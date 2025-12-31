@@ -1,0 +1,7 @@
+{
+  "name": "Project G.B.O.S. - Memory Diver",
+  "description": "A noir-style psychological text adventure where you dive into the comatose mind of undercover agent Robert Capone to uncover the truth behind a criminal syndicate.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
