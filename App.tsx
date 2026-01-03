@@ -147,10 +147,12 @@ const App: React.FC = () => {
   };
 
   const handleCollectClue = (clueId: string, word: string) => {
-    // Define keyword categories
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning'];
-    const YEAR_IDS = ['year_1971', 'year_1968'];
+    // Define Categories
+    const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol'];
+    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone'];
+    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967'];
 
+    const isDossier = DOSSIER_WHITELIST.includes(clueId);
     const isPerson = PEOPLE_IDS.includes(clueId);
     const isYear = YEAR_IDS.includes(clueId);
 
@@ -158,39 +160,50 @@ const App: React.FC = () => {
     const updates: Partial<GameState> = {};
     const newHistory: Array<{ type: 'search' | 'info' | 'shatter'; content: string; timestamp: number }> = [];
 
-    // People: add to unlockedPeople AND collectedClues
+    // --- LOGIC: RELATIONSHIPS ---
     if (isPerson) {
-      if (!gameState.unlockedPeople.includes(clueId)) {
-        updates.unlockedPeople = [...gameState.unlockedPeople, clueId];
+      // Map incoming ID to MindMap's expected ID
+      let unlockedId = clueId;
+      if (clueId === 'robert' || clueId === 'robert_capone') unlockedId = 'capone';
+
+      if (!gameState.unlockedPeople.includes(unlockedId)) {
+        updates.unlockedPeople = [...gameState.unlockedPeople, unlockedId];
         newHistory.push({
           type: 'info',
-          content: `[PERSON IDENTIFIED]: ${word} 已归档至人物关系`,
+          content: `[PERSON IDENTIFIED]: ${word} 已收录到人物关系`,
           timestamp: Date.now()
         });
       }
+      // Also mark as "known" in collectedClues so it highlights
+      if (!gameState.collectedClues.includes(clueId)) {
+        updates.collectedClues = [...(updates.collectedClues || gameState.collectedClues), clueId];
+      }
+    }
+    // --- LOGIC: CASE DOSSIER ---
+    else if (isDossier) {
       if (!gameState.collectedClues.includes(clueId)) {
         updates.collectedClues = [...(updates.collectedClues || gameState.collectedClues), clueId];
         newHistory.push({
           type: 'info',
-          content: `[DATA FRAGMENT ACQUIRED]: ${word}`,
+          content: `[EVIDENCE FILED]: ${word} 已收录到案卷建档`,
           timestamp: Date.now()
         });
       }
     }
-    // Years: add to collectedYears only (silent collection for archive search)
+    // --- LOGIC: YEARS (Silent) ---
     else if (isYear) {
       if (!gameState.collectedYears.includes(clueId)) {
         updates.collectedYears = [...gameState.collectedYears, clueId];
-        // Silent collection - no history message
       }
     }
-    // Regular clues: add to collectedClues only
+    // --- LOGIC: GENERIC KEYWORDS ---
     else {
       if (!gameState.collectedClues.includes(clueId)) {
         updates.collectedClues = [...gameState.collectedClues, clueId];
+        // Restore feedback for generic keywords
         newHistory.push({
           type: 'info',
-          content: `[DATA FRAGMENT ACQUIRED]: ${word}`,
+          content: `[KEYWORD RECORDED]: ${word} 已收录到关键词提示`,
           timestamp: Date.now()
         });
       }
@@ -234,6 +247,18 @@ const App: React.FC = () => {
   const activeNode = nodes.find(n => n.id === gameState.activeNodeId);
   const visibleNodes = nodes.filter(n => gameState.unlockedNodeIds.includes(n.id));
 
+  const [collectedAttachments, setCollectedAttachments] = useState<string[]>([]);
+
+  const handleCollectAttachment = (attachmentId: string) => {
+    if (!collectedAttachments.includes(attachmentId)) {
+      setCollectedAttachments(prev => [...prev, attachmentId]);
+      setGameState(prev => ({
+        ...prev,
+        history: [...prev.history, { type: 'info', content: `[EVIDENCE ATTACHED]: NEW ITEM IN CLUE FOLDER`, timestamp: Date.now() }]
+      }));
+    }
+  };
+
   // Render based on current phase
   return (
     <AnimatePresence mode="wait">
@@ -247,8 +272,8 @@ const App: React.FC = () => {
               ...p,
               phase: 'immersion',
               passwordEntered: true,
-              collectedClues: ['julip', 'chicago', 'asian_woman', 'maine', 'headdress', 'father', 'project', 'confession'],
-              collectedYears: []
+              collectedClues: ['julip', 'project'], // WHITELISTED ONLY
+              collectedYears: ['year_1967'] // Add a year for testing search if needed
             }))}
             className="fixed top-4 right-4 z-50 px-4 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 text-xs border border-red-500/50 rounded uppercase tracking-widest backdrop-blur-md transition-colors"
           >
@@ -295,6 +320,8 @@ const App: React.FC = () => {
             unlockedArchiveIds={gameState.unlockedArchiveIds}
             onUnlockArchive={handleUnlockArchive}
             onConsumeKeywords={handleConsumeKeywords}
+            collectedAttachments={collectedAttachments}
+            onCollectAttachment={handleCollectAttachment}
           />
         </motion.div>
       )}

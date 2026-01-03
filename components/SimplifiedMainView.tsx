@@ -25,6 +25,8 @@ interface SimplifiedMainViewProps {
     unlockedArchiveIds: string[];
     onUnlockArchive: (id: string) => void;
     onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
+    collectedAttachments: string[];
+    onCollectAttachment: (id: string) => void;
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
@@ -44,7 +46,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     onCollectClue,
     unlockedArchiveIds = [],
     onUnlockArchive,
-    onConsumeKeywords
+
+    onConsumeKeywords,
+    collectedAttachments,
+    onCollectAttachment
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [showMindMap, setShowMindMap] = useState(false);
@@ -78,7 +83,9 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'lundgren': '伦德格兰',
         'ohio': '俄亥俄州',
         'ritual_case': '祭祀案',
-        'year_1968': '1968年'
+        'dismemberment_case': '碎尸案',
+        'year_1968': '1968年',
+        'year_1967': '1967年'
     };
 
     const handleSearchSubmit = (e: React.FormEvent) => {
@@ -140,8 +147,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         className="group flex items-center gap-2 text-[#d89853]/80 hover:text-[#d89853] transition-colors text-xs tracking-[0.1em] font-bold"
                     >
                         <Database size={14} className="group-hover:scale-110 transition-transform" />
-                        <span className="hidden md:inline">线索库</span>
-                        <span className="bg-[#d89853]/10 px-1.5 py-0.5 rounded text-[9px] group-hover:bg-[#d89853]/30 transition-colors">{collectedClues.length}</span>
+                        <span className="hidden md:inline">案卷建档</span>
+                        <span className="bg-[#d89853]/10 px-1.5 py-0.5 rounded text-[9px] group-hover:bg-[#d89853]/30 transition-colors">
+                            {collectedClues.filter(id => ['julip', 'project', 'julip_symbol'].includes(id)).length}
+                        </span>
                     </button>
                 </div>
             </header>
@@ -376,22 +385,24 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
             {/* Feature Sidebar Panels */}
             <ClueLibrary
-                collectedClueIds={collectedClues}
                 isOpen={showClueLibrary}
                 onClose={() => setShowClueLibrary(false)}
+                collectedClueIds={collectedClues}
+                collectedAttachments={collectedAttachments}
+                onCollectAttachment={onCollectAttachment}
             />
-
             <Archives
                 isOpen={showArchives}
                 onClose={() => setShowArchives(false)}
                 unlockedArchiveIds={unlockedArchiveIds}
                 onUnlockArchive={onUnlockArchive}
-                onCollectClue={onCollectClue}
                 collectedClues={collectedClues}
+                onCollectClue={onCollectClue}
                 collectedYears={collectedYears}
                 onConsumeKeywords={onConsumeKeywords}
+                collectedAttachments={collectedAttachments}
+                onCollectAttachment={onCollectAttachment}
             />
-
         </div>
     );
 };

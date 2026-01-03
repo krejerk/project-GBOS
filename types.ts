@@ -25,11 +25,18 @@ export interface MemoryNode {
   position?: { x: number; y: number };
 }
 
+export interface ClueAttachment {
+  type: 'image' | 'text' | 'document';
+  title: string;
+  content: string; // URL for image, text content for others
+}
+
 export interface Clue {
   id: string;
   word: string;
   description: string;
   source: string;
+  attachments?: ClueAttachment[];
 }
 
 export interface ArchiveRecord {

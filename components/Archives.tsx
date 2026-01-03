@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Archive, Search, X, ShieldAlert, Stamp, ChevronRight, File, FolderOpen } from 'lucide-react';
+import { Archive, Search, X, ShieldAlert, Stamp, ChevronRight, File, FolderOpen, Folder } from 'lucide-react';
 
 interface ArchivesProps {
     isOpen: boolean;
@@ -11,6 +11,7 @@ interface ArchivesProps {
     collectedClues: string[];
     collectedYears: string[];
     onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
+    onCollectAttachment?: (id: string) => void;
 }
 
 interface DetailedArchiveRecord {
@@ -99,7 +100,53 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 **动机的后置包装（Post-hoc Narrative Construction）：**
 地方警署和大众媒体被伦德格兰的"末日论"牵着鼻子走，这正是他想要的。通过对他在RLDS时期的早期行为档案分析，其所谓的"先知身份"是在其精神系统彻底崩溃后才紧急搭建的防御机制。他并不是因为相信上帝才杀人，而是因为他无法抑制杀戮冲动，才不得不从经文中翻找借口，将其包装成一种"圣经式献祭"。
 
-需要注意的是，伦德格兰是一个极度危险的病理性捕猎者。他表现出的"邪教领袖"特质其实是他精心维护的外壳。如果在审讯中试图从宗教角度与其对话，将正中其下怀。`
+需要注意的是，伦德格兰是一个极度危险的病理性捕猎者。他表现出的“邪教领袖”特质其实是他精心维护的外壳。如果在审讯中试图从宗教角度与其对话，将正中其下怀。回溯到1967年，当我亲手划下KLUB的第一行组织架构时，我并不是在创造一个英雄机构。我只是意识到，二战后的美国正在滋生一种前所未有的有组织恶疾。KLUB的职能不是拯救，而是隔离——将这些足以煽动文明崩塌的‘邪教节点’，从社会肌理中生生剥离出来。”`
+        }
+    },
+    {
+        id: 'dc_1967',
+        title: '1967年跨州碎尸案分析',
+        triggers: {
+            year: '1967',
+            person: ['dr_reggie', '雷吉博士', 'Reggie'] // Triggered by Dr. Reggie
+        },
+        newspaper: {
+            source: '《华盛顿邮报》',
+            date: '1967年5月14日',
+            headline: '战后的阴影：我们是否正在孕育一种新型犯罪？',
+            content: [
+                '记者： 教授，根据1965年的统一犯罪报告（UCR），全美暴力犯罪率较十年前上升了近40%。学界普遍将其归咎于城市化带来的疏离感，您怎么看？',
+                '范斯教授： 城市化只是容器，而非毒药。我们必须正视1945年后的“病理残留”。那场战争不仅带回了英雄，也带回了一种被摧毁的道德底线。',
+                '记者： 您是指退伍军人的心理创伤？',
+                '范斯教授： 不止于此。通过对近二十年积压卷宗的交叉比对，我注意到一种“非典型的寄生现象”。在约五分之一的未决案中，凶手展现出一种超越了物欲或情欲的“仪式性冷感”。他们就像是受到某种松散的、隐形的逻辑驱动。',
+                '记者： 您曾在讲座中提到过“病理性捕猎者”这个词。',
+                '范斯教授： 是的。1950年代的宁静是个假象。那份“20%的异常数据”一直在增长。他们不是传统的黑帮，也不是疯子，而是一群在社会肌理缝隙中穿行的“清道夫”。如果调查局继续沿用应对禁酒令时代的手段，那么到1970年，这些散落在各州的“孤岛”将会连接成一片我们无法理解的暗网。',
+                '记者： 您的意思是，存在一个全国性的犯罪组织？',
+                '范斯教授： 不是那种有办公室和层级制度的组织。它更像是一种病毒，通过某种我们尚未识别的媒介在年轻人和失意者中传播。',
+                '(注：此处报纸页面被撕毁，后续内容缺失)'
+            ]
+        },
+        annotation: {
+            fileId: '#1967-ARCH-042',
+            date: '1969年8月24日',
+            level: '绝密 (TOP SECRET / KLUB EYES ONLY)',
+            author: '雷吉博士 (Dr. Reggie)',
+            content: `
+主题： 关于“KLUB”成立两年的调查总结：针对1945-1968年间全美非关联性罪案的重新评估
+
+【概要】 自 1967年 本处（KLUB - Knowledge-based Linkage & Urban Behavior）在您的直接授权下正式成立以来，我们对胡佛局长时代的积压卷宗进行了前所未有的数字化（穿孔卡片）处理与逻辑比对。现已确认：自二战结束以来，全美有 20.8% 的谋杀及纵火案件并非随机发生，而是受一种名为“余波”的松散社会病理结构驱动。
+
+【时间线与阶段性发现】
+**潜伏期（1945-1950）：** 数据显示，在二战结束后的最初五年，受该“邪教”意识形态影响的罪案仅占总数的 3%。雷吉博士认为，这是由于战后秩序的强力压制，使得该组织处于某种“休眠”或“地下孵化”状态。
+**扩张期（1951-1966）：** 随着冷战阴云和城市化加速，该数值开始稳步上升。在 1967 年 KLUB 成立前的回溯分析中，我们发现这种影响在 1963 年（██████）后出现了显著的波动。
+**爆发与机构建立（1967-至今）：** 1967年 的大范围骚乱与反文化运动为该组织提供了完美的掩体。KLUB 正是在这一年应运而生，旨在将那些被各地警方视为“嬉皮士犯罪”或“战后心理创伤”的孤立案件，拼凑成一张完整的威胁地图。
+
+【核心威胁评估】
+**非线性关联：** 雷吉博士通过比对 1967年夏季的三起跨州碎尸案发现，嫌疑人虽无物理接触，但均在案发现场留下了相似的符号，那是某种反复拓印后的墨迹，如同标记，出现在被害人的私人物品上，雷吉博士将该符号称为“黄 ██ 普”。「图片见附录」
+** █████ 警戒线：** 目前的感染率已突破█████。如果我们不能在1975年之前锁定该“松散组织”的传播媒介（推测为某种特定的短波电台或地下出版物），这种病理性犯罪将成为美国社会的“新常态”。
+
+【雷吉博士的个人声明】 “1967年不仅是 KLUB 的起点，也是美国文明的一个分水岭。我们追踪的不是一群躲在洞穴里的邪教徒，而是一场正在城市血管中流动的瘟疫。如果局方继续以 19 世纪的眼光看待这些‘新式犯罪’，我们将在十年内输掉这场无声的战争。”
+            `
         }
     }
 ];
@@ -112,7 +159,8 @@ export const Archives: React.FC<ArchivesProps> = ({
     onCollectClue,
     collectedClues,
     collectedYears,
-    onConsumeKeywords
+    onConsumeKeywords,
+    onCollectAttachment
 }) => {
     const [yearInput, setYearInput] = useState('');
     const [personInput, setPersonInput] = useState('');
@@ -124,26 +172,95 @@ export const Archives: React.FC<ArchivesProps> = ({
     // Focus State for Split View
     const [focusedPane, setFocusedPane] = useState<'newspaper' | 'annotation' | null>(null);
 
+    // Attachment Image Modal State
+    const [attachmentImage, setAttachmentImage] = useState<string | null>(null);
+
+    // Attachment Collection State
+    const [isSelectingFolder, setIsSelectingFolder] = useState(false);
+    const [collectionFeedback, setCollectionFeedback] = useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
+
     // Keyword mapping for archives - for annotation highlighting
     const ARCHIVE_KEYWORD_MAP: Record<string, string> = {
         '俄亥俄州': 'ohio',
-        '祭祀案': 'ritual_case'
+        '祭祀案': 'ritual_case',
+        '1967': 'year_1967',
+        '碎尸案': 'dismemberment_case'
     };
 
     // Clue display mapping for quick selection chips
     const CLUE_DISPLAY_MAP: Record<string, string> = {
         'year_1971': '1971',
         'year_1968': '1968',
+        'year_1967': '1967',
         'nibi': '尼比',
         'lundgren': '伦德格兰',
-        'conchar': '康查尔'
+        'conchar': '康查尔',
+        'dismemberment_case': '碎尸案',
+        'dr_reggie': '雷吉博士',
+        'project': '青豆牡蛎汤计划',
+        'julip': '黄油朱莉普',
+        'family': '诡异家族',
+        'maine': '缅因州',
+        'small_bank': '小银行',
+        'chicago': '芝加哥',
+        'robert': '罗伯特',
+        'asian_woman': '亚裔女性',
+        'missing': '失踪',
+        'father': '父亲',
+        'relationship': '扭曲关系',
+        'dirty_frank': '脏弗兰克酒吧',
+        'morning': '莫宁',
+        'ohio': '俄亥俄州',
+        'ritual_case': '祭祀案'
+    };
+
+    const handleAttemptCollect = (targetClueId: string) => {
+        // Logic: specific attachments belong to specific clues
+        // Currently we only have 'julip_symbol' belonging to 'julip'
+
+        let success = false;
+
+        // This mapping defines which folder receives the FBI symbol
+        // For now, hardcoded: attachmentImage is the FBI symbol -> 'julip'
+        if (targetClueId === 'julip') {
+            success = true;
+        }
+
+        if (success) {
+            if (onCollectAttachment) {
+                onCollectAttachment('julip_symbol');
+            }
+            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+            setTimeout(() => {
+                setAttachmentImage(null);
+                setIsSelectingFolder(false);
+                setCollectionFeedback({ type: null, msg: '' });
+            }, 1500);
+        } else {
+            setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
+            setTimeout(() => setCollectionFeedback({ type: null, msg: '' }), 2000);
+        }
     };
 
     const handleKeywordClick = (keyword: string) => {
         const clueId = ARCHIVE_KEYWORD_MAP[keyword];
-        if (clueId && !collectedKeywords.has(keyword)) {
-            setCollectedKeywords(prev => new Set([...prev, keyword]));
-            onCollectClue(clueId, keyword);
+        if (clueId) {
+            // STRATEGIC CHANGE: Clicking keywords only populates the "Prompt" (Search Inputs)
+            // It does NOT automatically add to the Case Dossier.
+
+            // Check if it's a person or year based on simple heuristic or map
+            // For now, checking loosely against known years
+            if (['1967', '1968', '1971'].includes(keyword)) {
+                setYearInput(keyword);
+            } else {
+                setPersonInput(keyword);
+                // Also support Chinese mapping for input
+                const display = CLUE_DISPLAY_MAP[clueId];
+                if (display && display !== keyword) {
+                    // If the map points to a chinese name but we clicked English, or vice versa
+                    // setPersonInput(display); // Optional: normalize input
+                }
+            }
         }
     };
 
@@ -174,6 +291,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                 const yearTrimmed = yearInput.trim();
                 if (yearTrimmed === '1971') usedYearIds.push('year_1971');
                 if (yearTrimmed === '1968') usedYearIds.push('year_1968');
+                if (yearTrimmed === '1967') usedYearIds.push('year_1967');
 
                 // Match person
                 const personLower = personInput.trim().toLowerCase();
@@ -181,8 +299,23 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (['lundgren', '伦德格兰'].includes(personLower)) usedPersonIds.push('lundgren');
                 if (['conchar', '康查尔'].includes(personLower)) usedPersonIds.push('conchar');
                 if (['morning', '莫宁'].includes(personLower)) usedPersonIds.push('morning');
+                if (['dr_reggie', '雷吉博士', 'reggie'].includes(personLower)) usedPersonIds.push('dr_reggie');
+                if (['project', '青豆牡蛎汤计划'].includes(personLower)) usedPersonIds.push('project');
 
-                // Call callback to remove keywords
+                // STRATEGIC CHANGE: Successful investigation unlocks the relevant Case Files (Dossier)
+                // DOSSIER WHITELIST: Only "Golden Julip" and "Project Green Bean Oyster Soup" can be filed.
+                // Other keywords (like Nibi, Maine) are useful for search but do NOT create permanent files.
+                const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol'];
+
+                usedPersonIds.forEach(id => {
+                    const word = CLUE_DISPLAY_MAP[id] || id;
+                    // Only collect if explicitly in the whitelist
+                    if (DOSSIER_WHITELIST.includes(id) && !collectedClues.includes(id)) {
+                        onCollectClue(id, word);
+                    }
+                });
+
+                // Call callback to remove keywords (if we were still using that mechanic, but we kept it for API compat)
                 if (usedYearIds.length > 0 || usedPersonIds.length > 0) {
                     onConsumeKeywords(usedYearIds, usedPersonIds);
                 }
@@ -475,32 +608,65 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                         </div>
 
                                                         <div className="font-mono text-sm md:text-base leading-7 space-y-6 text-neutral-300 font-light border-l border-[#c85a3f]/10 pl-6">
-                                                            {activeCase.annotation.content.split('\n').map((line, i) => (
-                                                                <p key={i} className="mb-4">
-                                                                    {line.split(/(俄亥俄州|祭祀案)/g).map((part, j) => {
-                                                                        if (['俄亥俄州', '祭祀案'].includes(part)) {
-                                                                            const isCollected = collectedKeywords.has(part);
-                                                                            return (
-                                                                                <span
-                                                                                    key={j}
-                                                                                    onClick={() => handleKeywordClick(part)}
-                                                                                    className={`
+                                                            {activeCase.annotation.content.split('\n').map((line, i) => {
+                                                                // Define keywords based on case ID
+                                                                const caseKeywords = activeCase.id === 'oh_1968'
+                                                                    ? ['俄亥俄州', '祭祀案', '1967']
+                                                                    : activeCase.id === 'dc_1967'
+                                                                        ? ['碎尸案'] // 1967 explicitly excluded for this case
+                                                                        : ['俄亥俄州', '祭祀案']; // Default legacy
+
+                                                                const attachmentTrigger = '「图片见附录」';
+                                                                // Create a combined regex for keywords and the specific attachment text
+                                                                const pattern = `(${[...caseKeywords, attachmentTrigger].join('|')})`;
+                                                                const regex = new RegExp(pattern, 'g');
+
+                                                                return (
+                                                                    <p key={i} className="mb-4">
+                                                                        {line.split(regex).map((part, j) => {
+                                                                            if (part === attachmentTrigger) {
+                                                                                return (
+                                                                                    <span
+                                                                                        key={j}
+                                                                                        onClick={() => {
+                                                                                            setAttachmentImage('/assets/fbi-symbol.png');
+                                                                                            if (onCollectAttachment) {
+                                                                                                onCollectAttachment('julip_symbol');
+                                                                                            }
+                                                                                        }}
+                                                                                        className="inline-flex items-center gap-1 text-[#d89853] cursor-pointer hover:text-white hover:underline decoration-1 underline-offset-4 ml-1 transition-colors group/link align-baseline font-bold"
+                                                                                        title="查看附录图片"
+                                                                                    >
+                                                                                        <File size={14} className="inline group-hover/link:scale-110 transition-transform" />
+                                                                                        {part}
+                                                                                    </span>
+                                                                                );
+                                                                            }
+
+                                                                            if (caseKeywords.includes(part)) {
+                                                                                const isCollected = collectedKeywords.has(part);
+                                                                                return (
+                                                                                    <span
+                                                                                        key={j}
+                                                                                        onClick={() => handleKeywordClick(part)}
+                                                                                        className={`
                                                                                         cursor-pointer font-bold inline-block transform hover:scale-105 transition-all duration-200
                                                                                         ${isCollected
-                                                                                            ? 'text-white bg-[#c85a3f] px-1 animate-pulse shadow-lg'
-                                                                                            : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20'
-                                                                                        }
+                                                                                                ? 'text-white bg-[#c85a3f] px-1 animate-pulse shadow-lg'
+                                                                                                : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20'
+                                                                                            }
                                                                                     `}
-                                                                                    title="点击收集线索"
-                                                                                >
-                                                                                    {part}
-                                                                                </span>
-                                                                            );
-                                                                        }
-                                                                        return <span key={j}>{part}</span>;
-                                                                    })}
-                                                                </p>
-                                                            ))}
+                                                                                        title="点击收集线索"
+                                                                                    >
+                                                                                        {part}
+                                                                                    </span>
+                                                                                );
+                                                                            }
+                                                                            return <span key={j}>{part}</span>;
+                                                                        })}
+                                                                    </p>
+                                                                );
+                                                            })}
                                                         </div>
 
                                                         {/* Handwritten Signature */}
@@ -541,6 +707,104 @@ export const Archives: React.FC<ArchivesProps> = ({
                             </div>
                         </div>
                     </div>
+                    {/* Attachment Image Modal */}
+                    {/* Attachment Image Modal */}
+                    <AnimatePresence>
+                        {attachmentImage && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => {
+                                    setAttachmentImage(null);
+                                    setIsSelectingFolder(false);
+                                    setCollectionFeedback({ type: null, msg: '' });
+                                }}
+                                className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl cursor-default"
+                            >
+                                <div className="relative w-full max-w-4xl flex flex-col items-center" onClick={e => e.stopPropagation()}>
+
+                                    <div className="relative mb-8">
+                                        <motion.img
+                                            initial={{ scale: 0.9, rotate: -2 }}
+                                            animate={{ scale: 1, rotate: 0 }}
+                                            exit={{ scale: 0.9, rotate: 2 }}
+                                            src={attachmentImage}
+                                            alt="FBI Attachment"
+                                            className="max-h-[60vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.8)] border-8 border-white p-4 bg-white transform rotate-1"
+                                        />
+
+                                        {collectionFeedback.msg && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-6 py-3 rounded border backdrop-blur-md shadow-2xl font-mono font-bold tracking-widest text-sm z-50
+                                                    ${collectionFeedback.type === 'success' ? 'bg-green-900/90 border-green-500 text-green-100' : 'bg-red-900/90 border-red-500 text-red-100'}
+                                                `}
+                                            >
+                                                {collectionFeedback.msg}
+                                            </motion.div>
+                                        )}
+                                    </div>
+
+                                    {/* Interaction Area */}
+                                    <div className="w-full max-w-lg">
+                                        {!isSelectingFolder ? (
+                                            <div className="flex flex-col items-center gap-2">
+                                                <button
+                                                    onClick={() => setIsSelectingFolder(true)}
+                                                    className="bg-[#c85a3f] text-white px-8 py-3 rounded-full font-mono font-bold tracking-[0.2em] flex items-center gap-3 hover:bg-[#d89853] transition-all shadow-[0_0_20px_rgba(200,90,63,0.4)] hover:scale-105 active:scale-95"
+                                                >
+                                                    <FolderOpen size={18} />
+                                                    COLLECT EVIDENCE
+                                                </button>
+                                                <span className="text-[10px] text-[#d89853]/60 font-mono tracking-widest uppercase">
+                                                    Identify applicable case file
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="bg-[#0f0a0a] border border-[#d89853]/30 rounded-lg p-6 shadow-2xl relative"
+                                            >
+                                                <div className="text-center mb-4">
+                                                    <h4 className="text-[#d89853] font-mono tracking-widest text-sm font-bold">SELECT TARGET CASE FILE</h4>
+                                                    <p className="text-[#d89853]/40 text-[10px] uppercase">Where does this evidence belong?</p>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-[30vh] overflow-y-auto custom-scrollbar p-1">
+                                                    {collectedClues.map(clueId => (
+                                                        <button
+                                                            key={clueId}
+                                                            onClick={() => handleAttemptCollect(clueId)}
+                                                            className="text-[10px] font-mono border border-[#d89853]/20 bg-[#d89853]/5 text-[#d89853]/80 p-2 rounded hover:bg-[#d89853]/20 hover:text-[#d89853] hover:border-[#d89853]/50 transition-all truncate text-left flex items-center gap-2"
+                                                        >
+                                                            <Folder size={12} className="shrink-0" />
+                                                            <span className="truncate">{CLUE_DISPLAY_MAP[clueId] || clueId}</span>
+                                                        </button>
+                                                    ))}
+                                                    {collectedClues.length === 0 && (
+                                                        <div className="col-span-3 text-center text-[#d89853]/30 text-xs py-4">
+                                                            NO OPEN FILES AVAILABLE
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <button
+                                                    onClick={() => setIsSelectingFolder(false)}
+                                                    className="absolute top-2 right-2 text-[#d89853]/40 hover:text-[#d89853]"
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </motion.div>
+                                        )}
+                                    </div>
+
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </motion.div>
             )}
         </AnimatePresence>

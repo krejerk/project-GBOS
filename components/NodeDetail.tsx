@@ -32,7 +32,8 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({ node, onShatter, onColle
     '脏弗兰克酒吧': 'dirty_frank',
     '莫宁': 'morning',
     '伦德格兰': 'lundgren',
-    '1968': 'year_1968'
+    '1968': 'year_1968',
+    '1967': 'year_1967'
   };
 
   // Select keyword map based on node ID

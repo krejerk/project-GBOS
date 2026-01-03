@@ -1,13 +1,14 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, Lock, Hash } from 'lucide-react';
-import { Clue } from '../types';
+import { Database, Folder, File, X, Image as ImageIcon, Paperclip, FileText, Search, Tag, Eye, Lock, Hash } from 'lucide-react';
+import { Clue, ClueAttachment } from '../types';
 
 interface ClueLibraryProps {
     collectedClueIds: string[];
     isOpen: boolean;
     onClose: () => void;
+    collectedAttachments?: string[];
+    onCollectAttachment?: (id: string) => void;
 }
 
 const CLUE_DEFINITIONS: Record<string, Clue> = {
@@ -21,7 +22,14 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         id: 'julip',
         word: '黄油朱莉普',
         description: '卡彭的安全识别代码 (Butter Julep)。',
-        source: 'Briefing'
+        source: 'Briefing',
+        attachments: [
+            {
+                type: 'image',
+                title: 'FBI Symbol Sketch',
+                content: '/assets/fbi-symbol.png'
+            }
+        ]
     },
     'maine': {
         id: 'maine',
@@ -139,73 +147,248 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
     }
 };
 
-export const ClueLibrary: React.FC<ClueLibraryProps> = ({ collectedClueIds, isOpen, onClose }) => {
-    const collectedClues = collectedClueIds.map(id => CLUE_DEFINITIONS[id]).filter(Boolean);
+export const ClueLibrary: React.FC<ClueLibraryProps> = ({
+    collectedClueIds,
+    isOpen,
+    onClose,
+    collectedAttachments = []
+}) => {
+    const [selectedClue, setSelectedClue] = useState<Clue | null>(null);
+    const [viewingAttachment, setViewingAttachment] = useState<ClueAttachment | null>(null);
+
+    // Filter available clues
+    // DOSSIER WHITELIST: Only these specific IDs are allowed to be displayed in the Case Dossier
+    const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol'];
+
+    const collectedClues = collectedClueIds
+        .map(id => CLUE_DEFINITIONS[id])
+        .filter(clue => clue && DOSSIER_WHITELIST.includes(clue.id));
+
+    // Group clues by source
+    const groupedClues = collectedClues.reduce((acc, clue) => {
+        if (!acc[clue.source]) acc[clue.source] = [];
+        acc[clue.source].push(clue);
+        return acc;
+    }, {} as Record<string, Clue[]>);
 
     return (
         <AnimatePresence>
             {isOpen && (
                 <motion.div
-                    initial={{ x: '100%' }}
-                    animate={{ x: 0 }}
-                    exit={{ x: '100%' }}
-                    transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                    className="fixed top-0 right-0 h-full w-full md:w-96 bg-[#0a0505]/95 backdrop-blur-md border-l border-[#c85a3f]/30 z-50 shadow-2xl flex flex-col"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
                 >
-                    {/* Header */}
-                    <div className="p-6 border-b border-[#c85a3f]/20 flex justify-between items-center bg-black/40">
-                        <div className="flex items-center gap-2 text-[#d89853]">
-                            <Database size={18} />
-                            <span className="font-mono text-lg tracking-widest uppercase">线索库 CLUES</span>
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="text-[#c85a3f]/60 hover:text-[#c85a3f] transition-colors font-mono text-sm"
-                        >
-                            [CLOSE]
-                        </button>
-                    </div>
+                    {/* Main Container - Centered Modal */}
+                    <div className="w-full max-w-6xl h-[85vh] bg-[#0c0c0c] border border-[#d89853]/20 rounded-lg flex shadow-[0_0_100px_rgba(216,152,83,0.1)] relative overflow-hidden">
 
-                    {/* List */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-[#c85a3f]/20 scrollbar-track-transparent">
-                        {collectedClues.length === 0 ? (
-                            <div className="text-center text-[#c85a3f]/40 font-mono py-10 space-y-2">
-                                <Lock size={32} className="mx-auto opacity-50 mb-4" />
-                                <p>NO DATA FRAGMENTS FOUND</p>
-                                <p className="text-xs">Collect clues from memory briefings</p>
+                        {/* Left Sidebar: Case Directory */}
+                        <div className="w-64 bg-[#0a0505] border-r border-[#d89853]/10 flex flex-col hidden md:flex">
+                            <div className="p-6 border-b border-[#d89853]/10">
+                                <h2 className="text-[#d89853] font-mono font-bold tracking-[0.2em] flex items-center gap-2">
+                                    <Database size={16} />
+                                    案卷建档
+                                </h2>
+                                <p className="text-[#d89853]/40 text-[10px] uppercase tracking-widest mt-1">Case Dossier & Evidence</p>
                             </div>
-                        ) : (
-                            collectedClues.map((clue, index) => (
-                                <motion.div
-                                    key={clue.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.05 }}
-                                    className="bg-[#d89853]/5 border border-[#d89853]/20 rounded p-4 group hover:bg-[#d89853]/10 transition-colors"
-                                >
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h3 className="text-[#d89853] font-bold tracking-wider">{clue.word}</h3>
-                                        <span className="text-[10px] text-[#c85a3f]/60 bg-[#c85a3f]/10 px-1 rounded font-mono">
-                                            {clue.source.toUpperCase()}
-                                        </span>
+
+                            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                                {Object.entries(groupedClues).map(([source, clues]) => (
+                                    <div key={source}>
+                                        <div className="text-[10px] text-[#d89853]/30 uppercase tracking-[0.2em] font-bold mb-3 px-2">
+                                            {source}
+                                        </div>
+                                        <div className="space-y-1">
+                                            {(clues as Clue[]).map(clue => {
+                                                const hasAttachment = clue.attachments && clue.attachments.length > 0;
+                                                const isActive = selectedClue?.id === clue.id;
+
+                                                return (
+                                                    <button
+                                                        key={clue.id}
+                                                        onClick={() => setSelectedClue(clue)}
+                                                        className={`
+                                                            w-full text-left px-3 py-2 rounded text-xs font-mono transition-all flex items-center justify-between group
+                                                            ${isActive
+                                                                ? 'bg-[#d89853]/20 text-[#d89853] border border-[#d89853]/40 shadow-inner'
+                                                                : 'text-[#d89853]/60 hover:bg-[#d89853]/5 hover:text-[#d89853]'
+                                                            }
+                                                        `}
+                                                    >
+                                                        <span className="truncate">{clue.word}</span>
+                                                        {hasAttachment && (
+                                                            <Paperclip size={10} className={`${isActive ? 'opacity-100' : 'opacity-30 group-hover:opacity-70'}`} />
+                                                        )}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                    <div className="text-neutral-400 text-sm leading-relaxed mb-3">
-                                        {clue.description}
-                                    </div>
-                                    <div className="flex items-center gap-1 text-[10px] text-[#d89853]/40 font-mono">
-                                        <Hash size={10} />
-                                        <span>ID: {clue.id.toUpperCase()}_{Math.floor(Math.random() * 9000) + 1000}</span>
-                                    </div>
-                                </motion.div>
-                            ))
-                        )}
+                                ))}
+                            </div>
+
+                            <div className="p-4 border-t border-[#d89853]/10 text-center text-[10px] text-[#d89853]/30 uppercase tracking-widest">
+                                TOTAL ITEMS: {collectedClues.length}
+                            </div>
+                        </div>
+
+                        {/* Right Content: Folder View */}
+                        <div className="flex-1 bg-[#100c0c] bg-[url('https://www.transparenttextures.com/patterns/black-felt.png')] relative overflow-hidden flex flex-col">
+
+                            {/* Close Button */}
+                            <button
+                                onClick={onClose}
+                                className="absolute top-4 right-4 z-20 p-2 text-[#d89853]/40 hover:text-[#d89853] hover:bg-[#d89853]/10 rounded-full transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+
+                            {/* Folder Content */}
+                            {selectedClue ? (
+                                <div className="flex-1 p-8 md:p-16 flex flex-col overflow-y-auto w-full max-w-4xl mx-auto custom-scrollbar">
+
+                                    {/* Folder Tab/Label */}
+                                    <motion.div
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        key={selectedClue.id}
+                                        className="w-full bg-[#E3DAC9] text-[#1a1515] rounded-sm p-1 shadow-2xl transform md:-rotate-1 relative mb-12"
+                                    >
+                                        {/* Folder Tab */}
+                                        <div className="absolute -top-6 left-0 bg-[#E3DAC9] px-6 py-1 rounded-t-lg font-mono font-bold text-xs tracking-widest shadow-sm">
+                                            EVIDENCE #{selectedClue.id.toUpperCase()}
+                                        </div>
+
+                                        {/* Paper Content */}
+                                        <div className="bg-[#f0ece2] p-8 md:p-12 min-h-[50vh] relative shadow-inner bg-[url('https://www.transparenttextures.com/patterns/cardboard-flat.png')]">
+
+                                            {/* Stamp */}
+                                            <div className="absolute top-8 right-8 text-red-900/20 border-4 border-red-900/20 p-2 font-black uppercase text-2xl tracking-[0.2em] transform rotate-12 pointer-events-none select-none">
+                                                CONFIDENTIAL
+                                            </div>
+
+                                            {/* Header */}
+                                            <div className="border-b-2 border-[#1a1515]/10 pb-6 mb-8">
+                                                <h1 className="text-3xl md:text-4xl font-bold text-[#1a1515] font-serif tracking-tight mb-2">
+                                                    {selectedClue.word}
+                                                </h1>
+                                                <div className="flex items-center gap-4 text-xs font-mono uppercase tracking-widest text-[#1a1515]/50">
+                                                    <span className="flex items-center gap-1"><Tag size={12} /> Source: {selectedClue.source}</span>
+                                                    <span>|</span>
+                                                    <span>Ref: {Math.random().toString(36).substr(2, 8).toUpperCase()}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Description - Typewriter style */}
+                                            <div className="font-mono text-sm md:text-base leading-relaxed text-[#1a1515]/80 mb-12 max-w-2xl">
+                                                {selectedClue.description}
+                                            </div>
+
+                                            {/* Attachments Section */}
+                                            <div className="bg-[#1a1515]/5 rounded-lg p-6 border border-[#1a1515]/10">
+                                                <div className="text-xs font-bold uppercase tracking-widest text-[#1a1515]/40 mb-4 flex items-center gap-2">
+                                                    <Paperclip size={12} />
+                                                    Attached Evidence
+                                                </div>
+
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                    {selectedClue.attachments?.map((attachment, idx) => {
+                                                        // CONDITIONAL RENDER CHECK
+                                                        const isUnlocked = collectedAttachments.includes('julip_symbol') || selectedClue.id !== 'julip';
+
+                                                        // Special logic for Julip: needs unlock
+                                                        if (selectedClue.id === 'julip' && !isUnlocked) {
+                                                            return null; // Or render a placeholder/locked state
+                                                        }
+
+                                                        return (
+                                                            <motion.button
+                                                                key={idx}
+                                                                whileHover={{ scale: 1.05 }}
+                                                                whileTap={{ scale: 0.95 }}
+                                                                onClick={() => setViewingAttachment(attachment)}
+                                                                className="group relative aspect-square bg-white shadow-sm p-2 flex flex-col items-center justify-center gap-2 border border-gray-200 hover:shadow-lg transition-all transform rotate-2 hover:rotate-0"
+                                                            >
+                                                                <div className="w-full h-full bg-gray-50 flex items-center justify-center overflow-hidden border border-gray-100 relative">
+                                                                    {attachment.type === 'image' ? (
+                                                                        <img src={attachment.content} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                                                                    ) : (
+                                                                        <FileText size={24} className="text-gray-400" />
+                                                                    )}
+
+                                                                    {/* Hover Overlay */}
+                                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                                                        <Eye size={20} />
+                                                                    </div>
+                                                                </div>
+                                                                <span className="text-[9px] uppercase tracking-wider font-bold text-gray-500 group-hover:text-black">
+                                                                    Exhibit {String.fromCharCode(65 + idx)}
+                                                                </span>
+                                                            </motion.button>
+                                                        );
+                                                    })}
+                                                    {(!selectedClue.attachments || selectedClue.attachments.length === 0 || (selectedClue.id === 'julip' && !collectedAttachments.includes('julip_symbol'))) && (
+                                                        <div className="col-span-4 text-center py-8 text-xs text-gray-400 italic">
+                                                            No physical evidence attached to this file.
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </motion.div>
+
+                                </div>
+                            ) : (
+                                <div className="flex-1 flex flex-col items-center justify-center text-[#d89853]/20">
+                                    <Folder size={64} className="mb-4 opacity-50" />
+                                    <p className="font-mono uppercase tracking-[0.2em] text-sm">Select a file to view details</p>
+                                </div>
+                            )}
+
+                        </div>
+
                     </div>
 
-                    {/* Footer Status */}
-                    <div className="p-4 border-t border-[#c85a3f]/20 bg-black/60 text-[10px] text-[#c85a3f]/50 font-mono flex justify-between">
-                        <span>TOTAL: {collectedClues.length}</span>
-                        <span>STATUS: SYNCHRONIZED</span>
-                    </div>
+                    {/* Full Screen Attachment Viewer */}
+                    <AnimatePresence>
+                        {viewingAttachment && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 z-[110] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+                                onClick={() => setViewingAttachment(null)}
+                            >
+                                {viewingAttachment.type === 'image' && (
+                                    <motion.div
+                                        initial={{ scale: 0.9, rotate: -2 }}
+                                        animate={{ scale: 1, rotate: 0 }}
+                                        exit={{ scale: 0.9, rotate: 2 }}
+                                        className="relative bg-white p-4 shadow-[0_0_100px_rgba(0,0,0,0.5)] border-8 border-white max-h-[90vh] max-w-[90vw]"
+                                        onClick={e => e.stopPropagation()}
+                                    >
+                                        <img
+                                            src={viewingAttachment.content}
+                                            alt={viewingAttachment.title}
+                                            className="max-h-[85vh] object-contain"
+                                        />
+                                        <div className="absolute bottom-[-40px] left-0 w-full text-center text-white font-mono text-sm tracking-widest mt-4">
+                                            {viewingAttachment.title}
+                                        </div>
+                                        <button
+                                            onClick={() => setViewingAttachment(null)}
+                                            className="absolute -top-12 -right-12 p-2 text-white/50 hover:text-white transition-colors"
+                                        >
+                                            <X size={24} />
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
                 </motion.div>
             )}
         </AnimatePresence>
