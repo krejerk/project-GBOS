@@ -246,21 +246,18 @@ export const Archives: React.FC<ArchivesProps> = ({
     const handleKeywordClick = (keyword: string) => {
         const clueId = ARCHIVE_KEYWORD_MAP[keyword];
         if (clueId) {
-            // STRATEGIC CHANGE: Clicking keywords only populates the "Prompt" (Search Inputs)
-            // It does NOT automatically add to the Case Dossier.
+            // Restore collection logic while keeping strict lane routing (handled by App.tsx)
+            // This ensures feedback and recording happens.
+            if (onCollectClue) {
+                onCollectClue(clueId, keyword);
+            }
 
+            // Also populate inputs for convenience (optional, keeping for UX)
             // Check if it's a person or year based on simple heuristic or map
-            // For now, checking loosely against known years
             if (['1967', '1968', '1971'].includes(keyword)) {
                 setYearInput(keyword);
             } else {
                 setPersonInput(keyword);
-                // Also support Chinese mapping for input
-                const display = CLUE_DISPLAY_MAP[clueId];
-                if (display && display !== keyword) {
-                    // If the map points to a chinese name but we clicked English, or vice versa
-                    // setPersonInput(display); // Optional: normalize input
-                }
             }
         }
     };
@@ -651,7 +648,10 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                             }
 
                                                                             if (caseKeywords.includes(part)) {
-                                                                                const isCollected = collectedKeywords.has(part);
+                                                                                const clueId = ARCHIVE_KEYWORD_MAP[part];
+                                                                                // Check visual feedback against global props
+                                                                                const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId);
+
                                                                                 return (
                                                                                     <span
                                                                                         key={j}
@@ -659,11 +659,11 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                         className={`
                                                                                         cursor-pointer font-bold inline-block transform hover:scale-105 transition-all duration-200
                                                                                         ${isCollected
-                                                                                                ? 'text-white bg-[#c85a3f] px-1 animate-pulse shadow-lg'
-                                                                                                : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20'
+                                                                                                ? 'text-white bg-[#c85a3f] px-1 shadow-lg'
+                                                                                                : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20 animate-pulse'
                                                                                             }
                                                                                     `}
-                                                                                        title="点击收集线索"
+                                                                                        title={isCollected ? "已收录" : "点击收集线索"}
                                                                                     >
                                                                                         {part}
                                                                                     </span>
