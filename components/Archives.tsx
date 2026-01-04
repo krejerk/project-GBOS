@@ -211,7 +211,8 @@ export const Archives: React.FC<ArchivesProps> = ({
         'dirty_frank': '脏弗兰克酒吧',
         'morning': '莫宁',
         'ohio': '俄亥俄州',
-        'ritual_case': '祭祀案'
+        'ritual_case': '祭祀案',
+        'headdress': '原住民头饰'
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
@@ -478,17 +479,23 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     {CLUE_DISPLAY_MAP[id]}
                                                                 </button>
                                                             ))}
-                                                            {/* People from collectedClues */}
-                                                            {collectedClues.filter(id => CLUE_DISPLAY_MAP[id]).map(id => (
-                                                                <button
-                                                                    key={id}
-                                                                    type="button"
-                                                                    onClick={() => setPersonInput(CLUE_DISPLAY_MAP[id])}
-                                                                    className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
-                                                                >
-                                                                    {CLUE_DISPLAY_MAP[id]}
-                                                                </button>
-                                                            ))}
+                                                            {/* People from collectedClues - Filter out self references (case insensitive) */}
+                                                            {collectedClues
+                                                                .filter(id => {
+                                                                    const lowerId = id.toLowerCase();
+                                                                    if (['robert', 'capone', 'robert_capone', 'robert capone'].includes(lowerId)) return false;
+                                                                    return !!CLUE_DISPLAY_MAP[id];
+                                                                })
+                                                                .map(id => (
+                                                                    <button
+                                                                        key={id}
+                                                                        type="button"
+                                                                        onClick={() => setPersonInput(CLUE_DISPLAY_MAP[id])}
+                                                                        className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
+                                                                    >
+                                                                        {CLUE_DISPLAY_MAP[id]}
+                                                                    </button>
+                                                                ))}
                                                         </div>
                                                     )}
 

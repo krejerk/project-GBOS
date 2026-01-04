@@ -27,6 +27,7 @@ interface SimplifiedMainViewProps {
     onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
     collectedAttachments: string[];
     onCollectAttachment: (id: string) => void;
+    collectedDossierIds: string[]; // Strict lane for Dossier
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
@@ -49,7 +50,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
     onConsumeKeywords,
     collectedAttachments,
-    onCollectAttachment
+    onCollectAttachment,
+    collectedDossierIds = []
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [showMindMap, setShowMindMap] = useState(false);
@@ -149,7 +151,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         <Database size={14} className="group-hover:scale-110 transition-transform" />
                         <span className="hidden md:inline">案卷建档</span>
                         <span className="bg-[#d89853]/10 px-1.5 py-0.5 rounded text-[9px] group-hover:bg-[#d89853]/30 transition-colors">
-                            {collectedClues.filter(id => ['julip', 'project', 'julip_symbol'].includes(id)).length}
+                            {collectedDossierIds.length}
                         </span>
                     </button>
                 </div>
@@ -216,31 +218,33 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     exit={{ opacity: 0, y: -10 }}
                                     className="w-full max-w-2xl px-4 flex flex-wrap gap-2 justify-center mt-4 absolute top-full left-0 z-20"
                                 >
-                                    {Array.from(new Set([...collectedClues, ...unlockedPeople])).map(id => (
-                                        <button
-                                            key={id}
-                                            type="button"
-                                            onMouseDown={(e) => {
-                                                e.preventDefault(); // Prevent blur
-                                                const clueText = CLUE_DISPLAY_MAP[id] || id;
-                                                setSearchQuery(prev => {
-                                                    if (!prev) {
-                                                        return clueText;
-                                                    }
-                                                    // Avoid duplicates if simple check passes (optional, but good UX)
-                                                    if (prev.includes(clueText)) {
-                                                        return prev;
-                                                    }
-                                                    // Append with a space, ensuring no double spaces if prev already ends with one
-                                                    const separator = prev.endsWith(' ') ? '' : ' ';
-                                                    return `${prev}${separator}${clueText}`;
-                                                });
-                                            }}
-                                            className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
-                                        >
-                                            {CLUE_DISPLAY_MAP[id] || id}
-                                        </button>
-                                    ))}
+                                    {Array.from(new Set([...collectedClues, ...unlockedPeople]))
+                                        .filter(id => id.toLowerCase() !== 'capone') // Filter out raw 'capone' ID (internal use only)
+                                        .map(id => (
+                                            <button
+                                                key={id}
+                                                type="button"
+                                                onMouseDown={(e) => {
+                                                    e.preventDefault(); // Prevent blur
+                                                    const clueText = CLUE_DISPLAY_MAP[id] || id;
+                                                    setSearchQuery(prev => {
+                                                        if (!prev) {
+                                                            return clueText;
+                                                        }
+                                                        // Avoid duplicates if simple check passes (optional, but good UX)
+                                                        if (prev.includes(clueText)) {
+                                                            return prev;
+                                                        }
+                                                        // Append with a space, ensuring no double spaces if prev already ends with one
+                                                        const separator = prev.endsWith(' ') ? '' : ' ';
+                                                        return `${prev}${separator}${clueText}`;
+                                                    });
+                                                }}
+                                                className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
+                                            >
+                                                {CLUE_DISPLAY_MAP[id] || id}
+                                            </button>
+                                        ))}
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -387,7 +391,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             <ClueLibrary
                 isOpen={showClueLibrary}
                 onClose={() => setShowClueLibrary(false)}
-                collectedClueIds={collectedClues}
+                collectedClueIds={collectedDossierIds}
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}
             />

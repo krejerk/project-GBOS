@@ -53,7 +53,8 @@ export interface GameState {
   unlockedNodeIds: string[];
   activeNodeId: string | null;
   passwordEntered?: boolean;
-  collectedClues: string[]; // Store IDs of collected clues (excluding years)
+  collectedClues: string[]; // Store IDs of collected clues (Prompts/Keywords)
+  collectedDossierIds: string[]; // Store IDs of Case Dossier files (Mutually Exclusive)
   collectedYears: string[]; // Store IDs of collected year keywords (for archive search only)
   unlockedPeople: string[]; // Store IDs of discovered people (e.g. 'nibi', 'conchar')
   unlockedArchiveIds: string[]; // Store IDs of unlocked archive cases

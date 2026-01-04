@@ -60,7 +60,7 @@ const BRIEFING_SECTIONS: BriefingSection[] = [
     },
 ];
 
-export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContinue, onCollectClue, collectedClues }) => {
+export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContinue, onCollectClue, collectedClues, collectedDossierIds }) => {
     const [currentSection, setCurrentSection] = useState(0);
 
     const handleNext = () => {
@@ -80,7 +80,7 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
             const match = part.match(/\[(.*?)\]\(clue:(.*?)\)/);
             if (match) {
                 const [_, text, clueId] = match;
-                const isCollected = collectedClues.includes(clueId);
+                const isCollected = collectedClues.includes(clueId) || collectedDossierIds.includes(clueId);
 
                 return (
                     <span

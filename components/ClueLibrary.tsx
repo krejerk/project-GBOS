@@ -157,12 +157,10 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const [viewingAttachment, setViewingAttachment] = useState<ClueAttachment | null>(null);
 
     // Filter available clues
-    // DOSSIER WHITELIST: Only these specific IDs are allowed to be displayed in the Case Dossier
-    const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol'];
-
+    // Data is now strict lane separated, so we trust the incoming IDs
     const collectedClues = collectedClueIds
         .map(id => CLUE_DEFINITIONS[id])
-        .filter(clue => clue && DOSSIER_WHITELIST.includes(clue.id));
+        .filter(Boolean);
 
     // Group clues by source
     const groupedClues = collectedClues.reduce((acc, clue) => {

@@ -170,37 +170,50 @@ const App: React.FC = () => {
         updates.unlockedPeople = [...gameState.unlockedPeople, unlockedId];
         newHistory.push({
           type: 'info',
-          content: `[PERSON IDENTIFIED]: ${word} 已收录到人物关系`,
+          content: `[PERSON IDENTIFIED]: ${word} 已收录到人物关系与关键词`,
           timestamp: Date.now()
         });
       }
-      // Also mark as "known" in collectedClues so it highlights
+      // Also mark as "known" in collectedClues so it highlights/prompts
       if (!gameState.collectedClues.includes(clueId)) {
         updates.collectedClues = [...(updates.collectedClues || gameState.collectedClues), clueId];
       }
     }
-    // --- LOGIC: CASE DOSSIER ---
+    // --- LOGIC: CASE DOSSIER (EXCLUSIVE) ---
     else if (isDossier) {
-      if (!gameState.collectedClues.includes(clueId)) {
-        updates.collectedClues = [...(updates.collectedClues || gameState.collectedClues), clueId];
+      // Add to DOSSIER IDs
+      if (!gameState.collectedDossierIds.includes(clueId)) {
+        updates.collectedDossierIds = [...(gameState.collectedDossierIds || []), clueId];
         newHistory.push({
           type: 'info',
           content: `[EVIDENCE FILED]: ${word} 已收录到案卷建档`,
           timestamp: Date.now()
         });
       }
+
+      // EXCEPTION: 'julip' (Golden Julip) is ALSO a keyword prompt
+      if (clueId === 'julip') {
+        if (!gameState.collectedClues.includes(clueId)) {
+          updates.collectedClues = [...(updates.collectedClues || gameState.collectedClues), clueId];
+          // Append info log for dual collection
+          newHistory.push({
+            type: 'info',
+            content: `[KEYWORD RECORDED]: ${word} 已同时收录到关键词提示`,
+            timestamp: Date.now()
+          });
+        }
+      }
     }
-    // --- LOGIC: YEARS (Silent) ---
+    // --- LOGIC: YEARS (Silent Archive Prompts) ---
     else if (isYear) {
       if (!gameState.collectedYears.includes(clueId)) {
         updates.collectedYears = [...gameState.collectedYears, clueId];
       }
     }
-    // --- LOGIC: GENERIC KEYWORDS ---
+    // --- LOGIC: GENERIC KEYWORDS (Prompts Only) ---
     else {
       if (!gameState.collectedClues.includes(clueId)) {
         updates.collectedClues = [...gameState.collectedClues, clueId];
-        // Restore feedback for generic keywords
         newHistory.push({
           type: 'info',
           content: `[KEYWORD RECORDED]: ${word} 已收录到关键词提示`,
@@ -272,8 +285,17 @@ const App: React.FC = () => {
               ...p,
               phase: 'immersion',
               passwordEntered: true,
-              collectedClues: ['julip', 'project'], // WHITELISTED ONLY
-              collectedYears: ['year_1967'] // Add a year for testing search if needed
+              // Persons: Both unlocked AND in prompts
+              unlockedPeople: ['father', 'capone', 'nibi', 'conchar'],
+
+              // Prompts: Person prompts + Keywords. 'project' excluded.
+              collectedClues: ['julip', 'chicago', 'asian_woman', 'maine', 'small_bank', 'missing', 'father', 'nibi', 'conchar', 'robert'],
+
+              // Dossier: Strict dossier items
+              collectedDossierIds: ['julip', 'project'],
+
+              // Years
+              collectedYears: ['year_1967', 'year_1968', 'year_1971']
             }))}
             className="fixed top-4 right-4 z-50 px-4 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 text-xs border border-red-500/50 rounded uppercase tracking-widest backdrop-blur-md transition-colors"
           >
@@ -288,6 +310,7 @@ const App: React.FC = () => {
             onContinue={() => setGameState(p => ({ ...p, phase: 'dialogue' }))}
             onCollectClue={handleCollectClue}
             collectedClues={gameState.collectedClues}
+            collectedDossierIds={gameState.collectedDossierIds}
           />
         </motion.div>
       )}
@@ -322,6 +345,7 @@ const App: React.FC = () => {
             onConsumeKeywords={handleConsumeKeywords}
             collectedAttachments={collectedAttachments}
             onCollectAttachment={handleCollectAttachment}
+            collectedDossierIds={gameState.collectedDossierIds || []}
           />
         </motion.div>
       )}
