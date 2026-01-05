@@ -23,6 +23,7 @@ export interface MemoryNode {
   };
   connectedTo: string[];
   position?: { x: number; y: number };
+  revealedKeywords?: string[];
 }
 
 export interface ClueAttachment {
@@ -58,6 +59,7 @@ export interface GameState {
   collectedYears: string[]; // Store IDs of collected year keywords (for archive search only)
   unlockedPeople: string[]; // Store IDs of discovered people (e.g. 'nibi', 'conchar')
   unlockedArchiveIds: string[]; // Store IDs of unlocked archive cases
+  systemStability: number; // 0-100% (Starts at 84%)
   activePersona?: 'detective' | 'shadow'; // Controls background visualization
   history: Array<{
     type: 'search' | 'info' | 'shatter';

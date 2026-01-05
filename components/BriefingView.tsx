@@ -88,7 +88,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete }) => {
   const step = BRIEFING_STEPS[currentStep];
 
   // Logic to determine if the persistent image should be shown
-  // Show image starting from step 2 (Incident Report) until the end (Mission)
+  // Show image starting from step 2 (Incident Report) until the end (Project Codename)
   const showPersistentImage = currentStep >= 2;
 
   // Typewriter effect
@@ -292,7 +292,6 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete }) => {
               查看简报及笔录摘要 VIEW BRIEFING & TRANSCRIPTS
               <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </motion.button>
-
           )}
 
           {isLastStep && !isTyping && (

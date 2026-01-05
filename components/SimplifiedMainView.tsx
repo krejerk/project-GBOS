@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Map, Terminal as TerminalIcon, FileText, X, ChevronDown, Database, Archive, Network, Construction } from 'lucide-react';
+import { Search, Map, Terminal as TerminalIcon, FileText, X, ChevronDown, Database, Archive, Network, Construction, Brain, Activity, RotateCcw } from 'lucide-react';
 import { MindMap } from './MindMap';
 import { ConfessionLog } from './ConfessionLog';
 import { NodeDetail } from './NodeDetail';
@@ -28,6 +28,8 @@ interface SimplifiedMainViewProps {
     collectedAttachments: string[];
     onCollectAttachment: (id: string) => void;
     collectedDossierIds: string[]; // Strict lane for Dossier
+    systemStability: number;
+    onRetrace: () => { success: boolean; reason?: string; keywords?: string[] };
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
@@ -51,25 +53,51 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     onConsumeKeywords,
     collectedAttachments,
     onCollectAttachment,
-    collectedDossierIds = []
+    collectedDossierIds = [],
+    systemStability,
+    onRetrace
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [showMindMap, setShowMindMap] = useState(false);
     const [showClueLibrary, setShowClueLibrary] = useState(false);
     const [showArchives, setShowArchives] = useState(false);
-    const [showTerminal, setShowTerminal] = useState(false); // Now acts as "Construction" modal trigger
+    const [showTerminal, setShowTerminal] = useState(false);
     const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-    // Helper map for clue display names (replicated from DialogueView for consistency)
+    // Retrace State
+    const [retraceResult, setRetraceResult] = useState<string[] | null>(null);
+    const [showRetraceModal, setShowRetraceModal] = useState(false);
+    const [retraceError, setRetraceError] = useState<string | null>(null);
+    const [statusFlash, setStatusFlash] = useState(false);
+
+    const closeRetraceModal = () => {
+        setShowRetraceModal(false);
+        // Trigger status bar flash to indicate change
+        setStatusFlash(true);
+        setTimeout(() => setStatusFlash(false), 2000); // 2s flash
+    };
+
+    const handleRetraceClick = () => {
+        const result = onRetrace();
+        if (result.success && result.keywords) {
+            setRetraceResult(result.keywords);
+            setRetraceError(null);
+            setShowRetraceModal(true);
+        } else {
+            setRetraceError("STABILITY CRITICAL - CANNOT RETRACE");
+            // Auto hide error after 3s
+            setTimeout(() => setRetraceError(null), 3000);
+        }
+    };
+
+    // Helper map for clue display names
     const CLUE_DISPLAY_MAP: Record<string, string> = {
         'rubick': '鲁比克',
-        'robert': '罗伯特·卡彭',
-        'julip': '黄油朱莉普',
-        'julep': '黄油朱莉普', // Alias for typo/legacy
         'chicago': '芝加哥',
         'asian_woman': '亚裔女性',
         'maine': '缅因州',
         'small_bank': '小银行',
+        'julip': '黄油朱莉普',
         'headdress': '阿尔衮琴族头饰', // Ensure it has a name if present
         'missing': '失踪',
         'father': '父亲',
@@ -87,8 +115,23 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'ritual_case': '祭祀案',
         'dismemberment_case': '碎尸案',
         'year_1968': '1968年',
-        'year_1967': '1967年'
+        'year_1967': '1967年',
+        'phoenix': '凤凰城行动',
+        'architect': '建筑师',
+        'syndicate': '辛迪加'
     };
+
+    // Transient System Message Handling
+    const [tempSystemMessage, setTempSystemMessage] = useState<string | null>(null);
+
+    React.useEffect(() => {
+        const lastItem = history[history.length - 1];
+        if (lastItem?.content.includes('[SYSTEM]: 已消耗')) {
+            setTempSystemMessage(lastItem.content);
+            const timer = setTimeout(() => setTempSystemMessage(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [history]);
 
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -167,15 +210,96 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     className="w-full max-w-2xl flex flex-col items-center gap-8"
                 >
                     {/* Ambient Avatar / Prompt */}
-                    <div className="relative mb-4 group">
-                        <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 group-hover:opacity-100 transition-opacity filter sepia-[0.2] contrast-110">
+                    <div className="relative mb-8 group flex flex-col items-center">
+                        <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 group-hover:opacity-100 transition-opacity filter sepia-[0.2] contrast-110 mb-6">
                             <img
                                 src="/assets/capone-split-personality.jpg"
                                 className="w-[200%] h-full max-w-none object-cover object-left"
                             />
                         </div>
-                        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap text-[#d89853]/60 text-sm tracking-[0.2em] font-light text-shadow-sm">
-                            “你想聊些什么？”
+
+                        {/* Dynamic Response Area */}
+                        <div className="min-h-[20px] flex items-center justify-center px-4 w-[120%] -ml-[10%] text-center">
+                            <AnimatePresence mode="wait">
+                                {(() => {
+                                    // 0. Check for Processing State
+                                    if (isProcessing) {
+                                        return (
+                                            <motion.div
+                                                key="processing"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="text-[#d89853] text-sm tracking-[0.2em] font-light animate-pulse"
+                                            >
+                                                ......
+                                            </motion.div>
+                                        );
+                                    }
+
+                                    // 1. Check for transient system message
+                                    if (tempSystemMessage) {
+                                        return (
+                                            <motion.div
+                                                key="temp-sys"
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.95 }}
+                                                className="text-xs font-mono tracking-widest text-[#d89853]/50 animate-pulse"
+                                            >
+                                                {tempSystemMessage}
+                                            </motion.div>
+                                        );
+                                    }
+
+                                    const lastItem = history.length > 0 ? history[history.length - 1] : null;
+
+                                    // Filter out "System Collection" messages from this specific display area
+                                    const isCollectionLog = lastItem?.content.includes('已收录') ||
+                                        lastItem?.content.includes('RECORDED') ||
+                                        lastItem?.content.includes('IDENTIFIED') ||
+                                        lastItem?.content.includes('FILED') ||
+                                        lastItem?.content.includes('NEURAL LINK ESTABLISHED') ||
+                                        lastItem?.content.includes('[SYSTEM]: 已消耗'); // Filter this out from normal flow
+
+                                    const showResponse = lastItem && lastItem.type !== 'search' && !isCollectionLog;
+
+                                    if (showResponse && lastItem) {
+                                        const isCharacter = lastItem.content.startsWith('> [');
+                                        // Clean up content for display: remove "> [NAME]: " prefix if present
+                                        const displayContent = isCharacter
+                                            ? lastItem.content.replace(/^> \[.*?\]:\s*"/, '').replace(/"$/, '')
+                                            : lastItem.content;
+
+                                        return (
+                                            <motion.div
+                                                key={lastItem.timestamp}
+                                                initial={{ opacity: 0, y: 5 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -5 }}
+                                                className={`text-sm tracking-[0.15em] font-light leading-relaxed
+                                                    ${isCharacter ? 'text-[#d89853] italic' : 'text-[#c85a3f]/70'}
+                                                `}
+                                                style={{ textShadow: '0 0 10px rgba(216,152,83,0.3)' }}
+                                            >
+                                                {isCharacter ? `“${displayContent}”` : displayContent}
+                                            </motion.div>
+                                        );
+                                    }
+
+                                    return (
+                                        <motion.div
+                                            key="default"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="text-[#d89853]/60 text-sm tracking-[0.2em] font-light text-shadow-sm"
+                                        >
+                                            “你想聊些什么？”
+                                        </motion.div>
+                                    );
+                                })()}
+                            </AnimatePresence>
                         </div>
                     </div>
 
@@ -201,6 +325,16 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             <TerminalIcon size={12} className="text-[#d89853]" />
                         </button>
 
+
+                        {/* Subconscious Retrace Button - Top Left of Search Box */}
+                        <div
+                            className="absolute -top-8 left-0 flex items-center gap-2 text-[10px] tracking-widest text-[#d89853]/60 hover:text-[#d89853] cursor-pointer transition-colors uppercase font-bold group/retrace"
+                            onClick={handleRetraceClick}
+                        >
+                            <Brain size={12} className="group-hover/retrace:animate-pulse" />
+                            <span>潜意识回溯 // RETRACE</span>
+                        </div>
+
                         {/* View Log Button - Top Right of Search Box */}
                         <div
                             className="absolute -top-8 right-0 flex items-center gap-2 text-[10px] tracking-widest text-[#d89853]/60 hover:text-[#d89853] cursor-pointer transition-colors uppercase font-bold"
@@ -209,6 +343,135 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             <TerminalIcon size={12} />
                             <span>查看日志 // LOGS</span>
                         </div>
+
+                        {/* Retrace Error Toast */}
+                        <AnimatePresence>
+                            {retraceError && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[#020617]/90 border border-[#1e293b] text-[#94a3b8] text-xs px-6 py-3 rounded shadow-[0_0_20px_rgba(15,23,42,0.5)] backdrop-blur-md tracking-widest flex items-center gap-3 whitespace-nowrap font-mono"
+                                >
+                                    <Activity size={14} className="text-[#64748b]" />
+                                    {retraceError}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Retrace Results Modal - IMMERSIVE OVERHAUL */}
+                        <AnimatePresence>
+                            {showRetraceModal && retraceResult && (
+                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm" onClick={closeRetraceModal}>
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                        className="w-full max-w-lg bg-[#020205] border border-[#1e293b] p-8 relative overflow-hidden group shadow-[0_0_100px_rgba(15,23,42,0.4)]"
+                                        onClick={e => e.stopPropagation()}
+                                    >
+                                        {/* Deep Atmosphere Overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/20 to-transparent pointer-events-none" />
+                                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
+                                        <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
+
+                                        <button
+                                            className="absolute top-4 right-4 text-[#475569] hover:text-[#94a3b8] transition-colors duration-500"
+                                            onClick={closeRetraceModal}
+                                        >
+                                            <X size={20} />
+                                        </button>
+
+                                        <div className="flex items-center gap-5 mb-10 text-[#64748b]">
+                                            <div className="relative">
+                                                <Brain size={28} className="opacity-60" />
+                                                <motion.div
+                                                    animate={{ opacity: [0.2, 0.5, 0.2] }}
+                                                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                                    className="absolute inset-0"
+                                                >
+                                                    <Brain size={28} className="blur-sm text-[#94a3b8]" />
+                                                </motion.div>
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <h2 className="text-lg font-light tracking-[0.3em] text-[#94a3b8]">
+                                                    潜意识深层回溯
+                                                </h2>
+                                                <span className="text-[10px] tracking-[0.2em] text-[#475569] font-mono">
+                                                    正在接入深层记忆扇区...
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="text-xs text-[#475569] mb-8 font-mono border-l border-[#334155] pl-4 py-2 space-y-2">
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-1 h-1 bg-[#475569] rounded-full animate-pulse" />
+                                                提示：精神锚点正在松动，意识边界模糊 (-20%)
+                                            </div>
+                                            <div className="flex items-center gap-2 opacity-70">
+                                                <span className="w-1 h-1 bg-[#334155] rounded-full" />
+                                                正在打捞沉没在黑暗中的记忆碎片...
+                                            </div>
+                                        </div>
+
+                                        {retraceResult.length > 0 ? (
+                                            <div className="space-y-6 relative z-10">
+                                                <p className="text-[#94a3b8] text-sm font-light leading-relaxed tracking-wide opacity-90 italic">
+                                                    “你提到的这些往事似乎在发挥作用，不知为何，这些词汇在我脑海中变得挥之不去……”
+                                                </p>
+                                                <div className="flex flex-wrap gap-3">
+                                                    {retraceResult.map(keyword => {
+                                                        const isCollected = collectedClues.includes(keyword) ||
+                                                            unlockedPeople.includes(keyword) ||
+                                                            collectedDossierIds.includes(keyword);
+
+                                                        return (
+                                                            <button
+                                                                key={keyword}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    if (!isCollected) {
+                                                                        onCollectClue(keyword, CLUE_DISPLAY_MAP[keyword] || keyword);
+                                                                    }
+                                                                }}
+                                                                disabled={isCollected}
+                                                                className={`px-4 py-1.5 border text-sm font-medium tracking-widest transition-all duration-300 relative overflow-hidden group/item uppercase flex items-center gap-2
+                                                                    ${isCollected
+                                                                        ? 'bg-[#d89853]/10 border-[#d89853]/30 text-[#d89853] cursor-default'
+                                                                        : 'bg-[#1e293b]/40 border-[#334155] text-[#94a3b8] hover:bg-[#1e293b] hover:border-[#64748b] hover:text-[#e2e8f0] cursor-pointer'
+                                                                    }
+                                                                `}
+                                                            >
+                                                                <span className={`absolute inset-0 bg-[#334155] translate-x-full transition-transform duration-300 pointer-events-none ${!isCollected ? 'group-hover/item:translate-x-0' : ''}`} />
+                                                                <span className="relative z-10">{CLUE_DISPLAY_MAP[keyword] || keyword}</span>
+                                                                {isCollected && (
+                                                                    <span className="relative z-10 text-[10px] bg-[#d89853]/20 text-[#d89853] px-1.5 py-0.5 rounded font-mono">
+                                                                        已收录
+                                                                    </span>
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="text-[#64748b] text-base italic font-serif leading-relaxed px-6 py-12 text-center border border-[#1e293b] bg-[#0f172a]/30 relative">
+                                                <span className="absolute text-4xl text-[#334155] top-2 left-2 font-serif">“</span>
+                                                不管你是谁，你并不知道我遭遇了什么，所以请离开吧，父亲和南希，他们都不在这里。
+                                                <span className="absolute text-4xl text-[#334155] bottom-2 right-2 font-serif">”</span>
+                                            </div>
+                                        )}
+
+                                        <div className="mt-8 pt-4 border-t border-[#1e293b] flex justify-between items-end text-[9px] text-[#475569] font-mono">
+                                            <span>SECTOR: 7G-A9</span>
+                                            <span className="animate-pulse">TERMINAL: ACTIVE</span>
+                                        </div>
+                                    </motion.div>
+                                </div>
+                            )}
+                        </AnimatePresence>
+
                         {/* Quick Input Clues - Show when focused or when there are clues */}
                         <AnimatePresence>
                             {(isSearchFocused || collectedClues.length > 0 || unlockedPeople.length > 0) && (collectedClues.length > 0 || unlockedPeople.length > 0) && (
@@ -223,7 +486,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             !unlockedPeople.includes(id) &&
                                             !id.startsWith('year_') &&
                                             id.toLowerCase() !== 'capone' &&
-                                            id.toLowerCase() !== 'robert' // Robert is person
+                                            id.toLowerCase() !== 'robert' && // Robert is person
+                                            id !== 'dr_reggie' // Explicitly exclude Reggie
                                         )
                                         .map(id => (
                                             <button
@@ -254,6 +518,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             )}
                         </AnimatePresence>
                     </form>
+
 
 
 
@@ -381,13 +646,30 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     transition={{ delay: 0.8 }}
                     className="absolute bottom-8 left-0 w-full flex justify-center z-20 pointer-events-none"
                 >
-                    <div className="flex items-center gap-8 md:gap-16 text-[10px] text-[#d89853]/50 tracking-widest uppercase font-semibold pointer-events-auto bg-black/20 backdrop-blur-sm px-8 py-2 rounded-full border border-[#d89853]/10">
+                    <div className={`flex items-center gap-8 md:gap-16 text-[10px] tracking-widest uppercase font-semibold pointer-events-auto backdrop-blur-sm px-8 py-2 rounded-full border transition-all duration-500
+                        ${statusFlash
+                            ? 'bg-[#1e293b]/80 border-[#94a3b8]/50 text-[#e2e8f0] shadow-[0_0_30px_rgba(148,163,184,0.3)] scale-105'
+                            : 'bg-black/20 text-[#d89853]/50 border-[#d89853]/10'
+                        }
+                    `}>
                         <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-[#c85a3f] rounded-full animate-pulse shadow-[0_0_5px_#c85a3f]" />
-                            系统稳定
+                            {/* Dynamic Status Indicator */}
+                            {(() => {
+                                const isStable = systemStability > 40;
+                                const isCritical = systemStability <= 0;
+                                const color = isCritical ? 'bg-red-600' : isStable ? 'bg-green-400' : 'bg-[#c85a3f]';
+                                const shadow = isCritical ? 'shadow-[0_0_8px_#dc2626]' : isStable ? 'shadow-[0_0_8px_#4ade80]' : 'shadow-[0_0_5px_#c85a3f]';
+
+                                return (
+                                    <div className={`w-1.5 h-1.5 rounded-full animate-pulse transition-colors duration-500 ${color} ${shadow}`} />
+                                );
+                            })()}
+                            {systemStability > 0 ? "STABLE" : "CRITICAL"}
                         </div>
-                        <div>记忆完整度: 84%</div>
-                        <div>连接: 安全</div>
+                        <div className={statusFlash ? 'text-[#94a3b8] animate-pulse' : ''}>
+                            SC-STABILITY: {Math.round(systemStability)}%
+                        </div>
+                        <div>LINK: SECURE</div>
                     </div>
                 </motion.div>
             )}
@@ -409,6 +691,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 onCollectClue={onCollectClue}
                 collectedYears={collectedYears}
                 unlockedPeople={unlockedPeople}
+                collectedDossierIds={collectedDossierIds}
                 onConsumeKeywords={onConsumeKeywords}
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}

@@ -7,7 +7,7 @@ import { DialogueView } from './components/DialogueView';
 import { SimplifiedMainView } from './components/SimplifiedMainView';
 import { CORE_NODES } from './constants';
 import { GameState, MemoryLayer } from './types';
-import { processCognitiveSearch } from './services/geminiService';
+import { processCognitiveSearch, generateCharacterResponse } from './services/geminiService';
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -16,9 +16,11 @@ const App: React.FC = () => {
     activeNodeId: null,
     passwordEntered: false,
     collectedClues: [],
+    collectedDossierIds: [],
     collectedYears: [],
     unlockedPeople: [],
     unlockedArchiveIds: [],
+    systemStability: 84, // Initial Stability
     history: [
       { type: 'info', content: '[SYSTEM]: NEURAL LINK ESTABLISHED...', timestamp: Date.now() }
     ]
@@ -26,6 +28,37 @@ const App: React.FC = () => {
 
   const [nodes, setNodes] = useState(CORE_NODES);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // --- SUBCONSCIOUS RETRACE LOGIC ---
+  const handleRetrace = useCallback(() => {
+    // 1. Check Stability
+    if (gameState.systemStability <= 0) {
+      return { success: false, reason: 'STABILITY_CRITICAL' };
+    }
+
+    // 2. Calculate Missed Keywords
+    // Get distinct keywords from all UNLOCKED nodes
+    const unlockedIdSet = new Set(gameState.unlockedNodeIds);
+    let allAvailableKeywords: string[] = [];
+
+    CORE_NODES.forEach(node => {
+      if (unlockedIdSet.has(node.id) && node.revealedKeywords) {
+        allAvailableKeywords = [...allAvailableKeywords, ...node.revealedKeywords];
+      }
+    });
+
+    // Filter out already collected ones
+    const collectedSet = new Set([...gameState.collectedClues, ...gameState.collectedDossierIds, ...gameState.collectedYears, ...gameState.unlockedPeople]);
+    const missedKeywords = [...new Set(allAvailableKeywords.filter(k => !collectedSet.has(k)))];
+
+    // 3. Apply Penalty
+    setGameState(prev => ({
+      ...prev,
+      systemStability: Math.max(0, prev.systemStability - 20)
+    }));
+
+    return { success: true, keywords: missedKeywords };
+  }, [gameState.systemStability, gameState.unlockedNodeIds, gameState.collectedClues, gameState.collectedDossierIds, gameState.collectedYears, gameState.unlockedPeople]);
 
   const handleSearch = useCallback(async (query: string) => {
     setIsProcessing(true);
@@ -49,6 +82,8 @@ const App: React.FC = () => {
             ...prev,
             activeNodeId: node.id,
             unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
+            // Restore Stability on Unlock (Success)
+            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
             // Remove used clues from inventory
             collectedClues: prev.collectedClues.filter(id => !['maine', 'small_bank', 'headdress'].includes(id)),
             history: [
@@ -75,6 +110,8 @@ const App: React.FC = () => {
             ...prev,
             activeNodeId: node.id,
             unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
+            // Restore Stability on Unlock
+            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
             collectedClues: prev.collectedClues.filter(id => !['ohio', 'ritual_case'].includes(id)),
             history: [
               ...prev.history,
@@ -97,20 +134,50 @@ const App: React.FC = () => {
             ...prev,
             activeNodeId: node.id,
             unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
+            systemStability: !prev.unlockedNodeIds.includes(node.id) && response.nodeId.startsWith('confession') ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
             history: [
               ...prev.history,
               { type: 'info', content: `[检测到共鸣]: ${node.title} 片段已浮现。`, timestamp: Date.now() }
             ]
           }));
+        } else {
+          // Node not in local list (shouldn't happen for core nodes, but safety net)
+          setGameState(prev => ({ ...prev, history: [...prev.history, { type: 'info', content: response.analysis, timestamp: Date.now() }] }));
         }
       } else {
-        setGameState(prev => ({
-          ...prev,
-          history: [
-            ...prev.history,
-            { type: 'info', content: response.analysis, timestamp: Date.now() }
-          ]
-        }));
+        // --- EASTER EGG: FUZZY QUESTIONING ---
+        // If not a key node, check if it's a question to trigger the persona response
+        // Relaxed Heuristic: Any question mark, chinese interrogative, or length > 2
+        const isQuestion = /[?？whatwhohowwhywhere谁什么哪里为何真相真假]/i.test(query) || query.length > 2;
+
+        if (isQuestion) {
+          // Heuristic for persona: if query mentions "truth", "who", "gbos" -> Shadow
+          const isShadowTrigger = /truth|who|real|gbos|真相|是谁|真实/i.test(query);
+          const persona = isShadowTrigger ? 'shadow' : 'detective';
+
+          const reply = await generateCharacterResponse(query, persona);
+
+          setGameState(prev => ({
+            ...prev,
+            history: [
+              ...prev.history,
+              {
+                type: 'info',
+                content: `> [${persona === 'shadow' ? 'UNKNOWN SIGNAL' : 'R. CAPONE'}]: "${reply}"`,
+                timestamp: Date.now()
+              }
+            ]
+          }));
+        } else {
+          // Default "Noise" behavior
+          setGameState(prev => ({
+            ...prev,
+            history: [
+              ...prev.history,
+              { type: 'info', content: response.analysis, timestamp: Date.now() }
+            ]
+          }));
+        }
       }
     } catch (error) {
       console.error(error);
@@ -149,7 +216,7 @@ const App: React.FC = () => {
   const handleCollectClue = (clueId: string, word: string) => {
     // Define Categories
     const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol'];
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone'];
+    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie'];
     const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967'];
 
     const isDossier = DOSSIER_WHITELIST.includes(clueId);
@@ -286,13 +353,13 @@ const App: React.FC = () => {
               phase: 'immersion',
               passwordEntered: true,
               // Persons: Both unlocked AND in prompts
-              unlockedPeople: ['father', 'capone', 'nibi', 'conchar'],
+              unlockedPeople: ['father', 'capone', 'nibi', 'conchar', 'dr_reggie'],
 
               // Prompts: Person prompts + Keywords. 'project' excluded.
-              collectedClues: ['julip', 'chicago', 'asian_woman', 'maine', 'small_bank', 'missing', 'father', 'nibi', 'conchar', 'robert'],
+              collectedClues: ['chicago', 'asian_woman', 'maine', 'small_bank', 'missing', 'father', 'nibi', 'conchar', 'robert', 'dr_reggie'],
 
               // Dossier: Strict dossier items
-              collectedDossierIds: ['julip', 'project'],
+              collectedDossierIds: [],
 
               // Years
               collectedYears: ['year_1968', 'year_1971']
@@ -310,7 +377,7 @@ const App: React.FC = () => {
             onContinue={() => setGameState(p => ({ ...p, phase: 'dialogue' }))}
             onCollectClue={handleCollectClue}
             collectedClues={gameState.collectedClues}
-            collectedDossierIds={gameState.collectedDossierIds}
+            collectedDossierIds={gameState.collectedDossierIds || []}
           />
         </motion.div>
       )}
@@ -346,6 +413,8 @@ const App: React.FC = () => {
             collectedAttachments={collectedAttachments}
             onCollectAttachment={handleCollectAttachment}
             collectedDossierIds={gameState.collectedDossierIds || []}
+            systemStability={gameState.systemStability}
+            onRetrace={handleRetrace}
           />
         </motion.div>
       )}

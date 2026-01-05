@@ -30,6 +30,7 @@ export const CORE_NODES: MemoryNode[] = [
     title: "罗伯特·卡彭",
     currentLayer: MemoryLayer.SURFACE,
     position: { x: window.innerWidth * 0.4, y: window.innerHeight * 0.45 },
+    revealedKeywords: [],
     layers: {
       [MemoryLayer.SURFACE]: {
         event: "罗伯特曾是FBI最受期待的探员，但在十年前的凤凰城扫黑行动后失踪。",
@@ -54,6 +55,7 @@ export const CORE_NODES: MemoryNode[] = [
     title: "卢西亚诺",
     currentLayer: MemoryLayer.SURFACE,
     position: { x: window.innerWidth * 0.6, y: window.innerHeight * 0.3 },
+    revealedKeywords: ['gbos', 'chicago'],
     layers: {
       [MemoryLayer.SURFACE]: {
         event: "卢西亚诺酒吧的老板，家族的财务管家。一个喜欢穿丝绸衬衫的肥胖男人。",
@@ -73,6 +75,7 @@ export const CORE_NODES: MemoryNode[] = [
     title: "G.B.O.S.",
     currentLayer: MemoryLayer.SURFACE,
     position: { x: window.innerWidth * 0.5, y: window.innerHeight * 0.7 },
+    revealedKeywords: ['julip', 'project'],
     layers: {
       [MemoryLayer.SURFACE]: {
         event: "代号意为'青豆牡蛎汤'。一种难以下咽的帮派内部流行食谱。",
@@ -92,6 +95,7 @@ export const CORE_NODES: MemoryNode[] = [
     title: "供述 No.1",
     currentLayer: MemoryLayer.SURFACE,
     position: { x: window.innerWidth * 0.7, y: window.innerHeight * 0.6 },
+    revealedKeywords: ['maine', 'nibi', 'conchar', 'year_1971', 'small_bank', 'relationship', 'confession'],
     layers: {
       [MemoryLayer.SURFACE]: {
         event: "日子过去实在太久了。这些年我喝了这么多劣质波本，脑子早被搞坏了。所以即便我能记得起来的，大概也是我这几十年来为了不发疯，一遍遍讲给自己听的'故事'。\n\n到底是不是真的发生过的事情，我真不敢给你打包票。我只能说，那次潜伏任务（Deep Cover）的启动完全背离了局里的标准作业程序。\n\n如果我没记错的话，你说的缅因州的案子发生在1971年，是雷吉博士标记案件中的最新一起。总之通过一些退伍军人俱乐部的关系，行动组很快就锁定了逮捕一个名叫尼比的阿尔衮琴人，尼比对罪行供认不讳，很快就被审判收监。没过几天，他们也把我也放到监狱里，和他关在一起。",
@@ -117,6 +121,7 @@ export const CORE_NODES: MemoryNode[] = [
     title: "供述 No.2",
     currentLayer: MemoryLayer.SURFACE,
     position: { x: window.innerWidth * 0.8, y: window.innerHeight * 0.5 },
+    revealedKeywords: ['ohio', 'lundgren', 'morning', 'year_1968', 'ritual_case'],
     layers: {
       [MemoryLayer.SURFACE]: {
         event: "从有了'统一场论'之后，雷吉博士就有一个不断更新中的冷案列表。\n\n我不知道他凭借什么理论框架和证据，就认为这些案子彼此之间存在勾连，但他要求我，务必记住其中每一件的所有细节，以便接近缅因州银行劫案的真凶之后，能从侧面搜寻串联起这些案子的人证物证。\n\n如你所知，到狱中后尼比始终对我毫无兴趣，而他的死也让我一度以为任务即将以失败，不过随着康查尔跟我一同出狱，我很快就发现，原来雷吉博士的冷案列表中，还真有两个案子或许有些联系。",

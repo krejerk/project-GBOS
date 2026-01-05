@@ -11,6 +11,7 @@ interface ArchivesProps {
     collectedClues: string[];
     collectedYears: string[];
     unlockedPeople: string[];
+    collectedDossierIds: string[];
     onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
     onCollectAttachment?: (id: string) => void;
 }
@@ -161,6 +162,7 @@ export const Archives: React.FC<ArchivesProps> = ({
     collectedClues,
     collectedYears,
     unlockedPeople,
+    collectedDossierIds,
     onConsumeKeywords,
     onCollectAttachment
 }) => {
@@ -481,8 +483,13 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                             {/* People from unlockedPeople */}
                                                             {unlockedPeople
                                                                 .filter(id => {
+                                                                    // Define specific people IDs that should be shown here
+                                                                    // We want to show people who are relevant to archives, like 'nibi', 'lundgren', 'conchar', 'dr_reggie'
+                                                                    // We exclude 'robert'/'capone' as they are the protagonist
                                                                     const lowerId = id.toLowerCase();
-                                                                    if (['robert', 'capone', 'robert_capone', 'robert capone', 'rubick'].includes(lowerId)) return false;
+                                                                    if (['robert', 'capone', 'robert_capone', 'robert capone', 'rubick', 'father'].includes(lowerId)) return false;
+
+                                                                    // Check if it has a display mapping (valid ID)
                                                                     return !!CLUE_DISPLAY_MAP[id];
                                                                 })
                                                                 .map(id => (
@@ -783,7 +790,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                 </div>
 
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-[30vh] overflow-y-auto custom-scrollbar p-1">
-                                                    {collectedClues.map(clueId => (
+                                                    {collectedDossierIds.map(clueId => (
                                                         <button
                                                             key={clueId}
                                                             onClick={() => handleAttemptCollect(clueId)}
@@ -793,7 +800,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                             <span className="truncate">{CLUE_DISPLAY_MAP[clueId] || clueId}</span>
                                                         </button>
                                                     ))}
-                                                    {collectedClues.length === 0 && (
+                                                    {collectedDossierIds.length === 0 && (
                                                         <div className="col-span-3 text-center text-[#d89853]/30 text-xs py-4">
                                                             NO OPEN FILES AVAILABLE
                                                         </div>
