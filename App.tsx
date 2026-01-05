@@ -295,7 +295,7 @@ const App: React.FC = () => {
               collectedDossierIds: ['julip', 'project'],
 
               // Years
-              collectedYears: ['year_1967', 'year_1968', 'year_1971']
+              collectedYears: ['year_1968', 'year_1971']
             }))}
             className="fixed top-4 right-4 z-50 px-4 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 text-xs border border-red-500/50 rounded uppercase tracking-widest backdrop-blur-md transition-colors"
           >

@@ -10,6 +10,7 @@ interface ArchivesProps {
     onCollectClue: (id: string, word: string) => void;
     collectedClues: string[];
     collectedYears: string[];
+    unlockedPeople: string[];
     onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
     onCollectAttachment?: (id: string) => void;
 }
@@ -159,6 +160,7 @@ export const Archives: React.FC<ArchivesProps> = ({
     onCollectClue,
     collectedClues,
     collectedYears,
+    unlockedPeople,
     onConsumeKeywords,
     onCollectAttachment
 }) => {
@@ -476,11 +478,11 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     {CLUE_DISPLAY_MAP[id]}
                                                                 </button>
                                                             ))}
-                                                            {/* People from collectedClues - Filter out self references (case insensitive) */}
-                                                            {collectedClues
+                                                            {/* People from unlockedPeople */}
+                                                            {unlockedPeople
                                                                 .filter(id => {
                                                                     const lowerId = id.toLowerCase();
-                                                                    if (['robert', 'capone', 'robert_capone', 'robert capone'].includes(lowerId)) return false;
+                                                                    if (['robert', 'capone', 'robert_capone', 'robert capone', 'rubick'].includes(lowerId)) return false;
                                                                     return !!CLUE_DISPLAY_MAP[id];
                                                                 })
                                                                 .map(id => (

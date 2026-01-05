@@ -218,8 +218,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     exit={{ opacity: 0, y: -10 }}
                                     className="w-full max-w-2xl px-4 flex flex-wrap gap-2 justify-center mt-4 absolute top-full left-0 z-20"
                                 >
-                                    {Array.from(new Set([...collectedClues, ...unlockedPeople]))
-                                        .filter(id => id.toLowerCase() !== 'capone') // Filter out raw 'capone' ID (internal use only)
+                                    {collectedClues
+                                        .filter(id =>
+                                            !unlockedPeople.includes(id) &&
+                                            !id.startsWith('year_') &&
+                                            id.toLowerCase() !== 'capone' &&
+                                            id.toLowerCase() !== 'robert' // Robert is person
+                                        )
                                         .map(id => (
                                             <button
                                                 key={id}
@@ -403,6 +408,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 collectedClues={collectedClues}
                 onCollectClue={onCollectClue}
                 collectedYears={collectedYears}
+                unlockedPeople={unlockedPeople}
                 onConsumeKeywords={onConsumeKeywords}
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}
