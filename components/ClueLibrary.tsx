@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, Folder, File, X, Image as ImageIcon, Paperclip, FileText, Search, Tag, Eye, Lock, Hash } from 'lucide-react';
+import { Database, Folder, File, X, Image as ImageIcon, Paperclip, FileText, Search, Tag, Eye, Lock, Hash, MessageCircle, Mic, ChevronRight, Activity, Brain } from 'lucide-react';
 import { Clue, ClueAttachment } from '../types';
 
 interface ClueLibraryProps {
@@ -9,6 +9,11 @@ interface ClueLibraryProps {
     onClose: () => void;
     collectedAttachments?: string[];
     onCollectAttachment?: (id: string) => void;
+    // Story node system
+    unlockedNodeIds?: string[]; // For tracking unlocked confessions
+    unlockedArchiveIds?: string[]; // For tracking unlocked archives
+    currentStoryNode?: number; // Current story node (0 = not reached, 1 = node 1, etc.)
+    onStoryNodeComplete?: (nodeId: number) => void; // Callback when node dialogue is completed
 }
 
 const CLUE_DEFINITIONS: Record<string, Clue> = {
@@ -144,17 +149,152 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         word: '1968年',
         description: '俄亥俄州柯特兰邪教屠杀案发生的年份。雷吉博士的案卷病理学分析揭示了伦德格兰的真实动机。',
         source: 'Confession'
+    },
+    'roger_beebe': {
+        id: 'roger_beebe',
+        word: '罗格·毕比',
+        description: '香槟镇失踪案的真凶。1985年因另一起案件被捕后，主动承认了1980年绑架并杀害金美善的罪行。',
+        source: 'Confession'
+    },
+    'year_1985': {
+        id: 'year_1985',
+        word: '1985年',
+        description: '罗格·毕比被捕并供认香槟镇失踪案的年份。FBI内部对KLUB机构的重组也在这一年启动。',
+        source: 'Confession'
     }
+};
+
+const JENNIFER_DIALOGUE = [
+    `你终于找到这里了。`,
+    `这里是"案卷建档"模块。
+从结构上看，它只是一个调查工具，对卡彭来说不具备情绪或记忆权重。`,
+    `为了避免引起他潜意识层面的警觉，我们之后的所有交流，都会在这个模块内进行。`,
+    `他知道你正在进行调查工作。
+在他的认知模型里，这里只会被理解为"你在整理材料"，不会触发防御反应。`,
+    `任务推进过程中，记得不时回来看看。
+当你取得阶段性进展时，我可能会为你解锁新的信息、提示，或者调整当前目标。`,
+    `如果我没有主动出现，也不代表这里是安全的。
+只是说明，你还没触及他真正敏感的部分。`,
+    `继续工作。
+我会在这里等你。`
+];
+
+const JENNIFER_RETURN_DIALOGUE = [
+    `你又回来了。`,
+    `目前还没有新的线索可以共享。
+你触及的层级，仍然停留在表层整理阶段。`,
+    `继续推进调查。
+当案卷之间出现无法被合理归档的矛盾时，这里才会再次产生意义。`,
+    `不用刻意停留。
+如果有新的触发点，我会在这个模块内标记出来。`,
+    `现在，回去工作吧。`
+];
+
+// Node 1 Dialogue - Triggered when player completes chapter 1
+const JENNIFER_NODE_1_DIALOGUE = [
+    `我需要你立刻修正判断。`,
+    `罗伯特·卡彭不再可信。\n他已经脱离"自己人"的范畴。`,
+    `他不断提及过往案件，并不是在协助你。\n那是在拖延，在绕开核心。`,
+    `从现在开始，忽略这些案子。`,
+    `你的唯一重点，是"父亲"的下落。`,
+    `盯紧他的路线，拆解他的话。\n找出漏洞，找出变节的迹象。`,
+    `最重要的是——\n确认他把父亲藏在了哪里。`,
+    `我已经根据你目前的调查进展，以及新增的外部信息，\n整理并更新了案卷建档中的部分内容。`,
+    `你现在可以进入该模块，查看这些更新。`,
+    `不要分心。`
+];
+
+// Utility function to reset visit status (call this when starting a new game)
+export const resetClueLibraryVisit = () => {
+    sessionStorage.removeItem('clueLibrary_visited');
 };
 
 export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     collectedClueIds,
     isOpen,
     onClose,
-    collectedAttachments = []
+    collectedAttachments = [],
+    unlockedNodeIds = [],
+    unlockedArchiveIds = [],
+    currentStoryNode = 0,
+    onStoryNodeComplete
 }) => {
     const [selectedClue, setSelectedClue] = useState<Clue | null>(null);
     const [viewingAttachment, setViewingAttachment] = useState<ClueAttachment | null>(null);
+
+    // Jennifer Dialogue State
+    const [showJennifer, setShowJennifer] = useState(false);
+    const [jenniferStep, setJenniferStep] = useState(0);
+    const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
+    const [pendingNodeId, setPendingNodeId] = useState<number | null>(null);
+
+    // Check if player has reached Node 1 conditions
+    const checkNode1Completion = () => {
+        const requiredConfessions = ['confession_1', 'confession_2', 'confession_3'];
+        const requiredArchives = ['me_1971', 'oh_1968', 'dc_1967', 'il_1985'];
+
+        const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
+        const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
+
+        return hasAllConfessions && hasAllArchives && currentStoryNode === 0;
+    };
+
+    // First visit detection - check whenever module opens
+    useEffect(() => {
+        if (isOpen) {
+            const visited = sessionStorage.getItem('clueLibrary_visited');
+            setHasVisitedBefore(!!visited);
+
+            // Check for node completion - don't auto-open, just set indicator
+            if (checkNode1Completion()) {
+                setPendingNodeId(1);
+                // Don't auto-open: setShowJennifer(true);
+            }
+            // Don't auto-open on first visit either
+            // User must click the button to see dialogue
+        }
+    }, [isOpen, unlockedNodeIds, unlockedArchiveIds, currentStoryNode]);
+
+    // Mark as visited when dialogue completes
+    const handleJenniferComplete = () => {
+        if (!hasVisitedBefore) {
+            sessionStorage.setItem('clueLibrary_visited', 'true');
+            setHasVisitedBefore(true);
+        }
+
+        // If completing a node dialogue, notify parent
+        if (pendingNodeId !== null && onStoryNodeComplete) {
+            onStoryNodeComplete(pendingNodeId);
+            setPendingNodeId(null);
+        }
+
+        setShowJennifer(false);
+        setJenniferStep(0);
+    };
+
+    const handleJenniferClose = () => {
+        setShowJennifer(false);
+        setJenniferStep(0);
+    };
+
+    const handleJenniferNext = () => {
+        // Select dialogue based on state
+        let currentDialogue;
+        if (pendingNodeId === 1) {
+            currentDialogue = JENNIFER_NODE_1_DIALOGUE;
+        } else if (hasVisitedBefore) {
+            currentDialogue = JENNIFER_RETURN_DIALOGUE;
+        } else {
+            currentDialogue = JENNIFER_DIALOGUE;
+        }
+
+        if (jenniferStep < currentDialogue.length - 1) {
+            setJenniferStep(prev => prev + 1);
+        }
+    };
+
+    // Get current dialogue based on visit status
+    const currentDialogue = hasVisitedBefore ? JENNIFER_RETURN_DIALOGUE : JENNIFER_DIALOGUE;
 
     // Filter available clues
     // Data is now strict lane separated, so we trust the incoming IDs
@@ -179,22 +319,22 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
                 >
                     {/* Main Container - Centered Modal */}
-                    <div className="w-full max-w-6xl h-[85vh] bg-[#0c0c0c] border border-[#d89853]/20 rounded-lg flex shadow-[0_0_100px_rgba(216,152,83,0.1)] relative overflow-hidden">
+                    <div className="w-full max-w-6xl h-[85vh] bg-[#1c1c1e] border-2 border-[#8b4049]/50 rounded-lg flex shadow-[0_0_80px_rgba(139,64,73,0.25),0_0_40px_rgba(56,189,248,0.1)] relative overflow-hidden">
 
                         {/* Left Sidebar: Case Directory */}
-                        <div className="w-64 bg-[#0a0505] border-r border-[#d89853]/10 flex flex-col hidden md:flex">
-                            <div className="p-6 border-b border-[#d89853]/10">
-                                <h2 className="text-[#d89853] font-mono font-bold tracking-[0.2em] flex items-center gap-2">
+                        <div className="w-64 bg-[#141416] border-r-2 border-[#8b4049]/30 flex flex-col hidden md:flex">
+                            <div className="p-6 border-b border-[#8b4049]/30">
+                                <h2 className="text-[#c9c9cd] font-mono font-bold tracking-[0.2em] flex items-center gap-2">
                                     <Database size={16} />
                                     案卷建档
                                 </h2>
-                                <p className="text-[#d89853]/40 text-[10px] uppercase tracking-widest mt-1">Case Dossier & Evidence</p>
+                                <p className="text-[#8b4049]/80 text-[10px] uppercase tracking-widest mt-1">Case Dossier & Evidence</p>
                             </div>
 
                             <div className="flex-1 overflow-y-auto p-4 space-y-6">
                                 {Object.entries(groupedClues).map(([source, clues]) => (
                                     <div key={source}>
-                                        <div className="text-[10px] text-[#d89853]/30 uppercase tracking-[0.2em] font-bold mb-3 px-2">
+                                        <div className="text-[10px] text-[#8e8e93] uppercase tracking-[0.2em] font-bold mb-3 px-2">
                                             {source}
                                         </div>
                                         <div className="space-y-1">
@@ -209,8 +349,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                         className={`
                                                             w-full text-left px-3 py-2 rounded text-xs font-mono transition-all flex items-center justify-between group
                                                             ${isActive
-                                                                ? 'bg-[#d89853]/20 text-[#d89853] border border-[#d89853]/40 shadow-inner'
-                                                                : 'text-[#d89853]/60 hover:bg-[#d89853]/5 hover:text-[#d89853]'
+                                                                ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/60 shadow-[0_0_15px_rgba(56,189,248,0.3)]'
+                                                                : 'text-[#aeaeb2] hover:bg-[#8b4049]/15 hover:text-[#c9c9cd] hover:border-[#8b4049]/30 border border-transparent'
                                                             }
                                                         `}
                                                     >
@@ -226,18 +366,18 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                 ))}
                             </div>
 
-                            <div className="p-4 border-t border-[#d89853]/10 text-center text-[10px] text-[#d89853]/30 uppercase tracking-widest">
+                            <div className="p-4 border-t border-[#8b4049]/30 text-center text-[10px] text-[#8e8e93] uppercase tracking-widest">
                                 TOTAL ITEMS: {collectedClues.length}
                             </div>
                         </div>
 
                         {/* Right Content: Folder View */}
-                        <div className="flex-1 bg-[#100c0c] bg-[url('https://www.transparenttextures.com/patterns/black-felt.png')] relative overflow-hidden flex flex-col">
+                        <div className="flex-1 bg-[#1c1c1e] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] relative overflow-hidden flex flex-col">
 
                             {/* Close Button */}
                             <button
                                 onClick={onClose}
-                                className="absolute top-4 right-4 z-20 p-2 text-[#d89853]/40 hover:text-[#d89853] hover:bg-[#d89853]/10 rounded-full transition-colors"
+                                className="absolute top-4 right-4 z-20 p-2 text-[#8e8e93] hover:text-[#c9c9cd] hover:bg-[#8b4049]/20 rounded-full transition-colors"
                             >
                                 <X size={20} />
                             </button>
@@ -339,7 +479,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
                                 </div>
                             ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center text-[#d89853]/20">
+                                <div className="flex-1 flex flex-col items-center justify-center text-[#636366]">
                                     <Folder size={64} className="mb-4 opacity-50" />
                                     <p className="font-mono uppercase tracking-[0.2em] text-sm">Select a file to view details</p>
                                 </div>
@@ -383,6 +523,185 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                         </button>
                                     </motion.div>
                                 )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Floating Jennifer Button */}
+                    <motion.button
+                        onClick={() => setShowJennifer(true)}
+                        className={`fixed bottom-8 right-8 z-[105] p-4 rounded-full border-2 transition-all duration-300 ${pendingNodeId !== null
+                            ? 'bg-gradient-to-r from-[#dc2626] to-[#b91c1c] border-[#fca5a5] text-white shadow-[0_0_40px_rgba(220,38,38,0.6)] scale-110'
+                            : hasVisitedBefore
+                                ? 'bg-[#0f172a]/90 border-[#475569] text-[#94a3b8] hover:bg-[#1e293b] hover:border-[#38bdf8] hover:text-[#38bdf8]'
+                                : 'bg-gradient-to-r from-[#0f172a] to-[#1e293b] border-[#38bdf8] text-[#38bdf8] shadow-[0_0_30px_rgba(56,189,248,0.4)]'
+                            }`}
+                        animate={
+                            pendingNodeId !== null || !hasVisitedBefore
+                                ? {
+                                    scale: [1.1, 1.25, 1.1],
+                                    boxShadow: pendingNodeId !== null
+                                        ? ['0 0 40px rgba(220, 38, 38, 0.6)', '0 0 70px rgba(220, 38, 38, 1)', '0 0 40px rgba(220, 38, 38, 0.6)']
+                                        : ['0 0 30px rgba(56, 189, 248, 0.4)', '0 0 50px rgba(56, 189, 248, 0.8)', '0 0 30px rgba(56, 189, 248, 0.4)']
+                                }
+                                : {}
+                        }
+                        transition={
+                            pendingNodeId !== null || !hasVisitedBefore
+                                ? { duration: 1.2, repeat: Infinity, ease: "easeInOut" }
+                                : {}
+                        }
+                        whileHover={{ scale: pendingNodeId !== null ? 1.3 : 1.15 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <MessageCircle size={24} />
+                        {(pendingNodeId !== null || !hasVisitedBefore) && (
+                            <motion.div
+                                className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${pendingNodeId !== null ? 'bg-red-500' : 'bg-[#38bdf8]'
+                                    }`}
+                                animate={{
+                                    scale: [1, 2, 1],
+                                    opacity: [1, 0.5, 1]
+                                }}
+                                transition={{ duration: 0.8, repeat: Infinity }}
+                            />
+                        )}
+                    </motion.button>
+
+                    {/* Jennifer Dialogue Overlay */}
+                    <AnimatePresence>
+                        {showJennifer && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 z-[120] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm"
+                            >
+                                <div className="w-full max-w-2xl bg-[#0f172a]/90 border border-[#334155] p-1 rounded-lg shadow-[0_0_50px_rgba(15,23,42,0.6)] backdrop-blur-xl relative overflow-hidden">
+                                    {/* Operator Header */}
+                                    <div className="bg-[#1e293b]/50 px-6 py-3 flex justify-between items-center border-b border-[#334155]">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-1.5 bg-[#475569]/30 rounded-full border border-[#475569]/50">
+                                                <Mic size={14} className="text-[#94a3b8]" />
+                                            </div>
+                                            <span className="text-[#e2e8f0] font-mono tracking-widest text-xs font-bold uppercase">
+                                                BAU OPERATOR: JENNIFER
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                                                <span className="text-[#64748b] text-[10px] bg-[#1e293b] px-2 py-0.5 rounded font-mono tracking-wider">
+                                                    LIVE FEED
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={handleJenniferClose}
+                                                className="p-1.5 text-[#94a3b8] hover:text-[#e2e8f0] hover:bg-[#334155]/50 rounded-full transition-colors"
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Waveform Visualizer */}
+                                    <div className="h-16 w-full bg-[#020617] relative flex items-center justify-center gap-1 overflow-hidden opacity-80">
+                                        {[...Array(40)].map((_, i) => (
+                                            <motion.div
+                                                key={i}
+                                                className="w-1 bg-[#38bdf8]/40 rounded-full"
+                                                animate={{
+                                                    height: [4, 12 + Math.random() * 20, 4],
+                                                    opacity: [0.3, 1, 0.3]
+                                                }}
+                                                transition={{
+                                                    duration: 0.8,
+                                                    repeat: Infinity,
+                                                    delay: i * 0.02,
+                                                    ease: "circInOut"
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Dialogue Content with Avatar */}
+                                    <div className="p-8 min-h-[200px] flex items-center gap-6 relative">
+                                        {/* Jennifer Silhouette Avatar */}
+                                        <div className="flex-shrink-0">
+                                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#38bdf8]/20 to-[#1e293b] border-2 border-[#38bdf8]/40 flex items-center justify-center relative overflow-hidden shadow-[0_0_30px_rgba(56,189,248,0.3)]">
+                                                {/* Simple silhouette - head and shoulders */}
+                                                <div className="absolute bottom-0 w-full h-full flex flex-col items-center justify-end">
+                                                    {/* Head */}
+                                                    <div className="w-10 h-10 rounded-full bg-[#38bdf8]/60 mb-1" />
+                                                    {/* Shoulders */}
+                                                    <div className="w-20 h-8 rounded-t-full bg-[#38bdf8]/60" />
+                                                </div>
+                                                {/* Glow effect */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-transparent to-[#38bdf8]/10" />
+                                            </div>
+                                        </div>
+
+                                        {/* Dialogue Text */}
+                                        <div className="flex-1">
+                                            <p className="text-[#e2e8f0] text-lg font-light tracking-wide leading-relaxed font-sans whitespace-pre-line">
+                                                {(() => {
+                                                    // Select dialogue based on state
+                                                    let currentDialogue;
+                                                    if (pendingNodeId === 1) {
+                                                        currentDialogue = JENNIFER_NODE_1_DIALOGUE;
+                                                    } else if (hasVisitedBefore) {
+                                                        currentDialogue = JENNIFER_RETURN_DIALOGUE;
+                                                    } else {
+                                                        currentDialogue = JENNIFER_DIALOGUE;
+                                                    }
+                                                    return currentDialogue[jenniferStep];
+                                                })()}
+                                            </p>
+                                        </div>
+
+                                        <div className="absolute top-2 right-2 text-[#334155]/20">
+                                            <Activity size={120} />
+                                        </div>
+                                    </div>
+
+                                    {/* Footer / Navigation */}
+                                    <div className="bg-[#1e293b]/30 p-4 flex justify-center border-t border-[#334155]">
+                                        {(() => {
+                                            // Select dialogue based on state
+                                            let currentDialogue;
+                                            if (pendingNodeId === 1) {
+                                                currentDialogue = JENNIFER_NODE_1_DIALOGUE;
+                                            } else if (hasVisitedBefore) {
+                                                currentDialogue = JENNIFER_RETURN_DIALOGUE;
+                                            } else {
+                                                currentDialogue = JENNIFER_DIALOGUE;
+                                            }
+
+                                            return jenniferStep < currentDialogue.length - 1 ? (
+                                                <button
+                                                    onClick={handleJenniferNext}
+                                                    className="group flex items-center gap-3 px-8 py-3 bg-[#334155]/50 hover:bg-[#475569]/50 border border-[#475569] text-[#e2e8f0] rounded-lg transition-all font-mono text-sm tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.1)] outline-none"
+                                                >
+                                                    继续
+                                                    <ChevronRight size={16} className="text-[#94a3b8] group-hover:translate-x-1 transition-transform" />
+                                                </button>
+                                            ) : (
+                                                <motion.button
+                                                    initial={{ scale: 0.9, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1 }}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={handleJenniferComplete}
+                                                    className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] hover:from-[#1e293b] hover:via-[#334155] hover:to-[#1e293b] border border-[#38bdf8]/50 text-[#38bdf8] rounded-lg transition-all font-mono text-base tracking-widest backdrop-blur-md shadow-[0_0_30px_rgba(56,189,248,0.2)]"
+                                                >
+                                                    <Brain size={20} className="animate-pulse" />
+                                                    继续工作 // CONTINUE
+                                                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                                                </motion.button>
+                                            );
+                                        })()}
+                                    </div>
+                                </div>
                             </motion.div>
                         )}
                     </AnimatePresence>

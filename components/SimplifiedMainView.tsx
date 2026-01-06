@@ -29,6 +29,8 @@ interface SimplifiedMainViewProps {
     onCollectAttachment: (id: string) => void;
     collectedDossierIds: string[]; // Strict lane for Dossier
     systemStability: number;
+    currentStoryNode: number;
+    onStoryNodeComplete: (nodeId: number) => void;
     onRetrace: () => { success: boolean; reason?: string; keywords?: string[] };
 }
 
@@ -55,6 +57,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     onCollectAttachment,
     collectedDossierIds = [],
     systemStability,
+    currentStoryNode,
+    onStoryNodeComplete,
     onRetrace
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -260,7 +264,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         lastItem?.content.includes('IDENTIFIED') ||
                                         lastItem?.content.includes('FILED') ||
                                         lastItem?.content.includes('NEURAL LINK ESTABLISHED') ||
-                                        lastItem?.content.includes('[SYSTEM]: 已消耗'); // Filter this out from normal flow
+                                        lastItem?.content.includes('[SYSTEM]: 已消耗') ||
+                                        lastItem?.content.includes('[STORY CHECKPOINT]'); // Filter story progression messages
 
                                     const showResponse = lastItem && lastItem.type !== 'search' && !isCollectionLog;
 
@@ -681,6 +686,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 collectedClueIds={collectedDossierIds}
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}
+                unlockedNodeIds={nodes.filter(n => n.id.includes('confession')).map(n => n.id)}
+                unlockedArchiveIds={unlockedArchiveIds}
+                currentStoryNode={currentStoryNode}
+                onStoryNodeComplete={onStoryNodeComplete}
             />
             <Archives
                 isOpen={showArchives}

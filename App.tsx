@@ -21,6 +21,7 @@ const App: React.FC = () => {
     unlockedPeople: [],
     unlockedArchiveIds: [],
     systemStability: 84, // Initial Stability
+    currentStoryNode: 0, // No story nodes reached yet
     history: [
       { type: 'info', content: '[SYSTEM]: NEURAL LINK ESTABLISHED...', timestamp: Date.now() }
     ]
@@ -59,6 +60,18 @@ const App: React.FC = () => {
 
     return { success: true, keywords: missedKeywords };
   }, [gameState.systemStability, gameState.unlockedNodeIds, gameState.collectedClues, gameState.collectedDossierIds, gameState.collectedYears, gameState.unlockedPeople]);
+
+  // Handle story node completion
+  const handleStoryNodeComplete = useCallback((nodeId: number) => {
+    setGameState(prev => ({
+      ...prev,
+      currentStoryNode: nodeId,
+      history: [
+        ...prev.history,
+        { type: 'info', content: `[STORY CHECKPOINT]: 第${nodeId}章节已完成`, timestamp: Date.now() }
+      ]
+    }));
+  }, []);
 
   const handleSearch = useCallback(async (query: string) => {
     setIsProcessing(true);
@@ -113,6 +126,33 @@ const App: React.FC = () => {
             // Restore Stability on Unlock
             systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
             collectedClues: prev.collectedClues.filter(id => !['ohio', 'ritual_case'].includes(id)),
+            history: [
+              ...prev.history,
+              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
+              { type: 'info', content: `[SYSTEM]: 已消耗关联线索模块`, timestamp: Date.now() }
+            ]
+          }));
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 3 Trigger: \"芝加哥\" AND \"失踪\" unlocks it.
+    const hasChicago = lowerQuery.includes('chicago') || lowerQuery.includes('芝加哥');
+    const hasMissing = lowerQuery.includes('missing') || lowerQuery.includes('失踪');
+
+    if (hasChicago && hasMissing) {
+      setTimeout(() => {
+        const node = nodes.find(n => n.id === 'confession_3');
+        if (node) {
+          setGameState(prev => ({
+            ...prev,
+            activeNodeId: node.id,
+            unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
+            // Restore Stability on Unlock
+            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
+            collectedClues: prev.collectedClues.filter(id => !['chicago', 'missing'].includes(id)),
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
@@ -188,7 +228,7 @@ const App: React.FC = () => {
     } finally {
       // But wait, if I return in the if block, this finally won't run. Correct.
       // So I updated the local block to set setIsProcessing(false).
-      if (!((hasMaine && hasSmallBank) || hasOhio || hasRitual)) {
+      if (!((hasMaine && hasSmallBank) || hasOhio || hasRitual || (hasChicago && hasMissing))) {
         setIsProcessing(false);
       }
     }
@@ -216,8 +256,8 @@ const App: React.FC = () => {
   const handleCollectClue = (clueId: string, word: string) => {
     // Define Categories
     const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol'];
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie'];
-    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967'];
+    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe'];
+    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985'];
 
     const isDossier = DOSSIER_WHITELIST.includes(clueId);
     const isPerson = PEOPLE_IDS.includes(clueId);
@@ -332,10 +372,7 @@ const App: React.FC = () => {
   const handleCollectAttachment = (attachmentId: string) => {
     if (!collectedAttachments.includes(attachmentId)) {
       setCollectedAttachments(prev => [...prev, attachmentId]);
-      setGameState(prev => ({
-        ...prev,
-        history: [...prev.history, { type: 'info', content: `[EVIDENCE ATTACHED]: NEW ITEM IN CLUE FOLDER`, timestamp: Date.now() }]
-      }));
+      // Note: No history message added - this is silent collection for ClueLibrary
     }
   };
 
@@ -356,7 +393,7 @@ const App: React.FC = () => {
               unlockedPeople: ['father', 'capone', 'nibi', 'conchar', 'dr_reggie'],
 
               // Prompts: Person prompts + Keywords. 'project' excluded.
-              collectedClues: ['chicago', 'asian_woman', 'maine', 'small_bank', 'missing', 'father', 'nibi', 'conchar', 'robert', 'dr_reggie'],
+              collectedClues: ['chicago', 'maine', 'small_bank', 'missing', 'father', 'nibi', 'conchar', 'robert', 'dr_reggie'],
 
               // Dossier: Strict dossier items
               collectedDossierIds: [],
@@ -414,6 +451,8 @@ const App: React.FC = () => {
             onCollectAttachment={handleCollectAttachment}
             collectedDossierIds={gameState.collectedDossierIds || []}
             systemStability={gameState.systemStability}
+            currentStoryNode={gameState.currentStoryNode}
+            onStoryNodeComplete={handleStoryNodeComplete}
             onRetrace={handleRetrace}
           />
         </motion.div>

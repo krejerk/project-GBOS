@@ -140,5 +140,31 @@ export const CORE_NODES: MemoryNode[] = [
       }
     },
     connectedTo: ["confession_1", "capone"]
+  },
+  {
+    id: "confession_3",
+    keyword: "confession",
+    title: "供述 No.3",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.3, y: window.innerHeight * 0.7 },
+    revealedKeywords: ['roger_beebe', 'year_1985'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "孩子，我先给你正确答案吧。\n\n失踪案的真凶名叫罗格·毕比，就是警方最早怀疑的那个嫌疑人。实话告诉你，要不是 KLUB 存心指错了路，警方五年前就该把他带走了。可谁能想到呢？直到1985年他因为别的案子被捕，竟然主动承认香槟镇那档子事也是他干的。",
+        attitude: "",
+        visual: "/assets/confession-3.jpg"
+      },
+      [MemoryLayer.DEEP]: {
+        event: "这件事让父亲失望了好一阵子。\n\n是的，父亲总是乐于在这些外人身上寻找那种熟悉的气味。在他看来，恶行是一种亲密的表达。所以，当 KLUB 表现出要把这案子归为辛迪加行动的迹象时，他反而认为这是一种荣耀。既然敌人想犯错，为什么要拦着他们？",
+        attitude: "",
+        visual: "/assets/father-disappointed.jpg"
+      },
+      [MemoryLayer.CORE]: {
+        event: "他们后来也不是没见过毕比，当然是在他入狱之后。不过，既然这人这辈子都出不来了，再纠结这些又有什么意义？",
+        attitude: "",
+        visual: "/assets/prison-visit.jpg"
+      }
+    },
+    connectedTo: ["confession_2", "capone"]
   }
 ];

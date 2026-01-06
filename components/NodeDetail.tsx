@@ -36,10 +36,17 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({ node, onShatter, onColle
     '1967': 'year_1967'
   };
 
+  const CONFESSION_3_KEYWORDS: Record<string, string> = {
+    '罗格·毕比': 'roger_beebe',
+    '1985': 'year_1985'
+  };
+
   // Select keyword map based on node ID
-  const KEYWORD_MAP = node.id === 'confession_2'
-    ? CONFESSION_2_KEYWORDS
-    : CONFESSION_1_KEYWORDS;
+  const KEYWORD_MAP = node.id === 'confession_3'
+    ? CONFESSION_3_KEYWORDS
+    : node.id === 'confession_2'
+      ? CONFESSION_2_KEYWORDS
+      : CONFESSION_1_KEYWORDS;
 
   // Track animation states for collected keywords
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});

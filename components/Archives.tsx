@@ -150,6 +150,55 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 【雷吉博士的个人声明】 “1967年不仅是 KLUB 的起点，也是美国文明的一个分水岭。我们追踪的不是一群躲在洞穴里的邪教徒，而是一场正在城市血管中流动的瘟疫。如果局方继续以 19 世纪的眼光看待这些‘新式犯罪’，我们将在十年内输掉这场无声的战争。”
             `
         }
+    },
+    {
+        id: 'il_1985',
+        title: '1985年香槟镇失踪案告破',
+        triggers: {
+            year: '1985',
+            person: ['roger_beebe', '罗格·毕比', 'Roger Beebe', 'Beebe']
+        },
+        newspaper: {
+            source: '《香槟中心日报》(Champaign Central Daily)',
+            date: '1985年10月16日',
+            headline: '正义迟到了五年：香槟镇失踪案告破，联邦调查局"专家"被指误导侦破方向',
+            content: [
+                '（本报讯） 经过长达五年的痛苦等待，1980年失踪的朝鲜族留学生金美善（Kim Mi-seon）一案终于迎来了令人心碎的结局。现年34岁的本地居民罗格·毕比（Roger Beebe）因另一起袭击案入狱后，于上周三向警方供述了其在五年前绑架并杀害金小姐的全部罪行。',
+                '然而，随着真相大白，当地警方的压力也随之而来。据一名因担心报复而要求匿名的香槟镇资深警官透露，早在1980年案发后的首个月，毕比就因其在校区附近的异常行为被列入重点怀疑名单。但就在调查进入关键期时，一股来自联邦层面的"专业力量"介入了案件。',
+                '"当时那些穿着西装的人告诉我们，这不是一桩简单的绑架案，"该知情人士愤慨地表示，"他们坚持认为失踪案背后隐藏着复杂的邪教逻辑，导致我们被迫放弃了对毕比的监视，转而去搜查那些子虚乌有的地下集会。"',
+                '这种因高层偏执而导致的侦破失误，不仅让凶手逍遥法外五年之久，更引发了社区对联邦机构干预地方治安的强烈质疑。金小姐的家属已通过律师表示，将对相关机构的"错误指引"追究法律责任。'
+            ]
+        },
+        annotation: {
+            fileId: '#1985-OP-014-DECOUPLE',
+            date: '1985年11月4日',
+            level: '绝密（仅限监察委员会及"薄荷计划"授权人员阅览）',
+            author: '代理协调员 艾萨克·阿特尔曼 (Isaac Alterman)',
+            content: `
+联邦调查局 (FBI) 内部机密简报
+
+主题： 关于"香槟镇失踪案（1980）"引发的系统性风险评估及 KLUB 机构重组提案
+
+1. 案情回顾与偏差溯源 (Retrospective Analysis)
+针对"罗格·毕比（Roger Beebe）案"暴露出的侦破误导问题，本职经核查确认为：1980年间 KLUB 介入该案并非基于刑事证据，而是基于前处长雷吉博士（Dr. Reggie）个人强推的"关联模型"。
+
+雷吉博士固执地将毕比这种具备典型特征的局部犯罪者强行嵌合入其假说中，这种武断导致了严重后果：我们为了捕捉某种虚无缥缈的"邪教信号"，忽视了触手可及的暴力事实。
+
+2. 责任剥离建议 (Accountability Segmentation)
+
+雷吉博士目前的病休状态为我们提供了一个理想的"防火墙"。通过将决策责任锁定在雷吉博士晚期日益僵化的认知模式上，局方可以有效地将 KLUB 的机构信誉与个人的学术破产进行切割。这能平息地方不满，也能在国会审计面前维持 FBI 整体决策的科学性形象。
+
+3. 分离方案 (Strategic Decoupling)
+本职坚决反对目前局内全盘关停 KLUB 的情绪化提议。作为替代方案，我主张立即执行以下计划：
+
+剥夺一线干预权： KLUB 将不再被允许介入任何进行中的、涉及地方治安或一般跨州犯罪的案件。其职能应被严格限制在"历史档案数字化比对"及"抽象社会模型开发"内，使其从实战机构彻底转变为后方研究室。
+
+行政隔离： 通过将 KLUB 的行政层级下移，使其成为一个在物理和程序上均被隔离的"数据孤岛"，从而切断地方争议向总部蔓延的路径。
+
+
+特别指出：鉴于RC曾于多处犯罪现场留有生物特征，雷吉博士此前基于"有限信任原则"与其维持开放交涉状态，现为规避机构改组期间的高风险接触，本职决定立即斩断所有相关线索。即刻起，撤销RC的一切特殊观察待遇，将其定性由"潜在资产"正式调整为"一般变节者"，按标准清算程序处理。
+            `
+        }
     }
 ];
 
@@ -196,11 +245,13 @@ export const Archives: React.FC<ArchivesProps> = ({
         'year_1971': '1971',
         'year_1968': '1968',
         'year_1967': '1967',
+        'year_1985': '1985',
         'nibi': '尼比',
         'lundgren': '伦德格兰',
         'conchar': '康查尔',
         'dismemberment_case': '碎尸案',
         'dr_reggie': '雷吉博士',
+        'roger_beebe': '罗格·毕比',
         'project': '青豆牡蛎汤计划',
         'julip': '黄油朱莉普',
         'family': '诡异家族',
@@ -354,14 +405,14 @@ export const Archives: React.FC<ArchivesProps> = ({
 
                         {/* Sidebar: Archive Directory */}
                         <div className="w-64 border-r border-[#c85a3f]/20 bg-[#0f0a0a] flex flex-col hidden md:flex">
-                            {/* NEW SEARCH Button - Now at top */}
-                            <button
-                                onClick={resetView}
-                                className="p-4 border-b border-[#c85a3f]/20 text-[#c85a3f]/60 hover:text-[#d89853] hover:bg-[#c85a3f]/10 transition-colors flex items-center justify-center gap-2 text-xs font-mono tracking-wider"
-                            >
-                                <Search size={14} />
-                                NEW SEARCH
-                            </button>
+                            {/* Title - At top */}
+                            <div className="p-6 border-b border-[#c85a3f]/20">
+                                <div className="flex items-center gap-2 text-[#d89853] mb-1">
+                                    <Archive size={18} />
+                                    <span className="font-mono text-sm tracking-widest font-bold">档案目录</span>
+                                </div>
+                                <div className="text-[10px] text-[#c85a3f]/40 font-mono">CASE DIRECTORY</div>
+                            </div>
 
                             {/* Archive List */}
                             <div className="flex-1 overflow-y-auto p-4 space-y-2">
@@ -396,14 +447,16 @@ export const Archives: React.FC<ArchivesProps> = ({
                                 })}
                             </div>
 
-                            {/* Title - Now at bottom */}
-                            <div className="p-6 border-t border-[#c85a3f]/20">
-                                <div className="flex items-center gap-2 text-[#d89853] mb-1">
-                                    <Archive size={18} />
-                                    <span className="font-mono text-sm tracking-widest font-bold">档案目录</span>
-                                </div>
-                                <div className="text-[10px] text-[#c85a3f]/40 font-mono">CASE DIRECTORY</div>
-                            </div>
+                            {/* NEW SEARCH Button - At bottom - ENHANCED */}
+                            <button
+                                onClick={resetView}
+                                className="relative p-5 border-t-2 border-[#c85a3f]/40 bg-gradient-to-r from-[#c85a3f]/20 to-[#d89853]/20 text-[#d89853] hover:from-[#c85a3f]/40 hover:to-[#d89853]/40 hover:text-white hover:border-[#d89853] transition-all duration-300 flex items-center justify-center gap-3 text-sm font-mono tracking-widest font-bold shadow-[0_0_20px_rgba(200,90,63,0.3)] hover:shadow-[0_0_30px_rgba(216,152,83,0.6)] group overflow-hidden"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#d89853]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <Search size={18} className="relative z-10 group-hover:scale-110 transition-transform" />
+                                <span className="relative z-10">NEW SEARCH</span>
+                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-[#d89853] rounded-full animate-pulse" />
+                            </button>
                         </div>
 
                         {/* Main Content Area */}
@@ -687,27 +740,61 @@ export const Archives: React.FC<ArchivesProps> = ({
 
                                                         {/* Handwritten Signature */}
                                                         <div className="mt-8 flex justify-end pr-12">
-                                                            <div className="relative text-red-900/80 transform -rotate-12 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
-                                                                <svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                    <path
-                                                                        d="M30 60 C 30 60, 25 20, 45 15 C 60 10, 70 25, 55 40 C 40 55, 30 40, 50 35 C 70 30, 90 60, 100 55"
-                                                                        stroke="currentColor"
-                                                                        strokeWidth="3"
-                                                                        strokeLinecap="round"
-                                                                        strokeLinejoin="round"
-                                                                        className="path-draw"
-                                                                    />
-                                                                    <path
-                                                                        d="M 25 65 L 105 50"
-                                                                        stroke="currentColor"
-                                                                        strokeWidth="2"
-                                                                        strokeLinecap="round"
-                                                                        opacity="0.6"
-                                                                    />
-                                                                    <text x="70" y="70" fontFamily="serif" fontSize="12" fill="currentColor" opacity="0.8" className="tracking-widest rotate-6">Reggie</text>
-                                                                </svg>
-                                                                <div className="text-[10px] text-[#c85a3f]/60 font-mono text-center mt-1 tracking-widest uppercase">Verified</div>
-                                                            </div>
+                                                            {activeCase.id === 'il_1985' ? (
+                                                                // Alterman's Signature - More angular and bureaucratic
+                                                                <div className="relative text-blue-900/70 transform -rotate-6 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                    <svg width="140" height="70" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        {/* "I" - vertical stroke */}
+                                                                        <path
+                                                                            d="M20 25 L 20 50"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2.5"
+                                                                            strokeLinecap="round"
+                                                                        />
+                                                                        {/* "A" - angular */}
+                                                                        <path
+                                                                            d="M30 50 L 40 25 L 50 50 M35 40 L 45 40"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2.5"
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                        />
+                                                                        {/* Underline */}
+                                                                        <path
+                                                                            d="M 15 55 L 125 48"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="1.5"
+                                                                            strokeLinecap="round"
+                                                                            opacity="0.5"
+                                                                        />
+                                                                        <text x="75" y="60" fontFamily="serif" fontSize="11" fill="currentColor" opacity="0.7" className="tracking-wider">Alterman</text>
+                                                                    </svg>
+                                                                    <div className="text-[10px] text-[#475569]/70 font-mono text-center mt-1 tracking-widest uppercase">Authorized</div>
+                                                                </div>
+                                                            ) : (
+                                                                // Reggie's Signature - Original flowing style
+                                                                <div className="relative text-red-900/80 transform -rotate-12 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                    <svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path
+                                                                            d="M30 60 C 30 60, 25 20, 45 15 C 60 10, 70 25, 55 40 C 40 55, 30 40, 50 35 C 70 30, 90 60, 100 55"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="3"
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            className="path-draw"
+                                                                        />
+                                                                        <path
+                                                                            d="M 25 65 L 105 50"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2"
+                                                                            strokeLinecap="round"
+                                                                            opacity="0.6"
+                                                                        />
+                                                                        <text x="70" y="70" fontFamily="serif" fontSize="12" fill="currentColor" opacity="0.8" className="tracking-widest rotate-6">Reggie</text>
+                                                                    </svg>
+                                                                    <div className="text-[10px] text-[#c85a3f]/60 font-mono text-center mt-1 tracking-widest uppercase">Verified</div>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>

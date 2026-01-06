@@ -60,6 +60,7 @@ export interface GameState {
   unlockedPeople: string[]; // Store IDs of discovered people (e.g. 'nibi', 'conchar')
   unlockedArchiveIds: string[]; // Store IDs of unlocked archive cases
   systemStability: number; // 0-100% (Starts at 84%)
+  currentStoryNode: number; // Current story node reached (0 = none, 1 = chapter 1 complete, etc.)
   activePersona?: 'detective' | 'shadow'; // Controls background visualization
   history: Array<{
     type: 'search' | 'info' | 'shatter';
