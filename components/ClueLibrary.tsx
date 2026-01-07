@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Database, Folder, File, X, Image as ImageIcon, Paperclip, FileText, Search, Tag, Eye, Lock, Hash, MessageCircle, Mic, ChevronRight, Activity, Brain } from 'lucide-react';
 import { Clue, ClueAttachment } from '../types';
+import { VehiclePhotosViewer } from './VehiclePhotosViewer';
 
 interface ClueLibraryProps {
     collectedClueIds: string[];
@@ -9,6 +10,8 @@ interface ClueLibraryProps {
     onClose: () => void;
     collectedAttachments?: string[];
     onCollectAttachment?: (id: string) => void;
+    onCollectClue?: (id: string, word: string) => void; // For auto-collecting clues
+    collectedDossierIds?: string[]; // For tracking dossier items like addresses
     // Story node system
     unlockedNodeIds?: string[]; // For tracking unlocked confessions
     unlockedArchiveIds?: string[]; // For tracking unlocked archives
@@ -161,6 +164,41 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         word: '1985年',
         description: '罗格·毕比被捕并供认香槟镇失踪案的年份。FBI内部对KLUB机构的重组也在这一年启动。',
         source: 'Confession'
+    },
+    '1402_old_dominion_rd': {
+        id: '1402_old_dominion_rd',
+        word: '1402 Old Dominion Rd.',
+        description: '罗伯特·卡彭接受特殊训练的地点。也是雷吉博士对他进行“特殊观察”的场所。',
+        source: 'Briefing'
+    },
+    'family_massacre': {
+        id: 'family_massacre',
+        word: '灭门案',
+        description: '内华达州戈尔康达郡发生的灭门惨案。RC曾在现场留下生物特征，被标记为高风险接触。',
+        source: 'Briefing'
+    },
+    'training_day': {
+        id: 'training_day',
+        word: '训练日',
+        description: 'RC受训结束的日子。在那一天，雷吉博士在一个马场旁的咖啡馆里，向他揭示了被选中的真相。',
+        source: 'Dialogue'
+    },
+    'nevada': {
+        id: 'nevada',
+        word: '内华达州',
+        description: 'RC多次活动的地点。在他的梦境中，那是“青豆牡蛎汤”的起源地。',
+        source: 'Confession'
+    },
+    'crime_route_map': {
+        id: 'crime_route_map',
+        word: '罗伯特·卡彭：犯罪路线',
+        description: '我根据你得到的供述，整理出了卡彭的犯罪活动路线图。目前标记到了波特兰、波士顿、纽波特、纽约、费城等关键地点。——詹妮弗',
+        source: 'Node 1 Analysis',
+        attachments: [{
+            type: 'image',
+            title: '东海岸犯罪路线图 (1980s)',
+            content: '/assets/crime-route-map.png'
+        }]
     }
 };
 
@@ -174,9 +212,7 @@ const JENNIFER_DIALOGUE = [
     `任务推进过程中，记得不时回来看看。
 当你取得阶段性进展时，我可能会为你解锁新的信息、提示，或者调整当前目标。`,
     `如果我没有主动出现，也不代表这里是安全的。
-只是说明，你还没触及他真正敏感的部分。`,
-    `继续工作。
-我会在这里等你。`
+    只是说明，你还没触及他真正敏感的部分。`
 ];
 
 const JENNIFER_RETURN_DIALOGUE = [
@@ -201,7 +237,7 @@ const JENNIFER_NODE_1_DIALOGUE = [
     `最重要的是——\n确认他把父亲藏在了哪里。`,
     `我已经根据你目前的调查进展，以及新增的外部信息，\n整理并更新了案卷建档中的部分内容。`,
     `你现在可以进入该模块，查看这些更新。`,
-    `不要分心。`
+    `不要分心。你可以试试问问他关于[训练日](clue:training_day)的事情。`
 ];
 
 // Utility function to reset visit status (call this when starting a new game)
@@ -214,12 +250,59 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     isOpen,
     onClose,
     collectedAttachments = [],
+    onCollectAttachment,
+    onCollectClue,
     unlockedNodeIds = [],
     unlockedArchiveIds = [],
     currentStoryNode = 0,
+    collectedDossierIds = [], // Default to empty array
+    collectedKeywords = [], // New prop for dialogue parsing only
     onStoryNodeComplete
 }) => {
     const [selectedClue, setSelectedClue] = useState<Clue | null>(null);
+    const [filter, setFilter] = useState('');
+    const [viewMode, setViewMode] = useState<'list' | 'folder'>('list');
+
+    // Helper to parse content and render clickable clues (Ported from BriefingDetailView)
+    const renderContent = (content: string) => {
+        const parts = content.split(/(\[.*?\]\(clue:.*?\))/g);
+
+        return parts.map((part, index) => {
+            const match = part.match(/\[(.*?)\]\(clue:(.*?)\)/);
+            if (match) {
+                const [_, text, clueId] = match;
+                // Check if collected in keywords (clues) OR in the display list (dossiers)
+                const isCollected = collectedKeywords.includes(clueId) || collectedClueIds.includes(clueId);
+
+                return (
+                    <span
+                        key={index}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (!isCollected && onCollectClue) {
+                                onCollectClue(clueId, text);
+                            }
+                        }}
+                        className={`
+                            relative inline-block px-1 rounded cursor-pointer transition-all duration-300 mx-0.5
+                            ${isCollected
+                                ? 'text-[#38bdf8] bg-[#38bdf8]/10 border-b border-[#38bdf8]/30 cursor-default'
+                                : 'text-[#e2e8f0] hover:bg-[#38bdf8]/20 hover:scale-105 border-b border-dashed border-[#e2e8f0]/50 animate-pulse'
+                            }
+                        `}
+                    >
+                        {text}
+                        {!isCollected && (
+                            <span className="absolute -top-3 -right-2 opacity-0 hover:opacity-100 transition-opacity text-[8px] text-[#38bdf8] bg-black/80 px-1 rounded border border-[#38bdf8]/30 whitespace-nowrap z-50">
+                                点击收集
+                            </span>
+                        )}
+                    </span>
+                );
+            }
+            return part;
+        });
+    };
     const [viewingAttachment, setViewingAttachment] = useState<ClueAttachment | null>(null);
 
     // Jennifer Dialogue State
@@ -227,6 +310,12 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const [jenniferStep, setJenniferStep] = useState(0);
     const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
     const [pendingNodeId, setPendingNodeId] = useState<number | null>(null);
+
+    // Track newly added items for glow effect
+    const [newlyAddedItems, setNewlyAddedItems] = useState<Set<string>>(new Set());
+
+    // Vehicle photos viewer state
+    const [showVehiclePhotos, setShowVehiclePhotos] = useState(false);
 
     // Check if player has reached Node 1 conditions
     const checkNode1Completion = () => {
@@ -262,9 +351,26 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setHasVisitedBefore(true);
         }
 
-        // If completing a node dialogue, notify parent
+        // If completing a node dialogue, notify parent and auto-collect items
         if (pendingNodeId !== null && onStoryNodeComplete) {
             onStoryNodeComplete(pendingNodeId);
+
+            // Auto-collect Node 1 items
+            if (pendingNodeId === 1) {
+                // Add crime route map as a clue
+                if (onCollectClue) {
+                    onCollectClue('crime_route_map', '罗伯特·卡彭：犯罪路线');
+                }
+
+                // Mark as newly added for glow effect
+                setNewlyAddedItems(new Set(['crime_route_map']));
+
+                // Remove glow after 10 seconds
+                setTimeout(() => {
+                    setNewlyAddedItems(new Set());
+                }, 10000);
+            }
+
             setPendingNodeId(null);
         }
 
@@ -341,24 +447,35 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                             {(clues as Clue[]).map(clue => {
                                                 const hasAttachment = clue.attachments && clue.attachments.length > 0;
                                                 const isActive = selectedClue?.id === clue.id;
+                                                const isNew = newlyAddedItems.has(clue.id);
 
                                                 return (
-                                                    <button
+                                                    <motion.button
                                                         key={clue.id}
                                                         onClick={() => setSelectedClue(clue)}
                                                         className={`
                                                             w-full text-left px-3 py-2 rounded text-xs font-mono transition-all flex items-center justify-between group
-                                                            ${isActive
-                                                                ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/60 shadow-[0_0_15px_rgba(56,189,248,0.3)]'
-                                                                : 'text-[#aeaeb2] hover:bg-[#8b4049]/15 hover:text-[#c9c9cd] hover:border-[#8b4049]/30 border border-transparent'
+                                                            ${isNew
+                                                                ? 'bg-[#38bdf8]/20 text-[#38bdf8] border border-[#38bdf8] shadow-[0_0_20px_rgba(56,189,248,0.6)]'
+                                                                : isActive
+                                                                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/60 shadow-[0_0_15px_rgba(56,189,248,0.3)]'
+                                                                    : 'text-[#aeaeb2] hover:bg-[#8b4049]/15 hover:text-[#c9c9cd] hover:border-[#8b4049]/30 border border-transparent'
                                                             }
                                                         `}
+                                                        animate={isNew ? {
+                                                            boxShadow: [
+                                                                '0 0 20px rgba(56, 189, 248, 0.6)',
+                                                                '0 0 30px rgba(56, 189, 248, 0.9)',
+                                                                '0 0 20px rgba(56, 189, 248, 0.6)'
+                                                            ]
+                                                        } : {}}
+                                                        transition={isNew ? { duration: 1.5, repeat: Infinity } : {}}
                                                     >
                                                         <span className="truncate">{clue.word}</span>
                                                         {hasAttachment && (
-                                                            <Paperclip size={10} className={`${isActive ? 'opacity-100' : 'opacity-30 group-hover:opacity-70'}`} />
+                                                            <Paperclip size={10} className={`${isActive || isNew ? 'opacity-100' : 'opacity-30 group-hover:opacity-70'}`} />
                                                         )}
-                                                    </button>
+                                                    </motion.button>
                                                 );
                                             })}
                                         </div>
@@ -496,32 +613,150 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="fixed inset-0 z-[110] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+                                className="fixed inset-0 z-[110] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-12"
                                 onClick={() => setViewingAttachment(null)}
                             >
-                                {viewingAttachment.type === 'image' && (
+                                {/* Special fullscreen UI for crime route map */}
+                                {selectedClue?.id === 'crime_route_map' ? (
                                     <motion.div
-                                        initial={{ scale: 0.9, rotate: -2 }}
-                                        animate={{ scale: 1, rotate: 0 }}
-                                        exit={{ scale: 0.9, rotate: 2 }}
-                                        className="relative bg-white p-4 shadow-[0_0_100px_rgba(0,0,0,0.5)] border-8 border-white max-h-[90vh] max-w-[90vw]"
+                                        initial={{ scale: 0.95, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        exit={{ scale: 0.95, opacity: 0 }}
+                                        className="relative w-full h-full flex flex-col overflow-hidden"
                                         onClick={e => e.stopPropagation()}
                                     >
-                                        <img
-                                            src={viewingAttachment.content}
-                                            alt={viewingAttachment.title}
-                                            className="max-h-[85vh] object-contain"
-                                        />
-                                        <div className="absolute bottom-[-40px] left-0 w-full text-center text-white font-mono text-sm tracking-widest mt-4">
-                                            {viewingAttachment.title}
+                                        {/* Header */}
+                                        <div className="flex items-center justify-between mb-6 px-8 flex-shrink-0">
+                                            <div>
+                                                <h2 className="text-2xl font-bold text-[#d89853] tracking-[0.2em] mb-2">
+                                                    犯罪路线分析
+                                                </h2>
+                                                <p className="text-sm text-[#94a3b8] font-mono">
+                                                    CRIME ROUTE ANALYSIS - CLASSIFIED
+                                                </p>
+                                            </div>
+                                            <button
+                                                onClick={() => setViewingAttachment(null)}
+                                                className="p-3 text-[#94a3b8] hover:text-white transition-colors bg-[#1e293b]/50 rounded-lg hover:bg-[#1e293b]"
+                                            >
+                                                <X size={24} />
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => setViewingAttachment(null)}
-                                            className="absolute -top-12 -right-12 p-2 text-white/50 hover:text-white transition-colors"
-                                        >
-                                            <X size={24} />
-                                        </button>
+
+                                        {/* Scrollable Map Container */}
+                                        <div className="flex-1 overflow-y-auto px-8 pb-8">
+                                            <motion.div
+                                                initial={{ y: 20 }}
+                                                animate={{ y: 0 }}
+                                                className="relative max-w-6xl mx-auto"
+                                            >
+                                                {/* Map Image */}
+                                                <div className="relative bg-gradient-to-br from-[#1a1f2e] to-[#0f1419] p-8 rounded-lg shadow-[0_0_100px_rgba(212,165,116,0.2)] border border-[#d89853]/20">
+                                                    <img
+                                                        src={viewingAttachment.content}
+                                                        alt={viewingAttachment.title}
+                                                        className="w-full h-auto rounded shadow-2xl"
+                                                    />
+
+                                                    {/* Decorative corners */}
+                                                    <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-[#d89853]/40"></div>
+                                                    <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#d89853]/40"></div>
+                                                    <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-[#d89853]/40"></div>
+                                                    <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-[#d89853]/40"></div>
+
+
+                                                    {/* Pinned Vehicle Photos - Top Right */}
+                                                    {/* Maine Photo - Behind */}
+                                                    <motion.button
+                                                        initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                                                        animate={{ opacity: 1, scale: 1, rotate: 3 }}
+                                                        transition={{ delay: 0.3 }}
+                                                        onClick={() => setShowVehiclePhotos(true)}
+                                                        className="absolute top-4 right-4 w-32 md:w-40 group cursor-pointer hover:scale-105 hover:z-30 transition-all z-20"
+                                                        style={{ transformOrigin: 'top center' }}
+                                                    >
+                                                        <div className="polaroid-photo">
+                                                            <img
+                                                                src="/assets/car-maine-original.jpg"
+                                                                alt="Maine Vehicle Evidence"
+                                                            />
+                                                            <div className="polaroid-caption">
+                                                                Maine: 412-88B<br />C.K. & R.C.
+                                                            </div>
+                                                        </div>
+                                                    </motion.button>
+
+                                                    {/* New Mexico Photo - Front, slightly overlapping */}
+                                                    <motion.button
+                                                        initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+                                                        animate={{ opacity: 1, scale: 1, rotate: -2 }}
+                                                        transition={{ delay: 0.5 }}
+                                                        onClick={() => setShowVehiclePhotos(true)}
+                                                        className="absolute top-12 right-16 w-32 md:w-40 group cursor-pointer hover:scale-105 hover:z-30 transition-all z-20"
+                                                        style={{ transformOrigin: 'top center' }}
+                                                    >
+                                                        <div className="polaroid-photo">
+                                                            <img
+                                                                src="/assets/car-newmexico-original.jpg"
+                                                                alt="New Mexico Vehicle Evidence"
+                                                            />
+                                                            <div className="polaroid-caption">
+                                                                NEW MEXICO: [SMUDGE] F★<br />OCT 26 '78
+                                                            </div>
+                                                        </div>
+                                                    </motion.button>
+                                                </div>
+
+                                                {/* Description */}
+                                                <div className="mt-6 bg-[#0f172a]/80 border border-[#334155] rounded-lg p-6">
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="p-2 bg-[#d89853]/10 rounded">
+                                                            <Database size={20} className="text-[#d89853]" />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="text-[#e2e8f0] text-sm leading-relaxed font-light">
+                                                                {selectedClue.description}
+                                                            </p>
+                                                            <div className="mt-4 flex gap-4 text-xs text-[#64748b]">
+                                                                <span>案件编号: FBI-84-0132</span>
+                                                                <span>•</span>
+                                                                <span>日期: 1984.10.12</span>
+                                                                <span>•</span>
+                                                                <span>状态: 进行中</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </motion.div>
+                                        </div>
                                     </motion.div>
+                                ) : (
+                                    /* Regular attachment viewer */
+                                    viewingAttachment.type === 'image' && (
+                                        <motion.div
+                                            initial={{ scale: 0.9, rotate: -2 }}
+                                            animate={{ scale: 1, rotate: 0 }}
+                                            exit={{ scale: 0.9, rotate: 2 }}
+                                            className="relative bg-white p-4 shadow-[0_0_100px_rgba(0,0,0,0.5)] border-8 border-white max-h-[90vh] max-w-[90vw] cursor-auto"
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            <img
+                                                src={viewingAttachment.content}
+                                                alt={viewingAttachment.title}
+                                                className="max-h-[85vh] object-contain"
+                                            />
+                                            <div className="absolute bottom-[-40px] left-0 w-full text-center text-white font-mono text-sm tracking-widest mt-4">
+                                                {viewingAttachment.title}
+                                            </div>
+                                            <button
+                                                onClick={() => setViewingAttachment(null)}
+                                                className="absolute -top-12 -right-12 p-2 text-white/50 hover:text-white transition-colors"
+                                            >
+                                                <X size={24} />
+                                            </button>
+                                        </motion.div>
+                                    )
                                 )}
                             </motion.div>
                         )}
@@ -654,7 +889,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                     } else {
                                                         currentDialogue = JENNIFER_DIALOGUE;
                                                     }
-                                                    return currentDialogue[jenniferStep];
+                                                    return renderContent(currentDialogue[jenniferStep]);
                                                 })()}
                                             </p>
                                         </div>
@@ -705,6 +940,12 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                             </motion.div>
                         )}
                     </AnimatePresence>
+
+                    {/* Vehicle Photos Fullscreen Viewer */}
+                    <VehiclePhotosViewer
+                        isOpen={showVehiclePhotos}
+                        onClose={() => setShowVehiclePhotos(false)}
+                    />
 
                 </motion.div>
             )}

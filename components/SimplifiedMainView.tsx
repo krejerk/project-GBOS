@@ -32,6 +32,7 @@ interface SimplifiedMainViewProps {
     currentStoryNode: number;
     onStoryNodeComplete: (nodeId: number) => void;
     onRetrace: () => { success: boolean; reason?: string; keywords?: string[] };
+    onDebugUnlockAll?: () => void; // DEBUG: Temporary testing function
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
@@ -59,7 +60,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     systemStability,
     currentStoryNode,
     onStoryNodeComplete,
-    onRetrace
+    onRetrace,
+    onDebugUnlockAll
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [showMindMap, setShowMindMap] = useState(false);
@@ -122,7 +124,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'year_1967': '1967年',
         'phoenix': '凤凰城行动',
         'architect': '建筑师',
-        'syndicate': '辛迪加'
+        'syndicate': '辛迪加',
+        '1402_old_dominion_rd': '1402 Old Dominion Rd.',
+        'family_massacre': '灭门案',
+        'nevada': '内华达州',
+        'training_day': '训练日',
+        'year_1985': '1985年',
+        'roger_beebe': '罗格·毕比'
     };
 
     // Transient System Message Handling
@@ -201,6 +209,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             {collectedDossierIds.length}
                         </span>
                     </button>
+
+
                 </div>
             </header>
 
@@ -265,7 +275,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         lastItem?.content.includes('FILED') ||
                                         lastItem?.content.includes('NEURAL LINK ESTABLISHED') ||
                                         lastItem?.content.includes('[SYSTEM]: 已消耗') ||
-                                        lastItem?.content.includes('[STORY CHECKPOINT]'); // Filter story progression messages
+                                        lastItem?.content.includes('[STORY CHECKPOINT]') ||
+                                        lastItem?.content.includes('[DEBUG]'); // Filter debug messages
 
                                     const showResponse = lastItem && lastItem.type !== 'search' && !isCollectionLog;
 
@@ -683,9 +694,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             <ClueLibrary
                 isOpen={showClueLibrary}
                 onClose={() => setShowClueLibrary(false)}
-                collectedClueIds={collectedDossierIds}
+                collectedClueIds={collectedDossierIds} // Revert: Main list shows Dossiers
+                collectedKeywords={collectedClues} // New: Keywords for dialogue parser
+                collectedDossierIds={collectedDossierIds}
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}
+                onCollectClue={onCollectClue}
                 unlockedNodeIds={nodes.filter(n => n.id.includes('confession')).map(n => n.id)}
                 unlockedArchiveIds={unlockedArchiveIds}
                 currentStoryNode={currentStoryNode}

@@ -41,12 +41,20 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({ node, onShatter, onColle
     '1985': 'year_1985'
   };
 
+  const CONFESSION_4_KEYWORDS: Record<string, string> = {
+    '内华达州': 'nevada',
+    // '雷吉博士' is explicitly excluded from being pickable here as per user request
+    // '训练日' is also not a target here, it's a trigger
+  };
+
   // Select keyword map based on node ID
-  const KEYWORD_MAP = node.id === 'confession_3'
-    ? CONFESSION_3_KEYWORDS
-    : node.id === 'confession_2'
-      ? CONFESSION_2_KEYWORDS
-      : CONFESSION_1_KEYWORDS;
+  const KEYWORD_MAP = node.id === 'confession_4'
+    ? CONFESSION_4_KEYWORDS
+    : node.id === 'confession_3'
+      ? CONFESSION_3_KEYWORDS
+      : node.id === 'confession_2'
+        ? CONFESSION_2_KEYWORDS
+        : CONFESSION_1_KEYWORDS;
 
   // Track animation states for collected keywords
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});

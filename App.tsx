@@ -8,6 +8,7 @@ import { SimplifiedMainView } from './components/SimplifiedMainView';
 import { CORE_NODES } from './constants';
 import { GameState, MemoryLayer } from './types';
 import { processCognitiveSearch, generateCharacterResponse } from './services/geminiService';
+import { DebugController } from './components/DebugController';
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -72,6 +73,8 @@ const App: React.FC = () => {
       ]
     }));
   }, []);
+
+
 
   const handleSearch = useCallback(async (query: string) => {
     setIsProcessing(true);
@@ -153,6 +156,32 @@ const App: React.FC = () => {
             // Restore Stability on Unlock
             systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
             collectedClues: prev.collectedClues.filter(id => !['chicago', 'missing'].includes(id)),
+            history: [
+              ...prev.history,
+              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
+              { type: 'info', content: `[SYSTEM]: 已消耗关联线索模块`, timestamp: Date.now() }
+            ]
+          }));
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 4 Trigger: "1402 Old Dominion Rd." AND "Training Day"
+    const hasAddress = lowerQuery.includes('1402') || lowerQuery.includes('old dominion') || lowerQuery.includes('old_dominion');
+    const hasTraining = lowerQuery.includes('training') || lowerQuery.includes('训练日');
+
+    if (hasAddress && hasTraining) {
+      setTimeout(() => {
+        const node = nodes.find(n => n.id === 'confession_4');
+        if (node) {
+          setGameState(prev => ({
+            ...prev,
+            activeNodeId: node.id,
+            unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
+            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
+            collectedClues: prev.collectedClues.filter(id => !['1402_old_dominion_rd', 'training_day'].includes(id)),
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
@@ -255,7 +284,7 @@ const App: React.FC = () => {
 
   const handleCollectClue = (clueId: string, word: string) => {
     // Define Categories
-    const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol'];
+    const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map'];
     const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe'];
     const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985'];
 
@@ -376,36 +405,26 @@ const App: React.FC = () => {
     }
   };
 
+  // Handle Debug State Changes
+  const handleDebugStateChange = (newState: Partial<GameState>) => {
+    setGameState(prev => ({
+      ...prev,
+      ...newState
+    }));
+  };
+
   // Render based on current phase
   return (
     <AnimatePresence mode="wait">
       {gameState.phase === 'briefing' && (
         <motion.div key="briefing" className="w-full h-full" exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }} transition={{ duration: 0.5 }}>
           <BriefingView onComplete={() => setGameState(p => ({ ...p, phase: 'briefing-detail' }))} />
-
-          {/* DEBUG: Quick Start Button */}
-          <button
-            onClick={() => setGameState(p => ({
-              ...p,
-              phase: 'immersion',
-              passwordEntered: true,
-              // Persons: Both unlocked AND in prompts
-              unlockedPeople: ['father', 'capone', 'nibi', 'conchar', 'dr_reggie'],
-
-              // Prompts: Person prompts + Keywords. 'project' excluded.
-              collectedClues: ['chicago', 'maine', 'small_bank', 'missing', 'father', 'nibi', 'conchar', 'robert', 'dr_reggie'],
-
-              // Dossier: Strict dossier items
-              collectedDossierIds: [],
-
-              // Years
-              collectedYears: ['year_1968', 'year_1971']
-            }))}
-            className="fixed top-4 right-4 z-50 px-4 py-2 bg-red-900/50 hover:bg-red-800 text-red-200 text-xs border border-red-500/50 rounded uppercase tracking-widest backdrop-blur-md transition-colors"
-          >
-            Debug: Quick Start
-          </button>
         </motion.div>
+      )}
+
+      {/* Global Debug Controller - Always available except in TitleScreen */}
+      {gameState.phase !== 'title' && (
+        <DebugController onSetState={handleDebugStateChange} />
       )}
 
       {gameState.phase === 'briefing-detail' && (

@@ -31,6 +31,17 @@ const CONFESSION_REGISTRY = [
         people: ['伦德格兰 (Lundgren)', '莫宁 (Morning)'],
         summary: '关于1968年俄亥俄州柯特兰邪教屠杀案的供述。揭示了雷吉博士的"统一场论"与伦德格兰案件之间的联系。',
         status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_4',
+        displayId: 'REC-1967-NV',
+        title: '供述 No.4: 训练日回忆',
+        eventTime: '1967',
+        location: '内华达州 (Nevada)',
+        keywords: ['训练日', '1402 Old Dominion Rd.', '内华达州', '雷吉博士'],
+        people: ['雷吉博士 (Dr. Reggie)'],
+        summary: '关于特工选拔与训练结束时的关键对话。揭示了雷吉博士选中卡彭的真实原因——一种被视为"天赋"的精神病态特质。',
+        status: 'DECRYPTED'
     }
 ];
 

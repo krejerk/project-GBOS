@@ -196,7 +196,7 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 行政隔离： 通过将 KLUB 的行政层级下移，使其成为一个在物理和程序上均被隔离的"数据孤岛"，从而切断地方争议向总部蔓延的路径。
 
 
-特别指出：鉴于RC曾于多处犯罪现场留有生物特征，雷吉博士此前基于"有限信任原则"与其维持开放交涉状态，现为规避机构改组期间的高风险接触，本职决定立即斩断所有相关线索。即刻起，撤销RC的一切特殊观察待遇，将其定性由"潜在资产"正式调整为"一般变节者"，按标准清算程序处理。
+特别指出：鉴于RC（受训于1402 Old Dominion Rd.）曾于多处犯罪现场（etc：内华达州戈尔康达郡，灭门案）留有生物特征，雷吉博士此前基于“有限信任原则”与其维持开放交涉状态，现为规避机构改组期间的高风险接触，本职决定立即斩断所有相关线索。即刻起，撤销RC的一切特殊观察待遇，将其定性由“潜在资产”正式调整为**“一般变节者”**，按标准清算程序处理。
             `
         }
     }
@@ -237,7 +237,10 @@ export const Archives: React.FC<ArchivesProps> = ({
         '俄亥俄州': 'ohio',
         '祭祀案': 'ritual_case',
         '1967': 'year_1967',
-        '碎尸案': 'dismemberment_case'
+        '碎尸案': 'dismemberment_case',
+        '1402 Old Dominion Rd.': '1402_old_dominion_rd',
+        '灭门案': 'family_massacre',
+        '训练日': 'training_day'
     };
 
     // Clue display mapping for quick selection chips
@@ -680,7 +683,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     ? ['俄亥俄州', '祭祀案', '1967']
                                                                     : activeCase.id === 'dc_1967'
                                                                         ? ['碎尸案'] // 1967 explicitly excluded for this case
-                                                                        : ['俄亥俄州', '祭祀案']; // Default legacy
+                                                                        : activeCase.id === 'il_1985'
+                                                                            ? ['1402 Old Dominion Rd.', '灭门案', '训练日']
+                                                                            : ['俄亥俄州', '祭祀案']; // Default legacy
 
                                                                 const attachmentTrigger = '「图片见附录」';
                                                                 // Create a combined regex for keywords and the specific attachment text
