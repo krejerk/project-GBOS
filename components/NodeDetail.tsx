@@ -291,16 +291,18 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                           </div>
 
                           <div className="grid grid-cols-2 gap-3 max-h-[40vh] overflow-y-auto custom-scrollbar p-1 mb-4">
-                            {collectedDossierIds.map(clueId => (
-                              <button
-                                key={clueId}
-                                onClick={() => handleAttemptCollect(clueId)}
-                                className="text-[10px] font-mono border border-[#d89853]/20 bg-[#d89853]/5 text-[#d89853]/80 p-3 rounded hover:bg-[#d89853]/20 hover:text-[#d89853] hover:border-[#d89853]/50 transition-all truncate text-left flex items-center gap-2"
-                              >
-                                <Folder size={14} className="shrink-0" />
-                                <span className="truncate">{clueDisplayMap[clueId] || clueId}</span>
-                              </button>
-                            ))}
+                            {collectedDossierIds
+                              .filter(id => ['julip', 'project', 'graywater_beacon'].includes(id))
+                              .map(clueId => (
+                                <button
+                                  key={clueId}
+                                  onClick={() => handleAttemptCollect(clueId)}
+                                  className="text-[10px] font-mono border border-[#d89853]/20 bg-[#d89853]/5 text-[#d89853]/80 p-3 rounded hover:bg-[#d89853]/20 hover:text-[#d89853] hover:border-[#d89853]/50 transition-all truncate text-left flex items-center gap-2"
+                                >
+                                  <Folder size={14} className="shrink-0" />
+                                  <span className="truncate">{clueDisplayMap[clueId] || clueId}</span>
+                                </button>
+                              ))}
                             {collectedDossierIds.length === 0 && (
                               <div className="col-span-2 text-center text-[#d89853]/30 text-xs py-4">
                                 NO OPEN FILES AVAILABLE
