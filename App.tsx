@@ -276,10 +276,7 @@ const App: React.FC = () => {
         if (node) {
           setGameState(prev => {
             if (prev.unlockedNodeIds.includes(node!.id)) {
-              return {
-                ...prev,
-                history: [...prev.history, { type: 'info', content: '[SYSTEM]: 该供述已解密 (RECORD ALREADY DECRYPTED)', timestamp: Date.now() }]
-              };
+              return prev;
             }
             return {
               ...prev,
