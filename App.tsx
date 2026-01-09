@@ -105,7 +105,7 @@ const App: React.FC = () => {
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
-              { type: 'info', content: `[SYSTEM]: 已消耗关联线索模块`, timestamp: Date.now() }
+
             ]
           }));
         }
@@ -132,7 +132,7 @@ const App: React.FC = () => {
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
-              { type: 'info', content: `[SYSTEM]: 已消耗关联线索模块`, timestamp: Date.now() }
+
             ]
           }));
         }
@@ -159,7 +159,7 @@ const App: React.FC = () => {
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
-              { type: 'info', content: `[SYSTEM]: 已消耗关联线索模块`, timestamp: Date.now() }
+
             ]
           }));
         }
@@ -185,9 +185,117 @@ const App: React.FC = () => {
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
-              { type: 'info', content: `[SYSTEM]: 已消耗关联线索模块`, timestamp: Date.now() }
+
             ]
           }));
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 5 Trigger: "Nevada" AND "Family Massacre"
+    const hasNevada = lowerQuery.includes('nevada') || lowerQuery.includes('内华达') || lowerQuery.includes('内华达州');
+    const hasFamilyMassacre = lowerQuery.includes('massacre') || lowerQuery.includes('extinction') || lowerQuery.includes('灭门') || lowerQuery.includes('灭门案');
+
+    if (hasNevada && hasFamilyMassacre) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_5');
+
+        // Stale State Protection: If node not found in state (due to HMR/Init), check constant
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_5');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]); // Sync state
+          }
+        }
+
+        if (node) {
+          setGameState(prev => ({
+            ...prev,
+            activeNodeId: node.id,
+            unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
+            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
+            collectedClues: prev.collectedClues.filter(id => !['nevada', 'family_massacre'].includes(id)),
+            history: [
+              ...prev.history,
+              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
+
+            ]
+          }));
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Archive 5 Trigger: "1971" AND "Little Derek Wayne" => Unlocks NV-1971
+    const hasYear1971 = lowerQuery.includes('1971') || lowerQuery.includes('year_1971');
+    const hasLittleDerek = lowerQuery.includes('little_derek_wayne') || lowerQuery.includes('小德里克') || lowerQuery.includes('derek wayne') || lowerQuery.includes('wayne');
+
+    if (hasYear1971 && hasLittleDerek) {
+      setTimeout(() => {
+        setGameState(prev => {
+          if (prev.unlockedArchiveIds.includes('nv_1971')) {
+            return {
+              ...prev,
+              history: [...prev.history, { type: 'info', content: '[SYSTEM]: 该档案已解密 (FILE ALREADY DECRYPTED)', timestamp: Date.now() }]
+            };
+          }
+          return {
+            ...prev,
+            unlockedArchiveIds: [...prev.unlockedArchiveIds, 'nv_1971'],
+            history: [
+              ...prev.history,
+              { type: 'info', content: '[ARCHIVE RETRIEVED]: NV-1971-SEC (The Nevada Chronicle)', timestamp: Date.now() }
+            ]
+          };
+        });
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 6 Trigger: "Mojave Rest Stop" AND "Empty Cigarette Pack" => Unlocks Confession 6
+    const hasMojave = lowerQuery.includes('mojave_rest_stop') || lowerQuery.includes('莫哈韦') || lowerQuery.includes('mojave');
+    const hasCigarette = lowerQuery.includes('empty_cigarette_pack') || lowerQuery.includes('空烟盒') || lowerQuery.includes('cigarette');
+
+    if (hasMojave && hasCigarette) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_6');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_6');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            if (prev.unlockedNodeIds.includes(node!.id)) {
+              return {
+                ...prev,
+                history: [...prev.history, { type: 'info', content: '[SYSTEM]: 该供述已解密 (RECORD ALREADY DECRYPTED)', timestamp: Date.now() }]
+              };
+            }
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              // Remove the trigger clues from "collected" list to "consume" them? Or keep them? User didn't specify consumption, usually we keep them.
+              // But previous logic for Confession 5 removed triggers. I'll follow that pattern if consistent, but usually we don't remove unless it's a "synthesis".
+              // Confession 5 logic: collectedClues.filter(id => !['nevada', 'family_massacre'].includes(id))
+              // I will keep them for now unless specified, safer.
+              history: [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+
+              ]
+            }
+          });
         }
         setIsProcessing(false);
       }, 50);
@@ -257,7 +365,7 @@ const App: React.FC = () => {
     } finally {
       // But wait, if I return in the if block, this finally won't run. Correct.
       // So I updated the local block to set setIsProcessing(false).
-      if (!((hasMaine && hasSmallBank) || hasOhio || hasRitual || (hasChicago && hasMissing))) {
+      if (!((hasMaine && hasSmallBank) || hasOhio || hasRitual || (hasChicago && hasMissing) || (hasNevada && hasFamilyMassacre) || (hasMojave && hasCigarette))) {
         setIsProcessing(false);
       }
     }
@@ -282,10 +390,22 @@ const App: React.FC = () => {
     }));
   };
 
+  const handleCollectAttachment = (id: string) => {
+    // Add to collected items and show history
+    setGameState(prev => {
+      if (prev.collectedClues.includes(id)) return prev;
+
+      return {
+        ...prev,
+        collectedClues: [...prev.collectedClues, id]
+      };
+    });
+  };
+
   const handleCollectClue = (clueId: string, word: string) => {
     // Define Categories
-    const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map'];
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe'];
+    const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'];
+    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne'];
     const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985'];
 
     const isDossier = DOSSIER_WHITELIST.includes(clueId);
@@ -310,19 +430,23 @@ const App: React.FC = () => {
           timestamp: Date.now()
         });
       }
-      // Also mark as "known" in collectedClues so it highlights/prompts
-      if (!gameState.collectedClues.includes(clueId)) {
-        updates.collectedClues = [...(updates.collectedClues || gameState.collectedClues), clueId];
-      }
+      // REMOVED: Do not add to collectedClues to keep prompt strict
     }
     // --- LOGIC: CASE DOSSIER (EXCLUSIVE) ---
     else if (isDossier) {
       // Add to DOSSIER IDs
       if (!gameState.collectedDossierIds.includes(clueId)) {
         updates.collectedDossierIds = [...(gameState.collectedDossierIds || []), clueId];
+
+        // Custom message for main dossier folders
+        const isMainFolder = ['project', 'julip', 'graywater_beacon'].includes(clueId);
+        const feedbackMsg = isMainFolder
+          ? `[EVIDENCE FILED]: ${word} >>> 已在案卷建档中建立文件夹`
+          : `[EVIDENCE FILED]: ${word} 已收录到案卷建档`;
+
         newHistory.push({
           type: 'info',
-          content: `[EVIDENCE FILED]: ${word} 已收录到案卷建档`,
+          content: feedbackMsg,
           timestamp: Date.now()
         });
       }
@@ -396,14 +520,7 @@ const App: React.FC = () => {
   const activeNode = nodes.find(n => n.id === gameState.activeNodeId);
   const visibleNodes = nodes.filter(n => gameState.unlockedNodeIds.includes(n.id));
 
-  const [collectedAttachments, setCollectedAttachments] = useState<string[]>([]);
 
-  const handleCollectAttachment = (attachmentId: string) => {
-    if (!collectedAttachments.includes(attachmentId)) {
-      setCollectedAttachments(prev => [...prev, attachmentId]);
-      // Note: No history message added - this is silent collection for ClueLibrary
-    }
-  };
 
   // Handle Debug State Changes
   const handleDebugStateChange = (newState: Partial<GameState>) => {
@@ -466,7 +583,6 @@ const App: React.FC = () => {
             unlockedArchiveIds={gameState.unlockedArchiveIds}
             onUnlockArchive={handleUnlockArchive}
             onConsumeKeywords={handleConsumeKeywords}
-            collectedAttachments={collectedAttachments}
             onCollectAttachment={handleCollectAttachment}
             collectedDossierIds={gameState.collectedDossierIds || []}
             systemStability={gameState.systemStability}

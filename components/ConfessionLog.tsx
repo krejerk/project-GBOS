@@ -33,6 +33,17 @@ const CONFESSION_REGISTRY = [
         status: 'DECRYPTED'
     },
     {
+        id: 'confession_3',
+        displayId: 'REC-1985-IL',
+        title: '供述 No.3: 罗格·毕比失踪案',
+        eventTime: '1985',
+        location: '伊利诺伊州 (Illinois)',
+        keywords: ['罗格·毕比', '1985'],
+        people: ['罗格·毕比 (Roger Beebe)'],
+        summary: '关于香槟镇失踪案真凶的供述。揭示了罗格·毕比在1985年落网后的供词，以及康查尔对此类"不受控恶行"的鄙夷态度。',
+        status: 'DECRYPTED'
+    },
+    {
         id: 'confession_4',
         displayId: 'REC-1967-NV',
         title: '供述 No.4: 训练日回忆',
@@ -41,6 +52,28 @@ const CONFESSION_REGISTRY = [
         keywords: ['训练日', '1402 Old Dominion Rd.', '内华达州', '雷吉博士'],
         people: ['雷吉博士 (Dr. Reggie)'],
         summary: '关于特工选拔与训练结束时的关键对话。揭示了雷吉博士选中卡彭的真实原因——一种被视为"天赋"的精神病态特质。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_5',
+        displayId: 'REC-1973-NV',
+        title: '供述 No.5: 维恩灭门案',
+        eventTime: '1973',
+        location: '内华达州 (Nevada)',
+        keywords: ['小德里克·维恩', '灭门案'],
+        people: ['小德里克·维恩 (Derek Wayne Jr.)', '康查尔 (Conchar)'],
+        summary: '关于维恩一家惨遭灭门的真相。揭示了该家族长子因其变态嗜好招致的报复，以及康查尔对此事所持的"受约束暴力"观点。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_6',
+        displayId: 'REC-1972-VA',
+        title: '供述 No.6: 灰水信标',
+        eventTime: '1972',
+        location: '弗吉尼亚州 (Virginia)',
+        keywords: ['罗阿诺克市', '灰水信标', '铁马'],
+        people: ['雷吉博士 (Dr. Reggie)', '康查尔 (Conchar)'],
+        summary: '关于“信标”系统的建立与早期运作。揭示了康查尔在逃亡途中如何利用特定品牌烟盒向清理小组单向传递情报的全过程。',
         status: 'DECRYPTED'
     }
 ];

@@ -1,3 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Permanent+Marker&display=swap');
+
+/* Custom Font Utilities if Tailwind config is missing */
+.font-creepster {
+  font-family: 'Creepster', display;
+}
+
+.font-handwriting {
+  font-family: 'Permanent Marker', cursive;
+}
+
 /* Dive Bar Aesthetic - Arizona/Paris, Texas */
 
 :root {
@@ -442,44 +453,69 @@ body {
 /* Add smooth transitions for Framer Motion */
 .motion-safe {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}/* Polaroid photo effect with paper clip */
+}
+
+/* Polaroid photo effect with paper clip */
 .polaroid-photo {
-    background: #f8f6f0;
-    padding: 12px 12px 40px 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    position: relative;
+  background: #f8f6f0;
+  padding: 12px 12px 40px 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
 .polaroid-photo img {
-    display: block;
-    width: 100%;
-    height: auto;
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .polaroid-photo::before {
-    /* Paper clip */
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30px;
-    height: 50px;
-    background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 50%, #c0c0c0 100%);
-    border-radius: 15px 15px 0 0;
-    clip-path: polygon(20% 0%, 80% 0%,
-            80% 70%, 90% 70%, 90% 100%, 10% 100%, 10% 70%, 20% 70%);
-    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5),
-        0 2px 4px rgba(0, 0, 0, 0.3);
+  /* Paper clip */
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 50px;
+  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 50%, #c0c0c0 100%);
+  border-radius: 15px 15px 0 0;
+  clip-path: polygon(20% 0%, 80% 0%,
+      80% 70%, 90% 70%, 90% 100%, 10% 100%, 10% 70%, 20% 70%);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .polaroid-caption {
-    position: absolute;
-    bottom: 8px;
-    left: 12px;
-    right: 12px;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    color: #1a1a1a;
-    font-weight: bold;
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  right: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #1a1a1a;
+  font-weight: bold;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(216, 152, 83, 0.2);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(216, 152, 83, 0.5);
+}
+
+.custom-summary-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

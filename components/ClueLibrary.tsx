@@ -199,6 +199,17 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
             title: '东海岸犯罪路线图 (1980s)',
             content: '/assets/crime-route-map.png'
         }]
+    },
+    'graywater_beacon': {
+        id: 'graywater_beacon',
+        word: '灰水信标',
+        description: '在莫哈韦休息站附近发现的视觉残留信号。包含一个名为“铁马”品牌的空烟盒。',
+        source: 'Confession',
+        attachments: [{
+            type: 'image',
+            title: '铁马烟盒 (Iron Horse)',
+            content: '/assets/iron_horse_beacon.jpg'
+        }]
     }
 };
 

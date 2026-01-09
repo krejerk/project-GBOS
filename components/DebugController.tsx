@@ -25,9 +25,9 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
 
             // Initial Keywords for search (Briefing content)
             collectedClues: [
-                'chicago', 'maine', 'small_bank', 'missing', 'father',
-                'nibi', 'conchar', 'robert', 'dr_reggie',
-                '1971', 'relationship', 'confession'
+                'chicago', 'maine', 'small_bank', 'missing',
+                'relationship', 'confession'
+                // Removed persons (nibi, conchar, etc.) and years (1971)
             ],
 
             // NO Dossier items yet (except maybe initial empty state or basic profile if intended, but keeping clean for "start")
@@ -68,19 +68,18 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
 
             collectedClues: [
                 // Intro / Base
-                'chicago', 'maine', 'small_bank', 'missing', 'father',
-                'nibi', 'conchar', 'robert', 'dr_reggie',
-                '1971', 'relationship', 'confession', 'family', 'asian_woman',
+                'chicago', 'maine', 'small_bank', 'missing',
+                'relationship', 'confession',
 
                 // Confession 2
-                'ohio', 'ritual_case', 'morning',
+                'ohio', 'ritual_case',
 
                 // Confession 3
-                'roger_beebe', 'year_1985',
+                // (No concept keywords in Confession 3, only Person/Year)
 
                 // Archive Keywords (found within unlocked archives)
-                'headdress', 'family_massacre', 'dismemberment_case',
-                'lundgren' // Usually collected via person, but ensuring regular clue id too
+                'headdress', 'family_massacre', 'dismemberment_case'
+                // Removed 'lundgren' (Person) and years
             ],
 
             // Floor 2 adds the Dossier items

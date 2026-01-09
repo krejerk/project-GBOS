@@ -199,6 +199,32 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 特别指出：鉴于RC（受训于1402 Old Dominion Rd.）曾于多处犯罪现场（etc：内华达州戈尔康达郡，灭门案）留有生物特征，雷吉博士此前基于“有限信任原则”与其维持开放交涉状态，现为规避机构改组期间的高风险接触，本职决定立即斩断所有相关线索。即刻起，撤销RC的一切特殊观察待遇，将其定性由“潜在资产”正式调整为**“一般变节者”**，按标准清算程序处理。
             `
         }
+    },
+    {
+        id: 'nv_1971',
+        title: '1971年内华达枯骨案',
+        triggers: {
+            year: '1971',
+            person: ['little_derek_wayne', '小德里克·维恩', 'Derek Wayne Jr.']
+        },
+        newspaper: {
+            source: '《内华达州纪事报》(The Nevada Chronicle)',
+            date: '1971年6月05日',
+            headline: '大盆地再现枯骨：派尤特猎人发现两年内第三具骸骨',
+            content: [
+                '本报讯 —— 本周二下午，一名派尤特族（Paiute）猎人在内华达大盆地深处的乱石堆中发现了一具女性残骸。据法医初步鉴定，死者死亡时间已在十年以上。',
+                '这已是近两年来在同一区域发现的第三具骸骨，死亡时间跨度从2年至15年不等。由于沙漠环境的剧烈风化，死因目前依然不明。当地警方已将此案并入“荒漠冷案”序列，调查仍在艰难进行中。'
+            ]
+        },
+        annotation: {
+            fileId: 'NV-1973-09-SEC',
+            date: '1973年9月14日',
+            level: '机密 (CONFIDENTIAL)',
+            author: '雷吉博士 (Dr. Reggie)',
+            content: `我听说两年前内华达州那具尸体终于有了名字。真凶是小德里克·维恩（Derek Wayne Jr.），他在两年前那场报复行动中已经变成了尸体。无须我重申，这个结论的最初线索来自RC丢弃在莫哈韦休息站垃圾桶内的一个空烟盒（别想打听那个休息站在哪）。
+
+我还听说那帮官僚正试图把这个冷案突破写进年度报告，甚至想以此为KLUB挽回点面子。我个人认为毫无必要，毕竟如果坐在量化官的办公室里玩拼图游戏也算“贡献”，那我们对贡献的定义显然有云泥之别。至于RC，他正在做的事情远超这些旧账清理，我确信他将带来更深层的实质性推进，目前的贡献只是一点点微小成就。而那些坐在量化官办公室里指手画脚的人，甚至不配在他未来的报告上签字。`
+        }
     }
 ];
 
@@ -240,7 +266,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         '碎尸案': 'dismemberment_case',
         '1402 Old Dominion Rd.': '1402_old_dominion_rd',
         '灭门案': 'family_massacre',
-        '训练日': 'training_day'
+        '训练日': 'training_day',
+        '莫哈韦休息站': 'mojave_rest_stop',
+        '空烟盒': 'empty_cigarette_pack'
     };
 
     // Clue display mapping for quick selection chips
@@ -255,6 +283,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         'dismemberment_case': '碎尸案',
         'dr_reggie': '雷吉博士',
         'roger_beebe': '罗格·毕比',
+        'little_derek_wayne': '小德里克·维恩',
         'project': '青豆牡蛎汤计划',
         'julip': '黄油朱莉普',
         'family': '诡异家族',
@@ -270,7 +299,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         'morning': '莫宁',
         'ohio': '俄亥俄州',
         'ritual_case': '祭祀案',
-        'headdress': '原住民头饰'
+        'headdress': '原住民头饰',
+        'mojave_rest_stop': '莫哈韦休息站',
+        'empty_cigarette_pack': '空烟盒'
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
@@ -685,7 +716,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                         ? ['碎尸案'] // 1967 explicitly excluded for this case
                                                                         : activeCase.id === 'il_1985'
                                                                             ? ['1402 Old Dominion Rd.', '灭门案', '训练日']
-                                                                            : ['俄亥俄州', '祭祀案']; // Default legacy
+                                                                            : activeCase.id === 'nv_1971'
+                                                                                ? ['莫哈韦休息站', '空烟盒']
+                                                                                : ['俄亥俄州', '祭祀案']; // Default legacy
 
                                                                 const attachmentTrigger = '「图片见附录」';
                                                                 // Create a combined regex for keywords and the specific attachment text

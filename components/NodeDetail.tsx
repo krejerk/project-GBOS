@@ -2,19 +2,49 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MemoryNode, MemoryLayer } from '../types';
-import { Quote, Sparkles, AlertCircle, Maximize2 } from 'lucide-react';
+import { Quote, Sparkles, AlertCircle, Maximize2, Folder, FolderOpen, X } from 'lucide-react';
 
 interface NodeDetailProps {
   node: MemoryNode;
   onShatter: (id: string) => void;
   onCollectClue: (id: string, word: string) => void;
+  onCollectAttachment?: (id: string) => void;
+  collectedDossierIds?: string[];
+  clueDisplayMap?: Record<string, string>;
 }
 
-export const NodeDetail: React.FC<NodeDetailProps> = ({ node, onShatter, onCollectClue }) => {
+export const NodeDetail: React.FC<NodeDetailProps> = ({
+  node,
+  onShatter,
+  onCollectClue,
+  onCollectAttachment,
+  collectedDossierIds = [],
+  clueDisplayMap = {}
+}) => {
   const current = node.layers[node.currentLayer] || node.layers[MemoryLayer.SURFACE];
   const currentContent = node.layers[node.currentLayer];
   const canShatter = node.currentLayer !== MemoryLayer.CORE;
   const currentLayerNum = node.currentLayer === MemoryLayer.SURFACE ? 1 : node.currentLayer === MemoryLayer.DEEP ? 2 : 3;
+
+  // Folder Selection State
+  const [isSelectingFolder, setIsSelectingFolder] = React.useState(false);
+  const [collectionFeedback, setCollectionFeedback] = React.useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
+
+  const handleAttemptCollect = (targetClueId: string) => {
+    if (targetClueId === 'graywater_beacon') {
+      if (onCollectAttachment) onCollectAttachment('graywater_beacon'); // Collect the image/dossier linkage
+      setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+      setTimeout(() => {
+        setIsSelectingFolder(false);
+        setCollectionFeedback({ type: null, msg: '' });
+        // Also update local state to hide visual if desired, or just show it's collected.
+        // We rely on parent state update re-rendering this component used in `isImageCollected` check below.
+      }, 1500);
+    } else {
+      setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
+      setTimeout(() => setCollectionFeedback({ type: null, msg: '' }), 2000);
+    }
+  };
 
   // Track seen keywords for first-instance highlighting
   const seenKeywords = new Set<string>();
@@ -47,17 +77,32 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({ node, onShatter, onColle
     // '训练日' is also not a target here, it's a trigger
   };
 
+  const CONFESSION_5_KEYWORDS: Record<string, string> = {
+    '小德里克·维恩': 'little_derek_wayne'
+  };
+
+  const CONFESSION_6_KEYWORDS: Record<string, string> = {
+    '罗阿诺克市': 'roanoke',
+    '灰水信标': 'graywater_beacon'
+  };
+
   // Select keyword map based on node ID
-  const KEYWORD_MAP = node.id === 'confession_4'
-    ? CONFESSION_4_KEYWORDS
-    : node.id === 'confession_3'
-      ? CONFESSION_3_KEYWORDS
-      : node.id === 'confession_2'
-        ? CONFESSION_2_KEYWORDS
-        : CONFESSION_1_KEYWORDS;
+  const KEYWORD_MAP = node.id === 'confession_6'
+    ? CONFESSION_6_KEYWORDS
+    : node.id === 'confession_5'
+      ? CONFESSION_5_KEYWORDS
+      : node.id === 'confession_4'
+        ? CONFESSION_4_KEYWORDS
+        : node.id === 'confession_3'
+          ? CONFESSION_3_KEYWORDS
+          : node.id === 'confession_2'
+            ? CONFESSION_2_KEYWORDS
+            : CONFESSION_1_KEYWORDS;
 
   // Track animation states for collected keywords
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});
+  const [isVisualRevealed, setIsVisualRevealed] = React.useState(false);
+  const [isImageCollected, setIsImageCollected] = React.useState(false);
 
   const handleKeywordClick = (e: React.MouseEvent, word: string) => {
     e.stopPropagation();
@@ -99,11 +144,13 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({ node, onShatter, onColle
             <span className="text-[10px] font-mono text-[#d89853]/60 uppercase tracking-widest">神经片段解析</span>
           )}
 
-          <div className="flex gap-1">
-            <div className={`w-1.5 h-1.5 rounded-full ${node.currentLayer === MemoryLayer.SURFACE ? 'bg-[#d89853]' : 'bg-[#d89853]/20'}`} />
-            <div className={`w-1.5 h-1.5 rounded-full ${node.currentLayer === MemoryLayer.DEEP ? 'bg-[#c85a3f]' : 'bg-[#c85a3f]/20'}`} />
-            <div className={`w-1.5 h-1.5 rounded-full ${node.currentLayer === MemoryLayer.CORE ? 'bg-red-600' : 'bg-red-600/20'}`} />
-          </div>
+          {!node.id.includes('confession') && (
+            <div className="flex gap-1">
+              <div className={`w-1.5 h-1.5 rounded-full ${node.currentLayer === MemoryLayer.SURFACE ? 'bg-[#d89853]' : 'bg-[#d89853]/20'}`} />
+              <div className={`w-1.5 h-1.5 rounded-full ${node.currentLayer === MemoryLayer.DEEP ? 'bg-[#c85a3f]' : 'bg-[#c85a3f]/20'}`} />
+              <div className={`w-1.5 h-1.5 rounded-full ${node.currentLayer === MemoryLayer.CORE ? 'bg-red-600' : 'bg-red-600/20'}`} />
+            </div>
+          )}
         </div>
         <h2 className={`text-2xl font-bold tracking-tight mb-1 uppercase ${node.id.includes('confession') ? 'text-[#d89853] font-mono' : 'text-[#d89853] italic'}`}>
           {node.title}
@@ -168,6 +215,71 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({ node, onShatter, onColle
                   })}
                 </p>
               ))}
+
+              {/* Visual Signal Extraction for Confession 6 */}
+              {node.id === 'confession_6' && (
+                <div className="mt-8 p-4 border border-[#c85a3f]/30 bg-[#c85a3f]/10 rounded relative overflow-hidden group/visual transition-all duration-500">
+                  <div className="absolute top-0 right-0 p-2 opacity-50">
+                    <AlertCircle size={16} className="text-[#c85a3f] animate-pulse" />
+                  </div>
+
+                  {!isVisualRevealed ? (
+                    <div
+                      className="cursor-pointer hover:bg-[#c85a3f]/10 p-2 rounded transition-colors"
+                      onClick={() => setIsVisualRevealed(true)}
+                    >
+                      <p className="text-xs text-[#c85a3f] font-mono tracking-widest mb-2 animate-pulse">
+                        [SYSTEM]: 侦测到残留视觉信号 / VISUAL TRACE DETECTED
+                      </p>
+                      <p className="text-sm text-[#d89853] underline decoration-dotted underline-offset-4 hover:text-white transition-colors">
+                        {`>> 请求提取视觉信息 (EXTRACT VISUAL DATA) <<`}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                      <div className="flex items-center justify-between border-b border-[#c85a3f]/30 pb-2">
+                        <span className="text-[10px] text-[#c85a3f] font-mono tracking-widest">VISUAL_DATA_RECOVERED.JPG</span>
+                        <span className="text-[10px] text-[#d89853]/50 font-mono">SIZE: 4.2MB</span>
+                      </div>
+
+                      <div
+                        className="relative group/image cursor-pointer overflow-hidden border border-[#d89853]/20 hover:border-[#d89853] transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isImageCollected) {
+                            // 1. Collect the Dossier Folder (Graywater Beacon)
+                            if (onCollectClue) onCollectClue('graywater_beacon', '灰水信标');
+                            // 2. Collect the Attachment (Iron Horse Image)
+                            if (onCollectAttachment) onCollectAttachment('iron_horse_image');
+
+                            setIsImageCollected(true);
+                          }
+                        }}
+                      >
+                        <img
+                          src="/assets/iron_horse_beacon.jpg"
+                          alt="Iron Horse Cigarettes"
+                          className={`w-full h-auto object-cover grayscale brightness-75 contrast-125 group-hover/image:grayscale-0 group-hover/image:brightness-100 transition-all duration-700 ${isImageCollected ? 'grayscale-0 brightness-100 ring-2 ring-[#d89853]' : ''}`}
+                        />
+
+                        {/* Overlay Label */}
+                        <div className="absolute bottom-0 left-0 w-full bg-black/80 backdrop-blur-sm p-2 text-center transform translate-y-full group-hover/image:translate-y-0 transition-transform duration-300">
+                          <span className={`text-xs font-mono tracking-widest ${isImageCollected ? 'text-[#d89853]' : 'text-white'}`}>
+                            {isImageCollected ? '>> IMAGE ARCHIVED ON SERVER <<' : 'CLICK TO ARCHIVE TO DOSSIER'}
+                          </span>
+                        </div>
+
+                        {/* Success Stamp */}
+                        {isImageCollected && (
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-[#d89853] text-[#d89853] p-2 font-black text-xl tracking-[0.2em] rotate-[-12deg] opacity-80 mix-blend-screen whitespace-nowrap bg-black/50 backdrop-blur-sm">
+                            FILED / 已归档
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="mt-12 pt-8 border-t border-double border-[#d89853]/30 flex flex-col items-end gap-2">
                 <div className="text-right rotate-[-2deg]">

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Map, Terminal as TerminalIcon, FileText, X, ChevronDown, Database, Archive, Network, Construction, Brain, Activity, RotateCcw } from 'lucide-react';
-import { MindMap } from './MindMap';
+import { SyndicateBoard } from './SyndicateBoard';
 import { ConfessionLog } from './ConfessionLog';
 import { NodeDetail } from './NodeDetail';
 import { ClueLibrary } from './ClueLibrary';
@@ -130,7 +130,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'nevada': '内华达州',
         'training_day': '训练日',
         'year_1985': '1985年',
-        'roger_beebe': '罗格·毕比'
+        'roger_beebe': '罗格·毕比',
+        'little_derek_wayne': '小德里克·维恩',
+        'mojave_rest_stop': '莫哈韦休息站',
+        'empty_cigarette_pack': '空烟盒',
+        'roanoke': '罗阿诺克市',
+        'graywater_beacon': '灰水信标',
+        'iron_horse_image': '铁马烟盒 (Visual)'
     };
 
     // Transient System Message Handling
@@ -501,9 +507,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         .filter(id =>
                                             !unlockedPeople.includes(id) &&
                                             !id.startsWith('year_') &&
+                                            !/^\d{4}$/.test(id) && // Filter out raw 4-digit years like "1971"
                                             id.toLowerCase() !== 'capone' &&
-                                            id.toLowerCase() !== 'robert' && // Robert is person
-                                            id !== 'dr_reggie' // Explicitly exclude Reggie
+                                            id.toLowerCase() !== 'robert' &&
+                                            id !== 'dr_reggie' &&
+                                            id !== 'graywater_beacon' &&
+                                            id !== 'iron_horse_image' &&
+                                            !!CLUE_DISPLAY_MAP[id] // STRICT: Only show if it has a valid Chinese mapping
                                         )
                                         .map(id => (
                                             <button
@@ -542,47 +552,14 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                 {/* Feature Modals */}
 
-                {/* MindMap Modal */}
+                {/* MindMap Modal -> REPLACED by Syndicate Board */}
                 <AnimatePresence>
                     {showMindMap && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="fixed inset-0 z-40 bg-black/95 bg-opacity-95 backdrop-blur-sm"
-                        >
-                            {/* Header Controls - Title Only */}
-                            <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-start pointer-events-none z-[100]">
-                                <span className="text-[#d89853] tracking-[0.2em] font-bold flex items-center gap-3 bg-black/50 px-4 py-2 rounded-full border border-[#d89853]/20 backdrop-blur-md pointer-events-auto shadow-[0_0_15px_rgba(216,152,83,0.2)]">
-                                    <Network size={20} />
-                                    神经网络图谱
-                                </span>
-                            </div>
-
-                            {/* Exit Button - Bottom Center */}
-                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[100] pointer-events-auto">
-                                <button
-                                    onClick={() => setShowMindMap(false)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-[#c85a3f]/30 hover:bg-[#c85a3f]/50 text-[#d89853]/80 hover:text-[#d89853] border border-[#c85a3f]/40 shadow-[0_0_8px_rgba(200,90,63,0.2)] rounded transition-all group backdrop-blur-sm"
-                                >
-                                    <span className="text-xs font-mono tracking-[0.15em] uppercase opacity-80 group-hover:opacity-100">EXIT</span>
-                                    <X size={14} />
-                                </button>
-                            </div>
-
-                            <div className="w-full h-full">
-                                <MindMap
-                                    nodes={nodes}
-                                    activeNodeId={activeNodeId}
-                                    onNodeClick={(id) => {
-                                        onNodeClick(id);
-                                        setShowMindMap(false); // Close map on click to show details
-                                    }}
-                                    onShatter={onShatter}
-                                    unlockedPeople={unlockedPeople}
-                                />
-                            </div>
-                        </motion.div>
+                        <SyndicateBoard
+                            unlockedPeople={unlockedPeople}
+                            onClose={() => setShowMindMap(false)}
+                            phase={1} // Hardcoded Phase 1 for now (expand later)
+                        />
                     )}
                 </AnimatePresence>
 
@@ -645,7 +622,14 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     <X size={24} />
                                 </button>
                                 <div className="overflow-y-auto custom-scrollbar">
-                                    <NodeDetail node={activeNode} onShatter={onShatter} onCollectClue={onCollectClue} />
+                                    <NodeDetail
+                                        node={activeNode}
+                                        onShatter={onShatter}
+                                        onCollectClue={onCollectClue}
+                                        onCollectAttachment={onCollectAttachment}
+                                        collectedDossierIds={collectedDossierIds}
+                                        clueDisplayMap={CLUE_DISPLAY_MAP}
+                                    />
                                 </div>
                             </div>
                         </motion.div>
