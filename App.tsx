@@ -238,10 +238,7 @@ const App: React.FC = () => {
       setTimeout(() => {
         setGameState(prev => {
           if (prev.unlockedArchiveIds.includes('nv_1971')) {
-            return {
-              ...prev,
-              history: [...prev.history, { type: 'info', content: '[SYSTEM]: 该档案已解密 (FILE ALREADY DECRYPTED)', timestamp: Date.now() }]
-            };
+            return prev;
           }
           return {
             ...prev,
