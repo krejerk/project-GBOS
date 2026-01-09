@@ -247,12 +247,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           if (!isImageCollected) {
-                            // 1. Collect the Dossier Folder (Graywater Beacon)
-                            if (onCollectClue) onCollectClue('graywater_beacon', '灰水信标');
-                            // 2. Collect the Attachment (Iron Horse Image)
-                            if (onCollectAttachment) onCollectAttachment('iron_horse_image');
-
-                            setIsImageCollected(true);
+                            setIsSelectingFolder(true);
                           }
                         }}
                       >
@@ -278,8 +273,66 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                       </div>
                     </div>
                   )}
+
+                  {/* Folder Selection Modal */}
+                  <AnimatePresence>
+                    {isSelectingFolder && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md cursor-default"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="relative w-full max-w-lg bg-[#0f0a0a] border border-[#d89853]/30 rounded-lg p-6 shadow-2xl">
+                          <div className="text-center mb-6">
+                            <h4 className="text-[#d89853] font-mono tracking-widest text-sm font-bold">SELECT TARGET CASE FILE</h4>
+                            <p className="text-[#d89853]/40 text-[10px] uppercase">Where does this evidence belong?</p>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 max-h-[40vh] overflow-y-auto custom-scrollbar p-1 mb-4">
+                            {collectedDossierIds.map(clueId => (
+                              <button
+                                key={clueId}
+                                onClick={() => handleAttemptCollect(clueId)}
+                                className="text-[10px] font-mono border border-[#d89853]/20 bg-[#d89853]/5 text-[#d89853]/80 p-3 rounded hover:bg-[#d89853]/20 hover:text-[#d89853] hover:border-[#d89853]/50 transition-all truncate text-left flex items-center gap-2"
+                              >
+                                <Folder size={14} className="shrink-0" />
+                                <span className="truncate">{clueDisplayMap[clueId] || clueId}</span>
+                              </button>
+                            ))}
+                            {collectedDossierIds.length === 0 && (
+                              <div className="col-span-2 text-center text-[#d89853]/30 text-xs py-4">
+                                NO OPEN FILES AVAILABLE
+                              </div>
+                            )}
+                          </div>
+
+                          <button
+                            onClick={() => setIsSelectingFolder(false)}
+                            className="absolute top-2 right-2 text-[#d89853]/40 hover:text-[#d89853]"
+                          >
+                            <X size={16} />
+                          </button>
+
+                          {collectionFeedback.msg && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className={`absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded border backdrop-blur-md shadow-lg font-mono font-bold tracking-widest text-xs z-50 whitespace-nowrap
+                                            ${collectionFeedback.type === 'success' ? 'bg-green-900/90 border-green-500 text-green-100' : 'bg-red-900/90 border-red-500 text-red-100'}
+                                        `}
+                            >
+                              {collectionFeedback.msg}
+                            </motion.div>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
+
 
               <div className="mt-12 pt-8 border-t border-double border-[#d89853]/30 flex flex-col items-end gap-2">
                 <div className="text-right rotate-[-2deg]">
@@ -343,6 +396,6 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
           </div>
         )}
       </div>
-    </motion.div>
+    </motion.div >
   );
 };

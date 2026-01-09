@@ -512,7 +512,7 @@ const App: React.FC = () => {
       collectedClues: prev.collectedClues.filter(id => !personIds.includes(id)),
       history: [
         ...prev.history,
-        { type: 'info', content: `[SYSTEM]: 已消耗档案检索线索`, timestamp: Date.now() }
+
       ]
     }));
   };
