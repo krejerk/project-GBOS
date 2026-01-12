@@ -26,8 +26,8 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
             // Initial Keywords for search (Briefing content)
             collectedClues: [
                 'chicago', 'maine', 'small_bank', 'missing',
-                'relationship', 'confession'
-                // Removed persons (nibi, conchar, etc.) and years (1971)
+                'relationship'
+                // Removed 'confession' (not a searchable keyword), persons, and years
             ],
 
             // NO Dossier items yet (except maybe initial empty state or basic profile if intended, but keeping clean for "start")
@@ -69,7 +69,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
             collectedClues: [
                 // Intro / Base
                 'chicago', 'maine', 'small_bank', 'missing',
-                'relationship', 'confession',
+                'relationship',
 
                 // Confession 2
                 'ohio', 'ritual_case',
@@ -78,8 +78,8 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                 // (No concept keywords in Confession 3, only Person/Year)
 
                 // Archive Keywords (found within unlocked archives)
-                'headdress', 'family_massacre', 'dismemberment_case'
-                // Removed 'lundgren' (Person) and years
+                'family_massacre', 'dismemberment_case'
+                // Removed 'headdress' (dirty data), persons, and years
             ],
 
             // Floor 2 adds the Dossier items

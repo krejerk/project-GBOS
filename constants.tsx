@@ -95,7 +95,7 @@ export const CORE_NODES: MemoryNode[] = [
     title: "供述 No.1",
     currentLayer: MemoryLayer.SURFACE,
     position: { x: window.innerWidth * 0.7, y: window.innerHeight * 0.6 },
-    revealedKeywords: ['maine', 'nibi', 'conchar', 'year_1971', 'small_bank', 'relationship', 'confession'],
+    revealedKeywords: ['maine', 'nibi', 'conchar', 'year_1971', 'small_bank', 'relationship'],
     layers: {
       [MemoryLayer.SURFACE]: {
         event: "日子过去实在太久了。这些年我喝了这么多劣质波本，脑子早被搞坏了。所以即便我能记得起来的，大概也是我这几十年来为了不发疯，一遍遍讲给自己听的'故事'。\n\n到底是不是真的发生过的事情，我真不敢给你打包票。我只能说，那次潜伏任务（Deep Cover）的启动完全背离了局里的标准作业程序。\n\n如果我没记错的话，你说的缅因州的案子发生在1971年，是雷吉博士标记案件中的最新一起。总之通过一些退伍军人俱乐部的关系，行动组很快就锁定了逮捕一个名叫尼比的阿尔衮琴人，尼比对罪行供认不讳，很快就被审判收监。没过几天，他们也把我也放到监狱里，和他关在一起。",

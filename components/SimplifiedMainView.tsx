@@ -274,24 +274,15 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                     const lastItem = history.length > 0 ? history[history.length - 1] : null;
 
-                                    // Filter out "System Collection" messages from this specific display area
-                                    const isCollectionLog = lastItem?.content.includes('已收录') ||
-                                        lastItem?.content.includes('RECORDED') ||
-                                        lastItem?.content.includes('IDENTIFIED') ||
-                                        lastItem?.content.includes('FILED') ||
-                                        lastItem?.content.includes('NEURAL LINK ESTABLISHED') ||
-                                        lastItem?.content.includes('[SYSTEM]: 已消耗') ||
-                                        lastItem?.content.includes('[STORY CHECKPOINT]') ||
-                                        lastItem?.content.includes('[DEBUG]'); // Filter debug messages
-
-                                    const showResponse = lastItem && lastItem.type !== 'search' && !isCollectionLog;
+                                    // CRITICAL: Only show CHARACTER DIALOGUE in this area
+                                    // Character dialogue format: "> [NAME]: ..."
+                                    // Block ALL system messages (anything not starting with "> [")
+                                    const isCharacterDialogue = lastItem?.content.startsWith('> [');
+                                    const showResponse = lastItem && lastItem.type !== 'search' && isCharacterDialogue;
 
                                     if (showResponse && lastItem) {
-                                        const isCharacter = lastItem.content.startsWith('> [');
                                         // Clean up content for display: remove "> [NAME]: " prefix if present
-                                        const displayContent = isCharacter
-                                            ? lastItem.content.replace(/^> \[.*?\]:\s*"/, '').replace(/"$/, '')
-                                            : lastItem.content;
+                                        const displayContent = lastItem.content.replace(/^> \[.*?\]:\s*"/, '').replace(/"$/, '');
 
                                         return (
                                             <motion.div
@@ -299,12 +290,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                                 initial={{ opacity: 0, y: 5 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -5 }}
-                                                className={`text-sm tracking-[0.15em] font-light leading-relaxed
-                                                    ${isCharacter ? 'text-[#d89853] italic' : 'text-[#c85a3f]/70'}
-                                                `}
+                                                className="text-sm tracking-[0.15em] font-light leading-relaxed text-[#d89853] italic"
                                                 style={{ textShadow: '0 0 10px rgba(216,152,83,0.3)' }}
                                             >
-                                                {isCharacter ? `“${displayContent}”` : displayContent}
+                                                "{displayContent}"
                                             </motion.div>
                                         );
                                     }
