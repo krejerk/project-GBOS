@@ -12,7 +12,7 @@ interface ClueLibraryProps {
     onCollectAttachment?: (id: string) => void;
     onCollectClue?: (id: string, word: string) => void; // For auto-collecting clues
     collectedDossierIds?: string[]; // For tracking dossier items like addresses
-    // Story node system
+    collectedKeywords?: string[]; // For tracking collected keywords/clues
     unlockedNodeIds?: string[]; // For tracking unlocked confessions
     unlockedArchiveIds?: string[]; // For tracking unlocked archives
     currentStoryNode?: number; // Current story node (0 = not reached, 1 = node 1, etc.)
@@ -203,13 +203,19 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
     'graywater_beacon': {
         id: 'graywater_beacon',
         word: '灰水信标',
-        description: '在莫哈韦休息站附近发现的视觉残留信号。包含一个名为“铁马”品牌的空烟盒。',
+        description: '在莫哈韦休息站附近发现的视觉残留信号。代号"灰水信标"，是KLUB计划中用于单向情报传递的载具系统。',
         source: 'Confession',
         attachments: [{
             type: 'image',
             title: '铁马烟盒 (Iron Horse)',
             content: '/assets/iron_horse_beacon.jpg'
         }]
+    },
+    'aw_wilmo': {
+        id: 'aw_wilmo',
+        word: '小A.W.威尔莫',
+        description: '烟盒上的手写姓名，缩写为A.W.，可能是某个关键人物的标记或代号。',
+        source: 'Confession'
     }
 };
 
@@ -548,7 +554,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
                                             {/* Description - Typewriter style */}
                                             <div className="font-mono text-sm md:text-base leading-relaxed text-[#1a1515]/80 mb-12 max-w-2xl">
-                                                {selectedClue.description}
+                                                {renderContent(selectedClue.description)}
                                             </div>
 
                                             {/* Attachments Section */}
@@ -757,8 +763,14 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                 alt={viewingAttachment.title}
                                                 className="max-h-[85vh] object-contain"
                                             />
-                                            <div className="absolute bottom-[-40px] left-0 w-full text-center text-white font-mono text-sm tracking-widest mt-4">
-                                                {viewingAttachment.title}
+                                            <div className="absolute bottom-[-60px] left-0 w-full text-center text-white font-mono text-sm tracking-widest mt-4">
+                                                <div className="mb-2">{viewingAttachment.title}</div>
+                                                {/* Special caption for iron horse beacon */}
+                                                {viewingAttachment.content === '/assets/iron_horse_beacon.jpg' && (
+                                                    <div className="text-xs text-[#94a3b8]">
+                                                        烟盒上写着：{renderContent('[小A.W.威尔莫](clue:aw_wilmo)')}
+                                                    </div>
+                                                )}
                                             </div>
                                             <button
                                                 onClick={() => setViewingAttachment(null)}

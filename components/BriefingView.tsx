@@ -158,9 +158,6 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete }) => {
 
             {/* Cinematic Label Overlay */}
             <div className="absolute bottom-4 left-6 flex items-center gap-3">
-              <span className="text-[10px] font-mono tracking-widest text-[#d89853]/90 bg-black/80 px-3 py-1.5 rounded border border-[#d89853]/20 backdrop-blur-md">
-                EVIDENCE_IMG_001.JPG
-              </span>
               <span className="text-[10px] font-mono tracking-widest text-[#c85a3f]/80 animate-pulse">
                 Analyzing...
               </span>

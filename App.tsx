@@ -18,6 +18,7 @@ const App: React.FC = () => {
     collectedClues: [],
     collectedDossierIds: [],
     collectedYears: [],
+    collectedAttachments: [],
     unlockedPeople: [],
     unlockedArchiveIds: [],
     systemStability: 84, // Initial Stability
@@ -82,28 +83,82 @@ const App: React.FC = () => {
       history: [...prev.history, { type: 'search', content: query, timestamp: Date.now() }]
     }));
 
+    // ===== KEYWORD-CONTENT MAPPING FOR AUTO-CLEANUP =====
+    // Define which keywords should be removed when confessions are unlocked
+    const CONFESSION_KEYWORDS: Record<string, { clues: string[], years: string[], people: string[] }> = {
+      confession_1: {
+        clues: ['maine', 'small_bank'],
+        years: [],
+        people: []
+      },
+      confession_2: {
+        clues: ['ohio', 'ritual_case'],
+        years: [],
+        people: []
+      },
+      confession_3: {
+        clues: ['chicago', 'missing'],
+        years: [],
+        people: []
+      },
+      confession_4: {
+        clues: ['1402_old_dominion_rd', 'training_day'],
+        years: [],
+        people: []
+      },
+      confession_5: {
+        clues: ['nevada', 'family_massacre'],
+        years: [],
+        people: []
+      },
+      confession_6: {
+        clues: ['mojave_rest_stop', 'empty_cigarette_pack'],
+        years: [],
+        people: []
+      }
+    };
+
     // ===== STRICT KEYWORD VALIDATION SYSTEM =====
 
     // Define all valid keywords (both Chinese and English variants)
+    // Note: Smart phrase matching handles multi-word phrases automatically
     const VALID_KEYWORDS: Record<string, boolean> = {
+      // Locations - complete phrases
       'maine': true, '缅因': true, '缅因州': true,
-      'small_bank': true, '小银行': true, 'small bank': true,
       'ohio': true, '俄亥俄': true, '俄亥俄州': true,
-      'ritual': true, '祭祀': true, '祭祀案': true, 'ritual_case': true,
       'chicago': true, '芝加哥': true,
-      'missing': true, '失踪': true,
       'nevada': true, '内华达': true, '内华达州': true,
+      'mojave': true, '莫哈韦': true, 'mojave rest stop': true, 'mojave_rest_stop': true, '休息站': true, '莫哈韦休息站': true,
+      'roanoke': true, '罗阿诺克市': true,
+
+      // Addresses - complete phrases
+      '1402': true, 'old dominion': true, 'old_dominion': true, '1402 old dominion rd': true,
+      'rd': true, // Keep for abbreviation flexibility
+
+      // Cases - complete phrases
+      'small bank': true, 'small_bank': true, '小银行': true,
+      'ritual': true, '祭祀': true, '祭祀案': true, 'ritual_case': true, 'ritual case': true,
+      'missing': true, '失踪': true,
       'family_massacre': true, '灭门': true, '灭门案': true, 'massacre': true, 'extinction': true,
-      '1402': true, 'old dominion': true, 'old_dominion': true,
-      'training': true, '训练日': true, 'training_day': true,
-      'mojave': true, '莫哈韦': true, 'mojave_rest_stop': true,
-      'cigarette': true, '空烟盒': true, 'empty_cigarette_pack': true,
+      'dismemberment_case': true, '碎尸案': true,
+      'training': true, '训练日': true, 'training_day': true, 'training day': true,
+
+      // Items
+      'cigarette': true, '空烟盒': true, 'empty_cigarette_pack': true, 'empty cigarette pack': true,
+      'headdress': true, '阿尔衮琴族头饰': true,
+      'graywater_beacon': true, '灰水信标': true,
+
+      // Years
       '1971': true, 'year_1971': true,
+      '1968': true, 'year_1968': true,
+      '1967': true, 'year_1967': true,
+      '1985': true, 'year_1985': true,
+
+      // People
       'little_derek_wayne': true, '小德里克': true, 'derek wayne': true, 'wayne': true,
       'rubick': true, '鲁比克': true,
       'asian_woman': true, '亚裔女性': true,
       'julip': true, '黄油朱莉普': true,
-      'headdress': true, '阿尔衮琴族头饰': true,
       'father': true, '父亲': true,
       'project': true, '青豆牡蛎汤计划': true,
       'relationship': true, '扭曲关系': true,
@@ -114,24 +169,44 @@ const App: React.FC = () => {
       'morning': true, '莫宁': true,
       'lundgren': true, '伦德格兰': true,
       'roger_beebe': true, '罗格·毕比': true, 'roger beebe': true,
-      '1968': true, 'year_1968': true,
-      '1967': true, 'year_1967': true,
-      '1985': true, 'year_1985': true,
       'phoenix': true, '凤凰城行动': true,
       'architect': true, '建筑师': true,
       'syndicate': true, '辛迪加': true,
-      'dismemberment_case': true, '碎尸案': true,
-      'roanoke': true, '罗阿诺克市': true,
-      'graywater_beacon': true, '灰水信标': true
+      'aw_wilmo': true, '小a.w.威尔莫': true, 'a.w.威尔莫': true, 'wilmo': true, '威尔莫': true
     };
 
     const validateQuery = (queryStr: string) => {
       const lowerQuery = queryStr.toLowerCase().trim();
-      const tokens = lowerQuery.split(/[\s,，.。、]+/).filter(t => t.length > 0);
-      const allValid = tokens.every(token => VALID_KEYWORDS[token]);
 
+      // ===== SMART PHRASE MATCHING =====
+      // Normalize input: convert underscores to spaces for easier matching
+      const normalizedQuery = lowerQuery.replace(/_/g, ' ');
+
+      // Extract all known phrases (sort by length descending for greedy matching)
+      const knownPhrases = Object.keys(VALID_KEYWORDS).sort((a, b) => b.length - a.length);
+
+      // Add word boundaries (spaces and punctuation) for matching
+      let remainingQuery = ' ' + normalizedQuery + ' ';
+
+      // Greedily match known phrases (longest first)
+      for (const phrase of knownPhrases) {
+        // Normalize phrase as well (convert underscores to spaces)
+        const normalizedPhrase = phrase.replace(/_/g, ' ');
+        // Escape regex special characters
+        const escaped = normalizedPhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Match with word boundaries (space, punctuation, CJK characters, or string boundary)
+        // CJK range: \u4e00-\u9fff (Chinese), \u3040-\u30ff (Japanese Hiragana/Katakana)
+        const pattern = new RegExp(`([\\s.。,，!！?？\\u4e00-\\u9fff\\u3040-\\u30ff]|^)${escaped}([\\s.。,，!！?？\\u4e00-\\u9fff\\u3040-\\u30ff]|$)`, 'gi');
+        remainingQuery = remainingQuery.replace(pattern, '$1 $2'); // Replace matched phrases with space
+      }
+
+      // Check if remaining content is only whitespace and punctuation
+      const remaining = remainingQuery.replace(/[\s,，.。、！!？?]+/g, '').trim();
+      const valid = remaining.length === 0; // All content was matched or is separator
+
+      // ===== FEATURE DETECTION (unchanged) =====
       return {
-        valid: allValid,
+        valid,
         hasMaine: lowerQuery.includes('maine') || lowerQuery.includes('缅因'),
         hasSmallBank: lowerQuery.includes('small_bank') || lowerQuery.includes('小银行') || lowerQuery.includes('small bank'),
         hasOhio: lowerQuery.includes('ohio') || lowerQuery.includes('俄亥俄'),
@@ -141,13 +216,14 @@ const App: React.FC = () => {
         hasNevada: lowerQuery.includes('nevada') || lowerQuery.includes('内华达'),
         hasFamilyMassacre: lowerQuery.includes('massacre') || lowerQuery.includes('extinction') || lowerQuery.includes('灭门'),
         hasAddress: lowerQuery.includes('1402') || lowerQuery.includes('old dominion') || lowerQuery.includes('old_dominion'),
-        hasTraining: lowerQuery.includes('training') || lowerQuery.includes('训练日'),
+        hasTraining: lowerQuery.includes('training') || lowerQuery.includes('训练日') || lowerQuery.includes('training_day'),
         hasMojave: lowerQuery.includes('mojave') || lowerQuery.includes('莫哈韦'),
         hasCigarette: lowerQuery.includes('empty_cigarette_pack') || lowerQuery.includes('空烟盒') || lowerQuery.includes('cigarette'),
         hasYear1971: lowerQuery.includes('1971') || lowerQuery.includes('year_1971'),
         hasLittleDerek: lowerQuery.includes('little_derek_wayne') || lowerQuery.includes('小德里克') || lowerQuery.includes('derek wayne') || lowerQuery.includes('wayne')
       };
     };
+
 
     const validation = validateQuery(query);
 
@@ -168,14 +244,17 @@ const App: React.FC = () => {
       setTimeout(() => {
         const node = nodes.find(n => n.id === 'confession_1');
         if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_1;
           setGameState(prev => ({
             ...prev,
             activeNodeId: node.id,
             unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
             // Restore Stability on Unlock (Success)
             systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            // Remove used clues from inventory
-            collectedClues: prev.collectedClues.filter(id => !['maine', 'small_bank', 'headdress'].includes(id)),
+            // Auto-remove used keywords 
+            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
+            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
@@ -205,13 +284,15 @@ const App: React.FC = () => {
       setTimeout(() => {
         const node = nodes.find(n => n.id === 'confession_2');
         if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_2;
           setGameState(prev => ({
             ...prev,
             activeNodeId: node.id,
             unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
-            // Restore Stability on Unlock
             systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            collectedClues: prev.collectedClues.filter(id => !['ohio', 'ritual_case'].includes(id)),
+            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
+            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
@@ -241,13 +322,15 @@ const App: React.FC = () => {
       setTimeout(() => {
         const node = nodes.find(n => n.id === 'confession_3');
         if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_3;
           setGameState(prev => ({
             ...prev,
             activeNodeId: node.id,
             unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
-            // Restore Stability on Unlock
             systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            collectedClues: prev.collectedClues.filter(id => !['chicago', 'missing'].includes(id)),
+            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
+            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
@@ -277,12 +360,15 @@ const App: React.FC = () => {
       setTimeout(() => {
         const node = nodes.find(n => n.id === 'confession_4');
         if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_4;
           setGameState(prev => ({
             ...prev,
             activeNodeId: node.id,
             unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
             systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            collectedClues: prev.collectedClues.filter(id => !['1402_old_dominion_rd', 'training_day'].includes(id)),
+            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
+            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
@@ -322,12 +408,15 @@ const App: React.FC = () => {
         }
 
         if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_5;
           setGameState(prev => ({
             ...prev,
             activeNodeId: node.id,
             unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
             systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            collectedClues: prev.collectedClues.filter(id => !['nevada', 'family_massacre'].includes(id)),
+            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
+            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
             history: [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
@@ -399,6 +488,7 @@ const App: React.FC = () => {
         }
 
         if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_6;
           setGameState(prev => {
             if (prev.unlockedNodeIds.includes(node!.id)) {
               return prev;
@@ -407,10 +497,10 @@ const App: React.FC = () => {
               ...prev,
               activeNodeId: node!.id,
               unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
-              // Remove the trigger clues from "collected" list to "consume" them? Or keep them? User didn't specify consumption, usually we keep them.
-              // But previous logic for Confession 5 removed triggers. I'll follow that pattern if consistent, but usually we don't remove unless it's a "synthesis".
-              // Confession 5 logic: collectedClues.filter(id => !['nevada', 'family_massacre'].includes(id))
-              // I will keep them for now unless specified, safer.
+              systemStability: Math.min(prev.systemStability + 20, 84),
+              collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -628,13 +718,13 @@ const App: React.FC = () => {
   };
 
   const handleCollectAttachment = (id: string) => {
-    // Add to collected items and show history
+    // Add to collected attachments and show history
     setGameState(prev => {
-      if (prev.collectedClues.includes(id)) return prev;
+      if (prev.collectedAttachments?.includes(id)) return prev;
 
       return {
         ...prev,
-        collectedClues: [...prev.collectedClues, id]
+        collectedAttachments: [...(prev.collectedAttachments || []), id]
       };
     });
   };
@@ -642,7 +732,7 @@ const App: React.FC = () => {
   const handleCollectClue = (clueId: string, word: string) => {
     // Define Categories
     const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'];
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne'];
+    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo'];
     const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985'];
 
     const isDossier = DOSSIER_WHITELIST.includes(clueId);
@@ -746,7 +836,7 @@ const App: React.FC = () => {
     setGameState(prev => ({
       ...prev,
       collectedYears: prev.collectedYears.filter(id => !yearIds.includes(id)),
-      collectedClues: prev.collectedClues.filter(id => !personIds.includes(id)),
+      unlockedPeople: prev.unlockedPeople.filter(id => !personIds.includes(id)), // Fixed: Remove from unlockedPeople, not collectedClues
       history: [
         ...prev.history,
 
@@ -822,6 +912,7 @@ const App: React.FC = () => {
             onConsumeKeywords={handleConsumeKeywords}
             onCollectAttachment={handleCollectAttachment}
             collectedDossierIds={gameState.collectedDossierIds || []}
+            collectedAttachments={gameState.collectedAttachments || []}
             systemStability={gameState.systemStability}
             currentStoryNode={gameState.currentStoryNode}
             onStoryNodeComplete={handleStoryNodeComplete}

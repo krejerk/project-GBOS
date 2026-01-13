@@ -301,7 +301,10 @@ export const Archives: React.FC<ArchivesProps> = ({
         'ritual_case': '祭祀案',
         'headdress': '原住民头饰',
         'mojave_rest_stop': '莫哈韦休息站',
-        'empty_cigarette_pack': '空烟盒'
+        'empty_cigarette_pack': '空烟盒',
+        'aw_wilmo': '小A.W.威尔莫',
+        'crime_route_map': '罗伯特·卡彭：犯罪路线',
+        'graywater_beacon': '灰水信标'
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
@@ -379,6 +382,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (yearTrimmed === '1971') usedYearIds.push('year_1971');
                 if (yearTrimmed === '1968') usedYearIds.push('year_1968');
                 if (yearTrimmed === '1967') usedYearIds.push('year_1967');
+                if (yearTrimmed === '1985') usedYearIds.push('year_1985');
 
                 // Match person
                 const personLower = personInput.trim().toLowerCase();
@@ -388,6 +392,8 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (['morning', '莫宁'].includes(personLower)) usedPersonIds.push('morning');
                 if (['dr_reggie', '雷吉博士', 'reggie'].includes(personLower)) usedPersonIds.push('dr_reggie');
                 if (['project', '青豆牡蛎汤计划'].includes(personLower)) usedPersonIds.push('project');
+                if (['roger_beebe', '罗格·毕比', 'roger beebe', 'beebe'].includes(personLower)) usedPersonIds.push('roger_beebe');
+
 
                 // STRATEGIC CHANGE: Successful investigation unlocks the relevant Case Files (Dossier)
                 // DOSSIER WHITELIST: Only "Golden Julip" and "Project Green Bean Oyster Soup" can be filed.
@@ -734,9 +740,6 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                         key={j}
                                                                                         onClick={() => {
                                                                                             setAttachmentImage('/assets/fbi-symbol.png');
-                                                                                            if (onCollectAttachment) {
-                                                                                                onCollectAttachment('julip_symbol');
-                                                                                            }
                                                                                         }}
                                                                                         className="inline-flex items-center gap-1 text-[#d89853] cursor-pointer hover:text-white hover:underline decoration-1 underline-offset-4 ml-1 transition-colors group/link align-baseline font-bold"
                                                                                         title="查看附录图片"

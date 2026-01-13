@@ -136,7 +136,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'empty_cigarette_pack': '空烟盒',
         'roanoke': '罗阿诺克市',
         'graywater_beacon': '灰水信标',
-        'iron_horse_image': '铁马烟盒 (Visual)'
+        'iron_horse_image': '铁马烟盒 (Visual)',
+        'aw_wilmo': '小A.W.威尔莫'
     };
 
     // Transient System Message Handling

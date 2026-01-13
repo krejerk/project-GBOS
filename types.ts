@@ -57,6 +57,7 @@ export interface GameState {
   collectedClues: string[]; // Store IDs of collected clues (Prompts/Keywords)
   collectedDossierIds: string[]; // Store IDs of Case Dossier files (Mutually Exclusive)
   collectedYears: string[]; // Store IDs of collected year keywords (for archive search only)
+  collectedAttachments: string[]; // Store IDs of collected attachments (e.g. 'julip_symbol')
   unlockedPeople: string[]; // Store IDs of discovered people (e.g. 'nibi', 'conchar')
   unlockedArchiveIds: string[]; // Store IDs of unlocked archive cases
   systemStability: number; // 0-100% (Starts at 84%)
