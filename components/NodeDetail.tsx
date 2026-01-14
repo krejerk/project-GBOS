@@ -148,14 +148,14 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
       )}
 
       {/* Header Area */}
-      <div className={`p-8 border-b ${node.id.includes('confession') ? 'border-[#d89853]/20 bg-[#d89853]/5' : 'border-[#d89853]/20'}`}>
-        <div className="flex items-center justify-between mb-2">
+      <div className={`p-4 border-b ${node.id.includes('confession') ? 'border-[#d89853]/20 bg-[#d89853]/5' : 'border-[#d89853]/20'}`}>
+        <div className="flex items-center justify-between mb-1.5">
           {node.id.includes('confession') ? (
-            <div className="flex items-center gap-4">
-              <div className="border border-[#c85a3f] text-[#c85a3f] px-2 py-0.5 text-[10px] font-bold tracking-[0.2em] uppercase rotate-[-2deg]">
+            <div className="flex items-center gap-3">
+              <div className="border border-[#c85a3f] text-[#c85a3f] px-2 py-0.5 text-[9px] font-bold tracking-[0.2em] uppercase rotate-[-2deg]">
                 TOP SECRET
               </div>
-              <span className="text-[10px] font-mono text-[#d89853]/60 uppercase tracking-widest">口供档案 #RC-7742</span>
+              <span className="text-[9px] font-mono text-[#d89853]/60 uppercase tracking-widest">口供档案 #RC-7742</span>
             </div>
           ) : (
             <span className="text-[10px] font-mono text-[#d89853]/60 uppercase tracking-widest">神经片段解析</span>
@@ -169,7 +169,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
             </div>
           )}
         </div>
-        <h2 className={`text-2xl font-bold tracking-tight mb-1 uppercase ${node.id.includes('confession') ? 'text-[#d89853] font-mono' : 'text-[#d89853] italic'}`}>
+        <h2 className={`text-xl font-bold tracking-tight uppercase ${node.id.includes('confession') ? 'text-[#d89853] font-mono' : 'text-[#d89853] italic'}`}>
           {node.title}
         </h2>
         {!node.id.includes('confession') && <div className="text-xs text-[#d89853]/50 font-mono">STATUS: {node.currentLayer} VIEW</div>}
