@@ -649,7 +649,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             ? { opacity: 1, scale: 1, filter: 'brightness(1) blur(0px)', transition: { type: "spring", damping: 20, stiffness: 100, duration: 0.7 } }
                             : { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3 } }}
                         exit={{ opacity: 0, scale: 0.9, filter: 'blur(20px)', transition: { duration: 0.3 } }}
-                        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 md:p-8"
+                        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm"
                         onClick={() => onNodeClick('')}
                     >
                         {/* Glitch Overlay for Confession Intro */}
@@ -663,11 +663,14 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         )}
 
                         <motion.div
-                            drag
+                            drag={!activeNode.id.includes('confession')}
                             dragConstraints={{ left: -300, right: 300, top: -200, bottom: 200 }}
                             dragMomentum={false}
-                            className="w-full max-w-6xl h-[85vh] bg-[#0c0505] border border-[#d89853]/40 rounded-sm shadow-[0_0_150px_rgba(216,152,83,0.15),0_0_50px_rgba(0,0,0,1)] overflow-hidden relative flex flex-col cursor-grab active:cursor-grabbing"
-                            style={{ boxShadow: '0 0 100px rgba(0,0,0,0.8), 0 0 40px rgba(216,152,83,0.1)' }}
+                            className={activeNode.id.includes('confession')
+                                ? "w-screen h-screen bg-[#0c0505] overflow-hidden relative flex flex-col"
+                                : "w-full max-w-6xl h-[85vh] bg-[#0c0505] border border-[#d89853]/40 rounded-sm shadow-[0_0_150px_rgba(216,152,83,0.15),0_0_50px_rgba(0,0,0,1)] overflow-hidden relative flex flex-col cursor-grab active:cursor-grabbing"
+                            }
+                            style={!activeNode.id.includes('confession') ? { boxShadow: '0 0 100px rgba(0,0,0,0.8), 0 0 40px rgba(216,152,83,0.1)' } : {}}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <button
