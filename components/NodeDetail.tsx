@@ -182,14 +182,15 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
           <div className="relative h-full flex flex-col bg-black overflow-hidden group/confession">
             {/* Pronounced CRT Flicker & Scanlines Layer */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-              {/* Global High-Frequency Flicker */}
+              {/* Global High-Frequency Flicker - Optimized */}
               <motion.div
                 animate={isStabilized
-                  ? { opacity: [0.03, 0.05, 0.02, 0.04] } // Calmer state
-                  : { opacity: [0.08, 0.12, 0.05, 0.1, 0.07] } // Aggressive initial state
+                  ? { opacity: [0.02, 0.04, 0.02] }
+                  : { opacity: [0.06, 0.08, 0.04] }
                 }
-                transition={{ repeat: Infinity, duration: isStabilized ? 0.3 : 0.12, ease: "linear" }}
+                transition={{ repeat: Infinity, duration: isStabilized ? 0.5 : 0.2, ease: "linear" }}
                 className="absolute inset-0 bg-white mix-blend-overlay z-[5]"
+                style={{ willChange: 'opacity' }}
               />
               {/* Scrolling Scanline Effect */}
               <motion.div
@@ -249,33 +250,32 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                     return (
                       <motion.div
                         key={fragmentId}
-                        initial={{ opacity: 0, scale: 0.9, y: 50, rotate: rotate + 5, filter: 'blur(15px)' }}
+                        initial={{ opacity: 0, scale: 0.95, y: 30, rotate: rotate + 3 }}
                         animate={{
-                          opacity: 1,
+                          opacity: isStabilized ? 1 : 0.8,
                           scale: 1,
                           y: 0,
-                          rotate: rotate,
-                          filter: isStabilized ? 'blur(0px) brightness(1)' : 'blur(5px) brightness(0.8)'
+                          rotate: rotate
                         }}
                         transition={{
-                          filter: { duration: 2, ease: "easeInOut" },
-                          opacity: { delay: 0.1 + (layerIndex * 0.5) + (pIndex * 0.2), duration: 0.8 },
-                          y: { delay: 0.1 + (layerIndex * 0.5) + (pIndex * 0.2), duration: 1.2, ease: [0.22, 1, 0.36, 1] },
-                          scale: { delay: 0.1 + (layerIndex * 0.5) + (pIndex * 0.2), duration: 1.2 },
-                          rotate: { delay: 0.1 + (layerIndex * 0.5) + (pIndex * 0.2), duration: 1.2 }
+                          opacity: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.6, ease: "easeOut" },
+                          y: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" },
+                          scale: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" },
+                          rotate: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" }
                         }}
                         whileHover={{
-                          scale: 1.04,
+                          scale: 1.02,
                           zIndex: 100,
                           rotate: 0,
-                          transition: { duration: 0.3, ease: "easeOut" }
+                          transition: { duration: 0.2, ease: "easeOut" }
                         }}
                         className="relative mb-16 p-8 bg-[#1a1410]/80 border border-[#d89853]/15 shadow-[0_20px_40px_rgba(0,0,0,0.5)] group/fragment backdrop-blur-sm overflow-hidden"
                         style={{
                           marginLeft: `${offsetX}px`,
-                          transform: `rotate(${rotate}deg)`,
+                          transform: `rotate(${rotate}deg) translateZ(0)`,
                           zIndex: zIndex,
-                          clipPath: clipPath
+                          clipPath: clipPath,
+                          willChange: 'transform, opacity'
                         }}
                       >
                         {/* Paper Texture Overlay */}
