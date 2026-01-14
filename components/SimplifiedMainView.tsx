@@ -339,7 +339,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                                 initial={{ opacity: 0, y: 5 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -5 }}
-                                                className="text-sm tracking-[0.15em] font-light leading-relaxed text-[#d89853] italic"
+                                                className="text-sm tracking-[0.15em] font-light leading-relaxed text-[#d89853]"
                                                 style={{ textShadow: '0 0 10px rgba(216,152,83,0.3)' }}
                                             >
                                                 "{displayContent}"
