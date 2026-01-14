@@ -635,6 +635,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     onCollectClue={onCollectClue}
                                     onCollectAttachment={onCollectAttachment}
                                     collectedDossierIds={collectedDossierIds}
+                                    collectedAttachments={collectedAttachments}
                                     clueDisplayMap={CLUE_DISPLAY_MAP}
                                 />
                             </div>

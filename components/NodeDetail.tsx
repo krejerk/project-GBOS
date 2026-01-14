@@ -10,6 +10,7 @@ interface NodeDetailProps {
   onCollectClue: (id: string, word: string) => void;
   onCollectAttachment?: (id: string) => void;
   collectedDossierIds?: string[];
+  collectedAttachments?: string[];
   clueDisplayMap?: Record<string, string>;
 }
 
@@ -19,6 +20,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   onCollectClue,
   onCollectAttachment,
   collectedDossierIds = [],
+  collectedAttachments = [],
   clueDisplayMap = {}
 }) => {
   const current = node.layers[node.currentLayer] || node.layers[MemoryLayer.SURFACE];
@@ -109,7 +111,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   // Track animation states for collected keywords
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});
   const [isVisualRevealed, setIsVisualRevealed] = React.useState(false);
-  const [isImageCollected, setIsImageCollected] = React.useState(false);
+  const isImageCollected = collectedAttachments.includes('graywater_beacon');
   const [isStabilized, setIsStabilized] = React.useState(false);
 
   React.useEffect(() => {
@@ -457,6 +459,65 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
             </button>
           </div>
         )}
+
+        {/* Global Folder Selection Overlay for Confession Visuals */}
+        <AnimatePresence>
+          {isSelectingFolder && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md"
+            >
+              <div className="w-full max-w-sm bg-[#1a1410] border border-[#d89853]/40 p-6 shadow-2xl relative">
+                <button
+                  onClick={() => setIsSelectingFolder(false)}
+                  className="absolute top-2 right-2 text-[#d89853]/40 hover:text-[#d89853]"
+                >
+                  <X size={16} />
+                </button>
+
+                <div className="text-center mb-6">
+                  <h4 className="text-[#d89853] font-mono tracking-widest text-xs font-bold uppercase mb-1">选择归档目录</h4>
+                  <p className="text-[#d89853]/40 text-[9px] uppercase tracking-tighter">SELECT TARGET CASE FILE FOR EVIDENCE</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2 max-h-[40vh] overflow-y-auto custom-scrollbar pr-1">
+                  {collectedDossierIds.map(clueId => (
+                    <button
+                      key={clueId}
+                      onClick={() => handleAttemptCollect(clueId)}
+                      className="text-[10px] font-mono border border-[#d89853]/20 bg-[#d89853]/5 text-[#d89853]/80 p-3 rounded hover:bg-[#d89853]/20 hover:text-[#d89853] hover:border-[#d89853]/50 transition-all flex items-center gap-3 group/folder"
+                    >
+                      <Folder size={14} className="group-hover/folder:scale-110 transition-transform" />
+                      <span className="truncate">{clueDisplayMap[clueId] || clueId}</span>
+                    </button>
+                  ))}
+                  {collectedDossierIds.length === 0 && (
+                    <div className="text-center py-8 border border-dashed border-[#d89853]/10">
+                      <p className="text-[#d89853]/30 text-[10px] uppercase font-mono tracking-widest">
+                        暂无可用案卷文件夹<br />
+                        <span className="text-[9px] opacity-50">NO OPEN FILES AVAILABLE</span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {collectionFeedback.msg && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`mt-4 p-3 border text-center font-mono font-bold text-[10px] tracking-widest
+                      ${collectionFeedback.type === 'success' ? 'bg-green-900/20 border-green-500 text-green-400' : 'bg-red-900/20 border-red-500 text-red-400'}
+                    `}
+                  >
+                    {collectionFeedback.msg}
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div >
   );
