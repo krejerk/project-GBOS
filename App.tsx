@@ -660,8 +660,13 @@ const App: React.FC = () => {
 
         // ===== ORIGINAL EASTER EGGS (Medium Priority) =====
         {
+          keywords: ['康查尔', 'conchar'],
+          response: '> [R. CAPONE]: "父亲负责播种，而康查尔负责修剪。他是家族的园丁。他看我们的眼神总是像看一群还没训好的牲口。他相信血缘是这世界上最脆弱的东西，只有共同流过的血，才是永恒的。"',
+          priority: 85
+        },
+        {
           keywords: ['家族', 'family', 'syndicate', '辛迪加'],
-          response: '> [UNKNOWN SIGNAL]: "家族无处不在。那种像霉菌一样的联系...有些人死了，但他们的声音还在墙壁里回荡。你听到了吗？"',
+          response: '> [R. CAPONE]: "在路易斯维尔，康查尔告诉我，\'你现在没有名字了，你只有家。\'"',
           priority: 80
         },
         {
