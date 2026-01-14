@@ -204,7 +204,6 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         description: '我根据你得到的供述，整理出了卡彭的犯罪活动路线图。目前标记到了波特兰、波士顿、纽波特、纽约、费城等关键地点。——詹妮弗',
         source: 'Node 1 Analysis',
         attachments: [{
-            id: 'crime_route_map',
             type: 'image',
             title: '东海岸犯罪路线图 (1980s)',
             content: '/assets/crime-route-map.png'
@@ -216,7 +215,6 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         description: '在莫哈韦休息站附近发现的视觉残留信号。代号"灰水信标"，是KLUB计划中用于单向情报传递的载具系统。',
         source: 'Confession',
         attachments: [{
-            id: 'graywater_beacon',
             type: 'image',
             title: '铁马烟盒 (Iron Horse)',
             content: '/assets/iron_horse_beacon.jpg'
