@@ -133,7 +133,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
             ],
 
             // Dossier
-            collectedDossierIds: ['julip', 'project', 'julip_symbol', 'project_symbol'],
+            collectedDossierIds: ['julip', 'project'],
 
             // Attachments - Crucial for Node 2 Check
             collectedAttachments: ['wilmer_ribbon'],

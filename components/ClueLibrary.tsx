@@ -476,19 +476,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     onCollectClue('blue_rv', '淡蓝色房车');
                 }
 
-                // Update Crime Route Map definition for dynamic update
-                // Note: Ideally we update state, but for this constant-based system we modify the definition or assume parent re-render handles it if we had state.
-                // For now, let's update the description in CLUE_DEFINITIONS directly or via a state override if we had one.
-                // Since CLUE_DEFINITIONS is const, we can't easily mutate it for persistence across reloads without a real backend.
-                // However, for the session, we can try to mutate it or use a local state.
-                // Given the architecture, we'll mutate the object in memory.
-                if (CLUE_DEFINITIONS['crime_route_map']) {
-                    CLUE_DEFINITIONS['crime_route_map'].description = '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔';
-                    // Update content to V2 image
-                    if (CLUE_DEFINITIONS['crime_route_map'].attachments) {
-                        CLUE_DEFINITIONS['crime_route_map'].attachments[0].content = '/assets/crime-route-map-v2.png';
-                    }
-                }
+                // Dynamic map update is now handled in getDynamicClueDefinition logic below
+                // avoiding permanent mutation of const object
 
                 // Mark as newly added/updated
                 setNewlyAddedItems(new Set(['crime_route_map', 'graywater_beacon']));
@@ -534,9 +523,31 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     // Filter available clues
     // Data is now strict lane separated, so we trust the incoming IDs
+
+    // Dynamic Clue Getter: Returns modified version of clue based on current state (Node 2 check)
+    const getDynamicClueDefinition = (id: string): Clue => {
+        const original = CLUE_DEFINITIONS[id];
+        if (!original) return original;
+
+        // Dynamic Rule: Crime Route Map updates if Node 2 is reached (detected by 'blue_rv' clue)
+        if (id === 'crime_route_map' && collectedKeywords?.includes('blue_rv')) {
+            // Return a COPY with V2 data
+            return {
+                ...original,
+                description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔',
+                attachments: original.attachments ? [{
+                    ...original.attachments[0],
+                    content: '/assets/crime-route-map-v2.png'
+                }] : []
+            };
+        }
+        return original;
+    }
+
     const collectedClues = collectedClueIds
-        .map(id => CLUE_DEFINITIONS[id])
-        .filter(Boolean);
+        .map(id => getDynamicClueDefinition(id))
+        // Filter out undefined and explicitly exclude known non-folder artifacts if they appear
+        .filter(clue => clue && !['julip_symbol', 'project_symbol'].includes(clue.id));
 
     // Group clues by source
     const groupedClues = collectedClues.reduce((acc, clue) => {
