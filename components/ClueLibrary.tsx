@@ -266,6 +266,19 @@ const JENNIFER_NODE_1_DIALOGUE = [
     `不要分心。你可以试试问问他关于[训练日](clue:training_day)的事情。`
 ];
 
+// Node 2 Dialogue - Triggered when player completes confessions 4-7, archives 5-7 (1985, 1971, 1990), and collects wilmer_ribbon
+const JENNIFER_NODE_2_DIALOGUE = [
+    `我注意到你在索恩的备忘录上停留了太长时间。`,
+    `我必须提醒你，索恩和雷吉一样，都是已经被时代抛弃的人。`,
+    `别忘了，卡彭没有阻止康查尔，他在享受。`,
+    `在他见到“父亲”之前，腐化就已经开始。他已不再可靠。`,
+    `我解密了一份被雷吉封存的原始记录。关于卡彭最后一次“灰水信标”投放。[查看记录](clue:view_iron_horse_record)`,
+    `在那之后，他进入了彻底的静默。`,
+    `去问他这件事，问他是否在那第一次见到父亲，见到那辆[淡蓝色房车](clue:blue_rv)的。`,
+    `我已经根据你目前的调查进展，以及新增的外部信息，\n整理并更新了案卷建档中的部分内容。`,
+    `你现在可以进入该模块，查看这些更新。`
+];
+
 // Utility function to reset visit status (call this when starting a new game)
 export const resetClueLibraryVisit = () => {
     sessionStorage.removeItem('clueLibrary_visited');
@@ -290,6 +303,19 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const [viewMode, setViewMode] = useState<'list' | 'folder'>('list');
 
     // Helper to parse content and render clickable clues (Ported from BriefingDetailView)
+
+    // Handle special actions from dialogue links
+    const handleDialogueAction = (actionId: string) => {
+        if (actionId === 'view_iron_horse_record') {
+            setViewingAttachment({
+                type: 'image',
+                title: 'Iron Horse Record (Louisville)',
+                content: '/assets/iron_horse_louisville.jpg',
+                id: 'iron_horse_louisville' // Virtual ID for tracking
+            });
+        }
+    };
+
     const renderContent = (content: string) => {
         const parts = content.split(/(\[.*?\]\(clue:.*?\))/g);
 
@@ -297,6 +323,23 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             const match = part.match(/\[(.*?)\]\(clue:(.*?)\)/);
             if (match) {
                 const [_, text, clueId] = match;
+
+                // Special handling for action links
+                if (clueId === 'view_iron_horse_record') {
+                    return (
+                        <span
+                            key={index}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDialogueAction(clueId);
+                            }}
+                            className="text-[#d89853] hover:text-[#fbbf24] hover:underline cursor-pointer transition-colors mx-1"
+                        >
+                            {text}
+                        </span>
+                    );
+                }
+
                 // Check if collected in keywords (clues) OR in the display list (dossiers)
                 const isCollected = collectedKeywords.includes(clueId) || collectedClueIds.includes(clueId);
 
@@ -343,6 +386,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     // Vehicle photos viewer state
     const [showVehiclePhotos, setShowVehiclePhotos] = useState(false);
 
+
     // Check if player has reached Node 1 conditions
     const checkNode1Completion = () => {
         const requiredConfessions = ['confession_1', 'confession_2', 'confession_3'];
@@ -354,6 +398,21 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         return hasAllConfessions && hasAllArchives && currentStoryNode === 0;
     };
 
+    // Check if player has reached Node 2 conditions
+    const checkNode2Completion = () => {
+        const requiredConfessions = ['confession_4', 'confession_5', 'confession_6', 'confession_7'];
+        const requiredArchives = ['il_1985', 'me_1971', 'va_1990']; // Clipping 5, 6, 7
+        const requiredAttachment = 'wilmer_ribbon';
+
+        const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
+        const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
+        const hasAttachment = collectedAttachments.includes(requiredAttachment);
+
+        // Node 2 requires Node 1 to be done (implied by currentStoryNode >= 1), 
+        // effectively checking if we are currently at stage 1 moving to 2
+        return hasAllConfessions && hasAllArchives && hasAttachment && currentStoryNode === 1;
+    };
+
     // First visit detection - check whenever module opens
     useEffect(() => {
         if (isOpen) {
@@ -363,12 +422,13 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             // Check for node completion - don't auto-open, just set indicator
             if (checkNode1Completion()) {
                 setPendingNodeId(1);
-                // Don't auto-open: setShowJennifer(true);
+            } else if (checkNode2Completion()) {
+                setPendingNodeId(2);
             }
             // Don't auto-open on first visit either
             // User must click the button to see dialogue
         }
-    }, [isOpen, unlockedNodeIds, unlockedArchiveIds, currentStoryNode]);
+    }, [isOpen, unlockedNodeIds, unlockedArchiveIds, currentStoryNode, collectedAttachments]);
 
     // Mark as visited when dialogue completes
     const handleJenniferComplete = () => {
@@ -396,6 +456,27 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     setNewlyAddedItems(new Set());
                 }, 10000);
             }
+            // Auto-collect Node 2 items and update map
+            else if (pendingNodeId === 2) {
+                // Unlock "Pale blue RV" keyword if not collected
+                if (onCollectClue) {
+                    onCollectClue('blue_rv', '淡蓝色房车');
+                }
+
+                // Update Crime Route Map definition for dynamic update
+                // Note: Ideally we update state, but for this constant-based system we modify the definition or assume parent re-render handles it if we had state.
+                // For now, let's update the description in CLUE_DEFINITIONS directly or via a state override if we had one.
+                // Since CLUE_DEFINITIONS is const, we can't easily mutate it for persistence across reloads without a real backend.
+                // However, for the session, we can try to mutate it or use a local state.
+                // Given the architecture, we'll mutate the object in memory.
+                if (CLUE_DEFINITIONS['crime_route_map']) {
+                    CLUE_DEFINITIONS['crime_route_map'].description = '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔';
+                }
+
+                // Mark as newly added/updated
+                setNewlyAddedItems(new Set(['crime_route_map', 'graywater_beacon']));
+                setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+            }
 
             setPendingNodeId(null);
         }
@@ -414,6 +495,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         let currentDialogue;
         if (pendingNodeId === 1) {
             currentDialogue = JENNIFER_NODE_1_DIALOGUE;
+        } else if (pendingNodeId === 2) {
+            currentDialogue = JENNIFER_NODE_2_DIALOGUE;
         } else if (hasVisitedBefore) {
             currentDialogue = JENNIFER_RETURN_DIALOGUE;
         } else {
@@ -778,6 +861,33 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                 {viewingAttachment.content === '/assets/iron_horse_beacon.jpg' && (
                                                     <div className="text-xs text-[#94a3b8]">
                                                         烟盒上写着：{renderContent('[小A.W.威尔莫](clue:aw_wilmo)')}
+                                                    </div>
+                                                )}
+                                                {/* Special caption for iron horse louisville */}
+                                                {viewingAttachment.content === '/assets/iron_horse_louisville.jpg' && (
+                                                    <div className="text-xs text-[#94a3b8]">
+                                                        地点标注：
+                                                        <span
+                                                            className={`
+                                                                ml-1 cursor-pointer hover:text-white transition-colors border-b border-dashed border-[#94a3b8]/50 hover:border-white
+                                                                ${collectedKeywords.includes('louisville') ? 'text-[#38bdf8] border-none cursor-default' : ''}
+                                                            `}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                if (!collectedKeywords.includes('louisville') && onCollectClue) {
+                                                                    onCollectClue('louisville', '路易斯维尔');
+
+                                                                    // Also try to collect the attachment into graywater_beacon folder if function exists
+                                                                    if (onCollectAttachment) {
+                                                                        // We use a specific ID to link this image to the folder
+                                                                        // Since graywater_beacon has no strict ID check anymore, this might just mean adding it to list for persistent tracking if needed
+                                                                        onCollectAttachment('iron_horse_louisville');
+                                                                    }
+                                                                }
+                                                            }}
+                                                        >
+                                                            路易斯维尔
+                                                        </span>
                                                     </div>
                                                 )}
                                             </div>
