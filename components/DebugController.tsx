@@ -100,6 +100,59 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
         setIsOpen(false);
     };
 
+    // PRESET 3: Floor 3 - Node 2 Ready
+    // Target: Completed Node 1. Unlocked Confessions 4-7 and Archives 5-7. Collected Wilmer Ribbon.
+    // Ready for Jennifer's THIRD special dialogue (Node 2 Logic).
+    const setFloor3 = () => {
+        // RESET VISITED STATE: Ensure Jennifer's Node 2 dialogue triggers again
+        sessionStorage.removeItem('clueLibrary_visited');
+
+        const newState: Partial<GameState> = {
+            phase: 'immersion',
+            passwordEntered: true,
+
+            // Unlocked People: Adds anyone found in Node 2 content (if any)
+            unlockedPeople: [
+                'father', 'capone', 'nibi', 'conchar', 'dr_reggie',
+                'lundgren', 'roger_beebe', 'morning',
+                'aw_wilmo' // Found in Clipping 7
+            ],
+
+            collectedClues: [
+                // Previous
+                'chicago', 'maine', 'small_bank', 'missing', 'relationship',
+                'ohio', 'ritual_case', 'family_massacre', 'dismemberment_case',
+                'year_1971', 'year_1968', 'year_1967', 'year_1985',
+
+                // Node 2 New Keywords
+                '1402_old_dominion_rd', 'training_day',
+                'nevada',
+                'mojave_rest_stop', 'empty_cigarette_pack',
+                'roanoke', 'twisted_relationship',
+                'year_1990'
+            ],
+
+            // Dossier
+            collectedDossierIds: ['julip', 'project', 'julip_symbol', 'project_symbol'],
+
+            // Attachments - Crucial for Node 2 Check
+            collectedAttachments: ['wilmer_ribbon'],
+
+            // Years
+            collectedYears: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1990'],
+
+            // Unlocked Content: Confessions 1-7 & Archives 5-7 (and previous)
+            unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7'],
+            unlockedArchiveIds: ['me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'va_1990'],
+
+            currentStoryNode: 1, // Ready to trigger Node 2 completion logic (checkNode2Completion returns true if conditions met && currentStoryNode === 1)
+            activeNodeId: null
+        };
+
+        onSetState(newState);
+        setIsOpen(false);
+    };
+
     return (
         <div className="fixed bottom-4 left-4 z-[9999] flex flex-col items-start pointer-events-none">
             <div className={`
@@ -151,6 +204,18 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                                 <div className="flex flex-col items-start">
                                     <span className="font-bold">Node 1 Ready</span>
                                     <span className="text-[8px] text-red-400/60 text-left">Investigation Complete, Pre-Dialogue</span>
+                                </div>
+                            </button>
+
+                            {/* Floor 3 - Node 2 Ready */}
+                            <button
+                                onClick={setFloor3}
+                                className="w-full flex items-center gap-3 px-3 py-2 bg-red-900/20 hover:bg-red-900/40 text-red-200 text-xs border border-red-500/30 rounded transition-all group"
+                            >
+                                <div className="w-4 h-4 rounded-full border border-red-400/50 flex items-center justify-center text-[8px] font-mono">3</div>
+                                <div className="flex flex-col items-start">
+                                    <span className="font-bold">Node 2 Ready</span>
+                                    <span className="text-[8px] text-red-400/60 text-left">Confessions 4-7 & Archives Unlocked</span>
                                 </div>
                             </button>
                         </div>
