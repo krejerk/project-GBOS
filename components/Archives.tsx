@@ -289,9 +289,9 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
             author: '马库斯·索恩 (Marcus Thorne)，FBI 实验室总证物官',
             content: `【关于“威尔莫案”证物反常性的个人陈述】
 
-1. 丝绸的“指纹”： 艾萨克·阿特尔曼（Alterman）声称此案是模仿犯的产物，因为生物特征不匹配。但我亲自比对了在小威尔莫家中缴获的发带与1972年罗阿诺克案留下的样本，两者的编织密度、染料成分全都出自同一种较比罕见的1950年代织机，这种规格的丝绸在60年代就停产了。
+1. 丝绸的“指纹”： 艾萨克·阿特尔曼（Alterman）声称此案是模仿犯的产物，因为生物特征不匹配。但我亲自比对了在小威尔莫家中缴获的发带与1972年罗阿诺克案留下的样本，两者的编织密度、染料成分全都出自同一种较比罕见的1950年代织机，这种规格的丝绸在60年代就停产了。「附注」
 
-2. 战略性剥离与“断尾”逻辑（Strategic Amputation）： 这种物理层面的一致性，与生物层面的不匹配，构成了这个案子最阴险的陷阱。阿特尔曼只看DNA，所以他轻而易举地把小威尔莫定性为“模仿者”。但他没想过，为什么这个52岁的修车工会如此“巧合”地拥有早已绝版的50年代丝绸？答案只有一个：这卷发带不是威尔莫买来的，而是被“移交”给他的。他们把这个已经年老色衰、精神受损、不再具备流动价值的小威尔莫扔在约克县的地下室里，并把那一整卷标志性的发带塞进他的抽屉，就是为了给FBI制造一个完美的“连环杀杀手”模板。这是一个“弃子”。当阿特尔曼拿着发带和威尔莫的DNA沾沾自喜时，他实际上是接过了家族递过来的一把手术刀，亲手帮“父亲”完成了这次切割。
+2. 战略性剥离与“断尾”逻辑（Strategic Amputation）： 这种物理层面的一致性，与生物层面的不匹配，构成了这个案子最阴险的陷阱。阿特尔曼只看DNA，所以他轻而易举地把小威尔莫定性为“模仿者”。但他没想过，为什么这个52岁的修车工会如此“巧合”地拥有早已绝版的50年代丝绸？答案只有一个：这卷发带不是威尔莫买来的，而是被“移交”给他的。他们把这个已经年老色衰、精神受损、不再具备流动价值的小威尔莫扔在约克县的地下室里，并把那一整卷标志性的发带塞进他的抽屉，就是为了给FBI制造一个完美的“连环杀手”模板。这是一个“弃子”。当阿特尔曼拿着发带和威尔莫的DNA沾沾自喜时，他实际上是接过了家族递过来的一把手术刀，亲手帮“父亲”完成了这次切割。
 
 3. 发散性结论： 抓获小威尔莫不是终结，而是一种“剥离”。有人把这个已经失去利用价值的、大脑受损的“支系”扔了出来，送给阿特尔曼当勋章，好换取整个“家族”更深层的静默。`,
             template: 'THORNE'
@@ -386,18 +386,31 @@ export const Archives: React.FC<ArchivesProps> = ({
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
-        // Logic: specific attachments belong to specific clues
-        // Currently we only have 'julip_symbol' belonging to 'julip'
-
-        let success = false;
-
-        // This mapping defines which folder receives the FBI symbol
-        // For now, hardcoded: attachmentImage is the FBI symbol -> 'julip'
-        if (targetClueId === 'julip') {
-            success = true;
+        // Special mapping: wilmer_ribbon goes to project dossier
+        if (attachmentImage === '/assets/wilmer_ribbon.jpg' && targetClueId === 'project') {
+            onCollectAttachment('wilmer_ribbon');
+            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+            setTimeout(() => {
+                setAttachmentImage(null);
+                setIsSelectingFolder(false);
+                setCollectionFeedback({ type: null, msg: '' });
+            }, 1500);
+            return;
         }
 
-        if (success) {
+        if (attachmentImage === '/assets/fbi-symbol.png' && targetClueId === 'graywater_beacon') {
+            onCollectAttachment('graywater_beacon');
+            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+            setTimeout(() => {
+                setAttachmentImage(null);
+                setIsSelectingFolder(false);
+                setCollectionFeedback({ type: null, msg: '' });
+            }, 1500);
+            return;
+        }
+
+        // Default logic for julip_symbol (if it's still needed, though graywater_beacon replaces it for the FBI symbol)
+        if (attachmentImage === '/assets/fbi-symbol.png' && targetClueId === 'julip') {
             if (onCollectAttachment) {
                 onCollectAttachment('julip_symbol');
             }
@@ -407,10 +420,11 @@ export const Archives: React.FC<ArchivesProps> = ({
                 setIsSelectingFolder(false);
                 setCollectionFeedback({ type: null, msg: '' });
             }, 1500);
-        } else {
-            setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
-            setTimeout(() => setCollectionFeedback({ type: null, msg: '' }), 2000);
+            return;
         }
+
+        setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
+        setTimeout(() => setCollectionFeedback({ type: null, msg: '' }), 2000);
     };
 
     const handleKeywordClick = (keyword: string) => {
@@ -800,34 +814,40 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     ? ['俄亥俄州', '祭祀案', '1967']
                                                                     : activeCase.id === 'dc_1967'
                                                                         ? ['碎尸案'] // 1967 explicitly excluded for this case
-                                                                        : activeCase.id === 'il_1985'
-                                                                            ? ['1402 Old Dominion Rd.', '灭门案', '训练日']
-                                                                            : activeCase.id === 'va_1990'
-                                                                                ? ['1972', '小威尔莫']
+                                                                        : activeCase.id === 'va_1990'
+                                                                            ? [] // No standard keywords in annotation for this case per request
+                                                                            : activeCase.id === 'il_1985'
+                                                                                ? ['1402 Old Dominion Rd.', '灭门案', '训练日']
                                                                                 : activeCase.id === 'nv_1971'
                                                                                     ? ['莫哈韦休息站', '空烟盒']
                                                                                     : ['俄亥俄州', '祭祀案']; // Default legacy
 
                                                                 const attachmentTrigger = '「图片见附录」';
+                                                                const wilmerTrigger = '「附注」';
                                                                 // Create a combined regex for keywords and the specific attachment text
-                                                                const pattern = `(${[...caseKeywords, attachmentTrigger].join('|')})`;
+                                                                const pattern = `(${[...caseKeywords, attachmentTrigger, wilmerTrigger].join('|')})`;
                                                                 const regex = new RegExp(pattern, 'g');
 
                                                                 return (
                                                                     <p key={i} className="mb-4">
                                                                         {line.split(regex).map((part, j) => {
-                                                                            if (part === attachmentTrigger) {
+                                                                            if (part === attachmentTrigger || part === wilmerTrigger) {
                                                                                 return (
                                                                                     <span
                                                                                         key={j}
                                                                                         onClick={() => {
-                                                                                            setAttachmentImage('/assets/fbi-symbol.png');
+                                                                                            // Special case for va_1990 image
+                                                                                            if (activeCase.id === 'va_1990') {
+                                                                                                setAttachmentImage('/assets/wilmer_ribbon.jpg');
+                                                                                            } else {
+                                                                                                setAttachmentImage('/assets/fbi-symbol.png');
+                                                                                            }
                                                                                         }}
                                                                                         className="inline-flex items-center gap-1 text-[#d89853] cursor-pointer hover:text-white hover:underline decoration-1 underline-offset-4 ml-1 transition-colors group/link align-baseline font-bold"
                                                                                         title="查看附录图片"
                                                                                     >
                                                                                         <File size={14} className="inline group-hover/link:scale-110 transition-transform" />
-                                                                                        {part}
+                                                                                        {part === '「附注」' ? '「附注」' : part}
                                                                                     </span>
                                                                                 );
                                                                             }
@@ -995,7 +1015,13 @@ export const Archives: React.FC<ArchivesProps> = ({
                                             exit={{ scale: 0.9, rotate: 2 }}
                                             src={attachmentImage}
                                             alt="FBI Attachment"
-                                            className="max-h-[60vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.8)] border-8 border-white p-4 bg-white transform rotate-1"
+                                            className={`
+                                                max-h-[70vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.8)] transition-all
+                                                ${attachmentImage === '/assets/wilmer_ribbon.jpg'
+                                                    ? 'p-0 bg-transparent transform rotate-2 scale-110' // Clean Polaroid style
+                                                    : 'border-8 border-white p-4 bg-white transform rotate-1' // Legacy style
+                                                }
+                                            `}
                                         />
 
                                         {collectionFeedback.msg && (
