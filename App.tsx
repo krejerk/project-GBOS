@@ -159,6 +159,8 @@ const App: React.FC = () => {
       '1968': true, 'year_1968': true,
       '1967': true, 'year_1967': true,
       '1985': true, 'year_1985': true,
+      '1972': true, 'year_1972': true,
+      '1990': true, 'year_1990': true,
 
       // People
       'little_derek_wayne': true, '小德里克': true, 'derek wayne': true, 'wayne': true,
@@ -178,7 +180,7 @@ const App: React.FC = () => {
       'phoenix': true, '凤凰城行动': true,
       'architect': true, '建筑师': true,
       'syndicate': true, '辛迪加': true,
-      'aw_wilmo': true, '小a.w.威尔莫': true, 'a.w.威尔莫': true, 'wilmo': true, '威尔莫': true
+      'aw_wilmo': true, '小A.W.威尔莫': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -793,7 +795,7 @@ const App: React.FC = () => {
     // Define Categories - COMPREHENSIVE CLASSIFICATION SYSTEM
     const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'];
     const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz'];
-    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972'];
+    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990'];
 
     const isDossier = DOSSIER_WHITELIST.includes(clueId);
     const isPerson = PEOPLE_IDS.includes(clueId);

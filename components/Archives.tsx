@@ -35,7 +35,7 @@ interface DetailedArchiveRecord {
         level: string;
         author: string;
         content: string;
-        template?: 'REGGIE' | 'ALTERMAN';
+        template?: 'REGGIE' | 'ALTERMAN' | 'THORNE';
     };
 }
 
@@ -262,11 +262,39 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 本职倾向于认为，1972年的玛莎案极有可能是一起独立案件，但因某种外部力量介入，导致一位连环杀手被激发并产生"模仿行为"，因此造就之后的一系列案件。虽然黄丝带这一符号被刻意留存，但此案的执行手法与后期成熟的、高度约束的攻击方式，却是截然不同的。
 
 3. 对 RC 资产价值的彻底否定：
-玛莎案的生物特征不符，揭示了一个令局里难堪的事实：我们可能在长达十年的时间里，都在根据一个由"模仿犯"或"变节者"提供的错误坐标进行推演。雷吉博士基于对 RC 的"病理信任"，将一个孤立的、执行拙劣的谋杀案强行并入了庞大的邪教模型。
-
-4. 结论：
 本职提议将玛莎·迪亚兹案从"青豆牡蛎汤计划"的相关档案中剥离。我们追踪的不是一个连贯的邪教逻辑，而是一个不断被模仿、被修饰的破碎切片。雷吉时代的盲目自信导致了我们在1972年就弄丢了正确的航向。`,
             template: 'ALTERMAN'
+        }
+    },
+    {
+        id: 'va_1990',
+        title: '公园大道噩梦终结：小A.W.威尔莫落网',
+        triggers: {
+            year: '1990',
+            person: ['aw_wilmo', '小A.W.威尔莫', 'A.W. Wilmer Jr.']
+        },
+        newspaper: {
+            source: '《弗吉尼亚公报》(The Virginia Gazette)',
+            date: '1990年4月12日',
+            headline: '公园大道噩梦终结：小 A.W. 威尔莫落网，“黄丝带杀手”身份曝光',
+            content: [
+                '（本报威廉斯堡讯） 维珍尼亚州警方与联邦调查局今日联合宣布，长达数年的“殖民地公园大道连环谋杀案”取得重大突破。现年52岁的本地居民小 A.W. 威尔莫（A. W. Wilmer, Jr.）于昨日在其位于约克县的隐秘住处被捕。',
+                '警方在搜查过程中，从其地下室挖掘出了大量受害者的遗物，部分物品的锈蚀程度显示其跨度可能长达二十年以上。联邦调查局目前正试图查证，这位年过五旬的修车工是否就是那个让罗阿诺克和威廉斯堡恐惧了二十年的阴影化身。'
+            ]
+        },
+        annotation: {
+            fileId: 'CP-1992-04-EVD',
+            date: '1992年4月28日',
+            level: '最高机密 (EYES ONLY / CLASSIFIED)',
+            author: '马库斯·索恩 (Marcus Thorne)，FBI 实验室总证物官',
+            content: `【关于“威尔莫案”证物反常性的个人陈述】
+
+1. 丝绸的“指纹”： 艾萨克·阿特尔曼（Alterman）声称此案是模仿犯的产物，因为生物特征不匹配。但我亲自比对了在小威尔莫家中缴获的发带与1972年罗阿诺克案留下的样本，两者的编织密度、染料成分全都出自同一种较比罕见的1950年代织机，这种规格的丝绸在60年代就停产了。
+
+2. 战略性剥离与“断尾”逻辑（Strategic Amputation）： 这种物理层面的一致性，与生物层面的不匹配，构成了这个案子最阴险的陷阱。阿特尔曼只看DNA，所以他轻而易举地把小威尔莫定性为“模仿者”。但他没想过，为什么这个52岁的修车工会如此“巧合”地拥有早已绝版的50年代丝绸？答案只有一个：这卷发带不是威尔莫买来的，而是被“移交”给他的。他们把这个已经年老色衰、精神受损、不再具备流动价值的小威尔莫扔在约克县的地下室里，并把那一整卷标志性的发带塞进他的抽屉，就是为了给FBI制造一个完美的“连环杀杀手”模板。这是一个“弃子”。当阿特尔曼拿着发带和威尔莫的DNA沾沾自喜时，他实际上是接过了家族递过来的一把手术刀，亲手帮“父亲”完成了这次切割。
+
+3. 发散性结论： 抓获小威尔莫不是终结，而是一种“剥离”。有人把这个已经失去利用价值的、大脑受损的“支系”扔了出来，送给阿特尔曼当勋章，好换取整个“家族”更深层的静默。`,
+            template: 'THORNE'
         }
     }
 ];
@@ -313,7 +341,10 @@ export const Archives: React.FC<ArchivesProps> = ({
         '莫哈韦休息站': 'mojave_rest_stop',
         '空烟盒': 'empty_cigarette_pack',
         '1972': 'year_1972',
-        '玛莎·迪亚兹': 'martha_diaz'
+        '玛莎·迪亚兹': 'martha_diaz',
+        '1990': 'year_1990',
+        '小A.W.威尔莫': 'aw_wilmo',
+        '小威尔莫': 'aw_wilmo'
     };
 
     // Clue display mapping for quick selection chips
@@ -755,7 +786,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 </div>
                                                                 <div>
                                                                     <span className="block text-[#c85a3f]/40 text-[10px] uppercase">
-                                                                        {activeCase.annotation.template === 'ALTERMAN' ? 'Authorized By' : 'Verified By'}
+                                                                        {activeCase.annotation.template === 'ALTERMAN' ? 'Authorized By' : activeCase.annotation.template === 'THORNE' ? 'Validated By' : 'Verified By'}
                                                                     </span>
                                                                     {activeCase.annotation.author}
                                                                 </div>
@@ -771,9 +802,11 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                         ? ['碎尸案'] // 1967 explicitly excluded for this case
                                                                         : activeCase.id === 'il_1985'
                                                                             ? ['1402 Old Dominion Rd.', '灭门案', '训练日']
-                                                                            : activeCase.id === 'nv_1971'
-                                                                                ? ['莫哈韦休息站', '空烟盒']
-                                                                                : ['俄亥俄州', '祭祀案']; // Default legacy
+                                                                            : activeCase.id === 'va_1990'
+                                                                                ? ['1972', '小威尔莫']
+                                                                                : activeCase.id === 'nv_1971'
+                                                                                    ? ['莫哈韦休息站', '空烟盒']
+                                                                                    : ['俄亥俄州', '祭祀案']; // Default legacy
 
                                                                 const attachmentTrigger = '「图片见附录」';
                                                                 // Create a combined regex for keywords and the specific attachment text
@@ -860,6 +893,44 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                         <text x="75" y="60" fontFamily="serif" fontSize="11" fill="currentColor" opacity="0.7" className="tracking-wider">Alterman</text>
                                                                     </svg>
                                                                     <div className="text-[10px] text-[#475569]/70 font-mono text-center mt-1 tracking-widest uppercase">Authorized</div>
+                                                                </div>
+                                                            ) : activeCase.annotation.template === 'THORNE' ? (
+                                                                // Marcus Thorne's Signature - Technical, Lab Chief style
+                                                                <div className="relative text-emerald-900/70 transform rotate-1 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                    <svg width="150" height="70" viewBox="0 0 150 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        {/* "M" - sharp, technical */}
+                                                                        <path
+                                                                            d="M25 50 L 25 25 L 40 40 L 55 25 L 55 50"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2"
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                        />
+                                                                        {/* "T" - precise */}
+                                                                        <path
+                                                                            d="M65 25 L 95 25 M 80 25 L 80 50"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2"
+                                                                            strokeLinecap="round"
+                                                                        />
+                                                                        {/* Lab Seal Symbol (Simple Hexagon) */}
+                                                                        <path
+                                                                            d="M110 30 L 125 22 L 140 30 L 140 45 L 125 53 L 110 45 Z"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="1"
+                                                                            opacity="0.4"
+                                                                        />
+                                                                        <text x="112" y="41" fontFamily="serif" fontSize="6" fill="currentColor" opacity="0.6">LAB-TECH</text>
+                                                                        {/* Divider line */}
+                                                                        <path
+                                                                            d="M 20 55 L 145 55"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="1"
+                                                                            opacity="0.3"
+                                                                        />
+                                                                        <text x="35" y="62" fontFamily="serif" fontSize="10" fill="currentColor" opacity="0.8" className="tracking-[0.2em]">M. THORNE</text>
+                                                                    </svg>
+                                                                    <div className="text-[10px] text-emerald-800/60 font-mono text-center mt-1 tracking-widest uppercase border-t border-emerald-800/20 pt-1">Forensic Chief</div>
                                                                 </div>
                                                             ) : (
                                                                 // Reggie's Signature - Original flowing style
