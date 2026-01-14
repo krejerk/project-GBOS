@@ -218,6 +218,11 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
             type: 'image',
             title: '铁马烟盒 (Iron Horse)',
             content: '/assets/iron_horse_beacon.jpg'
+        }, {
+            id: 'iron_horse_louisville',
+            type: 'image',
+            title: '烟盒记录：路易斯维尔',
+            content: '/assets/iron_horse_louisville.jpg'
         }]
     },
     'aw_wilmo': {
@@ -307,11 +312,12 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     // Handle special actions from dialogue links
     const handleDialogueAction = (actionId: string) => {
         if (actionId === 'view_iron_horse_record') {
-            setViewingAttachment({
-                type: 'image',
+            // Trigger Filing Mode instead of direct view
+            setFilingEvidence({
+                id: 'iron_horse_louisville',
                 title: 'Iron Horse Record (Louisville)',
                 content: '/assets/iron_horse_louisville.jpg',
-                id: 'iron_horse_louisville' // Virtual ID for tracking
+                type: 'image'
             });
         }
     };
@@ -383,6 +389,9 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     // New State for History/Replay
     const [showHistory, setShowHistory] = useState(false);
     const [simulatedDialogue, setSimulatedDialogue] = useState<string[] | null>(null);
+
+    // Filing State
+    const [filingEvidence, setFilingEvidence] = useState<{ id: string, title: string, content: string, type: 'image' | 'text' } | null>(null);
 
     // Track newly added items for glow effect
     const [newlyAddedItems, setNewlyAddedItems] = useState<Set<string>>(new Set());
@@ -1150,6 +1159,102 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                         isOpen={showVehiclePhotos}
                         onClose={() => setShowVehiclePhotos(false)}
                     />
+
+                    {/* Filing Evidence Modal */}
+                    <AnimatePresence>
+                        {filingEvidence && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-4"
+                            >
+                                <motion.div
+                                    initial={{ scale: 0.9, y: 20 }}
+                                    animate={{ scale: 1, y: 0 }}
+                                    className="w-full max-w-lg bg-[#1a1515] border border-[#d89853]/30 p-8 rounded shadow-[0_0_50px_rgba(216,152,83,0.1)] relative"
+                                >
+                                    <h2 className="text-[#d89853] font-mono font-bold tracking-[0.2em] text-xl mb-2 text-center">
+                                        EVIDENCE FILING
+                                    </h2>
+                                    <p className="text-[#94a3b8] text-xs font-mono text-center mb-8 uppercase tracking-widest">
+                                        Select destination folder for archival
+                                    </p>
+
+                                    {/* Evidence Preview */}
+                                    <div className="flex items-center gap-4 mb-8 bg-[#1e293b]/50 p-4 rounded border border-[#334155]">
+                                        <div className="w-16 h-16 bg-black border border-[#334155] p-1">
+                                            {filingEvidence.type === 'image' ? (
+                                                <img src={filingEvidence.content} className="w-full h-full object-cover opacity-80" />
+                                            ) : (
+                                                <FileText className="w-full h-full text-gray-500" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="text-[#e2e8f0] font-bold text-sm">{filingEvidence.title}</div>
+                                            <div className="text-[#94a3b8] text-xs font-mono">Unclassified Item</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Folder Targets */}
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {[
+                                            { id: 'project', label: '青豆牡蛎汤计划', valid: false },
+                                            { id: 'julip', label: '朱利普 (JULIP)', valid: false },
+                                            { id: 'graywater_beacon', label: '灰水信标 (GRAYWATER)', valid: true }
+                                        ].map(folder => (
+                                            <button
+                                                key={folder.id}
+                                                onClick={() => {
+                                                    if (folder.valid) {
+                                                        // Success Logic
+                                                        if (onCollectAttachment) {
+                                                            onCollectAttachment(filingEvidence.id);
+                                                        }
+
+                                                        // Open the proper folder
+                                                        const targetFolder = CLUE_DEFINITIONS[folder.id];
+                                                        if (targetFolder) {
+                                                            setSelectedClue(targetFolder);
+                                                        }
+
+                                                        // Close filing and Jennifer
+                                                        setFilingEvidence(null);
+                                                        setShowJennifer(false);
+
+                                                        // Feedback could be added here, but opening folder is strong feedback
+                                                    } else {
+                                                        // Error/Shake animation could go here
+                                                        // For now just do nothing or small shake
+                                                    }
+                                                }}
+                                                className={`
+                                                    p-4 border border-[#334155] rounded flex items-center justify-between group transition-all
+                                                    hover:border-[#d89853]/50 hover:bg-[#d89853]/5
+                                                `}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <Folder className="text-[#64748b] group-hover:text-[#d89853]" size={18} />
+                                                    <span className="text-[#94a3b8] font-mono tracking-widest text-sm group-hover:text-[#e2e8f0]">
+                                                        {folder.label}
+                                                    </span>
+                                                </div>
+                                                <ChevronRight className="text-[#334155] group-hover:text-[#d89853]" size={16} />
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <button
+                                        onClick={() => setFilingEvidence(null)}
+                                        className="mt-8 mx-auto block text-[#64748b] hover:text-[#94a3b8] text-xs font-mono tracking-widest"
+                                    >
+                                        CANCEL OPERATION
+                                    </button>
+
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                 </motion.div>
             )}
