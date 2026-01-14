@@ -75,6 +75,17 @@ const CONFESSION_REGISTRY = [
         people: ['雷吉博士 (Dr. Reggie)', '康查尔 (Conchar)'],
         summary: '关于“信标”系统的建立与早期运作。揭示了康查尔在逃亡途中如何利用特定品牌烟盒向清理小组单向传递情报的全过程。',
         status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_7',
+        displayId: 'REC-1972-VA-R',
+        title: '供述 No.7: 罗阿诺克谋杀案',
+        eventTime: '1972 ∙ 深秋',
+        location: '弗吉尼亚州 罗阿诺克市 (Roanoke)',
+        keywords: ['罗阿诺克市', '扭曲关系', '莫布利', '玛莎·迪亚兹', '1972'],
+        people: ['康查尔 (Conchar)', '尼比 (Nibi)', '玛莎·迪亚兹 (Martha Diaz)'],
+        summary: '关于康查尔与尼比之间病态关系的深度剖析，以及卡彭在罗阿诺克市的廉价旅馆中首次接触暴力仪式的经历。揭示了他目睹玛莎·迪亚兹被杀的全过程。',
+        status: 'DECRYPTED'
     }
 ];
 

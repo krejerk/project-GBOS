@@ -86,23 +86,38 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     '灰水信标': 'graywater_beacon'
   };
 
+  const CONFESSION_7_KEYWORDS: Record<string, string> = {
+    '玛莎·迪亚兹': 'martha_diaz',
+    '1972': 'year_1972'
+  };
+
   // Select keyword map based on node ID
-  const KEYWORD_MAP = node.id === 'confession_6'
-    ? CONFESSION_6_KEYWORDS
-    : node.id === 'confession_5'
-      ? CONFESSION_5_KEYWORDS
-      : node.id === 'confession_4'
-        ? CONFESSION_4_KEYWORDS
-        : node.id === 'confession_3'
-          ? CONFESSION_3_KEYWORDS
-          : node.id === 'confession_2'
-            ? CONFESSION_2_KEYWORDS
-            : CONFESSION_1_KEYWORDS;
+  const KEYWORD_MAP = node.id === 'confession_7'
+    ? CONFESSION_7_KEYWORDS
+    : node.id === 'confession_6'
+      ? CONFESSION_6_KEYWORDS
+      : node.id === 'confession_5'
+        ? CONFESSION_5_KEYWORDS
+        : node.id === 'confession_4'
+          ? CONFESSION_4_KEYWORDS
+          : node.id === 'confession_3'
+            ? CONFESSION_3_KEYWORDS
+            : node.id === 'confession_2'
+              ? CONFESSION_2_KEYWORDS
+              : CONFESSION_1_KEYWORDS;
 
   // Track animation states for collected keywords
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});
   const [isVisualRevealed, setIsVisualRevealed] = React.useState(false);
   const [isImageCollected, setIsImageCollected] = React.useState(false);
+  const [isStabilized, setIsStabilized] = React.useState(false);
+
+  React.useEffect(() => {
+    if (node.id.includes('confession')) {
+      const timer = setTimeout(() => setIsStabilized(true), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [node.id]);
 
   const handleKeywordClick = (e: React.MouseEvent, word: string) => {
     e.stopPropagation();
@@ -161,188 +176,233 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
       <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar relative z-10">
         {/* Content Rendering Switch */}
         {node.id.includes('confession') ? (
-          // Simplified Document View for Confession - "Raving Memoir" Style
-          <div className="space-y-6 px-4 md:px-8 py-4 relative min-h-[60vh] flex flex-col justify-center">
-            {/* Texture Overlays */}
-            <div className="absolute inset-0 bg-cover opacity-10 mix-blend-color-burn pointer-events-none" style={{ backgroundImage: "url('/assets/noise.png')" }} />
-            <div className="absolute top-0 right-0 w-32 h-32 bg-red-900/20 blur-[50px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-10 left-10 w-40 h-40 bg-orange-900/10 blur-[60px] rounded-full pointer-events-none" />
+          // Redesigned: Fragmented Memory Layout
+          <div className="relative h-full flex flex-col bg-black overflow-hidden group/confession">
+            {/* Pronounced CRT Flicker & Scanlines Layer */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+              {/* Global High-Frequency Flicker */}
+              <motion.div
+                animate={isStabilized
+                  ? { opacity: [0.03, 0.05, 0.02, 0.04] } // Calmer state
+                  : { opacity: [0.08, 0.12, 0.05, 0.1, 0.07] } // Aggressive initial state
+                }
+                transition={{ repeat: Infinity, duration: isStabilized ? 0.3 : 0.12, ease: "linear" }}
+                className="absolute inset-0 bg-white mix-blend-overlay z-[5]"
+              />
+              {/* Scrolling Scanline Effect */}
+              <motion.div
+                animate={{ y: ["-100%", "100%"] }}
+                transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+                className="absolute inset-x-0 h-1/2 bg-gradient-to-b from-transparent via-[#d89853]/5 to-transparent z-[4]"
+              />
+              {/* Static Grain Mask */}
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.15] mix-blend-overlay z-[3]" />
 
-            <div className="font-serif leading-loose text-lg md:text-xl text-[#d89853]/90 relative z-10">
-              {/* Timestamp / Header Scribble */}
-              <div className="mb-8 rotate-1 opacity-70 flex justify-between items-end border-b-2 border-[#d89853]/10 pb-2">
-                <span className="font-mono text-xs tracking-[0.3em]">REC_DATE: 1971_UNKNOWN</span>
-                <span className="font-handwriting text-2xl text-[#c85a3f] font-bold">"我记得..."</span>
-              </div>
+              {/* Atmospheric Glows */}
+              <motion.div
+                animate={{ opacity: [0.1, 0.15, 0.1], scale: [1, 1.1, 1] }}
+                transition={{ duration: 10, repeat: Infinity }}
+                className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] bg-[#d89853]/15 blur-[120px] rounded-full"
+              />
+              <motion.div
+                animate={{ opacity: [0.05, 0.1, 0.05], scale: [1, 1.2, 1] }}
+                transition={{ duration: 14, repeat: Infinity, delay: 2 }}
+                className="absolute bottom-[-20%] right-[-20%] w-[90%] h-[90%] bg-[#c85a3f]/10 blur-[150px] rounded-full"
+              />
+            </div>
 
-              {[
-                node.layers[MemoryLayer.SURFACE].event,
-                node.layers[MemoryLayer.DEEP].event,
-                node.layers[MemoryLayer.CORE]?.event
-              ].filter(Boolean).join('\n\n').split('\n').map((line, i) => (
-                <p
-                  key={i}
-                  className={`
-                    mb-8 last:mb-0 text-justify relative
-                    ${i % 2 === 0 ? 'pl-4 border-l-2 border-[#d89853]/20' : 'pr-4 text-right border-r-2 border-[#c85a3f]/20'}
-                    ${i === 1 ? 'text-xl font-bold opacity-100 tracking-wide' : 'opacity-80'}
-                  `}
-                >
-                  {line.split(new RegExp(`(${Object.keys(KEYWORD_MAP).join('|')})`, 'g')).map((part, j) => {
-                    if (Object.keys(KEYWORD_MAP).includes(part)) {
-                      if (!seenKeywords.has(part)) {
-                        seenKeywords.add(part);
-                        const isCollected = collectionEffects[part];
-                        return (
-                          <span
-                            key={j}
-                            onClick={(e) => handleKeywordClick(e, part)}
-                            className={`
-                                cursor-pointer font-bold inline-block transform hover:scale-110 transition-all duration-200
-                                ${isCollected
-                                ? 'text-white bg-[#c85a3f] px-1 animate-pulse shadow-lg rotate-2'
-                                : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f] hover:text-black skew-x-[-10deg]'
-                              }
-                            `}
-                            title="点击收集线索"
-                          >
-                            {part}
-                          </span>
-                        );
-                      }
-                    }
-                    return <span key={j} className="hover:text-white/80 transition-colors duration-500">{part}</span>;
-                  })}
-                </p>
-              ))}
+            {/* Scrollable Fragment Container */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar relative z-10 px-4 md:px-12 py-16">
+              <div className="relative max-w-2xl mx-auto pb-32">
+                {[
+                  node.layers[MemoryLayer.SURFACE].event,
+                  node.layers[MemoryLayer.DEEP].event,
+                  node.layers[MemoryLayer.CORE]?.event
+                ].filter(Boolean).map((eventText, layerIndex) => {
+                  const paragraphs = eventText.split('\n').filter(p => p.trim());
 
-              {/* Visual Signal Extraction for Confession 6 */}
-              {node.id === 'confession_6' && (
-                <div className="mt-8 p-4 border border-[#c85a3f]/30 bg-[#c85a3f]/10 rounded relative overflow-hidden group/visual transition-all duration-500">
-                  <div className="absolute top-0 right-0 p-2 opacity-50">
-                    <AlertCircle size={16} className="text-[#c85a3f] animate-pulse" />
-                  </div>
+                  return paragraphs.map((text, pIndex) => {
+                    const fragmentId = `${layerIndex}-${pIndex}`;
+                    const seed = (layerIndex + 1) * (pIndex + 5);
+                    const rotate = (seed % 6) - 3;
+                    const offsetX = (seed % 30) - 15; // Slightly reduced offset to prevent clipping
+                    const zIndex = 10 + layerIndex;
 
-                  {!isVisualRevealed ? (
-                    <div
-                      className="cursor-pointer hover:bg-[#c85a3f]/10 p-2 rounded transition-colors"
-                      onClick={() => setIsVisualRevealed(true)}
-                    >
-                      <p className="text-xs text-[#c85a3f] font-mono tracking-widest mb-2 animate-pulse">
-                        [SYSTEM]: 侦测到残留视觉信号 / VISUAL TRACE DETECTED
-                      </p>
-                      <p className="text-sm text-[#d89853] underline decoration-dotted underline-offset-4 hover:text-white transition-colors">
-                        {`>> 请求提取视觉信息 (EXTRACT VISUAL DATA) <<`}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                      <div className="flex items-center justify-between border-b border-[#c85a3f]/30 pb-2">
-                        <span className="text-[10px] text-[#c85a3f] font-mono tracking-widest">VISUAL_DATA_RECOVERED.JPG</span>
-                        <span className="text-[10px] text-[#d89853]/50 font-mono">SIZE: 4.2MB</span>
-                      </div>
-
-                      <div
-                        className="relative group/image cursor-pointer overflow-hidden border border-[#d89853]/20 hover:border-[#d89853] transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!isImageCollected) {
-                            setIsSelectingFolder(true);
-                          }
+                    return (
+                      <motion.div
+                        key={fragmentId}
+                        initial={{ opacity: 0, scale: 0.9, y: 50, rotate: rotate + 5, filter: 'blur(15px)' }}
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          y: 0,
+                          rotate: rotate,
+                          filter: isStabilized ? 'blur(0px) brightness(1)' : 'blur(5px) brightness(0.8)'
+                        }}
+                        transition={{
+                          filter: { duration: 2, ease: "easeInOut" },
+                          opacity: { delay: 0.1 + (layerIndex * 0.5) + (pIndex * 0.2), duration: 0.8 },
+                          y: { delay: 0.1 + (layerIndex * 0.5) + (pIndex * 0.2), duration: 1.2, ease: [0.22, 1, 0.36, 1] },
+                          scale: { delay: 0.1 + (layerIndex * 0.5) + (pIndex * 0.2), duration: 1.2 },
+                          rotate: { delay: 0.1 + (layerIndex * 0.5) + (pIndex * 0.2), duration: 1.2 }
+                        }}
+                        whileHover={{
+                          scale: 1.04,
+                          zIndex: 100,
+                          rotate: 0,
+                          transition: { duration: 0.3, ease: "easeOut" }
+                        }}
+                        className="relative mb-16 p-8 bg-[#1a1410]/80 border border-[#d89853]/15 shadow-[0_20px_40px_rgba(0,0,0,0.5)] group/fragment backdrop-blur-sm"
+                        style={{
+                          marginLeft: `${offsetX}px`,
+                          transform: `rotate(${rotate}deg)`,
+                          zIndex: zIndex
                         }}
                       >
-                        <img
-                          src="/assets/iron_horse_beacon.jpg"
-                          alt="Iron Horse Cigarettes"
-                          className={`w-full h-auto object-cover grayscale brightness-75 contrast-125 group-hover/image:grayscale-0 group-hover/image:brightness-100 transition-all duration-700 ${isImageCollected ? 'grayscale-0 brightness-100 ring-2 ring-[#d89853]' : ''}`}
-                        />
-
-                        {/* Overlay Label */}
-                        <div className="absolute bottom-0 left-0 w-full bg-black/80 backdrop-blur-sm p-2 text-center transform translate-y-full group-hover/image:translate-y-0 transition-transform duration-300">
-                          <span className={`text-xs font-mono tracking-widest ${isImageCollected ? 'text-[#d89853]' : 'text-white'}`}>
-                            {isImageCollected ? '>> IMAGE ARCHIVED ON SERVER <<' : 'CLICK TO ARCHIVE TO DOSSIER'}
-                          </span>
+                        {/* Fragment Decor */}
+                        <div className="absolute top-0 left-0 w-8 h-[1px] bg-[#d89853]/30" />
+                        <div className="absolute top-0 left-0 w-[1px] h-8 bg-[#d89853]/30" />
+                        <div className="absolute bottom-0 right-0 w-8 h-[1px] bg-[#c85a3f]/20" />
+                        <div className="absolute -top-3 -left-2 text-[10px] font-mono text-[#d89853]/20 select-none">
+                          FRAGMENT_{fragmentId}
                         </div>
 
-                        {/* Success Stamp */}
-                        {isImageCollected && (
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-[#d89853] text-[#d89853] p-2 font-black text-xl tracking-[0.2em] rotate-[-12deg] opacity-80 mix-blend-screen whitespace-nowrap bg-black/50 backdrop-blur-sm">
-                            FILED / 已归档
+                        {/* Content with Keyword Highlighting */}
+                        <p className="font-serif leading-relaxed text-lg text-[#d89853]/90 text-justify">
+                          {text.split(new RegExp(`(${Object.keys(KEYWORD_MAP).join('|')})`, 'g')).map((part, j) => {
+                            if (Object.keys(KEYWORD_MAP).includes(part)) {
+                              if (!seenKeywords.has(part)) {
+                                seenKeywords.add(part);
+                                const isCollected = collectionEffects[part];
+                                return (
+                                  <span
+                                    key={j}
+                                    onClick={(e) => handleKeywordClick(e, part)}
+                                    className={`
+                                      cursor-pointer font-bold inline-block mx-1 relative
+                                      ${isCollected
+                                        ? 'text-white bg-[#c85a3f] px-1 animate-pulse shadow-lg scale-110'
+                                        : 'text-[#c85a3f] border-b border-dashed border-[#c85a3f] hover:text-white transition-all underline-offset-4'
+                                      }
+                                  `}
+                                  >
+                                    {part}
+                                    {/* Sparkle effect on collectable */}
+                                    {!isCollected && (
+                                      <motion.span
+                                        animate={{ opacity: [0, 1, 0] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="absolute -top-1 -right-1"
+                                      >
+                                        <Sparkles size={8} />
+                                      </motion.span>
+                                    )}
+                                  </span>
+                                );
+                              }
+                            }
+                            return <span key={j} className="opacity-90">{part}</span>;
+                          })}
+                        </p>
+
+                        {/* Scribbled notes for deeper layers */}
+                        {layerIndex > 0 && pIndex === paragraphs.length - 1 && (
+                          <div className="mt-4 pt-4 border-t border-[#d89853]/5 italic text-sm text-[#c85a3f]/60 font-mono flex justify-between">
+                            <span className="opacity-50">[TRUNCATED...]</span>
+                            <span className="rotate-2">"难以找回的片段"</span>
                           </div>
                         )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Folder Selection Modal */}
-                  <AnimatePresence>
-                    {isSelectingFolder && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md cursor-default"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <div className="relative w-full max-w-lg bg-[#0f0a0a] border border-[#d89853]/30 rounded-lg p-6 shadow-2xl">
-                          <div className="text-center mb-6">
-                            <h4 className="text-[#d89853] font-mono tracking-widest text-sm font-bold">SELECT TARGET CASE FILE</h4>
-                            <p className="text-[#d89853]/40 text-[10px] uppercase">Where does this evidence belong?</p>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-3 max-h-[40vh] overflow-y-auto custom-scrollbar p-1 mb-4">
-                            {collectedDossierIds
-                              .filter(id => ['julip', 'project', 'graywater_beacon'].includes(id))
-                              .map(clueId => (
-                                <button
-                                  key={clueId}
-                                  onClick={() => handleAttemptCollect(clueId)}
-                                  className="text-[10px] font-mono border border-[#d89853]/20 bg-[#d89853]/5 text-[#d89853]/80 p-3 rounded hover:bg-[#d89853]/20 hover:text-[#d89853] hover:border-[#d89853]/50 transition-all truncate text-left flex items-center gap-2"
-                                >
-                                  <Folder size={14} className="shrink-0" />
-                                  <span className="truncate">{clueDisplayMap[clueId] || clueId}</span>
-                                </button>
-                              ))}
-                            {collectedDossierIds.length === 0 && (
-                              <div className="col-span-2 text-center text-[#d89853]/30 text-xs py-4">
-                                NO OPEN FILES AVAILABLE
-                              </div>
-                            )}
-                          </div>
-
-                          <button
-                            onClick={() => setIsSelectingFolder(false)}
-                            className="absolute top-2 right-2 text-[#d89853]/40 hover:text-[#d89853]"
-                          >
-                            <X size={16} />
-                          </button>
-
-                          {collectionFeedback.msg && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className={`absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded border backdrop-blur-md shadow-lg font-mono font-bold tracking-widest text-xs z-50 whitespace-nowrap
-                                            ${collectionFeedback.type === 'success' ? 'bg-green-900/90 border-green-500 text-green-100' : 'bg-red-900/90 border-red-500 text-red-100'}
-                                        `}
-                            >
-                              {collectionFeedback.msg}
-                            </motion.div>
-                          )}
-                        </div>
                       </motion.div>
+                    );
+                  });
+                })}
+
+                {/* Special Case: Confession 6 Visual Signal */}
+                {node.id === 'confession_6' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2, duration: 1 }}
+                    className="mt-16 p-8 bg-[#c85a3f]/5 border border-[#c85a3f]/20 rounded-sm relative overflow-hidden group/visual"
+                  >
+                    <div className="absolute top-0 right-0 p-2 opacity-50">
+                      <AlertCircle size={16} className="text-[#c85a3f] animate-pulse" />
+                    </div>
+
+                    {!isVisualRevealed ? (
+                      <div
+                        className="cursor-pointer hover:bg-[#c85a3f]/10 p-4 rounded text-center transition-all group-hover/visual:scale-[1.01]"
+                        onClick={() => setIsVisualRevealed(true)}
+                      >
+                        <p className="text-xs text-[#c85a3f] font-mono tracking-[0.3em] mb-3 animate-pulse">
+                          [SYSTEM]: 侦测到残留视觉信号 (VISUAL TRACE)
+                        </p>
+                        <div className="inline-block border border-[#d89853]/40 px-6 py-2 text-sm text-[#d89853] hover:bg-[#d89853] hover:text-black transition-all font-bold">
+                          解析视觉记忆块 {" >> "}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-6 animate-in fade-in zoom-in duration-1000">
+                        <div className="flex items-center justify-between border-b border-[#c85a3f]/30 pb-2">
+                          <span className="text-[10px] text-[#c85a3f] font-mono tracking-widest uppercase">Visual Artifact Extracted</span>
+                          <div className="h-1 flex-1 mx-4 bg-[repeating-linear-gradient(90deg,#c85a3f,#c85a3f_2px,transparent_2px,transparent_4px)] opacity-20" />
+                        </div>
+
+                        <div
+                          className="relative group/image cursor-pointer overflow-hidden border border-[#d89853]/20 shadow-2xl"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (!isImageCollected) setIsSelectingFolder(true);
+                          }}
+                        >
+                          <img
+                            src="/assets/iron_horse_beacon.jpg"
+                            alt="Iron Horse Cigarettes"
+                            className={`w-full h-auto object-cover grayscale brightness-50 group-hover/image:grayscale-0 group-hover/image:brightness-100 transition-all duration-1000 ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`}
+                          />
+
+                          {/* Success Stamp */}
+                          {isImageCollected && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <motion.div
+                                initial={{ scale: 2, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 0.8 }}
+                                className="border-8 border-[#d89853] text-[#d89853] p-4 font-black text-4xl tracking-widest uppercase rotate-[-15deg] bg-black/40 backdrop-blur-sm mix-blend-screen"
+                              >
+                                ARCHIVED
+                              </motion.div>
+                            </div>
+                          )}
+
+                          <div className="absolute bottom-0 left-0 w-full bg-black/90 p-3 text-center transition-transform duration-500 translate-y-full group-hover/image:translate-y-0">
+                            <span className="text-[10px] font-mono tracking-[0.4em] text-[#d89853]">
+                              {isImageCollected ? '>> DATA PERMANENTLY STORED <<' : 'ADD TO CASE FOLDER (DOSSIER)'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     )}
-                  </AnimatePresence>
-                </div>
-              )}
-
-
-              <div className="mt-12 pt-8 border-t border-double border-[#d89853]/30 flex flex-col items-end gap-2">
-                <div className="text-right rotate-[-2deg]">
-                  <div className="h-12 w-48 bg-[url('/assets/signature.png')] bg-contain bg-no-repeat bg-right opacity-80 mb-2 mix-blend-screen" />
-                  <p className="text-sm text-[#c85a3f] font-bold tracking-widest font-mono">CONFESSION_VERIFIED</p>
-                </div>
-                <div className="text-[10px] text-[#d89853]/30 uppercase tracking-[0.5em]">Memory Integrity: Unstable</div>
+                  </motion.div>
+                )}
               </div>
+
+              {/* Closing Signature / Seal */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="mt-20 pt-12 border-t border-dashed border-[#d89853]/20 max-w-lg mx-auto flex flex-col items-center text-center gap-6"
+              >
+                <div className="relative">
+                  <div className="absolute inset-0 bg-[#d89853] blur-[40px] opacity-10 rounded-full" />
+                  <div className="text-[10px] text-[#c85a3f]/60 font-mono tracking-[0.6em] mb-4">END_OF_TRANSCRIPT</div>
+                  <div className="h-16 w-64 bg-[url('/assets/signature.png')] bg-contain bg-no-repeat bg-center opacity-70 grayscale contrast-150 mix-blend-lighten" />
+                </div>
+                <div className="text-[9px] text-[#d89853]/20 font-mono max-w-xs uppercase leading-loose italic">
+                  These fragments were recovered via neural sync. Some data may remain inaccessible.
+                  Memory integrity is currently at 14% and declining.
+                </div>
+              </motion.div>
             </div>
           </div>
         ) : (

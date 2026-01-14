@@ -115,6 +115,11 @@ const App: React.FC = () => {
         clues: ['mojave_rest_stop', 'empty_cigarette_pack'],
         years: [],
         people: []
+      },
+      confession_7: {
+        clues: ['roanoke', 'twisted_relationship'],
+        years: [],
+        people: []
       }
     };
 
@@ -130,6 +135,7 @@ const App: React.FC = () => {
       'nevada': true, '内华达': true, '内华达州': true,
       'mojave': true, '莫哈韦': true, 'mojave rest stop': true, 'mojave_rest_stop': true, '休息站': true, '莫哈韦休息站': true,
       'roanoke': true, '罗阿诺克市': true,
+      'twisted_relationship': true, '扭曲关系': true,
 
       // Addresses - complete phrases
       '1402': true, 'old dominion': true, 'old_dominion': true, '1402 old dominion rd': true,
@@ -161,7 +167,7 @@ const App: React.FC = () => {
       'julip': true, '黄油朱莉普': true,
       'father': true, '父亲': true,
       'project': true, '青豆牡蛎汤计划': true,
-      'relationship': true, '扭曲关系': true,
+      'relationship': true,
       'conchar': true, '康查尔': true,
       'nibi': true, '尼比': true,
       'dr_reggie': true, '雷吉博士': true,
@@ -220,7 +226,9 @@ const App: React.FC = () => {
         hasMojave: lowerQuery.includes('mojave') || lowerQuery.includes('莫哈韦'),
         hasCigarette: lowerQuery.includes('empty_cigarette_pack') || lowerQuery.includes('空烟盒') || lowerQuery.includes('cigarette'),
         hasYear1971: lowerQuery.includes('1971') || lowerQuery.includes('year_1971'),
-        hasLittleDerek: lowerQuery.includes('little_derek_wayne') || lowerQuery.includes('小德里克') || lowerQuery.includes('derek wayne') || lowerQuery.includes('wayne')
+        hasLittleDerek: lowerQuery.includes('little_derek_wayne') || lowerQuery.includes('小德里克') || lowerQuery.includes('derek wayne') || lowerQuery.includes('wayne'),
+        hasRoanoke: lowerQuery.includes('roanoke') || lowerQuery.includes('罗阿诺克'),
+        hasTwistedRelationship: lowerQuery.includes('twisted_relationship') || lowerQuery.includes('扭曲关系')
       };
     };
 
@@ -514,6 +522,58 @@ const App: React.FC = () => {
       return;
     }
 
+    // Confession 7: Roanoke AND Twisted Relationship (STRICT)
+    if (validation.hasRoanoke && validation.hasTwistedRelationship) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: "你在说什么？想从我这套话,你得有点东西交换才行。"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_7');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_7');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_7;
+          setGameState(prev => {
+            if (prev.unlockedNodeIds.includes(node!.id)) {
+              return prev;
+            }
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: Math.min(prev.systemStability + 20, 84),
+              collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+
+              ]
+            }
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
     // ===== ADVANCED PRESET Q&A SYSTEM WITH FUZZY MATCHING =====
 
     const lowerQuery = query.toLowerCase().trim();
@@ -730,10 +790,10 @@ const App: React.FC = () => {
   };
 
   const handleCollectClue = (clueId: string, word: string) => {
-    // Define Categories
+    // Define Categories - COMPREHENSIVE CLASSIFICATION SYSTEM
     const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'];
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo'];
-    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985'];
+    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz'];
+    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972'];
 
     const isDossier = DOSSIER_WHITELIST.includes(clueId);
     const isPerson = PEOPLE_IDS.includes(clueId);

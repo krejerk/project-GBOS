@@ -35,6 +35,7 @@ interface DetailedArchiveRecord {
         level: string;
         author: string;
         content: string;
+        template?: 'REGGIE' | 'ALTERMAN';
     };
 }
 
@@ -70,7 +71,8 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 
 **符号污染（Symbolic Contamination）：**
 关于“阿尔衮琴头饰”的目击记录引起了我的高度关注。这并非简单的伪装。根据此前对该邪教原型的研究，这很可能是一种“剥夺式标记”。他们通过佩戴传统饰品以对犯罪动机进行宣言式展示，但表演性令人可疑。建议将此细节与“1968年「俄亥俄州」「祭祀案」”中的面具特征进行交叉比对。
-            `
+            `,
+            template: 'REGGIE'
         }
     },
     {
@@ -102,7 +104,8 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 **动机的后置包装（Post-hoc Narrative Construction）：**
 地方警署和大众媒体被伦德格兰的"末日论"牵着鼻子走，这正是他想要的。通过对他在RLDS时期的早期行为档案分析，其所谓的"先知身份"是在其精神系统彻底崩溃后才紧急搭建的防御机制。他并不是因为相信上帝才杀人，而是因为他无法抑制杀戮冲动，才不得不从经文中翻找借口，将其包装成一种"圣经式献祭"。
 
-需要注意的是，伦德格兰是一个极度危险的病理性捕猎者。他表现出的“邪教领袖”特质其实是他精心维护的外壳。如果在审讯中试图从宗教角度与其对话，将正中其下怀。回溯到1967年，当我亲手划下KLUB的第一行组织架构时，我并不是在创造一个英雄机构。我只是意识到，二战后的美国正在滋生一种前所未有的有组织恶疾。KLUB的职能不是拯救，而是隔离——将这些足以煽动文明崩塌的‘邪教节点’，从社会肌理中生生剥离出来。”`
+需要注意的是，伦德格兰是一个极度危险的病理性捕猎者。他表现出的“邪教领袖”特质其实是他精心维护的外壳。如果在审讯中试图从宗教角度与其对话，将正中其下怀。回溯到1967年，当我亲手划下KLUB的第一行组织架构时，我并不是在创造一个英雄机构。我只是意识到，二战后的美国正在滋生一种前所未有的有组织恶疾。KLUB的职能不是拯救，而是隔离——将这些足以煽动文明崩塌的‘邪教节点’，从社会肌理中生生剥离出来。”`,
+            template: 'REGGIE'
         }
     },
     {
@@ -148,7 +151,8 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 ** █████ 警戒线：** 目前的感染率已突破█████。如果我们不能在1975年之前锁定该“松散组织”的传播媒介（推测为某种特定的短波电台或地下出版物），这种病理性犯罪将成为美国社会的“新常态”。
 
 【雷吉博士的个人声明】 “1967年不仅是 KLUB 的起点，也是美国文明的一个分水岭。我们追踪的不是一群躲在洞穴里的邪教徒，而是一场正在城市血管中流动的瘟疫。如果局方继续以 19 世纪的眼光看待这些‘新式犯罪’，我们将在十年内输掉这场无声的战争。”
-            `
+            `,
+            template: 'REGGIE'
         }
     },
     {
@@ -197,7 +201,8 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 
 
 特别指出：鉴于RC（受训于1402 Old Dominion Rd.）曾于多处犯罪现场（etc：内华达州戈尔康达郡，灭门案）留有生物特征，雷吉博士此前基于“有限信任原则”与其维持开放交涉状态，现为规避机构改组期间的高风险接触，本职决定立即斩断所有相关线索。即刻起，撤销RC的一切特殊观察待遇，将其定性由“潜在资产”正式调整为**“一般变节者”**，按标准清算程序处理。
-            `
+            `,
+            template: 'ALTERMAN'
         }
     },
     {
@@ -223,7 +228,45 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
             author: '雷吉博士 (Dr. Reggie)',
             content: `我听说两年前内华达州那具尸体终于有了名字。真凶是小德里克·维恩（Derek Wayne Jr.），他在两年前那场报复行动中已经变成了尸体。无须我重申，这个结论的最初线索来自RC丢弃在莫哈韦休息站垃圾桶内的一个空烟盒（别想打听那个休息站在哪）。
 
-我还听说那帮官僚正试图把这个冷案突破写进年度报告，甚至想以此为KLUB挽回点面子。我个人认为毫无必要，毕竟如果坐在量化官的办公室里玩拼图游戏也算“贡献”，那我们对贡献的定义显然有云泥之别。至于RC，他正在做的事情远超这些旧账清理，我确信他将带来更深层的实质性推进，目前的贡献只是一点点微小成就。而那些坐在量化官办公室里指手画脚的人，甚至不配在他未来的报告上签字。`
+我还听说那帮官僚正试图把这个冷案突破写进年度报告，甚至想以此为KLUB挽回点面子。我个人认为毫无必要，毕竟如果坐在量化官的办公室里玩拼图游戏也算“贡献”，那我们对贡献的定义显然有云泥之别。至于RC，他正在做的事情远超这些旧账清理，我确信他将带来更深层的实质性推进，目前的贡献只是一点点微小成就。而那些坐在量化官办公室里指手画脚的人，甚至不配在他未来的报告上签字。`,
+            template: 'REGGIE'
+        }
+    },
+    {
+        id: 'va_1972',
+        title: '1972年罗阿诺克洗衣店谋杀案',
+        triggers: {
+            year: '1972',
+            person: ['martha_diaz', '玛莎·迪亚兹', 'Martha Diaz']
+        },
+        newspaper: {
+            source: '《罗阿诺克时报》(Roanoke Times)',
+            date: '1972年11月19日',
+            headline: '深夜洗衣店惨案：职员遇害手法极其罕见，警方调查陷入僵局',
+            content: [
+                '本报讯 —— 本周三凌晨，罗阿诺克市郊的一家自助洗衣店惊现血案。受害者玛莎·迪亚兹被发现死于工作岗位。据法医报告显示，受害者的气管被极其专业且精准的手法切断，现场没有搏斗痕迹，收银台钱款分毫未动。',
+                '据相关人士透露，凶手在受害者右手腕上系有一条明黄色丝绸发带。警方指出，这种"仪式化"的行为极具表演性质，暗示凶手可能具有严重的精神疾患或属于某种未知的极端组织。州警署已成立专案组，并对周边州界的类似冷案进行并案排查。'
+            ]
+        },
+        annotation: {
+            fileId: 'VA-1990-11-REV',
+            date: '1990年12月05日',
+            level: '绝密 (TOP SECRET / EYES ONLY)',
+            author: '代理协调员 艾萨克·阿特尔曼 (Isaac Alterman)',
+            content: `【关于1972年罗阿诺克案的重新评估与雷吉模型修正】
+
+1. 标志性特征的误导性（Signature Mismatch）：
+玛莎·迪亚兹案曾被前任处长雷吉博士视为"家族"犯罪的教学样板。然而，通过1990年度最新的实验室生物比对结果显示，玛莎案现场残留的血迹与毛发特征，与我们锁定的"家族"核心成员及后期系列案的真凶完全不匹配。这证明了雷吉博士所谓的"统一场论"在实证面前存在严重的逻辑缺陷。
+
+2. 模仿犯假说（Copycat or Interference）：
+本职倾向于认为，1972年的玛莎案极有可能是一起独立案件，但因某种外部力量介入，导致一位连环杀手被激发并产生"模仿行为"，因此造就之后的一系列案件。虽然黄丝带这一符号被刻意留存，但此案的执行手法与后期成熟的、高度约束的攻击方式，却是截然不同的。
+
+3. 对 RC 资产价值的彻底否定：
+玛莎案的生物特征不符，揭示了一个令局里难堪的事实：我们可能在长达十年的时间里，都在根据一个由"模仿犯"或"变节者"提供的错误坐标进行推演。雷吉博士基于对 RC 的"病理信任"，将一个孤立的、执行拙劣的谋杀案强行并入了庞大的邪教模型。
+
+4. 结论：
+本职提议将玛莎·迪亚兹案从"青豆牡蛎汤计划"的相关档案中剥离。我们追踪的不是一个连贯的邪教逻辑，而是一个不断被模仿、被修饰的破碎切片。雷吉时代的盲目自信导致了我们在1972年就弄丢了正确的航向。`,
+            template: 'ALTERMAN'
         }
     }
 ];
@@ -268,7 +311,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         '灭门案': 'family_massacre',
         '训练日': 'training_day',
         '莫哈韦休息站': 'mojave_rest_stop',
-        '空烟盒': 'empty_cigarette_pack'
+        '空烟盒': 'empty_cigarette_pack',
+        '1972': 'year_1972',
+        '玛莎·迪亚兹': 'martha_diaz'
     };
 
     // Clue display mapping for quick selection chips
@@ -304,7 +349,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         'empty_cigarette_pack': '空烟盒',
         'aw_wilmo': '小A.W.威尔莫',
         'crime_route_map': '罗伯特·卡彭：犯罪路线',
-        'graywater_beacon': '灰水信标'
+        'graywater_beacon': '灰水信标',
+        'year_1972': '1972',
+        'martha_diaz': '玛莎·迪亚兹'
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
@@ -707,7 +754,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     {activeCase.annotation.date}
                                                                 </div>
                                                                 <div>
-                                                                    <span className="block text-[#c85a3f]/40 text-[10px] uppercase">Authorized By</span>
+                                                                    <span className="block text-[#c85a3f]/40 text-[10px] uppercase">
+                                                                        {activeCase.annotation.template === 'ALTERMAN' ? 'Authorized By' : 'Verified By'}
+                                                                    </span>
                                                                     {activeCase.annotation.author}
                                                                 </div>
                                                             </div>
@@ -781,7 +830,7 @@ export const Archives: React.FC<ArchivesProps> = ({
 
                                                         {/* Handwritten Signature */}
                                                         <div className="mt-8 flex justify-end pr-12">
-                                                            {activeCase.id === 'il_1985' ? (
+                                                            {activeCase.annotation.template === 'ALTERMAN' ? (
                                                                 // Alterman's Signature - More angular and bureaucratic
                                                                 <div className="relative text-blue-900/70 transform -rotate-6 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
                                                                     <svg width="140" height="70" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg">

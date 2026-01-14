@@ -539,130 +539,147 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
 
                 </motion.div>
+            </main>
 
-                {/* Feature Modals */}
-
-                {/* MindMap Modal -> REPLACED by Syndicate Board */}
-                <AnimatePresence>
-                    {showMindMap && (
+            {/* Feature Modals (Moved out of <main> to escape z-index constraints) */}
+            {/* Syndicate Board Modal */}
+            <AnimatePresence>
+                {showMindMap && (
+                    <div className="fixed inset-0 z-[200]">
                         <SyndicateBoard
                             unlockedPeople={unlockedPeople}
                             onClose={() => setShowMindMap(false)}
-                            phase={1} // Hardcoded Phase 1 for now (expand later)
+                            phase={1}
                         />
-                    )}
-                </AnimatePresence>
+                    </div>
+                )}
+            </AnimatePresence>
 
-                {/* Terminal / Log View */}
-                <AnimatePresence>
-                    {showTerminal && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 20 }}
-                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
-                            onClick={() => setShowTerminal(false)}
+            {/* Terminal / Log View */}
+            <AnimatePresence>
+                {showTerminal && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+                        onClick={() => setShowTerminal(false)}
+                    >
+                        <div
+                            className="w-full max-w-3xl h-[80vh] bg-[#0c0c0c] border border-[#d89853]/30 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative flex flex-col"
+                            onClick={e => e.stopPropagation()}
                         >
-                            <div
-                                className="w-full max-w-3xl h-[80vh] bg-[#0c0c0c] border border-[#d89853]/30 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative flex flex-col"
-                                onClick={e => e.stopPropagation()}
+                            <button
+                                onClick={() => setShowTerminal(false)}
+                                className="absolute top-3 right-3 z-10 text-[#d89853]/60 hover:text-[#d89853] p-1 hover:bg-[#d89853]/10 rounded transition-colors"
                             >
-                                <button
-                                    onClick={() => setShowTerminal(false)}
-                                    className="absolute top-3 right-3 z-10 text-[#d89853]/60 hover:text-[#d89853] p-1 hover:bg-[#d89853]/10 rounded transition-colors"
-                                >
-                                    <X size={18} />
-                                </button>
-                                <ConfessionLog
-                                    unlockedNodeIds={nodes.map(n => n.id)}
-                                    onClose={() => setShowTerminal(false)}
-                                    onViewNode={(id) => {
-                                        setShowTerminal(false);
-                                        onNodeClick(id);
-                                    }}
+                                <X size={18} />
+                            </button>
+                            <ConfessionLog
+                                unlockedNodeIds={nodes.map(n => n.id)}
+                                onClose={() => setShowTerminal(false)}
+                                onViewNode={(id) => {
+                                    setShowTerminal(false);
+                                    onNodeClick(id);
+                                }}
+                            />
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Node Detail Modal (triggered by search or map click) */}
+            <AnimatePresence mode="wait">
+                {activeNode && (
+                    <motion.div
+                        key={activeNode.id}
+                        initial={activeNode.id.includes('confession')
+                            ? { opacity: 0, scale: 0.1, filter: 'brightness(5) blur(30px)' }
+                            : { opacity: 0, y: 50, scale: 0.95 }}
+                        animate={activeNode.id.includes('confession')
+                            ? { opacity: 1, scale: 1, filter: 'brightness(1) blur(0px)', transition: { type: "spring", damping: 20, stiffness: 100, duration: 0.7 } }
+                            : { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3 } }}
+                        exit={{ opacity: 0, scale: 0.9, filter: 'blur(20px)', transition: { duration: 0.3 } }}
+                        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 md:p-8"
+                        onClick={() => onNodeClick('')}
+                    >
+                        {/* Glitch Overlay for Confession Intro */}
+                        {activeNode.id.includes('confession') && (
+                            <motion.div
+                                initial={{ opacity: 1 }}
+                                animate={{ opacity: 0 }}
+                                transition={{ duration: 0.6 }}
+                                className="absolute inset-0 z-[210] bg-white pointer-events-none mix-blend-overlay"
+                            />
+                        )}
+
+                        <motion.div
+                            drag
+                            dragConstraints={{ left: -300, right: 300, top: -200, bottom: 200 }}
+                            dragMomentum={false}
+                            className="w-full max-w-6xl h-[85vh] bg-[#0c0505] border border-[#d89853]/40 rounded-sm shadow-[0_0_150px_rgba(216,152,83,0.15),0_0_50px_rgba(0,0,0,1)] overflow-hidden relative flex flex-col cursor-grab active:cursor-grabbing"
+                            style={{ boxShadow: '0 0 100px rgba(0,0,0,0.8), 0 0 40px rgba(216,152,83,0.1)' }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => onNodeClick('')}
+                                className="absolute top-6 right-6 z-[220] p-2 bg-black/60 text-[#d89853]/60 hover:text-[#d89853] hover:bg-black/80 border border-[#d89853]/20 rounded-full transition-all backdrop-blur-md shadow-2xl pointer-events-auto"
+                            >
+                                <X size={20} />
+                            </button>
+
+                            <div className="flex-1 overflow-hidden pointer-events-auto">
+                                <NodeDetail
+                                    node={activeNode}
+                                    onShatter={onShatter}
+                                    onCollectClue={onCollectClue}
+                                    onCollectAttachment={onCollectAttachment}
+                                    collectedDossierIds={collectedDossierIds}
+                                    clueDisplayMap={CLUE_DISPLAY_MAP}
                                 />
                             </div>
                         </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Node Detail Modal (triggered by search or map click) */}
-                <AnimatePresence>
-                    {activeNode && (
-                        <motion.div
-                            key={activeNode.id} // Ensure animation triggers on node change
-                            initial={activeNode.id.includes('confession')
-                                ? { opacity: 0, scale: 1.2, filter: 'brightness(2)' } // Bright flash start
-                                : { opacity: 0, y: 50, scale: 0.95 }}
-                            animate={activeNode.id.includes('confession')
-                                ? { opacity: 1, scale: 1, filter: 'brightness(1)', transition: { type: "spring", bounce: 0.4, duration: 0.6 } }
-                                : { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3 } }}
-                            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-                            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-12 bg-black/80 backdrop-blur-md"
-                            onClick={() => onNodeClick('')} // Click outside to close
-                        >
-                            <div
-                                className="w-full max-w-4xl max-h-full bg-[#0c0505] border border-[#d89853]/30 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden relative flex flex-col"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <button
-                                    onClick={() => onNodeClick('')}
-                                    className="absolute top-4 right-4 z-50 p-2 text-[#c85a3f]/60 hover:text-[#c85a3f] hover:bg-[#c85a3f]/10 rounded-full transition-all"
-                                >
-                                    <X size={24} />
-                                </button>
-                                <div className="overflow-y-auto custom-scrollbar">
-                                    <NodeDetail
-                                        node={activeNode}
-                                        onShatter={onShatter}
-                                        onCollectClue={onCollectClue}
-                                        onCollectAttachment={onCollectAttachment}
-                                        collectedDossierIds={collectedDossierIds}
-                                        clueDisplayMap={CLUE_DISPLAY_MAP}
-                                    />
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-            </main>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Quick Status / Hints - Fixed Bottom (hide when MindMap is open) */}
-            {!showMindMap && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 }}
-                    className="absolute bottom-8 left-0 w-full flex justify-center z-20 pointer-events-none"
-                >
-                    <div className={`flex items-center gap-8 md:gap-16 text-[10px] tracking-widest uppercase font-semibold pointer-events-auto backdrop-blur-sm px-8 py-2 rounded-full border transition-all duration-500
+            {
+                !showMindMap && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8 }}
+                        className="absolute bottom-8 left-0 w-full flex justify-center z-20 pointer-events-none"
+                    >
+                        <div className={`flex items-center gap-8 md:gap-16 text-[10px] tracking-widest uppercase font-semibold pointer-events-auto backdrop-blur-sm px-8 py-2 rounded-full border transition-all duration-500
                         ${statusFlash
-                            ? 'bg-[#1e293b]/80 border-[#94a3b8]/50 text-[#e2e8f0] shadow-[0_0_30px_rgba(148,163,184,0.3)] scale-105'
-                            : 'bg-black/20 text-[#d89853]/50 border-[#d89853]/10'
-                        }
+                                ? 'bg-[#1e293b]/80 border-[#94a3b8]/50 text-[#e2e8f0] shadow-[0_0_30px_rgba(148,163,184,0.3)] scale-105'
+                                : 'bg-black/20 text-[#d89853]/50 border-[#d89853]/10'
+                            }
                     `}>
-                        <div className="flex items-center gap-2">
-                            {/* Dynamic Status Indicator */}
-                            {(() => {
-                                const isStable = systemStability > 40;
-                                const isCritical = systemStability <= 0;
-                                const color = isCritical ? 'bg-red-600' : isStable ? 'bg-green-400' : 'bg-[#c85a3f]';
-                                const shadow = isCritical ? 'shadow-[0_0_8px_#dc2626]' : isStable ? 'shadow-[0_0_8px_#4ade80]' : 'shadow-[0_0_5px_#c85a3f]';
+                            <div className="flex items-center gap-2">
+                                {/* Dynamic Status Indicator */}
+                                {(() => {
+                                    const isStable = systemStability > 40;
+                                    const isCritical = systemStability <= 0;
+                                    const color = isCritical ? 'bg-red-600' : isStable ? 'bg-green-400' : 'bg-[#c85a3f]';
+                                    const shadow = isCritical ? 'shadow-[0_0_8px_#dc2626]' : isStable ? 'shadow-[0_0_8px_#4ade80]' : 'shadow-[0_0_5px_#c85a3f]';
 
-                                return (
-                                    <div className={`w-1.5 h-1.5 rounded-full animate-pulse transition-colors duration-500 ${color} ${shadow}`} />
-                                );
-                            })()}
-                            {systemStability > 0 ? "STABLE" : "CRITICAL"}
+                                    return (
+                                        <div className={`w-1.5 h-1.5 rounded-full animate-pulse transition-colors duration-500 ${color} ${shadow}`} />
+                                    );
+                                })()}
+                                {systemStability > 0 ? "STABLE" : "CRITICAL"}
+                            </div>
+                            <div className={statusFlash ? 'text-[#94a3b8] animate-pulse' : ''}>
+                                SC-STABILITY: {Math.round(systemStability)}%
+                            </div>
+                            <div>LINK: SECURE</div>
                         </div>
-                        <div className={statusFlash ? 'text-[#94a3b8] animate-pulse' : ''}>
-                            SC-STABILITY: {Math.round(systemStability)}%
-                        </div>
-                        <div>LINK: SECURE</div>
-                    </div>
-                </motion.div>
-            )}
+                    </motion.div>
+                )
+            }
 
             {/* Feature Sidebar Panels */}
             <ClueLibrary
@@ -693,6 +710,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}
             />
-        </div>
+        </div >
     );
 };
