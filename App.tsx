@@ -648,7 +648,7 @@ const App: React.FC = () => {
           priority: 90
         },
         {
-          keywords: ['小麻雀', 'little bird', '麻雀', '铁链', '她的灯'],
+          keywords: ['银喜鹊', 'silver magpie', '喜鹊', '铁链', '她的灯'],
           response: '> [R. CAPONE]: "我在睡觉时总能听到她在门外走动，铁链在地上拖行的声音。她从不杀人，她只负责确保没人能逃走。如果你见到了她，潜航者，离她的灯远一点。"',
           priority: 90
         },
