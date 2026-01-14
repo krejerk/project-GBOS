@@ -130,13 +130,14 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                 'mojave_rest_stop', 'empty_cigarette_pack',
                 'roanoke', 'twisted_relationship',
                 'year_1990',
+                'blue_rv', // CRITICAL: REQUIRED FOR V2 MAP UPDATE (Louisville)
 
                 // CRITICAL: Ensure Map is collected when skipping Node 1
                 'crime_route_map'
             ],
 
             // Dossier
-            collectedDossierIds: ['julip', 'project'],
+            collectedDossierIds: ['julip', 'project', 'crime_route_map'],
 
             // Attachments - Crucial for Node 2 Check
             collectedAttachments: ['wilmer_ribbon'],

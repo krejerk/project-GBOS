@@ -181,6 +181,7 @@ const App: React.FC = () => {
       'architect': true, '建筑师': true,
       'syndicate': true, '辛迪加': true,
       'aw_wilmo': true, '小A.W.威尔莫': true,
+      'blue_rv': true, '淡蓝色房车': true,
     };
 
     const validateQuery = (queryStr: string) => {
