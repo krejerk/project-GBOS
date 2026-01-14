@@ -129,7 +129,10 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                 'nevada',
                 'mojave_rest_stop', 'empty_cigarette_pack',
                 'roanoke', 'twisted_relationship',
-                'year_1990'
+                'year_1990',
+
+                // CRITICAL: Ensure Map is collected when skipping Node 1
+                'crime_route_map'
             ],
 
             // Dossier
