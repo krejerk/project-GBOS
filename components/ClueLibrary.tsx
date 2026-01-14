@@ -471,6 +471,10 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                 // Given the architecture, we'll mutate the object in memory.
                 if (CLUE_DEFINITIONS['crime_route_map']) {
                     CLUE_DEFINITIONS['crime_route_map'].description = '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔';
+                    // Update content to V2 image
+                    if (CLUE_DEFINITIONS['crime_route_map'].attachments) {
+                        CLUE_DEFINITIONS['crime_route_map'].attachments[0].content = '/assets/crime-route-map-v2.png';
+                    }
                 }
 
                 // Mark as newly added/updated
