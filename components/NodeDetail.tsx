@@ -230,6 +230,22 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                     const offsetX = (seed % 30) - 15; // Slightly reduced offset to prevent clipping
                     const zIndex = 10 + layerIndex;
 
+                    // Generate unique irregular edge pattern based on seed
+                    const clipPathVariations = [
+                      'polygon(2% 0%, 98% 1%, 99% 3%, 100% 97%, 97% 100%, 3% 99%, 0% 95%, 1% 2%)',
+                      'polygon(1% 3%, 4% 1%, 96% 0%, 99% 2%, 100% 96%, 98% 99%, 4% 100%, 0% 97%, 2% 5%)',
+                      'polygon(0% 2%, 97% 0%, 100% 4%, 99% 98%, 96% 100%, 2% 99%, 1% 96%, 0% 4%)',
+                      'polygon(3% 0%, 99% 2%, 100% 95%, 98% 100%, 1% 98%, 0% 3%, 2% 1%)',
+                      'polygon(1% 1%, 98% 0%, 100% 3%, 99% 97%, 97% 100%, 3% 99%, 0% 96%, 1% 4%)',
+                      'polygon(2% 2%, 96% 1%, 99% 0%, 100% 98%, 98% 100%, 4% 98%, 1% 99%, 0% 5%)'
+                    ];
+                    const clipPath = clipPathVariations[seed % clipPathVariations.length];
+
+                    // Vary corner decoration lengths
+                    const topLeftSize = 6 + (seed % 4);
+                    const bottomRightSize = 5 + ((seed * 3) % 5);
+                    const decorOpacity = 0.2 + ((seed % 3) * 0.1);
+
                     return (
                       <motion.div
                         key={fragmentId}
@@ -254,19 +270,76 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                           rotate: 0,
                           transition: { duration: 0.3, ease: "easeOut" }
                         }}
-                        className="relative mb-16 p-8 bg-[#1a1410]/80 border border-[#d89853]/15 shadow-[0_20px_40px_rgba(0,0,0,0.5)] group/fragment backdrop-blur-sm"
+                        className="relative mb-16 p-8 bg-[#1a1410]/80 border border-[#d89853]/15 shadow-[0_20px_40px_rgba(0,0,0,0.5)] group/fragment backdrop-blur-sm overflow-hidden"
                         style={{
                           marginLeft: `${offsetX}px`,
                           transform: `rotate(${rotate}deg)`,
-                          zIndex: zIndex
+                          zIndex: zIndex,
+                          clipPath: clipPath
                         }}
                       >
-                        {/* Fragment Decor */}
-                        <div className="absolute top-0 left-0 w-8 h-[1px] bg-[#d89853]/30" />
-                        <div className="absolute top-0 left-0 w-[1px] h-8 bg-[#d89853]/30" />
-                        <div className="absolute bottom-0 right-0 w-8 h-[1px] bg-[#c85a3f]/20" />
-                        <div className="absolute -top-3 -left-2 text-[10px] font-mono text-[#d89853]/20 select-none">
-                          FRAGMENT_{fragmentId}
+                        {/* Paper Texture Overlay */}
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')] opacity-[0.08] mix-blend-overlay pointer-events-none" />
+
+                        {/* Irregular Fragment Decor - Varied sizes */}
+                        <div
+                          className="absolute top-0 left-0 bg-[#d89853]"
+                          style={{
+                            width: `${topLeftSize * 4}px`,
+                            height: '1px',
+                            opacity: decorOpacity
+                          }}
+                        />
+                        <div
+                          className="absolute top-0 left-0 bg-[#d89853]"
+                          style={{
+                            width: '1px',
+                            height: `${topLeftSize * 4}px`,
+                            opacity: decorOpacity
+                          }}
+                        />
+                        <div
+                          className="absolute bottom-0 right-0 bg-[#c85a3f]"
+                          style={{
+                            width: `${bottomRightSize * 4}px`,
+                            height: '1px',
+                            opacity: decorOpacity * 0.7
+                          }}
+                        />
+
+                        {/* Enhanced Technical Label with Glitch Effect */}
+                        <div className="absolute -top-4 -left-3 font-mono select-none group-hover/fragment:animate-pulse">
+                          <div className="relative">
+                            {/* Main label */}
+                            <div
+                              className="text-[9px] tracking-wider text-[#d89853] relative z-10"
+                              style={{
+                                opacity: 0.3 + ((seed % 4) * 0.1),
+                                textShadow: '0 0 8px rgba(216, 152, 83, 0.3)'
+                              }}
+                            >
+                              <span className="opacity-60">[</span>
+                              FRAGMENT_{fragmentId}
+                              <span className="opacity-60">]</span>
+                            </div>
+                            {/* Glitch layer - only visible on hover */}
+                            <div
+                              className="absolute top-0 left-0 text-[9px] tracking-wider text-[#c85a3f] opacity-0 group-hover/fragment:opacity-40 transition-opacity duration-75"
+                              style={{
+                                transform: 'translate(1px, -0.5px)',
+                                mixBlendMode: 'screen'
+                              }}
+                            >
+                              [FRAGMENT_{fragmentId}]
+                            </div>
+                            {/* Corruption bar */}
+                            {seed % 3 === 0 && (
+                              <div
+                                className="absolute top-1/2 left-0 h-[1px] bg-[#d89853]/20"
+                                style={{ width: `${40 + (seed % 20)}px` }}
+                              />
+                            )}
+                          </div>
                         </div>
 
                         {/* Content with Keyword Highlighting */}
