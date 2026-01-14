@@ -137,8 +137,56 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'roanoke': '罗阿诺克市',
         'graywater_beacon': '灰水信标',
         'iron_horse_image': '铁马烟盒 (Visual)',
-        'aw_wilmo': '小A.W.威尔莫'
+        'aw_wilmo': '小A.W.威尔莫',
+        'twisted_relationship': '扭曲关系', // Confession 6 keyword
+        'blue_rv': '淡蓝色房车'
     };
+
+    // Mapping: Node ID -> [Keywords to HIDE when node is unlocked]
+    const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
+        // Node 1
+        'confession_1': ['maine', 'small_bank'],
+        'confession_2': ['chicago', 'asian_woman', 'missing'],
+        'confession_3': ['father', 'family', 'relationship'],
+
+        // Archives (Usually unlocked by Year + specialized keyword)
+        // Note: App.tsx handles consumption for years separately, but we can hide prompts here too
+        'oh_1968': ['ohio', 'ritual_case', 'year_1968'],
+        'me_1971': ['maine', 'year_1971'], // 'maine' also used for Confession 1, safe to duplicate
+        'dc_1967': ['year_1967', 'phoenix'],
+        'il_1985': ['year_1985', 'roger_beebe'],
+
+        // Node 2 (Confessions 4-7)
+        'confession_4': ['1402_old_dominion_rd', 'training_day'],
+        'confession_5': ['nevada', 'mojave_rest_stop', 'empty_cigarette_pack'],
+        'confession_6': ['roanoke', 'twisted_relationship'],
+        'confession_7': ['year_1990', 'aw_wilmo'], // Clipping 7 / Confession 7
+
+        // Archives Node 2
+        'va_1990': ['year_1990']
+    };
+
+    // Calculate currently consumed keywords based on unlocked nodes from props
+    // We use the `nodes` prop which contains only unlocked nodes (per App.tsx logic)
+    const consumedKeywords = React.useMemo(() => {
+        const consumed = new Set<string>();
+        // Add consumed from unlocked nodes (Confessions)
+        nodes.forEach(node => {
+            const keywords = KEYWORD_CONSUMPTION_MAP[node.id];
+            if (keywords) {
+                keywords.forEach(k => consumed.add(k));
+            }
+        });
+        // Add consumed from unlocked archives
+        unlockedArchiveIds.forEach(archiveId => {
+            const keywords = KEYWORD_CONSUMPTION_MAP[archiveId];
+            if (keywords) {
+                keywords.forEach(k => consumed.add(k));
+            }
+        });
+        return consumed;
+    }, [nodes, unlockedArchiveIds]);
+
 
     // Transient System Message Handling
     const [tempSystemMessage, setTempSystemMessage] = useState<string | null>(null);
@@ -497,13 +545,14 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         .filter(id =>
                                             !unlockedPeople.includes(id) &&
                                             !id.startsWith('year_') &&
-                                            !/^\d{4}$/.test(id) && // Filter out raw 4-digit years like "1971"
+                                            !/^\d{4}$/.test(id) &&
                                             id.toLowerCase() !== 'capone' &&
                                             id.toLowerCase() !== 'robert' &&
                                             id !== 'dr_reggie' &&
                                             id !== 'graywater_beacon' &&
                                             id !== 'iron_horse_image' &&
-                                            !!CLUE_DISPLAY_MAP[id] // STRICT: Only show if it has a valid Chinese mapping
+                                            !!CLUE_DISPLAY_MAP[id] && // STRICT: Only show if it has a valid Chinese mapping
+                                            !consumedKeywords.has(id) // HIDE CONSUMED KEYWORDS
                                         )
                                         .map(id => (
                                             <button
