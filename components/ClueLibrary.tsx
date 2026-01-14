@@ -33,6 +33,7 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         source: 'Briefing',
         attachments: [
             {
+                id: 'julip_symbol',
                 type: 'image',
                 title: 'FBI Symbol Sketch',
                 content: '/assets/fbi-symbol.png'
@@ -85,7 +86,15 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         id: 'project',
         word: '青豆牡蛎汤计划',
         description: '卡彭潜伏期间，该家族正在执行的犯罪计划代号。',
-        source: 'Briefing'
+        source: 'Briefing',
+        attachments: [
+            {
+                id: 'wilmer_ribbon',
+                type: 'image',
+                title: 'Silk Ribbon Evidence (1990)',
+                content: '/assets/wilmer_ribbon.jpg'
+            }
+        ]
     },
     'relationship': {
         id: 'relationship',
@@ -195,6 +204,7 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         description: '我根据你得到的供述，整理出了卡彭的犯罪活动路线图。目前标记到了波特兰、波士顿、纽波特、纽约、费城等关键地点。——詹妮弗',
         source: 'Node 1 Analysis',
         attachments: [{
+            id: 'crime_route_map',
             type: 'image',
             title: '东海岸犯罪路线图 (1980s)',
             content: '/assets/crime-route-map.png'
@@ -206,6 +216,7 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         description: '在莫哈韦休息站附近发现的视觉残留信号。代号"灰水信标"，是KLUB计划中用于单向情报传递的载具系统。',
         source: 'Confession',
         attachments: [{
+            id: 'graywater_beacon',
             type: 'image',
             title: '铁马烟盒 (Iron Horse)',
             content: '/assets/iron_horse_beacon.jpg'
@@ -566,13 +577,13 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
                                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                                     {selectedClue.attachments?.map((attachment, idx) => {
-                                                        // CONDITIONAL RENDER CHECK
-                                                        const isUnlocked = collectedAttachments.includes('julip_symbol') || selectedClue.id !== 'julip';
+                                                        // STRICT COLLECTION CHECK:
+                                                        // Only show attachment if its specific ID is in collectedAttachments,
+                                                        // OR if it's a legacy attachment without an ID (shouldn't happen with new definition)
+                                                        const attachmentId = (attachment as any).id;
+                                                        const isUnlocked = !attachmentId || collectedAttachments.includes(attachmentId);
 
-                                                        // Special logic for Julip: needs unlock
-                                                        if (selectedClue.id === 'julip' && !isUnlocked) {
-                                                            return null; // Or render a placeholder/locked state
-                                                        }
+                                                        if (!isUnlocked) return null;
 
                                                         return (
                                                             <motion.button

@@ -27,6 +27,7 @@ export interface MemoryNode {
 }
 
 export interface ClueAttachment {
+  id?: string;
   type: 'image' | 'text' | 'document';
   title: string;
   content: string; // URL for image, text content for others
