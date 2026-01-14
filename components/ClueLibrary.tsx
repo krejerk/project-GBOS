@@ -380,6 +380,10 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
     const [pendingNodeId, setPendingNodeId] = useState<number | null>(null);
 
+    // New State for History/Replay
+    const [showHistory, setShowHistory] = useState(false);
+    const [simulatedDialogue, setSimulatedDialogue] = useState<string[] | null>(null);
+
     // Track newly added items for glow effect
     const [newlyAddedItems, setNewlyAddedItems] = useState<Set<string>>(new Set());
 
@@ -487,17 +491,21 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
         setShowJennifer(false);
         setJenniferStep(0);
+        setSimulatedDialogue(null); // Clear simulation on exit
     };
 
     const handleJenniferClose = () => {
         setShowJennifer(false);
         setJenniferStep(0);
+        setSimulatedDialogue(null); // Clear simulation on exit
     };
 
     const handleJenniferNext = () => {
         // Select dialogue based on state
         let currentDialogue;
-        if (pendingNodeId === 1) {
+        if (simulatedDialogue) {
+            currentDialogue = simulatedDialogue;
+        } else if (pendingNodeId === 1) {
             currentDialogue = JENNIFER_NODE_1_DIALOGUE;
         } else if (pendingNodeId === 2) {
             currentDialogue = JENNIFER_NODE_2_DIALOGUE;
@@ -1024,20 +1032,57 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
                                         {/* Dialogue Text */}
                                         <div className="flex-1">
-                                            <p className="text-[#e2e8f0] text-lg font-light tracking-wide leading-relaxed font-sans whitespace-pre-line">
-                                                {(() => {
-                                                    // Select dialogue based on state
-                                                    let currentDialogue;
-                                                    if (pendingNodeId === 1) {
-                                                        currentDialogue = JENNIFER_NODE_1_DIALOGUE;
-                                                    } else if (hasVisitedBefore) {
-                                                        currentDialogue = JENNIFER_RETURN_DIALOGUE;
-                                                    } else {
-                                                        currentDialogue = JENNIFER_DIALOGUE;
-                                                    }
-                                                    return renderContent(currentDialogue[jenniferStep]);
-                                                })()}
-                                            </p>
+                                            {showHistory ? (
+                                                <div className="h-[300px] overflow-y-auto custom-scrollbar pr-2 space-y-4">
+                                                    <div className="text-xs font-mono text-[#94a3b8] mb-4 uppercase tracking-widest border-b border-[#334155] pb-2">
+                                                        Dialogue History Log
+                                                    </div>
+                                                    {/* Intro */}
+                                                    <div className="space-y-1">
+                                                        <div className="text-[10px] text-[#38bdf8] uppercase tracking-wider font-bold">Initial Contact</div>
+                                                        <p className="text-[#94a3b8] text-xs hover:text-[#e2e8f0] cursor-pointer" onClick={() => { setShowJennifer(true); setJenniferStep(0); setSimulatedDialogue(JENNIFER_DIALOGUE); setShowHistory(false); }}>
+                                                            Replay Sequence: "Connecting to Neural Link..."
+                                                        </p>
+                                                    </div>
+                                                    {/* Node 1 */}
+                                                    {(unlockedNodeIds.includes('confession_1') && unlockedNodeIds.includes('confession_2') && unlockedNodeIds.includes('confession_3')) && (
+                                                        <div className="space-y-1 pt-2 border-t border-[#334155]/30">
+                                                            <div className="text-[10px] text-[#38bdf8] uppercase tracking-wider font-bold">Checkpoint 1: The Ritual</div>
+                                                            <p className="text-[#94a3b8] text-xs hover:text-[#e2e8f0] cursor-pointer" onClick={() => { setShowJennifer(true); setJenniferStep(0); setSimulatedDialogue(JENNIFER_NODE_1_DIALOGUE); setShowHistory(false); }}>
+                                                                Replay Sequence: "You found the pattern..."
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    {/* Node 2 */}
+                                                    {(unlockedNodeIds.includes('confession_7')) && (
+                                                        <div className="space-y-1 pt-2 border-t border-[#334155]/30">
+                                                            <div className="text-[10px] text-[#38bdf8] uppercase tracking-wider font-bold">Checkpoint 2: Graywater Beacon</div>
+                                                            <p className="text-[#94a3b8] text-xs hover:text-[#e2e8f0] cursor-pointer" onClick={() => { setShowJennifer(true); setJenniferStep(0); setSimulatedDialogue(JENNIFER_NODE_2_DIALOGUE); setShowHistory(false); }}>
+                                                                Replay Sequence: "Thorne's signature found..."
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <p className="text-[#e2e8f0] text-lg font-light tracking-wide leading-relaxed font-sans whitespace-pre-line">
+                                                    {(() => {
+                                                        // Priority: Simulated (Replay) > Node 2 > Node 1 > Return > Intro
+                                                        if (simulatedDialogue) return renderContent(simulatedDialogue[jenniferStep]);
+
+                                                        let currentDialogue;
+                                                        if (pendingNodeId === 2) {
+                                                            currentDialogue = JENNIFER_NODE_2_DIALOGUE;
+                                                        } else if (pendingNodeId === 1) {
+                                                            currentDialogue = JENNIFER_NODE_1_DIALOGUE;
+                                                        } else if (hasVisitedBefore) {
+                                                            currentDialogue = JENNIFER_RETURN_DIALOGUE;
+                                                        } else {
+                                                            currentDialogue = JENNIFER_DIALOGUE;
+                                                        }
+                                                        return renderContent(currentDialogue[jenniferStep]);
+                                                    })()}
+                                                </p>
+                                            )}
                                         </div>
 
                                         <div className="absolute top-2 right-2 text-[#334155]/20">
@@ -1045,12 +1090,25 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                         </div>
                                     </div>
 
-                                    {/* Footer / Navigation */}
-                                    <div className="bg-[#1e293b]/30 p-4 flex justify-center border-t border-[#334155]">
+                                    <div className="bg-[#1e293b]/30 p-4 flex justify-between items-center border-t border-[#334155]">
+                                        {/* History Toggle */}
+                                        <button
+                                            onClick={() => setShowHistory(!showHistory)}
+                                            className="text-[#94a3b8] hover:text-[#38bdf8] text-xs font-mono tracking-widest px-4 py-2 hover:bg-[#334155]/50 rounded transition-colors"
+                                        >
+                                            {showHistory ? "BACK TO LIVE FEED" : "REVIEW LOGS"}
+                                        </button>
+
                                         {(() => {
-                                            // Select dialogue based on state
+                                            if (showHistory) return null;
+
+                                            // Priority: Simulated (Replay) > Node 2 > Node 1 > Return > Intro
                                             let currentDialogue;
-                                            if (pendingNodeId === 1) {
+                                            if (simulatedDialogue) {
+                                                currentDialogue = simulatedDialogue;
+                                            } else if (pendingNodeId === 2) {
+                                                currentDialogue = JENNIFER_NODE_2_DIALOGUE;
+                                            } else if (pendingNodeId === 1) {
                                                 currentDialogue = JENNIFER_NODE_1_DIALOGUE;
                                             } else if (hasVisitedBefore) {
                                                 currentDialogue = JENNIFER_RETURN_DIALOGUE;
