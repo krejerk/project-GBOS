@@ -483,17 +483,19 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 gap-2 max-h-[40vh] overflow-y-auto custom-scrollbar pr-1">
-                  {collectedDossierIds.map(clueId => (
-                    <button
-                      key={clueId}
-                      onClick={() => handleAttemptCollect(clueId)}
-                      className="text-[10px] font-mono border border-[#d89853]/20 bg-[#d89853]/5 text-[#d89853]/80 p-3 rounded hover:bg-[#d89853]/20 hover:text-[#d89853] hover:border-[#d89853]/50 transition-all flex items-center gap-3 group/folder"
-                    >
-                      <Folder size={14} className="group-hover/folder:scale-110 transition-transform" />
-                      <span className="truncate">{clueDisplayMap[clueId] || clueId}</span>
-                    </button>
-                  ))}
-                  {collectedDossierIds.length === 0 && (
+                  {collectedDossierIds
+                    .filter(clueId => !!clueDisplayMap[clueId]) // STRICT: Only show if it has a valid mapping
+                    .map(clueId => (
+                      <button
+                        key={clueId}
+                        onClick={() => handleAttemptCollect(clueId)}
+                        className="text-[10px] font-mono border border-[#d89853]/20 bg-[#d89853]/5 text-[#d89853]/80 p-3 rounded hover:bg-[#d89853]/20 hover:text-[#d89853] hover:border-[#d89853]/50 transition-all flex items-center gap-3 group/folder"
+                      >
+                        <Folder size={14} className="group-hover/folder:scale-110 transition-transform" />
+                        <span className="truncate">{clueDisplayMap[clueId]}</span>
+                      </button>
+                    ))}
+                  {collectedDossierIds.filter(clueId => !!clueDisplayMap[clueId]).length === 0 && (
                     <div className="text-center py-8 border border-dashed border-[#d89853]/10">
                       <p className="text-[#d89853]/30 text-[10px] uppercase font-mono tracking-widest">
                         暂无可用案卷文件夹<br />
