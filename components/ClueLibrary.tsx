@@ -37,6 +37,13 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 type: 'image',
                 title: 'FBI Symbol Sketch',
                 content: '/assets/fbi-symbol.png'
+            },
+            {
+                id: 'butter_julep_evidence',
+                type: 'image',
+                title: 'Butter Julep Evidence (1973)',
+                content: '/assets/butter_julep_evidence.jpg',
+                description: '1973年辛辛那提少女冻死案证物。热感成像技术扫描显示，毛毯上残留着一个由高纯度工业油脂与未知染料混合而成的热敏化学印记。该标记呈现半透明蜡黄色，形状为高度抽象的几何结构，被命名为"黄油朱莉普"。根据雷吉博士的行为学分析，凶手将遗体放置在警局门口的行为类似完成一次邮差的"签收"动作，因此在女孩身上留下了这个如同货物印章般的冒烟印迹。'
             }
         ]
     },
@@ -920,6 +927,12 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                         >
                                                             路易斯维尔
                                                         </span>
+                                                    </div>
+                                                )}
+                                                {/* General description for attachments with description field */}
+                                                {viewingAttachment.description && (
+                                                    <div className="text-xs text-[#94a3b8] mt-4 max-w-2xl mx-auto leading-relaxed">
+                                                        {viewingAttachment.description}
                                                     </div>
                                                 )}
                                             </div>

@@ -139,7 +139,15 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'iron_horse_image': '铁马烟盒 (Visual)',
         'aw_wilmo': '小A.W.威尔莫',
         'twisted_relationship': '扭曲关系', // Confession 6 keyword
-        'blue_rv': '淡蓝色房车'
+        'blue_rv': '淡蓝色房车',
+        'year_1973': '1973年',
+        'julie': '朱莉',
+        'the_mother': '母亲',
+        'vanessa': '瓦妮莎',
+        'silas': '塞勒斯',
+        'cincinnati': '辛辛那提',
+        'year_1986': '1986年',
+        'mint_plan': '薄荷计划'
     };
 
     // Mapping: Node ID -> [Keywords to HIDE when node is unlocked]
@@ -163,7 +171,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'confession_7': ['year_1990', 'aw_wilmo'], // Clipping 7 / Confession 7
 
         // Archives Node 2
-        'va_1990': ['year_1990']
+        'va_1990': ['year_1990'],
+
+        // Confession 8
+        'confession_8': ['louisville', 'blue_rv']
     };
 
     // Calculate currently consumed keywords based on unlocked nodes from props
@@ -232,33 +243,33 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             </div>
 
             {/* Header / Nav */}
-            <header className="h-14 md:h-20 border-b border-[#d89853]/20 flex items-center justify-between px-4 md:px-8 bg-black/20 backdrop-blur-md z-20">
-                <div className="flex items-center gap-3">
+            <header className="h-12 md:h-16 border-b border-[#d89853]/20 flex items-center justify-between px-3 md:px-8 bg-black/20 backdrop-blur-md z-20">
+                <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-[#c85a3f] rounded-full animate-pulse shadow-[0_0_8px_#c85a3f]" />
-                    <h1 className="text-lg md:text-xl tracking-[0.2em] font-bold text-[#d89853] opacity-90 text-shadow-sm">G.B.O.S. LINK</h1>
+                    <h1 className="text-sm md:text-xl tracking-[0.15em] md:tracking-[0.2em] font-bold text-[#d89853] opacity-90 text-shadow-sm">G.B.O.S. LINK</h1>
                 </div>
 
                 {/* Top Feature Nav */}
-                <div className="flex gap-4 md:gap-6">
+                <div className="flex gap-2 md:gap-6">
                     <button
                         onClick={() => setShowMindMap(true)}
-                        className="group flex items-center gap-2 text-[#d89853]/80 hover:text-[#d89853] transition-colors text-xs tracking-[0.1em] font-bold"
+                        className="group flex items-center gap-1.5 text-[#d89853]/80 hover:text-[#d89853] transition-colors text-xs tracking-[0.1em] font-bold p-2 md:p-0"
                     >
-                        <Network size={14} className="group-hover:scale-110 transition-transform" />
+                        <Network size={16} className="group-hover:scale-110 transition-transform" />
                         <span className="hidden md:inline">人物关系</span>
                     </button>
                     <button
                         onClick={() => setShowArchives(true)}
-                        className="group flex items-center gap-2 text-[#d89853]/80 hover:text-[#d89853] transition-colors text-xs tracking-[0.1em] font-bold"
+                        className="group flex items-center gap-1.5 text-[#d89853]/80 hover:text-[#d89853] transition-colors text-xs tracking-[0.1em] font-bold p-2 md:p-0"
                     >
-                        <Archive size={14} className="group-hover:scale-110 transition-transform" />
+                        <Archive size={16} className="group-hover:scale-110 transition-transform" />
                         <span className="hidden md:inline">档案室</span>
                     </button>
                     <button
                         onClick={() => setShowClueLibrary(true)}
-                        className="group flex items-center gap-2 text-[#d89853]/80 hover:text-[#d89853] transition-colors text-xs tracking-[0.1em] font-bold"
+                        className="group flex items-center gap-1.5 text-[#d89853]/80 hover:text-[#d89853] transition-colors text-xs tracking-[0.1em] font-bold p-2 md:p-0"
                     >
-                        <Database size={14} className="group-hover:scale-110 transition-transform" />
+                        <Database size={16} className="group-hover:scale-110 transition-transform" />
                         <span className="hidden md:inline">案卷建档</span>
                         <span className="bg-[#d89853]/10 px-1.5 py-0.5 rounded text-[9px] group-hover:bg-[#d89853]/30 transition-colors">
                             {collectedDossierIds.length}
@@ -279,8 +290,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     className="w-full max-w-2xl flex flex-col items-center gap-8"
                 >
                     {/* Ambient Avatar / Prompt */}
-                    <div className="relative mb-8 group flex flex-col items-center">
-                        <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 group-hover:opacity-100 transition-opacity filter sepia-[0.2] contrast-110 mb-6">
+                    <div className="relative mb-4 md:mb-8 group flex flex-col items-center">
+                        <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 group-hover:opacity-100 transition-opacity filter sepia-[0.2] contrast-110 mb-4 md:mb-6">
                             <img
                                 src="/assets/capone-split-personality.jpg"
                                 className="w-[200%] h-full max-w-none object-cover object-left"
@@ -365,7 +376,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                     {/* Search Input */}
                     <form onSubmit={handleSearchSubmit} className="w-full relative group transform transition-all duration-300 focus-within:scale-105">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-[#d89853]/60 group-hover:text-[#d89853] transition-colors" size={20} />
+                        <Search className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-[#d89853]/60 group-hover:text-[#d89853] transition-colors" size={18} />
                         <input
                             type="text"
                             value={searchQuery}
@@ -374,7 +385,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             autoFocus
                             onFocus={() => setIsSearchFocused(true)}
                             onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)} // Delay to allow click on chips
-                            className="w-full pl-16 pr-8 py-5 bg-black/40 backdrop-blur-md border border-[#d89853]/30 text-[#d89853] placeholder-[#d89853]/40 rounded-full text-lg font-light tracking-wide focus:outline-none focus:border-[#d89853]/60 focus:bg-black/60 transition-all shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:border-[#d89853]/50"
+                            className="w-full pl-12 md:pl-16 pr-6 md:pr-8 py-3 md:py-5 bg-black/40 backdrop-blur-md border border-[#d89853]/30 text-[#d89853] placeholder-[#d89853]/40 rounded-full text-base md:text-lg font-light tracking-wide focus:outline-none focus:border-[#d89853]/60 focus:bg-black/60 transition-all shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:border-[#d89853]/50"
                             style={{ textShadow: '0 0 10px rgba(216,152,83,0.2)' }}
                         />
                         <button
@@ -574,7 +585,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                                         return `${prev}${separator}${clueText}`;
                                                     });
                                                 }}
-                                                className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
+                                                className="px-2.5 md:px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-[11px] md:text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
                                             >
                                                 {CLUE_DISPLAY_MAP[id] || id}
                                             </button>

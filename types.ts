@@ -31,6 +31,7 @@ export interface ClueAttachment {
   type: 'image' | 'text' | 'document';
   title: string;
   content: string; // URL for image, text content for others
+  description?: string; // Optional detailed description for the attachment
 }
 
 export interface Clue {

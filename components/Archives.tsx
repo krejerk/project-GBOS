@@ -13,6 +13,7 @@ interface ArchivesProps {
     unlockedPeople: string[];
     collectedDossierIds: string[];
     onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
+    collectedAttachments?: string[];
     onCollectAttachment?: (id: string) => void;
 }
 
@@ -296,6 +297,41 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 3. 发散性结论： 抓获小威尔莫不是终结，而是一种“剥离”。有人把这个已经失去利用价值的、大脑受损的“支系”扔了出来，送给阿特尔曼当勋章，好换取整个“家族”更深层的静默。`,
             template: 'THORNE'
         }
+    },
+    {
+        id: 'cin_1973',
+        title: '1973年辛辛那提少女冻死案',
+        triggers: {
+            year: '1973',
+            person: ['cincinnati', '辛辛那提', 'julie', '朱莉']
+        },
+        newspaper: {
+            source: '《辛辛那提询问报》(The Cincinnati Enquirer)',
+            date: '1973年1月14日',
+            headline: '警局门前的致命疏忽：六岁少女冻死分局阶梯，警方陷入信用危机',
+            content: [
+                '（本报讯） 针对本月初"朱莉·沃尔什失踪案"的调查于昨日宣告终结，辛辛那提警方正式承认这是一起由"极端管理疏忽"导致的悲剧。',
+                '1月5日清晨，失踪三日的六岁少女朱莉（Julie Walsh）被发现冻死在第四分局的大门前，身上仅裹着一层单薄的毛毯。初步尸检显示，死因为长时间暴露于极寒环境导致的体温过低。由于新年假期期间警队休假人数过多，分局内部人员严重短缺，值班警员在漫长的深夜值班中竟完全忽略了门前的动态。',
+                '尽管朱莉的家属质疑孩子为何会出现在警局门口，但警方在对现场进行排查后认为，朱莉可能是在迷路后试图寻求帮助，却因体力不支倒在门前，而值班警察的玩忽职守导致了救援机会的丧失。目前，两名当值警员已停职接受行政调查，案件最终以"意外死亡"结案。'
+            ]
+        },
+        annotation: {
+            fileId: 'CIN-1973-009-REV',
+            date: '1986年11月12日',
+            level: '最高机密 (EYES ONLY / CLASSIFIED)',
+            author: '马库斯·索恩 (Marcus Thorne)，FBI 实验室总证物官',
+            content: `【证物异常状态说明：CIN-1973-009-E（蓝色纤维毛毯上的残留标记）】
+
+在 1986 年的薄荷计划的系列证据复核调查中，我利用热感成像复原技术重新扫描了辛辛那提少女冻死案时的毛毯样本。
+
+
+关于"黄油朱莉普（Butter Julep）"： 这不是某种泼洒物。这是一个热敏化学印记。残留物是由高纯度工业油脂与某种未知染料混合而成的。由于其特殊的化学性质，它在很长一段时间内会产生缓慢的氧化反应，看起来就像是一直在冒着热气的活体标记。「图片见附录」
+
+符号的性质： 其形状是一个高度抽象的几何结构。在我们的档案中，这种标记被命名为"黄油朱莉普"，因为它呈现出一种恶心的、类似融化油脂的半透明蜡黄色。这更像是一个**"印刷品污迹"**，而非手写的签名。
+
+行为学暗示： 根据雷吉博士的理论，凶手将遗体放置在警局门口，其行为类似完成了一次邮差的"签收"动作。因此他必须像是在给一件货物加盖印章一样，在女孩身上留下这个冒烟的印迹。`,
+            template: 'THORNE'
+        }
     }
 ];
 
@@ -310,6 +346,7 @@ export const Archives: React.FC<ArchivesProps> = ({
     unlockedPeople,
     collectedDossierIds,
     onConsumeKeywords,
+    collectedAttachments = [],
     onCollectAttachment
 }) => {
     const [yearInput, setYearInput] = useState('');
@@ -343,8 +380,20 @@ export const Archives: React.FC<ArchivesProps> = ({
         '1972': 'year_1972',
         '玛莎·迪亚兹': 'martha_diaz',
         '1990': 'year_1990',
+        '1990年': 'year_1990',
         '小A.W.威尔莫': 'aw_wilmo',
-        '小威尔莫': 'aw_wilmo'
+        '小威尔莫': 'aw_wilmo',
+        '1973': 'year_1973',
+        '1973年': 'year_1973',
+        '朱莉': 'julie',
+        '母亲': 'the_mother',
+        '瓦妮莎': 'vanessa',
+        '塞勒斯': 'silas',
+        '赛勒斯': 'silas',
+        '辛辛那提': 'cincinnati',
+        '1986': 'year_1986',
+        '1986年': 'year_1986',
+        '薄荷计划': 'mint_plan'
     };
 
     // Clue display mapping for quick selection chips
@@ -353,6 +402,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         'year_1968': '1968',
         'year_1967': '1967',
         'year_1985': '1985',
+        'year_1990': '1990',
+        'year_1972': '1972',
+        'year_1973': '1973',
         'nibi': '尼比',
         'lundgren': '伦德格兰',
         'conchar': '康查尔',
@@ -381,8 +433,14 @@ export const Archives: React.FC<ArchivesProps> = ({
         'aw_wilmo': '小A.W.威尔莫',
         'crime_route_map': '罗伯特·卡彭：犯罪路线',
         'graywater_beacon': '灰水信标',
-        'year_1972': '1972',
-        'martha_diaz': '玛莎·迪亚兹'
+        'martha_diaz': '玛莎·迪亚兹',
+        'julie': '朱莉',
+        'the_mother': '母亲',
+        'vanessa': '瓦妮莎',
+        'silas': '塞勒斯',
+        'cincinnati': '辛辛那提',
+        'year_1986': '1986',
+        'mint_plan': '薄荷计划'
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
@@ -423,6 +481,20 @@ export const Archives: React.FC<ArchivesProps> = ({
             return;
         }
 
+        // Butter Julep evidence photo goes to julip dossier
+        if (attachmentImage === '/assets/butter_julep_evidence.jpg' && targetClueId === 'julip') {
+            if (onCollectAttachment) {
+                onCollectAttachment('butter_julep_evidence');
+            }
+            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+            setTimeout(() => {
+                setAttachmentImage(null);
+                setIsSelectingFolder(false);
+                setCollectionFeedback({ type: null, msg: '' });
+            }, 1500);
+            return;
+        }
+
         setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
         setTimeout(() => setCollectionFeedback({ type: null, msg: '' }), 2000);
     };
@@ -438,7 +510,7 @@ export const Archives: React.FC<ArchivesProps> = ({
 
             // Also populate inputs for convenience (optional, keeping for UX)
             // Check if it's a person or year based on simple heuristic or map
-            if (['1967', '1968', '1971'].includes(keyword)) {
+            if (['1967', '1968', '1971', '1972', '1985', '1990'].includes(keyword)) {
                 setYearInput(keyword);
             } else {
                 setPersonInput(keyword);
@@ -475,6 +547,10 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (yearTrimmed === '1968') usedYearIds.push('year_1968');
                 if (yearTrimmed === '1967') usedYearIds.push('year_1967');
                 if (yearTrimmed === '1985') usedYearIds.push('year_1985');
+                if (yearTrimmed === '1972') usedYearIds.push('year_1972');
+                if (yearTrimmed === '1990') usedYearIds.push('year_1990');
+                if (yearTrimmed === '1973') usedYearIds.push('year_1973');
+                if (yearTrimmed === '1986') usedYearIds.push('year_1986');
 
                 // Match person
                 const personLower = personInput.trim().toLowerCase();
@@ -820,7 +896,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                 ? ['1402 Old Dominion Rd.', '灭门案', '训练日']
                                                                                 : activeCase.id === 'nv_1971'
                                                                                     ? ['莫哈韦休息站', '空烟盒']
-                                                                                    : ['俄亥俄州', '祭祀案']; // Default legacy
+                                                                                    : activeCase.id === 'cin_1973'
+                                                                                        ? ['1986', '1986年', '薄荷计划']
+                                                                                        : ['俄亥俄州', '祭祀案']; // Default legacy
 
                                                                 const attachmentTrigger = '「图片见附录」';
                                                                 const wilmerTrigger = '「附注」';
@@ -831,14 +909,17 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 return (
                                                                     <p key={i} className="mb-4">
                                                                         {line.split(regex).map((part, j) => {
+
                                                                             if (part === attachmentTrigger || part === wilmerTrigger) {
                                                                                 return (
                                                                                     <span
                                                                                         key={j}
                                                                                         onClick={() => {
-                                                                                            // Special case for va_1990 image
+                                                                                            // Special case for different archives
                                                                                             if (activeCase.id === 'va_1990') {
                                                                                                 setAttachmentImage('/assets/wilmer_ribbon.jpg');
+                                                                                            } else if (activeCase.id === 'cin_1973') {
+                                                                                                setAttachmentImage('/assets/butter_julep_evidence.jpg');
                                                                                             } else {
                                                                                                 setAttachmentImage('/assets/fbi-symbol.png');
                                                                                             }
