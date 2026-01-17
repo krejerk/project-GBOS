@@ -303,7 +303,7 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
         title: '1973年辛辛那提少女冻死案',
         triggers: {
             year: '1973',
-            person: ['cincinnati', '辛辛那提', 'julie', '朱莉']
+            person: ['julie', '朱莉']
         },
         newspaper: {
             source: '《辛辛那提询问报》(The Cincinnati Enquirer)',
@@ -331,6 +331,38 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 
 行为学暗示： 根据雷吉博士的理论，凶手将遗体放置在警局门口，其行为类似完成了一次邮差的"签收"动作。因此他必须像是在给一件货物加盖印章一样，在女孩身上留下这个冒烟的印迹。`,
             template: 'THORNE'
+        }
+    },
+    {
+        id: 'nas_1973',
+        title: '1973年纳什维尔警局军械库窃案',
+        triggers: {
+            year: '1973',
+            person: ['juvell_chambers', '朱维尔·钱伯斯', 'juvell chambers']
+        },
+        newspaper: {
+            source: '《纳什维尔旗帜报》(Nashville Banner)',
+            date: '1973年8月22日',
+            headline: '警局军械库遭劫，争议警员钱伯斯获无罪判决：正义还是妥协？',
+            content: [
+                '（本报讯） 纳什维尔地方法院昨日人声鼎沸。经过长达三个月的审理，大陪审团最终宣布，因"证据链存在严重瑕疵且存在过度执法嫌疑"，正式撤销对非裔警员朱维尔·钱伯斯（Jewel Chambers）的控诉。',
+                '去年发生的"灵魂厨房"系列犯罪波及周边数城，最终在纳什维尔达到高潮。当时，一伙蒙面暴徒在混乱中洗劫了第三分局的军械库，包括 12 支泵动式散弹枪及大量弹药在内的警用物资失窃。由于钱伯斯是当晚唯一的库房守卫，且现场发现了与黑人民权组织相关的非法印刷品，警方内部坚称钱伯斯是"内鬼"，旨在为激进分子输送武装。',
+                '然而，案件审理期间遭遇了来自民权团体和社区的巨大压力，辩方律师指出警方将钱伯斯"拖出来顶罪"的行为具有明显的种族歧视色彩。尽管警方坚信军械库大门的开启必须依靠内应，但在缺乏直接物证的情况下，法庭最终因担心引发更大规模的街头冲突而判定其无罪。'
+            ]
+        },
+        annotation: {
+            fileId: 'NAS-1979-102-REV',
+            date: '1979年5月14日',
+            level: '最高机密 (EYES ONLY / CLASSIFIED)',
+            author: '阿尔特曼 (Altman)，FBI 高级特别探员',
+            content: `【关于 1973 年纳什维尔"军械库窃案"与钱伯斯的后续评估】
+
+关于"灵魂厨房计划（Project Soul Kitchen）"： 根据我们对 1973 年至 1975 年间俄亥俄州及周边地区一系列种族犯罪的最新交叉研究，纳什维尔的军械库窃案绝非孤立事件。这是一次极其典型的、带有高度政治目的的战术行动。
+
+朱维尔·钱伯斯的真实身份： 虽然法庭在种族政治的压力下低了头，但我依然维持 1973 年的最初判断。根据一些未公开线索，钱伯斯在进入警队前曾与加州的分裂团体有染。他留在警队唯一的目的，根本就是等待"厨房"再度开张。而且有证据表明，其获释两年后，伯克斯维尔的多起暴力案件与之存在间接关联。那些失窃的散弹枪至今没有在任何黑市流向记录中出现，这说明这批武器并没有被转售，而是进入了某种深层的、潜伏性质的武装内部。
+
+我的直觉： 我们仍应将朱维尔·钱伯斯列入"红色观察名单"。虽然局内有人试图往什么连环杀手方向引导，但我认为，这本质上是黑人反抗运动策划的一场针对政府武装力量的、有组织的渗透。`,
+            template: 'ALTERMAN'
         }
     }
 ];
@@ -393,7 +425,10 @@ export const Archives: React.FC<ArchivesProps> = ({
         '辛辛那提': 'cincinnati',
         '1986': 'year_1986',
         '1986年': 'year_1986',
-        '薄荷计划': 'mint_plan'
+        '薄荷计划': 'mint_plan',
+        '伯克斯维尔': 'burkesville',
+        '1975': 'year_1975',
+        '1975年': 'year_1975'
     };
 
     // Clue display mapping for quick selection chips
@@ -440,7 +475,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         'silas': '塞勒斯',
         'cincinnati': '辛辛那提',
         'year_1986': '1986',
-        'mint_plan': '薄荷计划'
+        'mint_plan': '薄荷计划',
+        'year_1975': '1975',
+        'burkesville': '伯克斯维尔'
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
@@ -551,6 +588,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (yearTrimmed === '1990') usedYearIds.push('year_1990');
                 if (yearTrimmed === '1973') usedYearIds.push('year_1973');
                 if (yearTrimmed === '1986') usedYearIds.push('year_1986');
+                if (yearTrimmed === '1975') usedYearIds.push('year_1975');
 
                 // Match person
                 const personLower = personInput.trim().toLowerCase();
@@ -898,7 +936,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                     ? ['莫哈韦休息站', '空烟盒']
                                                                                     : activeCase.id === 'cin_1973'
                                                                                         ? ['1986', '1986年', '薄荷计划']
-                                                                                        : ['俄亥俄州', '祭祀案']; // Default legacy
+                                                                                        : activeCase.id === 'nas_1973'
+                                                                                            ? ['伯克斯维尔', '1975', '1975年']
+                                                                                            : ['俄亥俄州', '祭祀案']; // Default legacy
 
                                                                 const attachmentTrigger = '「图片见附录」';
                                                                 const wilmerTrigger = '「附注」';

@@ -147,7 +147,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'silas': '塞勒斯',
         'cincinnati': '辛辛那提',
         'year_1986': '1986年',
-        'mint_plan': '薄荷计划'
+        'mint_plan': '薄荷计划',
+        'year_1982': '1982年',
+        'el_paso': '埃尔帕索',
+        'juvell_chambers': '朱维尔·钱伯斯',
+        'year_1975': '1975年',
+        'burkesville': '伯克斯维尔'
     };
 
     // Mapping: Node ID -> [Keywords to HIDE when node is unlocked]
@@ -174,7 +179,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'va_1990': ['year_1990'],
 
         // Confession 8
-        'confession_8': ['louisville', 'blue_rv']
+        'confession_8': ['louisville', 'blue_rv'],
+        'confession_9': ['cincinnati', 'mint_plan']
     };
 
     // Calculate currently consumed keywords based on unlocked nodes from props

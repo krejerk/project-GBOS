@@ -125,6 +125,11 @@ const App: React.FC = () => {
         clues: ['louisville', 'blue_rv'],
         years: [],
         people: []
+      },
+      confession_9: {
+        clues: ['cincinnati', 'mint_plan'],
+        years: [],
+        people: []
       }
     };
 
@@ -196,6 +201,11 @@ const App: React.FC = () => {
       'syndicate': true, '辛迪加': true,
       'aw_wilmo': true, '小A.W.威尔莫': true,
       'mint_plan': true, 'mint plan': true, '薄荷计划': true,
+      'year_1982': true, '1982': true, '1982年': true,
+      'el_paso': true, '埃尔帕索': true,
+      'juvell_chambers': true, '朱维尔·钱伯斯': true, 'juvell chambers': true,
+      'burkesville': true, '伯克斯维尔': true,
+      'year_1975': true, '1975': true, '1975年': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -247,7 +257,9 @@ const App: React.FC = () => {
         hasRoanoke: lowerQuery.includes('roanoke') || lowerQuery.includes('罗阿诺克'),
         hasTwistedRelationship: lowerQuery.includes('twisted_relationship') || lowerQuery.includes('扭曲关系'),
         hasLouisville: lowerQuery.includes('louisville') || lowerQuery.includes('路易斯维尔'),
-        hasBlueRV: lowerQuery.includes('blue_rv') || lowerQuery.includes('blue rv') || lowerQuery.includes('淡蓝色房车') || lowerQuery.includes('房车')
+        hasBlueRV: lowerQuery.includes('blue_rv') || lowerQuery.includes('blue rv') || lowerQuery.includes('淡蓝色房车') || lowerQuery.includes('房车'),
+        hasCincinnati: lowerQuery.includes('cincinnati') || lowerQuery.includes('辛辛那提'),
+        hasMintPlan: lowerQuery.includes('mint_plan') || lowerQuery.includes('mint plan') || lowerQuery.includes('薄荷计划')
       };
     };
 
@@ -645,6 +657,58 @@ const App: React.FC = () => {
       return;
     }
 
+    // Confession 9: Cincinnati + Mint Plan
+    if (validation.hasCincinnati && validation.hasMintPlan) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: \"你在说什么？想从我这套话,你得有点东西交换才行。\"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_9');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_9');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_9;
+          setGameState(prev => {
+            if (prev.unlockedNodeIds.includes(node!.id)) {
+              return prev;
+            }
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: Math.min(prev.systemStability + 20, 84),
+              collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+
+              ]
+            }
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
     // ===== ADVANCED PRESET Q&A SYSTEM WITH FUZZY MATCHING =====
 
     const lowerQuery = query.toLowerCase().trim();
@@ -893,8 +957,8 @@ const App: React.FC = () => {
   const handleCollectClue = (clueId: string, word: string) => {
     // Define Categories - COMPREHENSIVE CLASSIFICATION SYSTEM
     const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'];
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas'];
-    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986'];
+    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers'];
+    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975'];
 
     const isDossier = DOSSIER_WHITELIST.includes(clueId);
     const isPerson = PEOPLE_IDS.includes(clueId);

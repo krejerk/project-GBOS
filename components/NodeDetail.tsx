@@ -103,22 +103,31 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     '赛勒斯': 'silas'
   };
 
+  const CONFESSION_9_KEYWORDS: Record<string, string> = {
+    '1982': 'year_1982',
+    '埃尔帕索': 'el_paso',
+    '朱维尔·钱伯斯': 'juvell_chambers',
+    '1973': 'year_1973'
+  };
+
   // Select keyword map based on node ID
-  const KEYWORD_MAP = node.id === 'confession_8'
-    ? CONFESSION_8_KEYWORDS
-    : node.id === 'confession_7'
-      ? CONFESSION_7_KEYWORDS
-      : node.id === 'confession_6'
-        ? CONFESSION_6_KEYWORDS
-        : node.id === 'confession_5'
-          ? CONFESSION_5_KEYWORDS
-          : node.id === 'confession_4'
-            ? CONFESSION_4_KEYWORDS
-            : node.id === 'confession_3'
-              ? CONFESSION_3_KEYWORDS
-              : node.id === 'confession_2'
-                ? CONFESSION_2_KEYWORDS
-                : CONFESSION_1_KEYWORDS;
+  const KEYWORD_MAP = node.id === 'confession_9'
+    ? CONFESSION_9_KEYWORDS
+    : node.id === 'confession_8'
+      ? CONFESSION_8_KEYWORDS
+      : node.id === 'confession_7'
+        ? CONFESSION_7_KEYWORDS
+        : node.id === 'confession_6'
+          ? CONFESSION_6_KEYWORDS
+          : node.id === 'confession_5'
+            ? CONFESSION_5_KEYWORDS
+            : node.id === 'confession_4'
+              ? CONFESSION_4_KEYWORDS
+              : node.id === 'confession_3'
+                ? CONFESSION_3_KEYWORDS
+                : node.id === 'confession_2'
+                  ? CONFESSION_2_KEYWORDS
+                  : CONFESSION_1_KEYWORDS;
 
   // Track animation states for collected keywords
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});
