@@ -482,7 +482,7 @@ export const Archives: React.FC<ArchivesProps> = ({
 
     const handleAttemptCollect = (targetClueId: string) => {
         // Special mapping: wilmer_ribbon goes to project dossier
-        if (attachmentImage === '/assets/wilmer_ribbon.jpg' && targetClueId === 'project') {
+        if (attachmentImage === 'assets/wilmer_ribbon.jpg' && targetClueId === 'project') {
             onCollectAttachment('wilmer_ribbon');
             setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
             setTimeout(() => {
@@ -493,7 +493,7 @@ export const Archives: React.FC<ArchivesProps> = ({
             return;
         }
 
-        if (attachmentImage === '/assets/fbi-symbol.png' && targetClueId === 'graywater_beacon') {
+        if (attachmentImage === 'assets/fbi-symbol.png' && targetClueId === 'graywater_beacon') {
             onCollectAttachment('graywater_beacon');
             setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
             setTimeout(() => {
@@ -505,7 +505,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         }
 
         // Default logic for julip_symbol (if it's still needed, though graywater_beacon replaces it for the FBI symbol)
-        if (attachmentImage === '/assets/fbi-symbol.png' && targetClueId === 'julip') {
+        if (attachmentImage === 'assets/fbi-symbol.png' && targetClueId === 'julip') {
             if (onCollectAttachment) {
                 onCollectAttachment('julip_symbol');
             }
@@ -519,7 +519,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         }
 
         // Butter Julep evidence photo goes to julip dossier
-        if (attachmentImage === '/assets/butter_julep_evidence.jpg' && targetClueId === 'julip') {
+        if (attachmentImage === 'assets/butter_julep_evidence.jpg' && targetClueId === 'julip') {
             if (onCollectAttachment) {
                 onCollectAttachment('butter_julep_evidence');
             }
@@ -957,11 +957,11 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                         onClick={() => {
                                                                                             // Special case for different archives
                                                                                             if (activeCase.id === 'va_1990') {
-                                                                                                setAttachmentImage('/assets/wilmer_ribbon.jpg');
+                                                                                                setAttachmentImage('assets/wilmer_ribbon.jpg');
                                                                                             } else if (activeCase.id === 'cin_1973') {
-                                                                                                setAttachmentImage('/assets/butter_julep_evidence.jpg');
+                                                                                                setAttachmentImage('assets/butter_julep_evidence.jpg');
                                                                                             } else {
-                                                                                                setAttachmentImage('/assets/fbi-symbol.png');
+                                                                                                setAttachmentImage('assets/fbi-symbol.png');
                                                                                             }
                                                                                         }}
                                                                                         className="inline-flex items-center gap-1 text-[#d89853] cursor-pointer hover:text-white hover:underline decoration-1 underline-offset-4 ml-1 transition-colors group/link align-baseline font-bold"
@@ -1138,7 +1138,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                             alt="FBI Attachment"
                                             className={`
                                                 max-h-[70vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.8)] transition-all
-                                                ${attachmentImage === '/assets/wilmer_ribbon.jpg'
+                                                ${attachmentImage === 'assets/wilmer_ribbon.jpg'
                                                     ? 'p-0 bg-transparent transform rotate-2 scale-110' // Clean Polaroid style
                                                     : 'border-8 border-white p-4 bg-white transform rotate-1' // Legacy style
                                                 }

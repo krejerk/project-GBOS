@@ -36,13 +36,13 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 id: 'julip_symbol',
                 type: 'image',
                 title: 'FBI Symbol Sketch',
-                content: '/assets/fbi-symbol.png'
+                content: 'assets/fbi-symbol.png'
             },
             {
                 id: 'butter_julep_evidence',
                 type: 'image',
                 title: 'Butter Julep Evidence (1973)',
-                content: '/assets/butter_julep_evidence.jpg',
+                content: 'assets/butter_julep_evidence.jpg',
                 description: '1973年辛辛那提少女冻死案证物。热感成像技术扫描显示，毛毯上残留着一个由高纯度工业油脂与未知染料混合而成的热敏化学印记。该标记呈现半透明蜡黄色，形状为高度抽象的几何结构，被命名为"黄油朱莉普"。根据雷吉博士的行为学分析，凶手将遗体放置在警局门口的行为类似完成一次邮差的"签收"动作，因此在女孩身上留下了这个如同货物印章般的冒烟印迹。'
             }
         ]
@@ -99,7 +99,7 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 id: 'wilmer_ribbon',
                 type: 'image',
                 title: 'Silk Ribbon Evidence (1990)',
-                content: '/assets/wilmer_ribbon.jpg'
+                content: 'assets/wilmer_ribbon.jpg'
             }
         ]
     },
@@ -213,7 +213,7 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         attachments: [{
             type: 'image',
             title: '东海岸犯罪路线图 (1980s)',
-            content: '/assets/crime-route-map.png'
+            content: 'assets/crime-route-map.png'
         }]
     },
     'graywater_beacon': {
@@ -224,12 +224,12 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         attachments: [{
             type: 'image',
             title: '铁马烟盒 (Iron Horse)',
-            content: '/assets/iron_horse_beacon.jpg'
+            content: 'assets/iron_horse_beacon.jpg'
         }, {
             id: 'iron_horse_louisville',
             type: 'image',
             title: '烟盒记录：路易斯维尔',
-            content: '/assets/iron_horse_louisville.jpg'
+            content: 'assets/iron_horse_louisville.jpg'
         }]
     },
     'aw_wilmo': {
@@ -323,7 +323,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setFilingEvidence({
                 id: 'iron_horse_louisville',
                 title: 'Iron Horse Record (Louisville)',
-                content: '/assets/iron_horse_louisville.jpg',
+                content: 'assets/iron_horse_louisville.jpg',
                 type: 'image'
             });
         }
@@ -544,7 +544,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                 description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔',
                 attachments: original.attachments ? [{
                     ...original.attachments[0],
-                    content: '/assets/crime-route-map-v2.png'
+                    content: 'assets/crime-route-map-v2.png'
                 }] : []
             };
         }
@@ -825,7 +825,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                     >
                                                         <div className="polaroid-photo">
                                                             <img
-                                                                src="/assets/car-maine-original.jpg"
+                                                                src="assets/car-maine-original.jpg"
                                                                 alt="Maine Vehicle Evidence"
                                                             />
                                                             <div className="polaroid-caption">
@@ -845,7 +845,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                     >
                                                         <div className="polaroid-photo">
                                                             <img
-                                                                src="/assets/car-newmexico-original.jpg"
+                                                                src="assets/car-newmexico-original.jpg"
                                                                 alt="New Mexico Vehicle Evidence"
                                                             />
                                                             <div className="polaroid-caption">
@@ -897,13 +897,13 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                             <div className="absolute bottom-[-60px] left-0 w-full text-center text-white font-mono text-sm tracking-widest mt-4">
                                                 <div className="mb-2">{viewingAttachment.title}</div>
                                                 {/* Special caption for iron horse beacon */}
-                                                {viewingAttachment.content === '/assets/iron_horse_beacon.jpg' && (
+                                                {viewingAttachment.content === 'assets/iron_horse_beacon.jpg' && (
                                                     <div className="text-xs text-[#94a3b8]">
                                                         烟盒上写着：{renderContent('[小A.W.威尔莫](clue:aw_wilmo)')}
                                                     </div>
                                                 )}
                                                 {/* Special caption for iron horse louisville */}
-                                                {viewingAttachment.content === '/assets/iron_horse_louisville.jpg' && (
+                                                {viewingAttachment.content === 'assets/iron_horse_louisville.jpg' && (
                                                     <div className="text-xs text-[#94a3b8]">
                                                         地点标注：
                                                         <span

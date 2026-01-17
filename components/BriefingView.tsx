@@ -148,7 +148,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete }) => {
         <div className={`relative transition-all duration-1000 ease-in-out mb-8 ${showPersistentImage ? 'opacity-100 max-h-[400px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
           <div className="w-full h-80 relative rounded-lg overflow-hidden border border-[#c85a3f]/40 shadow-[0_0_30px_rgba(200,90,63,0.1)] group">
             <img
-              src="/assets/incident-report.jpg"
+              src="assets/incident-report.jpg"
               alt="Incident Scene"
               className="w-full h-full object-cover filter contrast-125 sepia-[0.3] brightness-75 scale-105 group-hover:scale-100 transition-transform duration-[20s] ease-linear"
               style={{ objectPosition: 'center 40%' }}

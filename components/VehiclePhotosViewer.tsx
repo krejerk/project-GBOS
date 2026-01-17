@@ -49,7 +49,7 @@ export const VehiclePhotosViewer: React.FC<VehiclePhotosViewerProps> = ({ isOpen
                                 {/* Maine Photo */}
                                 <div className="polaroid-photo transform -rotate-2 hover:rotate-0 transition-transform duration-300">
                                     <img
-                                        src="/assets/car-maine-original.jpg"
+                                        src="assets/car-maine-original.jpg"
                                         alt="Maine Vehicle Evidence"
                                         className="w-full h-auto"
                                     />
@@ -61,7 +61,7 @@ export const VehiclePhotosViewer: React.FC<VehiclePhotosViewerProps> = ({ isOpen
                                 {/* New Mexico Photo */}
                                 <div className="polaroid-photo transform rotate-2 hover:rotate-0 transition-transform duration-300">
                                     <img
-                                        src="/assets/car-newmexico-original.jpg"
+                                        src="assets/car-newmexico-original.jpg"
                                         alt="New Mexico Vehicle Evidence"
                                         className="w-full h-auto"
                                     />

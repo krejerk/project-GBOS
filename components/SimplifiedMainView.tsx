@@ -235,7 +235,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 {/* BRIGHTER: Background Image */}
                 <div className="absolute inset-0 opacity-40 filter blur-lg scale-110 pointer-events-none mix-blend-screen">
                     <img
-                        src="/assets/capone-split-personality.jpg"
+                        src="assets/capone-split-personality.jpg"
                         className="w-full h-full object-cover opacity-60" // Increased opacity
                         style={{ objectPosition: '0% 20%' }}
                     />
@@ -299,7 +299,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     <div className="relative mb-4 md:mb-8 group flex flex-col items-center">
                         <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 group-hover:opacity-100 transition-opacity filter sepia-[0.2] contrast-110 mb-4 md:mb-6">
                             <img
-                                src="/assets/capone-split-personality.jpg"
+                                src="assets/capone-split-personality.jpg"
                                 className="w-[200%] h-full max-w-none object-cover object-left"
                             />
                         </div>

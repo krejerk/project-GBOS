@@ -452,7 +452,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                           }}
                         >
                           <img
-                            src="/assets/iron_horse_beacon.jpg"
+                            src="assets/iron_horse_beacon.jpg"
                             alt="Iron Horse Cigarettes"
                             className={`w-full h-auto object-cover grayscale brightness-50 group-hover/image:grayscale-0 group-hover/image:brightness-100 transition-all duration-1000 ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`}
                           />
@@ -492,7 +492,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                 <div className="relative">
                   <div className="absolute inset-0 bg-[#d89853] blur-[40px] opacity-10 rounded-full" />
                   <div className="text-[10px] text-[#c85a3f]/60 font-mono tracking-[0.6em] mb-4">END_OF_TRANSCRIPT</div>
-                  <div className="h-16 w-64 bg-[url('/assets/signature.png')] bg-contain bg-no-repeat bg-center opacity-70 grayscale contrast-150 mix-blend-lighten" />
+                  <div className="h-16 w-64 bg-[url('assets/signature.png')] bg-contain bg-no-repeat bg-center opacity-70 grayscale contrast-150 mix-blend-lighten" />
                 </div>
                 <div className="text-[9px] text-[#d89853]/20 font-mono max-w-xs uppercase leading-loose italic">
                   These fragments were recovered via neural sync. Some data may remain inaccessible.
