@@ -32,6 +32,7 @@ interface SimplifiedMainViewProps {
     currentStoryNode: number;
     onStoryNodeComplete: (nodeId: number) => void;
     onRetrace: () => { success: boolean; reason?: string; keywords?: string[] };
+    onClearUnusedKeywords: () => void; // Clear unused keywords after Node 3
     onDebugUnlockAll?: () => void; // DEBUG: Temporary testing function
 }
 
@@ -61,6 +62,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     currentStoryNode,
     onStoryNodeComplete,
     onRetrace,
+    onClearUnusedKeywords,
     onDebugUnlockAll
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -130,14 +132,20 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'nevada': '内华达州',
         'training_day': '训练日',
         'year_1985': '1985年',
+        'year_1976': '1976年',
         'roger_beebe': '罗格·毕比',
         'little_derek_wayne': '小德里克·维恩',
         'mojave_rest_stop': '莫哈韦休息站',
         'empty_cigarette_pack': '空烟盒',
         'roanoke': '罗阿诺克市',
         'graywater_beacon': '灰水信标',
+        'kansas_city': '堪萨斯城',
+        'mobile_blood_truck': '流动献血车',
         'iron_horse_image': '铁马烟盒 (Visual)',
         'aw_wilmo': '小A.W.威尔莫',
+        'jc_penney': '杰西·潘尼',
+        'east_12th_st': '东12街',
+        'execution_room': '行刑室',
         'twisted_relationship': '扭曲关系', // Confession 6 keyword
         'blue_rv': '淡蓝色房车',
         'year_1973': '1973年',
@@ -152,7 +160,11 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'el_paso': '埃尔帕索',
         'juvell_chambers': '朱维尔·钱伯斯',
         'year_1975': '1975年',
-        'burkesville': '伯克斯维尔'
+        'burkesville': '伯克斯维尔',
+        'distant_relatives': '远亲',
+        'boris_smirnov': '鲍里斯·斯米尔诺夫',
+        'john_morrissey': '约翰·莫里西',
+        'chaos_aesthetics': '混乱美学'
     };
 
     // Mapping: Node ID -> [Keywords to HIDE when node is unlocked]
@@ -180,8 +192,21 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
         // Confession 8
         'confession_8': ['louisville', 'blue_rv'],
-        'confession_9': ['cincinnati', 'mint_plan']
+        'confession_9': ['cincinnati', 'mint_plan'],
+        'confession_10': ['burkesville', 'distant_relatives'],
+        'confession_11': ['klub75_report', 'quantico'],
+        'confession_12': ['kansas_city', 'mobile_blood_truck'],
+        'confession_13': ['east_12th_st', 'execution_room']
     };
+
+    // Derived Set of keywords that ARE part of a consumption rule (i.e. case-specific targets)
+    const CASE_TARGET_KEYWORDS = React.useMemo(() => {
+        const set = new Set<string>();
+        Object.values(KEYWORD_CONSUMPTION_MAP).forEach(list => {
+            list.forEach(k => set.add(k));
+        });
+        return set;
+    }, []);
 
     // Calculate currently consumed keywords based on unlocked nodes from props
     // We use the `nodes` prop which contains only unlocked nodes (per App.tsx logic)
@@ -338,28 +363,85 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         );
                                     }
 
-                                    const lastItem = history.length > 0 ? history[history.length - 1] : null;
+                                    // Find the latest character dialogue in history
+                                    // Dialogue items start with "> [" and are not search types
+                                    const reversedHistory = [...history].reverse();
+                                    const lastDialogue = reversedHistory.find(item =>
+                                        item.content.startsWith('> [') && item.type !== 'search'
+                                    );
 
-                                    // CRITICAL: Only show CHARACTER DIALOGUE in this area
-                                    // Character dialogue format: "> [NAME]: ..."
-                                    // Block ALL system messages (anything not starting with "> [")
-                                    const isCharacterDialogue = lastItem?.content.startsWith('> [');
-                                    const showResponse = lastItem && lastItem.type !== 'search' && isCharacterDialogue;
+                                    const showResponse = !!lastDialogue;
+                                    const displayItem = lastDialogue;
 
-                                    if (showResponse && lastItem) {
+                                    if (showResponse && displayItem) {
                                         // Clean up content for display: remove "> [NAME]: " prefix if present
-                                        const displayContent = lastItem.content.replace(/^> \[.*?\]:\s*"/, '').replace(/"$/, '');
+                                        const displayContent = displayItem.content.replace(/^> \[.*?\]:\s*"/, '').replace(/"$/, '');
+
+                                        // Highlight pickable keywords
+                                        const isConfession12 = (displayItem as any).id === 'confession_12';
+
+                                        const pickableKeywords = isConfession12
+                                            ? ['杰西·潘尼', '杰西潘尼']
+                                            : ['堪萨斯城', '流动献血车', '1976', '1976年', '杰西·潘尼', '杰西潘尼', '东12街', '行刑室', '约翰·莫里西', '约翰莫里西'];
+
+                                        const keywordMap: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' }> = {
+                                            '堪萨斯城': { id: 'kansas_city', type: 'clue' },
+                                            '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
+                                            '1976': { id: 'year_1976', type: 'year' },
+                                            '1976年': { id: 'year_1976', type: 'year' },
+                                            '杰西·潘尼': { id: 'jc_penney', type: 'person' },
+                                            '杰西潘尼': { id: 'jc_penney', type: 'person' },
+                                            '东12街': { id: 'east_12th_st', type: 'location' },
+                                            '行刑室': { id: 'execution_room', type: 'clue' },
+                                            '约翰·莫里西': { id: 'john_morrissey', type: 'person' },
+                                            '约翰莫里西': { id: 'john_morrissey', type: 'person' }
+                                        };
+
+                                        const regex = new RegExp(`(${pickableKeywords.join('|')})`, 'g');
+                                        const parts = displayContent.split(regex);
 
                                         return (
                                             <motion.div
-                                                key={lastItem.timestamp}
+                                                key={displayItem.timestamp}
                                                 initial={{ opacity: 0, y: 5 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -5 }}
                                                 className="text-sm tracking-[0.15em] font-light leading-relaxed text-[#d89853]"
                                                 style={{ textShadow: '0 0 10px rgba(216,152,83,0.3)' }}
                                             >
-                                                "{displayContent}"
+                                                "
+                                                {parts.map((part, j) => {
+                                                    const keywordConfig = keywordMap[part];
+                                                    if (keywordConfig) {
+                                                        // Check collection status based on type
+                                                        const isCollected =
+                                                            keywordConfig.type === 'year' ? collectedYears.includes(keywordConfig.id) :
+                                                                keywordConfig.type === 'person' ? unlockedPeople.includes(keywordConfig.id) :
+                                                                    collectedClues.includes(keywordConfig.id);
+
+                                                        return (
+                                                            <span
+                                                                key={j}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    onCollectClue(keywordConfig.id, part); // Pass display text, not type
+                                                                }}
+                                                                className={`
+                                                                    cursor-pointer font-bold transition-all duration-300
+                                                                    ${isCollected
+                                                                        ? 'text-white bg-[#d89853] px-1 shadow-[0_0_10px_rgba(216,152,83,0.5)]'
+                                                                        : 'text-[#d89853] border-b border-[#d89853] hover:bg-[#d89853]/20 animate-pulse'
+                                                                    }
+                                                                `}
+                                                                title={isCollected ? "已收录" : "点击记下关键词"}
+                                                            >
+                                                                {part}
+                                                            </span>
+                                                        );
+                                                    }
+                                                    return part;
+                                                })}
+                                                "
                                             </motion.div>
                                         );
                                     }
@@ -551,53 +633,60 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                         {/* Quick Input Clues - Show when focused or when there are clues */}
                         <AnimatePresence>
-                            {(isSearchFocused || collectedClues.length > 0 || unlockedPeople.length > 0) && (collectedClues.length > 0 || unlockedPeople.length > 0) && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    className="w-full max-w-2xl px-4 flex flex-wrap gap-2 justify-center mt-4 absolute top-full left-0 z-20"
-                                >
-                                    {collectedClues
-                                        .filter(id =>
-                                            !unlockedPeople.includes(id) &&
-                                            !id.startsWith('year_') &&
-                                            !/^\d{4}$/.test(id) &&
-                                            id.toLowerCase() !== 'capone' &&
-                                            id.toLowerCase() !== 'robert' &&
-                                            id !== 'dr_reggie' &&
-                                            id !== 'graywater_beacon' &&
-                                            id !== 'iron_horse_image' &&
-                                            !!CLUE_DISPLAY_MAP[id] && // STRICT: Only show if it has a valid Chinese mapping
-                                            !consumedKeywords.has(id) // HIDE CONSUMED KEYWORDS
-                                        )
-                                        .map(id => (
-                                            <button
-                                                key={id}
-                                                type="button"
-                                                onMouseDown={(e) => {
-                                                    e.preventDefault(); // Prevent blur
-                                                    const clueText = CLUE_DISPLAY_MAP[id] || id;
-                                                    setSearchQuery(prev => {
-                                                        if (!prev) {
-                                                            return clueText;
-                                                        }
-                                                        // Avoid duplicates if simple check passes (optional, but good UX)
-                                                        if (prev.includes(clueText)) {
-                                                            return prev;
-                                                        }
-                                                        // Append with a space, ensuring no double spaces if prev already ends with one
-                                                        const separator = prev.endsWith(' ') ? '' : ' ';
-                                                        return `${prev}${separator}${clueText}`;
-                                                    });
-                                                }}
-                                                className="px-2.5 md:px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-[11px] md:text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
-                                            >
-                                                {CLUE_DISPLAY_MAP[id] || id}
-                                            </button>
-                                        ))}
-                                </motion.div>
-                            )}
+                            {(isSearchFocused || collectedClues.length > 0 || unlockedPeople.length > 0) &&
+                                (collectedClues.length > 0 || unlockedPeople.length > 0) && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="w-full max-w-2xl px-4 flex flex-wrap gap-2 justify-center mt-4 absolute top-full left-0 z-20"
+                                    >
+                                        {/* Combine clues and people for chips */}
+                                        {[...new Set([...collectedClues, ...unlockedPeople])]
+                                            .filter(id => {
+                                                const isPerson = unlockedPeople.includes(id);
+                                                // STRICT: Only show people if they are explicit case targets (hides core Syndicate)
+                                                if (isPerson && !CASE_TARGET_KEYWORDS.has(id)) return false;
+
+                                                return (
+                                                    (!id.startsWith('year_') || id === 'year_1976') &&
+                                                    (!/^\d{4}$/.test(id) || id === '1976') &&
+                                                    id.toLowerCase() !== 'capone' &&
+                                                    id.toLowerCase() !== 'robert' &&
+                                                    id !== 'dr_reggie' &&
+                                                    id !== 'graywater_beacon' &&
+                                                    id !== 'iron_horse_image' &&
+                                                    !!CLUE_DISPLAY_MAP[id] && // STRICT: Only show if it has a valid mapping
+                                                    !consumedKeywords.has(id) // HIDE CONSUMED KEYWORDS
+                                                );
+                                            })
+                                            .map(id => (
+                                                <button
+                                                    key={id}
+                                                    type="button"
+                                                    onMouseDown={(e) => {
+                                                        e.preventDefault(); // Prevent blur
+                                                        const clueText = CLUE_DISPLAY_MAP[id] || id;
+                                                        setSearchQuery(prev => {
+                                                            if (!prev) {
+                                                                return clueText;
+                                                            }
+                                                            // Avoid duplicates if simple check passes (optional, but good UX)
+                                                            if (prev.includes(clueText)) {
+                                                                return prev;
+                                                            }
+                                                            // Append with a space, ensuring no double spaces if prev already ends with one
+                                                            const separator = prev.endsWith(' ') ? '' : ' ';
+                                                            return `${prev}${separator}${clueText}`;
+                                                        });
+                                                    }}
+                                                    className="px-2.5 md:px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-[11px] md:text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
+                                                >
+                                                    {CLUE_DISPLAY_MAP[id] || id}
+                                                </button>
+                                            ))}
+                                    </motion.div>
+                                )}
                         </AnimatePresence>
                     </form>
 
@@ -615,7 +704,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         <SyndicateBoard
                             unlockedPeople={unlockedPeople}
                             onClose={() => setShowMindMap(false)}
-                            phase={1}
+                            phase={currentStoryNode >= 2 ? 2 : 1}
                         />
                     </div>
                 )}
@@ -765,6 +854,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 unlockedArchiveIds={unlockedArchiveIds}
                 currentStoryNode={currentStoryNode}
                 onStoryNodeComplete={onStoryNodeComplete}
+                onClearUnusedKeywords={onClearUnusedKeywords}
             />
             <Archives
                 isOpen={showArchives}
@@ -779,6 +869,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 onConsumeKeywords={onConsumeKeywords}
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}
+                currentStoryNode={currentStoryNode}
             />
         </div >
     );

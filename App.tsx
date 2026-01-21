@@ -25,7 +25,8 @@ const App: React.FC = () => {
     currentStoryNode: 0, // No story nodes reached yet
     history: [
       { type: 'info', content: '[SYSTEM]: NEURAL LINK ESTABLISHED...', timestamp: Date.now() }
-    ]
+    ],
+    consecutiveSearch: undefined
   });
 
   const [nodes, setNodes] = useState(CORE_NODES);
@@ -70,6 +71,22 @@ const App: React.FC = () => {
       history: [
         ...prev.history,
         { type: 'info', content: `[STORY CHECKPOINT]: 第${nodeId}章节已完成`, timestamp: Date.now() }
+      ]
+    }));
+  }, []);
+
+  // Handle clearing unused keywords (Jennifer回收未使用的关键词) after Node 3
+  const handleClearUnusedKeywords = useCallback(() => {
+    // Aggressively clear all keywords and years for a clean UI state after Node 3 completion
+    setGameState(prev => ({
+      ...prev,
+      collectedClues: [],
+      collectedYears: [],
+      unlockedPeople: [], // CLEAR: People keywords should also be reset after Node 3
+      // We keep unlockedPeople for the Mind Map/Relationship view only
+      history: [
+        ...prev.history,
+        { type: 'info', content: '[JENNIFER]: 已回收并封存所有未使用的关键词', timestamp: Date.now() }
       ]
     }));
   }, []);
@@ -130,6 +147,26 @@ const App: React.FC = () => {
         clues: ['cincinnati', 'mint_plan'],
         years: [],
         people: []
+      },
+      confession_10: {
+        clues: ['burkesville', 'distant_relatives'],
+        years: [],
+        people: []
+      },
+      confession_11: {
+        clues: ['klub75_report', 'quantico'],
+        years: [],
+        people: []
+      },
+      confession_12: {
+        clues: ['kansas_city', 'mobile_blood_truck'],
+        years: [],
+        people: []
+      },
+      confession_13: {
+        clues: ['east_12th_st', 'execution_room'],
+        years: [],
+        people: []
       }
     };
 
@@ -148,6 +185,8 @@ const App: React.FC = () => {
       'twisted_relationship': true, '扭曲关系': true,
       'louisville': true, '路易斯维尔': true,
       'cincinnati': true, '辛辛那提': true,
+      'st_louis': true, 'st louis': true, 'st. louis': true, '圣路易斯': true,
+      'vampire': true, '吸血鬼': true,
 
       // Addresses - complete phrases
       '1402': true, 'old dominion': true, 'old_dominion': true, '1402 old dominion rd': true,
@@ -206,6 +245,18 @@ const App: React.FC = () => {
       'juvell_chambers': true, '朱维尔·钱伯斯': true, 'juvell chambers': true,
       'burkesville': true, '伯克斯维尔': true,
       'year_1975': true, '1975': true, '1975年': true,
+      'distant_relatives': true, '远亲': true,
+      'boris_smirnov': true, '鲍里斯·斯米尔诺夫': true, 'boris smirnov': true,
+      'klub75_report': true, 'KLUB-75号分析报告': true, 'KLUB-75': true, 'klub-75': true,
+      'quantico': true, '匡提科': true,
+      'kansas_city': true, '堪萨斯城': true, 'kansas city': true,
+      'mobile_blood_truck': true, '流动献血车': true, 'mobile blood donation vehicle': true,
+      'year_1976': true, '1976': true, '1976年': true,
+      'jc_penney': true, 'jc penney': true, '杰西·潘尼': true, '杰西潘尼': true,
+      'east_12th_st': true, '东12街': true, 'east 12th st': true,
+      'execution_room': true, '行刑室': true, 'execution room': true,
+      'john_morrissey': true, '约翰·莫里西': true, 'john morrissey': true,
+      'chaos_aesthetics': true, '混乱美学': true, 'chaos aesthetics': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -259,7 +310,17 @@ const App: React.FC = () => {
         hasLouisville: lowerQuery.includes('louisville') || lowerQuery.includes('路易斯维尔'),
         hasBlueRV: lowerQuery.includes('blue_rv') || lowerQuery.includes('blue rv') || lowerQuery.includes('淡蓝色房车') || lowerQuery.includes('房车'),
         hasCincinnati: lowerQuery.includes('cincinnati') || lowerQuery.includes('辛辛那提'),
-        hasMintPlan: lowerQuery.includes('mint_plan') || lowerQuery.includes('mint plan') || lowerQuery.includes('薄荷计划')
+        hasMintPlan: lowerQuery.includes('mint_plan') || lowerQuery.includes('mint plan') || lowerQuery.includes('薄荷计划'),
+        hasBurkesville: lowerQuery.includes('burkesville') || lowerQuery.includes('伯克斯维尔'),
+        hasDistantRelatives: lowerQuery.includes('distant_relatives') || lowerQuery.includes('distant relatives') || lowerQuery.includes('远亲'),
+        hasKlub75Report: lowerQuery.includes('klub75_report') || lowerQuery.includes('klub-75') || lowerQuery.includes('KLUB-75号分析报告'),
+        hasQuantico: lowerQuery.includes('quantico') || lowerQuery.includes('匡提科'),
+        hasKansasCity: lowerQuery.includes('堪萨斯城') || lowerQuery.includes('kansas city') || lowerQuery.includes('kansas_city'),
+        hasMobileBloodTruck: lowerQuery.includes('流动献血车') || lowerQuery.includes('mobile_blood_truck') || lowerQuery.includes('mobile blood donation vehicle'),
+        hasYear1976: lowerQuery.includes('1976') || lowerQuery.includes('1976年') || lowerQuery.includes('year_1976'),
+        hasJCPenney: lowerQuery.includes('jc_penney') || lowerQuery.includes('jc penney') || lowerQuery.includes('杰西·潘尼') || lowerQuery.includes('杰西潘尼'),
+        hasEast12thSt: lowerQuery.includes('东12街') || lowerQuery.includes('east 12th st') || lowerQuery.includes('east_12th_st'),
+        hasExecutionRoom: lowerQuery.includes('行刑室') || lowerQuery.includes('execution room') || lowerQuery.includes('execution_room')
       };
     };
 
@@ -284,22 +345,22 @@ const App: React.FC = () => {
         const node = nodes.find(n => n.id === 'confession_1');
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_1;
-          setGameState(prev => ({
-            ...prev,
-            activeNodeId: node.id,
-            unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
-            // Restore Stability on Unlock (Success)
-            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            // Auto-remove used keywords 
-            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-            history: [
-              ...prev.history,
-              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
-
-            ]
-          }));
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
         }
         setIsProcessing(false);
       }, 50);
@@ -324,20 +385,22 @@ const App: React.FC = () => {
         const node = nodes.find(n => n.id === 'confession_2');
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_2;
-          setGameState(prev => ({
-            ...prev,
-            activeNodeId: node.id,
-            unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
-            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-            history: [
-              ...prev.history,
-              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
-
-            ]
-          }));
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
         }
         setIsProcessing(false);
       }, 50);
@@ -362,20 +425,62 @@ const App: React.FC = () => {
         const node = nodes.find(n => n.id === 'confession_3');
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_3;
-          setGameState(prev => ({
-            ...prev,
-            activeNodeId: node.id,
-            unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
-            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-            history: [
-              ...prev.history,
-              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
 
-            ]
-          }));
+    // Confession 13: East 12th St AND Execution Room (STRICT)
+    if (validation.hasEast12thSt && validation.hasExecutionRoom) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: "你在说什么？想从我这套话,你得有点东西交换才行。"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        const node = nodes.find(n => n.id === 'confession_13');
+        if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_13;
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
         }
         setIsProcessing(false);
       }, 50);
@@ -400,20 +505,22 @@ const App: React.FC = () => {
         const node = nodes.find(n => n.id === 'confession_4');
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_4;
-          setGameState(prev => ({
-            ...prev,
-            activeNodeId: node.id,
-            unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
-            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-            history: [
-              ...prev.history,
-              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
-
-            ]
-          }));
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
         }
         setIsProcessing(false);
       }, 50);
@@ -448,20 +555,22 @@ const App: React.FC = () => {
 
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_5;
-          setGameState(prev => ({
-            ...prev,
-            activeNodeId: node.id,
-            unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node.id])),
-            systemStability: !prev.unlockedNodeIds.includes(node.id) ? Math.min(prev.systemStability + 20, 84) : prev.systemStability,
-            collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-            collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-            unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-            history: [
-              ...prev.history,
-              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node.title}`, timestamp: Date.now() },
-
-            ]
-          }));
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
         }
         setIsProcessing(false);
       }, 50);
@@ -528,25 +637,23 @@ const App: React.FC = () => {
 
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_6;
-          setGameState(prev => {
-            if (prev.unlockedNodeIds.includes(node!.id)) {
-              return prev;
-            }
-            return {
-              ...prev,
-              activeNodeId: node!.id,
-              unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
-              systemStability: Math.min(prev.systemStability + 20, 84),
-              collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-              history: [
-                ...prev.history,
-                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+          const isAlreadyUnlocked = gameState.unlockedNodeIds.includes(node.id);
 
-              ]
-            }
-          });
+          setGameState(prev => ({
+            ...prev,
+            activeNodeId: node!.id,
+            // Only add to unlocked and consume keywords if not already unlocked
+            unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+            systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+            collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+            collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+            unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+            history: isAlreadyUnlocked ? prev.history : [
+              ...prev.history,
+              { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+
+            ]
+          }));
         }
         setIsProcessing(false);
       }, 50);
@@ -581,23 +688,20 @@ const App: React.FC = () => {
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_7;
           setGameState(prev => {
-            if (prev.unlockedNodeIds.includes(node!.id)) {
-              return prev;
-            }
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
               ...prev,
               activeNodeId: node!.id,
-              unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
-              systemStability: Math.min(prev.systemStability + 20, 84),
-              collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-              history: [
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
-
               ]
-            }
+            };
           });
         }
         setIsProcessing(false);
@@ -633,23 +737,20 @@ const App: React.FC = () => {
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_8;
           setGameState(prev => {
-            if (prev.unlockedNodeIds.includes(node!.id)) {
-              return prev;
-            }
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
               ...prev,
               activeNodeId: node!.id,
-              unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
-              systemStability: Math.min(prev.systemStability + 20, 84),
-              collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-              history: [
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
-
               ]
-            }
+            };
           });
         }
         setIsProcessing(false);
@@ -685,23 +786,20 @@ const App: React.FC = () => {
         if (node) {
           const keywords = CONFESSION_KEYWORDS.confession_9;
           setGameState(prev => {
-            if (prev.unlockedNodeIds.includes(node!.id)) {
-              return prev;
-            }
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
               ...prev,
               activeNodeId: node!.id,
-              unlockedNodeIds: Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
-              systemStability: Math.min(prev.systemStability + 20, 84),
-              collectedClues: prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
-              history: [
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
-
               ]
-            }
+            };
           });
         }
         setIsProcessing(false);
@@ -709,15 +807,184 @@ const App: React.FC = () => {
       return;
     }
 
-    // ===== ADVANCED PRESET Q&A SYSTEM WITH FUZZY MATCHING =====
+    // Confession 10: Burkesville AND Distant Relatives (STRICT)
+    if (validation.hasBurkesville && validation.hasDistantRelatives) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: "你在说什么？想从我这套话,你得有点东西交换才行。"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_10');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_10');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_10;
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 11: KLUB-75 Report AND Quantico (STRICT)
+    if (validation.hasKlub75Report && validation.hasQuantico) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: "你在说什么？想从我这套话,你得有点东西交换才行。"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_11');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_11');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_11;
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 12: Kansas City + Mobile Blood Truck (STRICT)
+    if (validation.hasKansasCity && validation.hasMobileBloodTruck) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: "你在说什么？想从我这套话,你得有点东西交换才行。"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_12');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_12');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          const keywords = CONFESSION_KEYWORDS.confession_12;
+
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
+              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
+              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
 
     const lowerQuery = query.toLowerCase().trim();
+
+    // Clipping 11 Unlock: 1976 + Kansas City
+    if (validation.hasYear1976 && validation.hasKansasCity) {
+      handleUnlockArchive('kan_1976');
+    }
 
     // Track consecutive invalid inputs for special easter egg
     const invalidInputKey = 'consecutive_invalid_inputs';
     const getInvalidCount = () => parseInt(sessionStorage.getItem(invalidInputKey) || '0');
     const incrementInvalidCount = () => sessionStorage.setItem(invalidInputKey, String(getInvalidCount() + 1));
     const resetInvalidCount = () => sessionStorage.removeItem(invalidInputKey);
+
+    // Track Vanessa consecutive searches
+    const isVanessaQuery = lowerQuery === '瓦妮莎' || lowerQuery === 'vanessa';
+    let finalQuery = query;
+    let newConsecutive: { keyword: string, count: number } | undefined = undefined;
+
+    if (isVanessaQuery) {
+      const prevCount = gameState.consecutiveSearch?.keyword === 'vanessa' ? gameState.consecutiveSearch.count : 0;
+      const newCount = prevCount + 1;
+      newConsecutive = { keyword: 'vanessa', count: newCount };
+
+      if (newCount === 3) {
+        finalQuery = 'vanessa_consecutive_3';
+        newConsecutive = undefined; // Reset after trigger
+      }
+    } else {
+      newConsecutive = undefined;
+    }
 
     // Define preset responses with priority levels and fuzzy keywords
     const PRESET_RESPONSES: Array<{
@@ -728,9 +995,20 @@ const App: React.FC = () => {
     }> = [
         // ===== USER-PROVIDED EASTER EGGS (Highest Priority) =====
         {
+          keywords: ['vanessa_consecutive_3'],
+          response: '> [R. CAPONE]: "……够了。既然你这么执着挖掘我的伤口，那就看清楚了。瓦妮莎确实与别人不同……1976年，堪萨斯城，她哭着求我不要执行那个针对流动献血车的计划。但我没有听。我当时太想看那个城市燃烧了。"',
+          priority: 200
+        },
+        {
           keywords: ['真相', 'truth', '真实', 'reality', '是什么真相'],
           response: '> [R. CAPONE]: "真相就在那些灰水里，你得把手伸进去捞，而不是在这里敲打键盘。它闻起来不怎么好。"',
           priority: 100,
+          fuzzyMatch: true
+        },
+        {
+          keywords: ['圣路易斯', 'st louis', 'st. louis', '吸血鬼', 'vampire'],
+          response: '> [R. CAPONE]: "你想知道圣路易斯发生了什么？去问阿尔特曼啊，让他在办公室里照照镜子就知道吸血鬼在哪了。别来问我。我已经死了，不存在了。"',
+          priority: 110,
           fuzzyMatch: true
         },
         {
@@ -790,6 +1068,23 @@ const App: React.FC = () => {
           priority: 90
         },
 
+        // ===== FAMILY MEMBERS (High Priority) =====
+        {
+          keywords: ['母亲', 'the mother', 'mother', '她的眼睛'],
+          response: '> [R. CAPONE]: "你想象不出她能用她那双眼睛做什么。从我上车之后，她的目光就开始拆解我。我的蜕变并非始于\"父亲\"的暴力，而是始于爱。"',
+          priority: 90
+        },
+        {
+          keywords: ['塞勒斯', '赛勒斯', 'silas', '次子'],
+          response: '> [R. CAPONE]: "与康查尔不同，塞勒斯身上有种毫无遮掩的恶意，我从未分清他们究竟谁更危险，是一个在暗处观察你的影子，还是一个在你背后磨刀的疯子。"',
+          priority: 90
+        },
+        {
+          keywords: ['瓦妮莎', 'vanessa', '养女'],
+          response: '> [R. CAPONE]: "她最恶心的那个。一方面她是\"父亲\"的玩物，更多时候，当\"母亲\"、康查尔和赛勒斯开始令人作呕的三人行时，她又会被推出来，充当他们欲望交织时的调剂工具……关于她，我没什么可说的。"',
+          priority: 90
+        },
+
         // ===== ORIGINAL EASTER EGGS (Medium Priority) =====
         {
           keywords: ['康查尔', 'conchar'],
@@ -808,7 +1103,7 @@ const App: React.FC = () => {
         },
         {
           keywords: ['建筑师', 'architect'],
-          response: '> [UNKNOWN SIGNAL]: "建筑师...他是设计师，是操纵者。他的作品不是建筑，是活体实验。而我，我帮他完成了最后一步。"',
+          response: '> [UNKNOWN SIGNAL]: "建筑师...他是设计师，是操纵者。他的作品不是建筑，是活体实验. 而我，我帮他完成了最后一步。"',
           priority: 80
         },
         {
@@ -840,6 +1135,21 @@ const App: React.FC = () => {
           priority: 50
         },
         {
+          keywords: ['堪萨斯城', 'kansas city', 'kansas_city'],
+          response: '> [R. CAPONE]: "堪萨斯城... 那里本该只有麦浪和宁静。但我带去了火焰，带去了不该属于那个地方的尖叫。那是瓦妮莎最后一次试图阻止我。"',
+          priority: 80
+        },
+        {
+          keywords: ['流动献血车', 'mobile_blood_truck', 'mobile blood donation vehicle'],
+          response: '> [R. CAPONE]: "一辆白色的车，在城市边缘安静地停着。谁会想到那会是恶梦的开始？雷吉博士说那是‘净化的祭坛’。我只记得血的味道。"',
+          priority: 80
+        },
+        {
+          keywords: ['1976', '1976年', 'year_1976'],
+          response: '> [R. CAPONE]: "1976年。那一年堪萨斯城的夏天特别长，蝉鸣声盖过了一切。那天之后，我再也没见过瓦妮莎笑过。"',
+          priority: 80
+        },
+        {
           keywords: ['痛', 'pain', 'hurt', '头', 'headache'],
           response: '> [R. CAPONE]: "我的头...像要裂开一样。每次我试图记起什么，就像有人在我脑子里用刀刻字。"',
           priority: 50
@@ -847,25 +1157,26 @@ const App: React.FC = () => {
       ];
 
     // Sort by priority (highest first)
-    const sortedResponses = PRESET_RESPONSES.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+    const sortedResponses = [...PRESET_RESPONSES].sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
     // Try to match query against preset responses
     let matchedResponse: string | null = null;
+    const effectiveQuery = finalQuery.toLowerCase().trim();
 
     for (const preset of sortedResponses) {
       const hasMatch = preset.keywords.some(keyword => {
         if (preset.fuzzyMatch) {
           // Fuzzy matching: check if query contains keyword or keyword contains query
           const keywordTokens = keyword.split(/\s+/);
-          const queryTokens = lowerQuery.split(/\s+/);
+          const queryTokens = effectiveQuery.split(/\s+/);
 
           // Check if any significant token overlaps
           return keywordTokens.some(kt =>
             queryTokens.some(qt => qt.length > 1 && (qt.includes(kt) || kt.includes(qt)))
-          ) || lowerQuery.includes(keyword) || keyword.includes(lowerQuery);
+          ) || effectiveQuery.includes(keyword) || keyword.includes(effectiveQuery);
         } else {
           // Strict matching
-          return lowerQuery.includes(keyword);
+          return effectiveQuery.includes(keyword);
         }
       });
 
@@ -881,6 +1192,7 @@ const App: React.FC = () => {
       setTimeout(() => {
         setGameState(prev => ({
           ...prev,
+          consecutiveSearch: newConsecutive,
           history: [
             ...prev.history,
             { type: 'info', content: matchedResponse!, timestamp: Date.now() }
@@ -913,6 +1225,7 @@ const App: React.FC = () => {
       setTimeout(() => {
         setGameState(prev => ({
           ...prev,
+          consecutiveSearch: newConsecutive,
           history: [
             ...prev.history,
             { type: 'info', content: responseMessage, timestamp: Date.now() }
@@ -921,7 +1234,7 @@ const App: React.FC = () => {
         setIsProcessing(false);
       }, 300);
     }
-  }, [nodes]);
+  }, [gameState.consecutiveSearch, gameState.history, nodes]);
 
   const handleShatter = (id: string) => {
     // Logic to "Break" the bubble and go deeper
@@ -957,104 +1270,105 @@ const App: React.FC = () => {
   const handleCollectClue = (clueId: string, word: string) => {
     // Define Categories - COMPREHENSIVE CLASSIFICATION SYSTEM
     const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'];
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers'];
-    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975'];
+    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey'];
+    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975', 'year_1976'];
+    const LOCATION_IDS = ['east_12th_st'];
 
     const isDossier = DOSSIER_WHITELIST.includes(clueId);
     const isPerson = PEOPLE_IDS.includes(clueId);
     const isYear = YEAR_IDS.includes(clueId);
 
-    // Build updates object
-    const updates: Partial<GameState> = {};
-    const newHistory: Array<{ type: 'search' | 'info' | 'shatter'; content: string; timestamp: number }> = [];
+    // Use functional update to ensure we always have the latest state
+    setGameState(prev => {
+      const updates: Partial<GameState> = {};
+      const newHistory: Array<{ type: 'search' | 'info' | 'shatter'; content: string; timestamp: number }> = [];
 
-    // --- LOGIC: RELATIONSHIPS ---
-    if (isPerson) {
-      // Map incoming ID to MindMap's expected ID
-      let unlockedId = clueId;
-      if (clueId === 'robert' || clueId === 'robert_capone') unlockedId = 'capone';
+      // --- LOGIC: RELATIONSHIPS ---
+      if (isPerson) {
+        let unlockedId = clueId;
+        if (clueId === 'robert' || clueId === 'robert_capone') unlockedId = 'capone';
 
-      if (!gameState.unlockedPeople.includes(unlockedId)) {
-        updates.unlockedPeople = [...gameState.unlockedPeople, unlockedId];
-        newHistory.push({
-          type: 'info',
-          content: `[PERSON IDENTIFIED]: ${word} 已收录到人物关系与关键词`,
-          timestamp: Date.now()
-        });
-      }
-      // REMOVED: Do not add to collectedClues to keep prompt strict
-    }
-    // --- LOGIC: CASE DOSSIER (EXCLUSIVE) ---
-    else if (isDossier) {
-      // Add to DOSSIER IDs
-      if (!gameState.collectedDossierIds.includes(clueId)) {
-        updates.collectedDossierIds = [...(gameState.collectedDossierIds || []), clueId];
-
-        // Custom message for main dossier folders
-        const isMainFolder = ['project', 'julip', 'graywater_beacon'].includes(clueId);
-        const feedbackMsg = isMainFolder
-          ? `[EVIDENCE FILED]: ${word} >>> 已在案卷建档中建立文件夹`
-          : `[EVIDENCE FILED]: ${word} 已收录到案卷建档`;
-
-        newHistory.push({
-          type: 'info',
-          content: feedbackMsg,
-          timestamp: Date.now()
-        });
-      }
-
-      // EXCEPTION: 'julip' (Golden Julip) is ALSO a keyword prompt
-      if (clueId === 'julip') {
-        if (!gameState.collectedClues.includes(clueId)) {
-          updates.collectedClues = [...(updates.collectedClues || gameState.collectedClues), clueId];
-          // Append info log for dual collection
+        if (!prev.unlockedPeople.includes(unlockedId)) {
+          updates.unlockedPeople = [...prev.unlockedPeople, unlockedId];
           newHistory.push({
             type: 'info',
-            content: `[KEYWORD RECORDED]: ${word} 已同时收录到关键词提示`,
+            content: `[PERSON IDENTIFIED]: ${word} 已收录到人物关系与关键词`,
             timestamp: Date.now()
           });
         }
       }
-    }
-    // --- LOGIC: YEARS (Silent Archive Prompts) ---
-    else if (isYear) {
-      if (!gameState.collectedYears.includes(clueId)) {
-        updates.collectedYears = [...gameState.collectedYears, clueId];
-      }
-    }
-    // --- LOGIC: GENERIC KEYWORDS (Prompts Only) ---
-    else {
-      if (!gameState.collectedClues.includes(clueId)) {
-        updates.collectedClues = [...gameState.collectedClues, clueId];
-        newHistory.push({
-          type: 'info',
-          content: `[KEYWORD RECORDED]: ${word} 已收录到关键词提示`,
-          timestamp: Date.now()
-        });
-      }
-    }
+      // --- LOGIC: CASE DOSSIER (EXCLUSIVE) ---
+      else if (isDossier) {
+        if (!prev.collectedDossierIds.includes(clueId)) {
+          updates.collectedDossierIds = [...(prev.collectedDossierIds || []), clueId];
 
-    // Apply updates if any
-    if (Object.keys(updates).length > 0 || newHistory.length > 0) {
-      setGameState(prev => ({
-        ...prev,
-        ...updates,
-        history: [...prev.history, ...newHistory]
-      }));
-    }
+          const isMainFolder = ['project', 'julip', 'graywater_beacon'].includes(clueId);
+          const feedbackMsg = isMainFolder
+            ? `[EVIDENCE FILED]: ${word} >>> 已在案卷建档中建立文件夹`
+            : `[EVIDENCE FILED]: ${word} 已收录到案卷建档`;
+
+          newHistory.push({
+            type: 'info',
+            content: feedbackMsg,
+            timestamp: Date.now()
+          });
+        }
+
+        if (clueId === 'julip') {
+          if (!prev.collectedClues.includes(clueId)) {
+            updates.collectedClues = [...prev.collectedClues, clueId];
+            newHistory.push({
+              type: 'info',
+              content: `[KEYWORD RECORDED]: ${word} 已同时收录到关键词提示`,
+              timestamp: Date.now()
+            });
+          }
+        }
+      }
+      // --- LOGIC: YEARS (Silent Archive Prompts) ---
+      else if (isYear) {
+        if (!prev.collectedYears.includes(clueId)) {
+          updates.collectedYears = [...prev.collectedYears, clueId];
+        }
+      }
+      // --- LOGIC: GENERIC KEYWORDS (Prompts Only) ---
+      else {
+        if (!prev.collectedClues.includes(clueId)) {
+          updates.collectedClues = [...prev.collectedClues, clueId];
+          newHistory.push({
+            type: 'info',
+            content: `[KEYWORD RECORDED]: ${word} 已收录到关键词提示`,
+            timestamp: Date.now()
+          });
+        }
+      }
+
+      // Only update if there are changes
+      if (Object.keys(updates).length > 0 || newHistory.length > 0) {
+        return {
+          ...prev,
+          ...updates,
+          history: [...prev.history, ...newHistory]
+        };
+      }
+      return prev;
+    });
   };
 
   const handleUnlockArchive = (archiveId: string) => {
-    if (!gameState.unlockedArchiveIds.includes(archiveId)) {
-      setGameState(prev => ({
-        ...prev,
-        unlockedArchiveIds: [...prev.unlockedArchiveIds, archiveId],
-        history: [
-          ...prev.history,
-          { type: 'info', content: `[ARCHIVE RETRIEVED]: ${archiveId.toUpperCase()}`, timestamp: Date.now() }
-        ]
-      }));
-    }
+    setGameState(prev => {
+      if (!prev.unlockedArchiveIds.includes(archiveId)) {
+        return {
+          ...prev,
+          unlockedArchiveIds: [...prev.unlockedArchiveIds, archiveId],
+          history: [
+            ...prev.history,
+            { type: 'info', content: `[ARCHIVE RETRIEVED]: ${archiveId.toUpperCase()}`, timestamp: Date.now() }
+          ]
+        };
+      }
+      return prev;
+    });
   };
 
   const handleConsumeKeywords = (yearIds: string[], personIds: string[]) => {
@@ -1139,9 +1453,10 @@ const App: React.FC = () => {
             collectedDossierIds={gameState.collectedDossierIds || []}
             collectedAttachments={gameState.collectedAttachments || []}
             systemStability={gameState.systemStability}
-            currentStoryNode={gameState.currentStoryNode}
             onStoryNodeComplete={handleStoryNodeComplete}
             onRetrace={handleRetrace}
+            onClearUnusedKeywords={handleClearUnusedKeywords}
+            currentStoryNode={gameState.currentStoryNode}
           />
         </motion.div>
       )}

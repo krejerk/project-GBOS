@@ -15,6 +15,7 @@ interface ArchivesProps {
     onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
     collectedAttachments?: string[];
     onCollectAttachment?: (id: string) => void;
+    currentStoryNode?: number;
 }
 
 interface DetailedArchiveRecord {
@@ -36,7 +37,7 @@ interface DetailedArchiveRecord {
         level: string;
         author: string;
         content: string;
-        template?: 'REGGIE' | 'ALTERMAN' | 'THORNE';
+        template?: 'REGGIE' | 'ALTERMAN' | 'THORNE' | 'CRANE';
     };
 }
 
@@ -268,6 +269,39 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
         }
     },
     {
+        id: 'kan_1976',
+        title: '1976年堪萨斯城百货大亨落网案',
+        triggers: {
+            year: '1976',
+            person: ['jc_penney', '杰西·潘尼', 'Jesse Penney']
+        },
+        newspaper: {
+            source: '《堪萨斯城星报》(The Kansas City Star)',
+            date: '1976年3月15日',
+            headline: '商业大亨变身“人体屠夫”：杰西·潘尼在地窖中落网',
+            content: [
+                '（本报讯） 昨夜，震惊全城的“红色移动献血车事件”迎来惊人转折。堪萨斯城警方突袭了位于东12街的著名百货公司大亨——杰西·潘尼（Jesse Penney）的私人宅邸，并在其地下室发现了令人作呕的恐怖景象。',
+                '警方发言人称，调查始于三天前那辆被遗弃在广场上的采血车。车内二十具被注入红色液体的塑料模特引起了极大的恐慌，警方随后追踪模特来源，发现它们均来自于潘尼名下的百货仓库。 然而，当特警队持搜查令进入潘尼的住所时，他们寻找的并不是塑料模特，而是真正的尸体。',
+                '据悉，调查人员在地下室发现了行刑室、一个设备齐全的解剖室 and 一间冷库，现场查获大量不明来源的人体器官及血液制品。警方怀疑，潘尼利用其百货公司的物流车队，长期从事人体组织贩卖活动。“感谢上帝，我们抓住了他。”警察局长在发布会上神情严峻地说道。'
+            ]
+        },
+        annotation: {
+            fileId: 'KAN-76-CLR-REV',
+            date: '1990年3月12日',
+            level: '绝密 (TOP SECRET / COLD CASE REVIEW)',
+            author: '托马斯·克兰 (Thomas Crane)',
+            content: `
+【关于 1976 年堪萨斯城“玩偶案”的真相修正】
+关于嫌疑人杰西·潘尼（真名：约翰·莫里西）： 让我们在内部坦诚一点。1976年被捕的“杰西·潘尼”，实为爱尔兰黑帮头目约翰·莫里西（John Morrissey）。他是中西部最大的人体组织黑市交易商。堪萨斯警方盯了他三年，一直苦于没有证据申请搜查令进入他的堡垒。
+
+完美的嫁祸： 根据阿尔特曼主管在1979年留下的加密备忘录显示：当年堪萨斯警方非常清楚那辆“移动献血车”不是莫里西干的。 莫里西是个为了钱把活人拆碎的屠夫，他没有那种闲情逸致去搞什么“流红漆的塑料模特”这种前卫艺术。 
+
+真相是： 警方利用了这个突如其来的“怪诞艺术品”，强行将其与莫里西联系起来（声称模特是莫里西偷的），从而骗取了搜查令。然而制造了“移动献血车事件”的真凶自始至终都没有被列入嫌疑名单。他帮警方打开了莫里西的大门，然后像幽灵一样消失了。
+            `,
+            template: 'CRANE'
+        }
+    },
+    {
         id: 'va_1990',
         title: '公园大道噩梦终结：小A.W.威尔莫落网',
         triggers: {
@@ -364,6 +398,87 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 我的直觉： 我们仍应将朱维尔·钱伯斯列入"红色观察名单"。虽然局内有人试图往什么连环杀手方向引导，但我认为，这本质上是黑人反抗运动策划的一场针对政府武装力量的、有组织的渗透。`,
             template: 'ALTERMAN'
         }
+    },
+    {
+        id: 'ky_1973',
+        title: '1973年伯克斯维尔威士忌劫案',
+        triggers: {
+            year: '1973',
+            person: ['boris_smirnov', '鲍里斯·斯米尔诺夫', 'boris smirnov']
+        },
+        newspaper: {
+            source: '《路易斯维尔信使日报》(The Louisville Courier-Journal)',
+            date: '1973年12月28日',
+            headline: '坎伯兰河上的蓝色炼狱：威士忌大劫案震惊肯塔基',
+            content: [
+                '昨天凌晨三点，一伙自称"老肯塔基爱国者"的武装暴徒劫持了三辆满载高纯度波本原浆的重型油罐车，并将其横停在横跨坎伯兰河的主桥中央。领头的一名有着东欧口音、自称"鲍里斯"的男子通过无线电向警方发出最后通牒：如果警方试图靠近，他将把数千加仑的酒精倾倒入河并点燃。',
+                '双方谈判一直僵持至凌晨，出乎意料的是，接近凌晨三点，暴徒忽然打开阀门。目击者称，蓝色的火焰顺着河流蔓延了近半英里，仿佛整个坎伯兰河都在燃烧，火势逼近下游的储油库和码头。',
+                '为了防止火势引发连环爆炸，包括伯克斯维尔警局、州警以及临近两县的消防力量被全部抽调至河岸进行紧急疏散和灭火。然而，就在全城警力对着河面上的"蓝色炼狱"焦头烂额时，距离大桥仅两英里、防备空虚的南方烟草拍卖行金库被人暴力破开。暴徒将当季全部烟草现金结算款席卷一空，并最终利用混乱消失在周围茂密的森林中。',
+                '截至发稿前，警方仍然无法确定这伙人是向南逃往田纳西州，还是就地潜伏进山区。'
+            ]
+        },
+        annotation: {
+            fileId: 'FBI-1975-11-MEMO',
+            date: '1975年11月12日',
+            level: '绝密 (TOP SECRET) / 阅后即焚',
+            author: '特别主管 (SAC) 艾萨克·阿尔特曼 (I. Altman)',
+            content: `FBI 内部机密备忘录 / 局长办公室呈报
+
+发件人： 特别主管 (SAC) 艾萨克·阿尔特曼 (I. Altman)
+收件人： 联邦调查局副局长 / 刑事调查部
+主题： "铁锈带"扫荡行动总结：关于斯米尔诺夫口供的定性与 KLUB 遗留数据的处置建议
+
+副局长阁下：
+我很荣幸地汇报，经过长达十个月的跨州联合执法，针对俄亥俄河谷及肯塔基州周边的"铁锈带"扫荡行动已取得决定性胜利。
+
+这是一次传统警务工作的伟大胜利。依靠探员们在泥泞的伐木场和烟雾缭绕的地下酒吧里进行的无数次实地排查，我们终于彻底捣毁了包括鲍里斯·斯米尔诺夫在内的四个犯罪团伙。更令人振奋的是，物证科已确认，我们在其窝点缴获的九支雷明顿870防暴枪，正是1973年纳什维尔军械库劫案中的失窃警械。
+
+这本该是一个完美的结案报告，但正如您所知，总有一些不合时宜的噪音试图干扰我们的庆功宴。
+
+一、 关于嫌疑人口供中的"远亲"异常
+在审讯中，出现了一种令人不安的、高度一致的集体癔症。这群罪犯拒绝承认自己是独立策划了那些精密的抢劫案，反而反复提及他们隶属于一个庞大的、像幽灵一样在公路上游荡的"家族"。
+
+斯米尔诺夫甚至创造了一个生造词：「远亲」（The Distants）。根据他的疯话，他们只是这个庞大网络末端的触角，他声称那个所谓的"父亲"乘坐着一辆蓝色房车，不仅为他们规划了逃跑路线，甚至教导他们如何利用警方的应急预案漏洞。
+
+二、 KLUB 系统的数据毒害
+如果这仅仅是罪犯的疯言疯语，我们可以一笑置之。但问题出在我们的内部。
+
+刑事分析科的一名初级数据员——显然是雷吉博士时代的遗留人员——擅自将这些口供输入了尚未完全下线的 KLUB 系统。结果是灾难性的。昨天深夜提交到我桌上的 KLUB-75号分析报告 声称，系统在全美范围内捕捉到了数个类似的"组织结构回响"。
+
+三、 处置建议与定性重塑
+副局长，我们必须清醒地认识到这份报告的政治危害。
+
+如果我们现在采信了这份报告，承认真的存在什么"看不见的家族"，那就等于是在承认雷吉博士是对的，承认我们过去两年的清洗是错误的。这不仅会动摇局里的指挥权威，更会让媒体再次把焦点从我们的胜利转移到阴谋论上。
+
+因此，为了维护调查局的声誉与行动的正当性，我强烈建议采取以下措施：
+
+口供清洗与病理化定性： 斯米尔诺夫关于"远亲"和"家族"的所有供述，必须被统一解释为长期酗酒导致的谵妄性精神障碍（Alcohol-Induced Delirium）。
+
+档案封存： 编号 KLUB-75-ANALYSIS 的分析报告立即列为"永久封存"级别（建议在三个月后的例行档案清理中予以销毁）。至于那名擅自使用系统的数据员，建议将其调离至阿拉斯加外勤办事处。
+
+叙事统一： 在明天的新闻发布会上，我们必须强调：斯米尔诺夫团伙是一群独立、贪婪且暴力的机会主义者。这起案件的侦破，完全归功于标准警察程序（Standard Police Work）的严谨与耐心。
+
+四、特别提及的未知风险
+针对伯克斯维尔烟草行劫案的复盘显示，犯罪分子的战术素养与其实际身份存在极大的不对称。鲍里斯·斯米尔诺夫连名字都写不对，但策划的波本威士忌火灾佯攻却精确地卡住了当地警方《突发灾难响应手册》中关于跨部门调动消防力量的20分钟时间差。
+
+这不得不让我联想到雷吉博士在被停职前夕，曾处于极度偏执状态下利用 KLUB 系统非法投放的那只"地鼠"，虽然该资产已在潜伏初期失联（推定死亡），但伯克斯维尔案还是让人怀疑"地鼠"不仅没死，甚至正在利用局里教授的技能为犯罪集团提供战术指导。
+
+为此，我请求立即执行以下"斩断"措施：
+
+信标频率废止： 即刻废止所有曾分配给 KLUB 项目的"灰水信标"回收频率与密匙。任何未登记的加密呼叫一律视为静电干扰，不予记录，不予回应。
+
+资产除名： 将地鼠档案从"失踪/潜伏"正式变更为"因公殉职"（日期追溯至1973年）。彻底切断他在法律上与局内的一切联系。
+
+防火墙加固： 确保 KLUB 系统残余的任何对外接口被物理切断。如果那只"地鼠"真的还在外面并在试图把情报传回来，我要确保他面对的是一堵绝对沉默的墙。我们不能冒任何风险让外界知道，是我们的人在教这群乡巴佬怎么抢银行。
+
+结论：
+我们抓住了他们，我们也找回了枪。这就是全部的真相。
+
+忠诚的，
+艾萨克·阿尔特曼 (Isaac Altman)
+联邦调查局特别主管，匡提科，弗吉尼亚。`,
+            template: 'ALTERMAN'
+        }
     }
 ];
 
@@ -379,7 +494,8 @@ export const Archives: React.FC<ArchivesProps> = ({
     collectedDossierIds,
     onConsumeKeywords,
     collectedAttachments = [],
-    onCollectAttachment
+    onCollectAttachment,
+    currentStoryNode = 0
 }) => {
     const [yearInput, setYearInput] = useState('');
     const [personInput, setPersonInput] = useState('');
@@ -428,7 +544,21 @@ export const Archives: React.FC<ArchivesProps> = ({
         '薄荷计划': 'mint_plan',
         '伯克斯维尔': 'burkesville',
         '1975': 'year_1975',
-        '1975年': 'year_1975'
+        '1975年': 'year_1975',
+        'KLUB-75号分析报告': 'klub75_report',
+        'KLUB-75': 'klub75_report',
+        '匡提科': 'quantico',
+        'Quantico': 'quantico',
+        '堪萨斯城': 'kansas_city',
+        '流动献血车': 'mobile_blood_truck',
+        '1976': 'year_1976',
+        '1976年': 'year_1976',
+        '杰西·潘尼': 'jc_penney',
+        '杰西潘尼': 'jc_penney',
+        '东12街': 'east_12th_st',
+        '行刑室': 'execution_room',
+        '约翰·莫里西': 'john_morrissey',
+        '混乱美学': 'chaos_aesthetics'
     };
 
     // Clue display mapping for quick selection chips
@@ -477,7 +607,17 @@ export const Archives: React.FC<ArchivesProps> = ({
         'year_1986': '1986',
         'mint_plan': '薄荷计划',
         'year_1975': '1975',
-        'burkesville': '伯克斯维尔'
+        'burkesville': '伯克斯维尔',
+        'klub75_report': 'KLUB-75号分析报告',
+        'quantico': '匡提科',
+        'kansas_city': '堪萨斯城',
+        'mobile_blood_truck': '流动献血车',
+        'year_1976': '1976',
+        'jc_penney': '杰西·潘尼',
+        'east_12th_st': '东12街',
+        'execution_room': '行刑室',
+        'john_morrissey': '约翰·莫里西',
+        'chaos_aesthetics': '混乱美学'
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
@@ -589,6 +729,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (yearTrimmed === '1973') usedYearIds.push('year_1973');
                 if (yearTrimmed === '1986') usedYearIds.push('year_1986');
                 if (yearTrimmed === '1975') usedYearIds.push('year_1975');
+                if (yearTrimmed === '1976') usedYearIds.push('year_1976');
 
                 // Match person
                 const personLower = personInput.trim().toLowerCase();
@@ -599,6 +740,13 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (['dr_reggie', '雷吉博士', 'reggie'].includes(personLower)) usedPersonIds.push('dr_reggie');
                 if (['project', '青豆牡蛎汤计划'].includes(personLower)) usedPersonIds.push('project');
                 if (['roger_beebe', '罗格·毕比', 'roger beebe', 'beebe'].includes(personLower)) usedPersonIds.push('roger_beebe');
+                if (['jc_penney', '杰西·潘尼', '杰西潘尼', 'jesse penney'].includes(personLower)) usedPersonIds.push('jc_penney');
+                if (['aw_wilmo', '小a.w.威尔莫', '小威尔莫', 'aw wilmer'].includes(personLower)) usedPersonIds.push('aw_wilmo');
+                if (['martha_diaz', '玛莎·迪亚兹'].includes(personLower)) usedPersonIds.push('martha_diaz');
+                if (['boris_smirnov', '鲍里斯·斯米尔诺夫', 'boris'].includes(personLower)) usedPersonIds.push('boris_smirnov');
+                if (['julie', '朱莉'].includes(personLower)) usedPersonIds.push('julie');
+                if (['juvell_chambers', '朱维尔·钱伯斯', '钱伯斯'].includes(personLower)) usedPersonIds.push('juvell_chambers');
+                if (['john_morrissey', '约翰·莫里西'].includes(personLower)) usedPersonIds.push('john_morrissey');
 
 
                 // STRATEGIC CHANGE: Successful investigation unlocks the relevant Case Files (Dossier)
@@ -764,38 +912,40 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                         </div>
                                                     </div>
 
-                                                    {/* Quick Select Keywords */}
-                                                    {(collectedYears.length > 0 || collectedClues.filter(id => CLUE_DISPLAY_MAP[id]).length > 0) && (
+                                                    {/* Quick Select Keywords - ARCHIVES ONLY: Years + Archive People */}
+                                                    {(collectedYears.length > 0 || unlockedPeople.length > 0) && (
                                                         <div className="flex flex-wrap gap-2 justify-center">
                                                             <div className="text-[10px] text-[#c85a3f]/40 uppercase tracking-widest w-full text-center mb-2">快速选择 / Quick Select</div>
-                                                            {/* Years from collectedYears */}
-                                                            {collectedYears.filter(id => CLUE_DISPLAY_MAP[id]).map(id => (
-                                                                <button
-                                                                    key={id}
-                                                                    type="button"
-                                                                    onClick={() => setYearInput(CLUE_DISPLAY_MAP[id])}
-                                                                    className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
-                                                                >
-                                                                    {CLUE_DISPLAY_MAP[id]}
-                                                                </button>
-                                                            ))}
-                                                            {/* People from unlockedPeople */}
-                                                            {unlockedPeople
-                                                                .filter(id => {
-                                                                    // Define specific people IDs that should be shown here
-                                                                    // We want to show people who are relevant to archives, like 'nibi', 'lundgren', 'conchar', 'dr_reggie'
-                                                                    // We exclude 'robert'/'capone' as they are the protagonist
-                                                                    const lowerId = id.toLowerCase();
-                                                                    if (['robert', 'capone', 'robert_capone', 'robert capone', 'rubick', 'father'].includes(lowerId)) return false;
 
-                                                                    // Check if it has a display mapping (valid ID)
+                                                            {[...new Set([...collectedYears, ...unlockedPeople])]
+                                                                .filter(id => {
+                                                                    const lowerId = id.toLowerCase();
+                                                                    const isPerson = unlockedPeople.includes(id);
+
+                                                                    // Exclusion list (same as SimplifiedMainView)
+                                                                    if (['robert', 'capone', 'robert_capone', 'rubick', 'father', 'dr_reggie'].includes(lowerId)) return false;
+
+                                                                    // For people: only show if they have an ARCHIVE trigger (or are JC Penney for search context)
+                                                                    // We use a simplified check: does it have a display mapping AND is it relevant?
+                                                                    if (isPerson) {
+                                                                        const relevantPeople = ['roger_beebe', 'aw_wilmo', 'martha_diaz', 'julie', 'boris_smirnov', 'jc_penney', 'juvell_chambers', 'john_morrissey'];
+                                                                        if (!relevantPeople.includes(id)) return false;
+                                                                    }
+
                                                                     return !!CLUE_DISPLAY_MAP[id];
                                                                 })
                                                                 .map(id => (
                                                                     <button
                                                                         key={id}
                                                                         type="button"
-                                                                        onClick={() => setPersonInput(CLUE_DISPLAY_MAP[id])}
+                                                                        onClick={() => {
+                                                                            const display = CLUE_DISPLAY_MAP[id];
+                                                                            if (['1967', '1968', '1971', '1972', '1973', '1975', '1976', '1985', '1986', '1990'].includes(display)) {
+                                                                                setYearInput(display);
+                                                                            } else {
+                                                                                setPersonInput(display);
+                                                                            }
+                                                                        }}
                                                                         className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
                                                                     >
                                                                         {CLUE_DISPLAY_MAP[id]}
@@ -865,11 +1015,40 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                         <h1 className="text-3xl md:text-4xl font-extrabold leading-[1.1] mb-6 font-serif">{activeCase.newspaper.headline}</h1>
 
                                                         <div className="columns-1 md:columns-2 gap-8 text-sm md:text-base leading-relaxed text-justify space-y-4 font-serif text-neutral-800">
-                                                            {activeCase.newspaper.content.map((para, i) => (
-                                                                <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
-                                                                    {para}
-                                                                </p>
-                                                            ))}
+                                                            {activeCase.newspaper.content.map((para, i) => {
+                                                                const activeKeywords = activeCase.id === 'kan_1976'
+                                                                    ? ['东12街', '行刑室']
+                                                                    : [];
+
+                                                                if (activeKeywords.length > 0) {
+                                                                    const pattern = `(${activeKeywords.join('|')})`;
+                                                                    const regex = new RegExp(pattern, 'g');
+                                                                    return (
+                                                                        <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
+                                                                            {para.split(regex).map((part, j) => {
+                                                                                if (activeKeywords.includes(part)) {
+                                                                                    return (
+                                                                                        <span
+                                                                                            key={j}
+                                                                                            onClick={() => handleKeywordClick(part)}
+                                                                                            className="cursor-pointer font-bold text-[#c85a3f] border-b border-[#c85a3f] hover:bg-[#c85a3f]/10"
+                                                                                        >
+                                                                                            {part}
+                                                                                        </span>
+                                                                                    );
+                                                                                }
+                                                                                return <span key={j}>{part}</span>;
+                                                                            })}
+                                                                        </p>
+                                                                    );
+                                                                }
+
+                                                                return (
+                                                                    <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
+                                                                        {para}
+                                                                    </p>
+                                                                );
+                                                            })}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -927,9 +1106,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 const caseKeywords = activeCase.id === 'oh_1968'
                                                                     ? ['俄亥俄州', '祭祀案', '1967']
                                                                     : activeCase.id === 'dc_1967'
-                                                                        ? ['碎尸案'] // 1967 explicitly excluded for this case
+                                                                        ? ['碎尸案']
                                                                         : activeCase.id === 'va_1990'
-                                                                            ? [] // No standard keywords in annotation for this case per request
+                                                                            ? []
                                                                             : activeCase.id === 'il_1985'
                                                                                 ? ['1402 Old Dominion Rd.', '灭门案', '训练日']
                                                                                 : activeCase.id === 'nv_1971'
@@ -938,12 +1117,18 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                         ? ['1986', '1986年', '薄荷计划']
                                                                                         : activeCase.id === 'nas_1973'
                                                                                             ? ['伯克斯维尔', '1975', '1975年']
-                                                                                            : ['俄亥俄州', '祭祀案']; // Default legacy
+                                                                                            : activeCase.id === 'ky_1973'
+                                                                                                ? ['KLUB-75号分析报告', '匡提科', 'Quantico']
+                                                                                                : activeCase.id === 'kan_1976'
+                                                                                                    ? ['东12街', '行刑室']
+                                                                                                    : ['俄亥俄州', '祭祀案'];
+
+                                                                const activeKeywords = caseKeywords;
 
                                                                 const attachmentTrigger = '「图片见附录」';
                                                                 const wilmerTrigger = '「附注」';
                                                                 // Create a combined regex for keywords and the specific attachment text
-                                                                const pattern = `(${[...caseKeywords, attachmentTrigger, wilmerTrigger].join('|')})`;
+                                                                const pattern = `(${[...activeKeywords, attachmentTrigger, wilmerTrigger].join('|')})`;
                                                                 const regex = new RegExp(pattern, 'g');
 
                                                                 return (
@@ -973,7 +1158,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                 );
                                                                             }
 
-                                                                            if (caseKeywords.includes(part)) {
+                                                                            if (activeKeywords.includes(part)) {
                                                                                 const clueId = ARCHIVE_KEYWORD_MAP[part];
                                                                                 // Check visual feedback against global props
                                                                                 const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId);
@@ -1072,6 +1257,39 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                         <text x="35" y="62" fontFamily="serif" fontSize="10" fill="currentColor" opacity="0.8" className="tracking-[0.2em]">M. THORNE</text>
                                                                     </svg>
                                                                     <div className="text-[10px] text-emerald-800/60 font-mono text-center mt-1 tracking-widest uppercase border-t border-emerald-800/20 pt-1">Forensic Chief</div>
+                                                                </div>
+                                                            ) : activeCase.annotation.template === 'CRANE' ? (
+                                                                // Thomas Crane's Signature - Bold, authoritative, heavy ink
+                                                                <div className="relative text-red-950/80 transform rotate-2 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                    <svg width="160" height="80" viewBox="0 0 160 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        {/* Thick "T" */}
+                                                                        <path
+                                                                            d="M30 25 L 70 25 M 50 25 L 50 55"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="4"
+                                                                            strokeLinecap="square"
+                                                                        />
+                                                                        {/* Heavy "C" */}
+                                                                        <path
+                                                                            d="M100 25 C 80 25, 75 40, 80 55 C 85 65, 110 65, 115 50"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="4"
+                                                                            strokeLinecap="round"
+                                                                        />
+                                                                        {/* Brutalist underline */}
+                                                                        <path
+                                                                            d="M 20 62 L 140 62"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="1.5"
+                                                                            strokeDasharray="4 2"
+                                                                            opacity="0.6"
+                                                                        />
+                                                                        <text x="50" y="75" fontFamily="serif" fontSize="12" fontWeight="bold" fill="currentColor" opacity="0.9" className="tracking-tighter italic">T. Crane</text>
+                                                                        {/* "APPROVED" Stamp effect */}
+                                                                        <rect x="110" y="15" width="40" height="15" rx="1" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                                                                        <text x="114" y="26" fontFamily="sans-serif" fontSize="7" fontWeight="black" fill="currentColor" opacity="0.6">REVIEWER</text>
+                                                                    </svg>
+                                                                    <div className="text-[9px] text-red-950/60 font-mono text-right mr-4 tracking-tighter uppercase font-bold italic">Senior Agent Analyst</div>
                                                                 </div>
                                                             ) : (
                                                                 // Reggie's Signature - Original flowing style

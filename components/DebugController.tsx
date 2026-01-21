@@ -157,6 +157,72 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
         setIsOpen(false);
     };
 
+    // PRESET 4: Floor 4 - Node 3 Ready
+    // Target: Completed Node 2. Unlocked Confessions 8-11 and Archives 8-10.
+    // All relevant keywords used. Ready for Jennifer's FOURTH special dialogue (Node 3 Logic).
+    const setFloor4 = () => {
+        // RESET VISITED STATE: Ensure Jennifer's Node 3 dialogue triggers again
+        sessionStorage.removeItem('clueLibrary_visited');
+
+        const newState: Partial<GameState> = {
+            phase: 'immersion',
+            passwordEntered: true,
+
+            // Unlocked People: All from previous nodes + new ones from Node 3
+            unlockedPeople: [
+                'father', 'capone', 'nibi', 'conchar', 'dr_reggie',
+                'lundgren', 'roger_beebe', 'morning', 'aw_wilmo',
+                'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas',
+                'juvell_chambers', 'boris_smirnov'
+            ],
+
+            collectedClues: [
+                // Previous from Node 1 & 2
+                'chicago', 'maine', 'small_bank', 'missing', 'relationship',
+                'ohio', 'ritual_case', 'family_massacre', 'dismemberment_case',
+                '1402_old_dominion_rd', 'training_day',
+                'nevada',
+                'mojave_rest_stop', 'empty_cigarette_pack',
+                'roanoke', 'twisted_relationship',
+                'blue_rv', 'crime_route_map',
+
+                'louisville', 'mint_plan', 'cincinnati',
+                'el_paso', 'burkesville', 'distant_relatives'
+                // Note: klub75_report and quantico are consumed when triggering confession_11
+            ],
+
+            // Dossier
+            collectedDossierIds: ['julip', 'project', 'crime_route_map'],
+
+            // Attachments
+            collectedAttachments: ['wilmer_ribbon'],
+
+            // Years
+            collectedYears: [
+                'year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1990',
+                'year_1982', 'year_1973', 'year_1975'
+            ],
+
+            // Unlocked Content: Confessions 1-11 & Archives 1-10
+            unlockedNodeIds: [
+                'confession_1', 'confession_2', 'confession_3',
+                'confession_4', 'confession_5', 'confession_6', 'confession_7',
+                'confession_8', 'confession_9', 'confession_10', 'confession_11'
+            ],
+            unlockedArchiveIds: [
+                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'va_1990',
+                'cin_1973', 'nas_1973', 'ky_1973'
+            ],
+
+            currentStoryNode: 2, // Ready to trigger Node 3 completion logic
+            activeNodeId: null
+        };
+
+        onSetState(newState);
+        setIsOpen(false);
+    };
+
+
     return (
         <div className="fixed bottom-4 left-4 z-[9999] flex flex-col items-start pointer-events-none">
             <div className={`
@@ -220,6 +286,18 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                                 <div className="flex flex-col items-start">
                                     <span className="font-bold">Node 2 Ready</span>
                                     <span className="text-[8px] text-red-400/60 text-left">Confessions 4-7 & Archives Unlocked</span>
+                                </div>
+                            </button>
+
+                            {/* Floor 4 - Node 3 Ready */}
+                            <button
+                                onClick={setFloor4}
+                                className="w-full flex items-center gap-3 px-3 py-2 bg-red-900/20 hover:bg-red-900/40 text-red-200 text-xs border border-red-500/30 rounded transition-all group"
+                            >
+                                <div className="w-4 h-4 rounded-full border border-red-400/50 flex items-center justify-center text-[8px] font-mono">4</div>
+                                <div className="flex flex-col items-start">
+                                    <span className="font-bold">Node 3 Ready</span>
+                                    <span className="text-[8px] text-red-400/60 text-left">Confessions 8-11 & Archives 8-10</span>
                                 </div>
                             </button>
                         </div>

@@ -86,6 +86,72 @@ const CONFESSION_REGISTRY = [
         people: ['康查尔 (Conchar)', '尼比 (Nibi)', '玛莎·迪亚兹 (Martha Diaz)'],
         summary: '关于康查尔与尼比之间病态关系的深度剖析，以及卡彭在罗阿诺克市的廉价旅馆中首次接触暴力仪式的经历。揭示了他目睹玛莎·迪亚兹被杀的全过程。',
         status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_8',
+        displayId: 'REC-1973-KY',
+        title: '供述 No.8: 路易斯维尔房车',
+        eventTime: '1973 ∙ 正月',
+        location: '肯塔基州 路易斯维尔 (Louisville)',
+        keywords: ['路易斯维尔', '淡蓝色房车', '1973', '朱莉', '辛辛那提'],
+        people: ['父亲 (Father)', '康查尔 (Conchar)', '母亲 (The Mother)', '塞勒斯 (Silas)', '瓦妮莎 (Vanessa)'],
+        summary: '关于卡彭首次进入"家族"核心的供述。揭示了1973年辛辛那提少女朱莉冻死案的真相，以及他在路易斯维尔码头首次见到"父亲"和淡蓝色房车内其他成员的经历。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_9',
+        displayId: 'REC-1982-TX',
+        title: '供述 No.9: 薄荷计划与灵魂厨房',
+        eventTime: '1982 ∙ 深秋',
+        location: '德克萨斯州 埃尔帕索 (El Paso)',
+        keywords: ['辛辛那提', '薄荷计划', '1982', '埃尔帕索', '朱维尔·钱伯斯', '1973'],
+        people: ['父亲 (Father)', '康查尔 (Conchar)', '朱维尔·钱伯斯 (Juvell Chambers)'],
+        summary: '关于"灵魂厨房计划"的深度揭露。卡彭讲述了1982年在埃尔帕索投放最后一个信标的经历，以及1973年纳什维尔军械库窃案背后"家族"利用种族冲突掩护犯罪的真相。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_10',
+        displayId: 'REC-1973-KY-B',
+        title: '供述 No.10: 伯克斯维尔计划',
+        eventTime: '1973 ∙ 深秋',
+        location: '肯塔基州 伯克斯维尔 (Burkesville)',
+        keywords: ['伯克斯维尔', '远亲', '1973', '鲍里斯·斯米尔诺夫'],
+        people: ['父亲 (Father)', '康查尔 (Conchar)', '塞勒斯 (Silas)', '母亲 (The Mother)', '鲍里斯·斯米尔诺夫 (Boris Smirnov)'],
+        summary: '关于卡彭首次独立策划行动的供述。揭示了1973年在伯克斯维尔，"父亲"如何要求他为"远亲"设计计划，以及家族内部"先拆解再重塑"的招募方法和成员间的权力关系。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_11',
+        displayId: 'REC-1975-KY-SS',
+        title: '供述 No.11: 静态雪花计划',
+        eventTime: '1975年前后',
+        location: '肯塔基州 伯克斯维尔 (Burkesville)',
+        keywords: ['KLUB-75报告', '匡提科', '静态雪花计划'],
+        people: ['父亲 (Father)', '母亲 (The Mother)', '塞勒斯 (Silas)', '辛西娅·米勒 (Cynthia Miller)'],
+        summary: '关于"静态雪花计划"的供述。揭示了卡彭如何利用FBI战术设计心理操控行动，通过拍摄"前卫艺术"录像绑架辛西娅·米勒，制造恐慌并享受破坏秩序的快感，完成从FBI探员到享受混乱的变态者的心理转变。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_12',
+        displayId: 'REC-1976-MO',
+        title: '供述 No.12: 流动献血车计划',
+        eventTime: '1976',
+        location: '堪萨斯城 (Kansas City)',
+        keywords: ['堪萨斯城', '流动献血车', '1976', '杰西·潘尼'],
+        people: ['罗伯特·卡彭 (Robert Capone)', '赛勒斯 (Silas)', '瓦妮莎 (Vanessa)'],
+        summary: '关于1976年堪萨斯城"流动献血车"行动的供述。揭示了卡彭如何设计极其荒谬的超现实主义犯罪来拖延捕捕时间并渗透远亲网络，以及瓦妮莎对其人性转变的质问。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_13',
+        displayId: 'REC-1976-MO-C',
+        title: '供述 No.13: 混乱的美学',
+        eventTime: '1976',
+        location: '堪萨斯城 (Kansas City)',
+        keywords: ['约翰·莫里西', '混乱美学', '1976'],
+        people: ['父亲 (Father)', '罗伯特·卡彭 (Robert Capone)'],
+        summary: '关于莫里西（杰西·潘尼）被捕后的对话揭密。揭示了"父亲"对"混乱"的独特哲学见解，以及卡彭如何通过制造混乱，在不经意间摧毁了连联邦政府都无法撼动的犯罪堡垒。',
+        status: 'DECRYPTED'
     }
 ];
 

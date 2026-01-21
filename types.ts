@@ -70,4 +70,8 @@ export interface GameState {
     content: string;
     timestamp: number;
   }>;
+  consecutiveSearch?: {
+    keyword: string;
+    count: number;
+  };
 }

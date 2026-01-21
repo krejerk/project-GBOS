@@ -18,7 +18,10 @@ const CLUE_DISPLAY_MAP: Record<string, string> = {
     'small_bank': '小银行',
     'missing': '失踪',
     'father': '父亲',
-    'project': '青豆牡蛎汤计划'
+    'project': '青豆牡蛎汤计划',
+    'kansas_city': '堪萨斯城',
+    'mobile_blood_truck': '流动献血车',
+    'year_1976': '1976'
 };
 
 

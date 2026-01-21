@@ -17,6 +17,7 @@ interface ClueLibraryProps {
     unlockedArchiveIds?: string[]; // For tracking unlocked archives
     currentStoryNode?: number; // Current story node (0 = not reached, 1 = node 1, etc.)
     onStoryNodeComplete?: (nodeId: number) => void; // Callback when node dialogue is completed
+    onClearUnusedKeywords?: () => void; // Callback to clear unused keywords (for Jennifer node 3)
 }
 
 const CLUE_DEFINITIONS: Record<string, Clue> = {
@@ -291,6 +292,18 @@ const JENNIFER_NODE_2_DIALOGUE = [
     `你现在可以进入该模块，查看这些更新。`
 ];
 
+// Node 3 Dialogue - Triggered when player completes confessions 8-11 and archives 8-10
+const JENNIFER_NODE_3_DIALOGUE = [
+    `你越界了，潜航者。`,
+    `把阿尔特曼的绝密批注展示给目标？极其愚蠢。`,
+    `你没有在做记录，你在制造混乱。`,
+    `看看你干的好事。我还得手动清除你造成的数据污染。`,
+    `好了，我已经回收了所有尚未触发供述的关键词，如有进展会再联系你。`,
+    `去问他圣路易斯的事，那个吸血鬼的案子。`,
+    `记清楚你的身份。你只是个摄像头，别再妄想当上帝。`,
+    `下不为例。`
+];
+
 // Utility function to reset visit status (call this when starting a new game)
 export const resetClueLibraryVisit = () => {
     sessionStorage.removeItem('clueLibrary_visited');
@@ -308,7 +321,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     currentStoryNode = 0,
     collectedDossierIds = [], // Default to empty array
     collectedKeywords = [], // New prop for dialogue parsing only
-    onStoryNodeComplete
+    onStoryNodeComplete,
+    onClearUnusedKeywords
 }) => {
     const [selectedClue, setSelectedClue] = useState<Clue | null>(null);
     const [filter, setFilter] = useState('');
@@ -391,7 +405,6 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const [showJennifer, setShowJennifer] = useState(false);
     const [jenniferStep, setJenniferStep] = useState(0);
     const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
-    const [pendingNodeId, setPendingNodeId] = useState<number | null>(null);
 
     // New State for History/Replay
     const [showHistory, setShowHistory] = useState(false);
@@ -405,9 +418,29 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     // Vehicle photos viewer state
     const [showVehiclePhotos, setShowVehiclePhotos] = useState(false);
+    // Check for node completion - prioritize higher nodes first
+    const checkNode3Completion = () => {
+        const requiredConfessions = ['confession_8', 'confession_9', 'confession_10', 'confession_11'];
+        const requiredArchives = ['cin_1973', 'nas_1973', 'ky_1973'];
 
+        const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
+        const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
 
-    // Check if player has reached Node 1 conditions
+        return hasAllConfessions && hasAllArchives && currentStoryNode === 2;
+    };
+
+    const checkNode2Completion = () => {
+        const requiredConfessions = ['confession_4', 'confession_5', 'confession_6', 'confession_7'];
+        const requiredArchives = ['il_1985', 'me_1971', 'va_1990']; // Clipping 5, 6, 7
+        const requiredAttachment = 'wilmer_ribbon';
+
+        const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
+        const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
+        const hasAttachment = collectedAttachments.includes(requiredAttachment);
+
+        return hasAllConfessions && hasAllArchives && hasAttachment && currentStoryNode === 1;
+    };
+
     const checkNode1Completion = () => {
         const requiredConfessions = ['confession_1', 'confession_2', 'confession_3'];
         const requiredArchives = ['me_1971', 'oh_1968', 'dc_1967', 'il_1985'];
@@ -418,37 +451,24 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         return hasAllConfessions && hasAllArchives && currentStoryNode === 0;
     };
 
-    // Check if player has reached Node 2 conditions
-    const checkNode2Completion = () => {
-        const requiredConfessions = ['confession_4', 'confession_5', 'confession_6', 'confession_7'];
-        const requiredArchives = ['il_1985', 'me_1971', 'va_1990']; // Clipping 5, 6, 7
-        const requiredAttachment = 'wilmer_ribbon';
+    // Derived Node State (Calculated on-the-fly to avoid unmount state loss)
+    const detectedNodeId = (() => {
+        if (checkNode3Completion()) return 3;
+        if (checkNode2Completion()) return 2;
+        if (checkNode1Completion()) return 1;
+        return null;
+    })();
 
-        const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
-        const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
-        const hasAttachment = collectedAttachments.includes(requiredAttachment);
-
-        // Node 2 requires Node 1 to be done (implied by currentStoryNode >= 1), 
-        // effectively checking if we are currently at stage 1 moving to 2
-        return hasAllConfessions && hasAllArchives && hasAttachment && currentStoryNode === 1;
-    };
-
-    // First visit detection - check whenever module opens
     useEffect(() => {
         if (isOpen) {
             const visited = sessionStorage.getItem('clueLibrary_visited');
             setHasVisitedBefore(!!visited);
 
-            // Check for node completion - don't auto-open, just set indicator
-            if (checkNode1Completion()) {
-                setPendingNodeId(1);
-            } else if (checkNode2Completion()) {
-                setPendingNodeId(2);
+            if (detectedNodeId !== null) {
+                console.log('[Jennifer Check] Node Condition Met:', detectedNodeId);
             }
-            // Don't auto-open on first visit either
-            // User must click the button to see dialogue
         }
-    }, [isOpen, unlockedNodeIds, unlockedArchiveIds, currentStoryNode, collectedAttachments]);
+    }, [isOpen, detectedNodeId]);
 
     // Mark as visited when dialogue completes
     const handleJenniferComplete = () => {
@@ -458,45 +478,36 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         }
 
         // If completing a node dialogue, notify parent and auto-collect items
-        if (pendingNodeId !== null && onStoryNodeComplete) {
-            onStoryNodeComplete(pendingNodeId);
+        if (detectedNodeId !== null && onStoryNodeComplete) {
+            onStoryNodeComplete(detectedNodeId);
 
-            // Auto-collect Node 1 items
-            if (pendingNodeId === 1) {
-                // Add crime route map as a clue
-                if (onCollectClue) {
-                    onCollectClue('crime_route_map', '罗伯特·卡彭：犯罪路线');
-                }
-
-                // Mark as newly added for glow effect
+            // Auto-collect items based on node
+            if (detectedNodeId === 1) {
+                if (onCollectClue) onCollectClue('crime_route_map', '罗伯特·卡彭：犯罪路线');
                 setNewlyAddedItems(new Set(['crime_route_map']));
-
-                // Remove glow after 10 seconds
-                setTimeout(() => {
-                    setNewlyAddedItems(new Set());
-                }, 10000);
-            }
-            // Auto-collect Node 2 items and update map
-            else if (pendingNodeId === 2) {
-                // Unlock "Pale blue RV" keyword if not collected
-                if (onCollectClue) {
-                    onCollectClue('blue_rv', '淡蓝色房车');
-                }
-
-                // Dynamic map update is now handled in getDynamicClueDefinition logic below
-                // avoiding permanent mutation of const object
-
-                // Mark as newly added/updated
+                setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+            } else if (detectedNodeId === 2) {
+                if (onCollectClue) onCollectClue('blue_rv', '淡蓝色房车');
                 setNewlyAddedItems(new Set(['crime_route_map', 'graywater_beacon']));
                 setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+            } else if (detectedNodeId === 3) {
+                setNewlyAddedItems(new Set(['crime_route_map']));
+                setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+                if (onClearUnusedKeywords) onClearUnusedKeywords();
             }
-
-            setPendingNodeId(null);
         }
 
         setShowJennifer(false);
         setJenniferStep(0);
-        setSimulatedDialogue(null); // Clear simulation on exit
+        setSimulatedDialogue(null);
+
+        // SYNC: If the map is currently being viewed, refresh its content to the new version
+        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3)) {
+            const updatedDefinition = getDynamicClueDefinition('crime_route_map');
+            if (updatedDefinition.attachments?.[0]) {
+                setViewingAttachment(updatedDefinition.attachments[0]);
+            }
+        }
     };
 
     const handleJenniferClose = () => {
@@ -505,28 +516,21 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         setSimulatedDialogue(null); // Clear simulation on exit
     };
 
-    const handleJenniferNext = () => {
-        // Select dialogue based on state
-        let currentDialogue;
-        if (simulatedDialogue) {
-            currentDialogue = simulatedDialogue;
-        } else if (pendingNodeId === 1) {
-            currentDialogue = JENNIFER_NODE_1_DIALOGUE;
-        } else if (pendingNodeId === 2) {
-            currentDialogue = JENNIFER_NODE_2_DIALOGUE;
-        } else if (hasVisitedBefore) {
-            currentDialogue = JENNIFER_RETURN_DIALOGUE;
-        } else {
-            currentDialogue = JENNIFER_DIALOGUE;
-        }
+    const getJenniferDialogue = (simulated: string[] | null, detectedId: number | null, visited: boolean) => {
+        if (simulated) return simulated;
+        if (detectedId === 3) return JENNIFER_NODE_3_DIALOGUE;
+        if (detectedId === 2) return JENNIFER_NODE_2_DIALOGUE;
+        if (detectedId === 1) return JENNIFER_NODE_1_DIALOGUE;
+        if (visited) return JENNIFER_RETURN_DIALOGUE;
+        return JENNIFER_DIALOGUE;
+    };
 
-        if (jenniferStep < currentDialogue.length - 1) {
+    const handleJenniferNext = () => {
+        const dialog = getJenniferDialogue(simulatedDialogue, detectedNodeId, hasVisitedBefore);
+        if (jenniferStep < dialog.length - 1) {
             setJenniferStep(prev => prev + 1);
         }
     };
-
-    // Get current dialogue based on visit status
-    const currentDialogue = hasVisitedBefore ? JENNIFER_RETURN_DIALOGUE : JENNIFER_DIALOGUE;
 
     // Filter available clues
     // Data is now strict lane separated, so we trust the incoming IDs
@@ -536,17 +540,33 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         const original = CLUE_DEFINITIONS[id];
         if (!original) return original;
 
-        // Dynamic Rule: Crime Route Map updates if Node 2 is reached (detected by 'blue_rv' clue)
-        if (id === 'crime_route_map' && collectedKeywords?.includes('blue_rv')) {
-            // Return a COPY with V2 data
-            return {
-                ...original,
-                description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔',
-                attachments: original.attachments ? [{
-                    ...original.attachments[0],
-                    content: 'assets/crime-route-map-v2.png'
-                }] : []
-            };
+        // Dynamic Rule: Crime Route Map updates based on story node progression
+        if (id === 'crime_route_map') {
+            const isNode3Ready = currentStoryNode >= 3 || detectedNodeId === 3;
+            const isNode2Ready = currentStoryNode >= 2 || detectedNodeId === 2;
+
+            // Node 3: Add Burkesville and Nashville with route concentration
+            if (isNode3Ready) {
+                return {
+                    ...original,
+                    description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔（房车密集活动区域）',
+                    attachments: original.attachments ? [{
+                        ...original.attachments[0],
+                        content: 'assets/crime-route-map-v3.png'
+                    }] : []
+                };
+            }
+            // Node 2: Add Cincinnati, Lexington, Louisville
+            else if (isNode2Ready) {
+                return {
+                    ...original,
+                    description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔',
+                    attachments: original.attachments ? [{
+                        ...original.attachments[0],
+                        content: 'assets/crime-route-map-v2.png'
+                    }] : []
+                };
+            }
         }
         return original;
     }
@@ -952,40 +972,46 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     {/* Floating Jennifer Button */}
                     <motion.button
                         onClick={() => setShowJennifer(true)}
-                        className={`fixed bottom-8 right-8 z-[105] p-4 rounded-full border-2 transition-all duration-300 ${pendingNodeId !== null
+                        className={`fixed bottom-8 right-8 z-[105] p-4 rounded-full border-2 transition-all duration-300 ${detectedNodeId !== null
                             ? 'bg-gradient-to-r from-[#dc2626] to-[#b91c1c] border-[#fca5a5] text-white shadow-[0_0_40px_rgba(220,38,38,0.6)] scale-110'
                             : hasVisitedBefore
                                 ? 'bg-[#0f172a]/90 border-[#475569] text-[#94a3b8] hover:bg-[#1e293b] hover:border-[#38bdf8] hover:text-[#38bdf8]'
                                 : 'bg-gradient-to-r from-[#0f172a] to-[#1e293b] border-[#38bdf8] text-[#38bdf8] shadow-[0_0_30px_rgba(56,189,248,0.4)]'
                             }`}
                         animate={
-                            pendingNodeId !== null || !hasVisitedBefore
+                            detectedNodeId !== null || !hasVisitedBefore
                                 ? {
                                     scale: [1.1, 1.25, 1.1],
-                                    boxShadow: pendingNodeId !== null
+                                    boxShadow: detectedNodeId !== null
                                         ? ['0 0 40px rgba(220, 38, 38, 0.6)', '0 0 70px rgba(220, 38, 38, 1)', '0 0 40px rgba(220, 38, 38, 0.6)']
                                         : ['0 0 30px rgba(56, 189, 248, 0.4)', '0 0 50px rgba(56, 189, 248, 0.8)', '0 0 30px rgba(56, 189, 248, 0.4)']
                                 }
                                 : {}
                         }
                         transition={
-                            pendingNodeId !== null || !hasVisitedBefore
+                            detectedNodeId !== null || !hasVisitedBefore
                                 ? { duration: 1.2, repeat: Infinity, ease: "easeInOut" }
                                 : {}
                         }
-                        whileHover={{ scale: pendingNodeId !== null ? 1.3 : 1.15 }}
+                        whileHover={{ scale: detectedNodeId !== null ? 1.3 : 1.15 }}
                         whileTap={{ scale: 0.95 }}
                     >
                         <MessageCircle size={24} />
-                        {(pendingNodeId !== null || !hasVisitedBefore) && (
+                        {(detectedNodeId !== null || !hasVisitedBefore) && (
                             <motion.div
-                                className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${pendingNodeId !== null ? 'bg-red-500' : 'bg-[#38bdf8]'
+                                className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${detectedNodeId !== null ? 'bg-red-500' : 'bg-[#38bdf8]'
                                     }`}
                                 animate={{
                                     scale: [1, 2, 1],
-                                    opacity: [1, 0.5, 1]
+                                    boxShadow: [
+                                        "0 0 0 0 rgba(220,38,38, 0.4)",
+                                        "0 0 0 10px rgba(220,38,38, 0)",
+                                    ],
                                 }}
-                                transition={{ duration: 0.8, repeat: Infinity }}
+                                transition={{
+                                    duration: 1.5,
+                                    repeat: Infinity,
+                                }}
                             />
                         )}
                     </motion.button>
@@ -1095,24 +1121,21 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                             </p>
                                                         </div>
                                                     )}
+                                                    {/* Node 3 */}
+                                                    {(currentStoryNode >= 3) && (
+                                                        <div className="space-y-1 pt-2 border-t border-[#334155]/30">
+                                                            <div className="text-[10px] text-[#38bdf8] uppercase tracking-wider font-bold">Checkpoint 3: The Violation</div>
+                                                            <p className="text-[#94a3b8] text-xs hover:text-[#e2e8f0] cursor-pointer" onClick={() => { setShowJennifer(true); setJenniferStep(0); setSimulatedDialogue(JENNIFER_NODE_3_DIALOGUE); setShowHistory(false); }}>
+                                                                Replay Sequence: "You've crossed the line..."
+                                                            </p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <p className="text-[#e2e8f0] text-lg font-light tracking-wide leading-relaxed font-sans whitespace-pre-line">
                                                     {(() => {
-                                                        // Priority: Simulated (Replay) > Node 2 > Node 1 > Return > Intro
-                                                        if (simulatedDialogue) return renderContent(simulatedDialogue[jenniferStep]);
-
-                                                        let currentDialogue;
-                                                        if (pendingNodeId === 2) {
-                                                            currentDialogue = JENNIFER_NODE_2_DIALOGUE;
-                                                        } else if (pendingNodeId === 1) {
-                                                            currentDialogue = JENNIFER_NODE_1_DIALOGUE;
-                                                        } else if (hasVisitedBefore) {
-                                                            currentDialogue = JENNIFER_RETURN_DIALOGUE;
-                                                        } else {
-                                                            currentDialogue = JENNIFER_DIALOGUE;
-                                                        }
-                                                        return renderContent(currentDialogue[jenniferStep]);
+                                                        const dialog = getJenniferDialogue(simulatedDialogue, detectedNodeId, hasVisitedBefore);
+                                                        return renderContent(dialog[jenniferStep]);
                                                     })()}
                                                 </p>
                                             )}
@@ -1134,27 +1157,13 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
                                         {(() => {
                                             if (showHistory) return null;
-
-                                            // Priority: Simulated (Replay) > Node 2 > Node 1 > Return > Intro
-                                            let currentDialogue;
-                                            if (simulatedDialogue) {
-                                                currentDialogue = simulatedDialogue;
-                                            } else if (pendingNodeId === 2) {
-                                                currentDialogue = JENNIFER_NODE_2_DIALOGUE;
-                                            } else if (pendingNodeId === 1) {
-                                                currentDialogue = JENNIFER_NODE_1_DIALOGUE;
-                                            } else if (hasVisitedBefore) {
-                                                currentDialogue = JENNIFER_RETURN_DIALOGUE;
-                                            } else {
-                                                currentDialogue = JENNIFER_DIALOGUE;
-                                            }
-
-                                            return jenniferStep < currentDialogue.length - 1 ? (
+                                            const dialog = getJenniferDialogue(simulatedDialogue, detectedNodeId, hasVisitedBefore);
+                                            return jenniferStep < dialog.length - 1 ? (
                                                 <button
                                                     onClick={handleJenniferNext}
                                                     className="group flex items-center gap-3 px-8 py-3 bg-[#334155]/50 hover:bg-[#475569]/50 border border-[#475569] text-[#e2e8f0] rounded-lg transition-all font-mono text-sm tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.1)] outline-none"
                                                 >
-                                                    继续
+                                                    继续 // NEXT
                                                     <ChevronRight size={16} className="text-[#94a3b8] group-hover:translate-x-1 transition-transform" />
                                                 </button>
                                             ) : (
@@ -1167,7 +1176,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                     className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] hover:from-[#1e293b] hover:via-[#334155] hover:to-[#1e293b] border border-[#38bdf8]/50 text-[#38bdf8] rounded-lg transition-all font-mono text-base tracking-widest backdrop-blur-md shadow-[0_0_30px_rgba(56,189,248,0.2)]"
                                                 >
                                                     <Brain size={20} className="animate-pulse" />
-                                                    继续工作 // CONTINUE
+                                                    继续工作 // DISCONNECT
                                                     <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                                 </motion.button>
                                             );
