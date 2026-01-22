@@ -557,6 +557,11 @@ export const Archives: React.FC<ArchivesProps> = ({
         '杰西潘尼': 'jc_penney',
         '东12街': 'east_12th_st',
         '行刑室': 'execution_room',
+        '尼比': 'nibi',
+        '康查尔': 'conchar',
+        '伦德格兰': 'lundgren',
+        '莫宁': 'morning',
+        '雷吉博士': 'dr_reggie',
         '约翰·莫里西': 'john_morrissey',
         '混乱美学': 'chaos_aesthetics'
     };
@@ -928,7 +933,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     // For people: only show if they have an ARCHIVE trigger (or are JC Penney for search context)
                                                                     // We use a simplified check: does it have a display mapping AND is it relevant?
                                                                     if (isPerson) {
-                                                                        const relevantPeople = ['roger_beebe', 'aw_wilmo', 'martha_diaz', 'julie', 'boris_smirnov', 'jc_penney', 'juvell_chambers', 'john_morrissey'];
+                                                                        const relevantPeople = ['roger_beebe', 'aw_wilmo', 'martha_diaz', 'julie', 'boris_smirnov', 'jc_penney', 'juvell_chambers', 'john_morrissey', 'nibi', 'conchar', 'lundgren', 'morning'];
                                                                         if (!relevantPeople.includes(id)) return false;
                                                                     }
 

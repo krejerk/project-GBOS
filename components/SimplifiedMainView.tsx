@@ -382,7 +382,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                         const pickableKeywords = isConfession12
                                             ? ['杰西·潘尼', '杰西潘尼']
-                                            : ['堪萨斯城', '流动献血车', '1976', '1976年', '杰西·潘尼', '杰西潘尼', '东12街', '行刑室', '约翰·莫里西', '约翰莫里西'];
+                                            : ['堪萨斯城', '流动献血车', '1976', '1976年', '杰西·潘尼', '杰西潘尼', '东12街', '行刑室', '约翰·莫里西', '约翰莫里西', '尼比', '康查尔', '伦德格兰', '莫宁', '雷吉博士'];
 
                                         const keywordMap: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' }> = {
                                             '堪萨斯城': { id: 'kansas_city', type: 'clue' },
@@ -394,7 +394,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '东12街': { id: 'east_12th_st', type: 'location' },
                                             '行刑室': { id: 'execution_room', type: 'clue' },
                                             '约翰·莫里西': { id: 'john_morrissey', type: 'person' },
-                                            '约翰莫里西': { id: 'john_morrissey', type: 'person' }
+                                            '约翰莫里西': { id: 'john_morrissey', type: 'person' },
+                                            '尼比': { id: 'nibi', type: 'person' },
+                                            '康查尔': { id: 'conchar', type: 'person' },
+                                            '伦德格兰': { id: 'lundgren', type: 'person' },
+                                            '莫宁': { id: 'morning', type: 'person' },
+                                            '雷吉博士': { id: 'dr_reggie', type: 'person' }
                                         };
 
                                         const regex = new RegExp(`(${pickableKeywords.join('|')})`, 'g');
