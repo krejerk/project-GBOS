@@ -171,26 +171,27 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
         // Node 1
         'confession_1': ['maine', 'small_bank'],
-        'confession_2': ['chicago', 'asian_woman', 'missing'],
-        'confession_3': ['father', 'family', 'relationship'],
+        'confession_2': ['ohio', 'ritual_case'], // Corrected: C2 triggers by Ohio/Ritual, consumes them
+        'confession_3': ['chicago', 'missing'], // Corrected: C3 triggers by Chicago/Missing, consumes them
 
         // Archives (Usually unlocked by Year + specialized keyword)
-        // Note: App.tsx handles consumption for years separately, but we can hide prompts here too
-        'oh_1968': ['ohio', 'ritual_case', 'year_1968'],
-        'me_1971': ['maine', 'year_1971'], // 'maine' also used for Confession 1, safe to duplicate
-        'dc_1967': ['year_1967', 'phoenix'],
-        'il_1985': ['year_1985', 'roger_beebe'],
+        // We REMOVE years from here to prevent global hiding, only hide the specialized keyword
+        // These are mostly discovery-based
+        'oh_1968': ['ritual_case'],
+        'me_1971': ['maine'],
+        'dc_1967': ['phoenix'],
+        'il_1985': ['roger_beebe'],
 
         // Node 2 (Confessions 4-7)
         'confession_4': ['1402_old_dominion_rd', 'training_day'],
-        'confession_5': ['nevada', 'mojave_rest_stop', 'empty_cigarette_pack'],
-        'confession_6': ['roanoke', 'twisted_relationship'],
-        'confession_7': ['year_1990', 'aw_wilmo'], // Clipping 7 / Confession 7
+        'confession_5': ['nevada', 'family_massacre'], // Corrected to match App.tsx
+        'confession_6': ['mojave_rest_stop', 'empty_cigarette_pack'], // Corrected to match App.tsx
+        'confession_7': ['roanoke', 'twisted_relationship'], // Corrected to match App.tsx
 
-        // Archives Node 2
-        'va_1990': ['year_1990'],
+        // Archives Node 2 (No consumption needed for pure years)
+        'va_1990': [],
 
-        // Confession 8
+        // Confession 8-13
         'confession_8': ['louisville', 'blue_rv'],
         'confession_9': ['cincinnati', 'mint_plan'],
         'confession_10': ['burkesville', 'distant_relatives'],

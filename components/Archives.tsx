@@ -772,8 +772,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                 });
 
                 // Call callback to remove keywords (if we were still using that mechanic, but we kept it for API compat)
-                if (usedYearIds.length > 0 || usedPersonIds.length > 0) {
-                    onConsumeKeywords(usedYearIds, usedPersonIds);
+                // We STOP consuming years here to allow re-use in multiple searches
+                if (usedPersonIds.length > 0) {
+                    onConsumeKeywords([], usedPersonIds);
                 }
             } else {
                 setErrorMsg('检索失败：未找到匹配的关联档案 (NO RECORDS FOUND)');
