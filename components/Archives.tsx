@@ -553,7 +553,6 @@ export const Archives: React.FC<ArchivesProps> = ({
         '流动献血车': 'mobile_blood_truck',
         '1976': 'year_1976',
         '1976年': 'year_1976',
-        '杰西·潘尼': 'jc_penney',
         '杰西潘尼': 'jc_penney',
         '东12街': 'east_12th_st',
         '行刑室': 'execution_room',
@@ -563,6 +562,11 @@ export const Archives: React.FC<ArchivesProps> = ({
         '莫宁': 'morning',
         '雷吉博士': 'dr_reggie',
         '约翰·莫里西': 'john_morrissey',
+        '罗格·毕比': 'roger_beebe',
+        '小德里克·维恩': 'little_derek_wayne',
+        '鲍里斯·斯米尔诺夫': 'boris_smirnov',
+        '朱维尔·钱伯斯': 'juvell_chambers',
+        '辛西娅·米勒': 'cynthia_miller',
         '混乱美学': 'chaos_aesthetics'
     };
 
@@ -933,7 +937,10 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     // For people: only show if they have an ARCHIVE trigger (or are JC Penney for search context)
                                                                     // We use a simplified check: does it have a display mapping AND is it relevant?
                                                                     if (isPerson) {
-                                                                        const relevantPeople = ['roger_beebe', 'aw_wilmo', 'martha_diaz', 'julie', 'boris_smirnov', 'jc_penney', 'juvell_chambers', 'john_morrissey', 'nibi', 'conchar', 'lundgren', 'morning'];
+                                                                        const relevantPeople = [
+                                                                            'roger_beebe', 'aw_wilmo', 'martha_diaz', 'julie', 'boris_smirnov', 'jc_penney', 'juvell_chambers', 'john_morrissey',
+                                                                            'nibi', 'conchar', 'lundgren', 'morning', 'silas', 'vanessa', 'the_mother', 'little_derek_wayne', 'cynthia_miller'
+                                                                        ];
                                                                         if (!relevantPeople.includes(id)) return false;
                                                                     }
 

@@ -382,7 +382,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                         const pickableKeywords = isConfession12
                                             ? ['杰西·潘尼', '杰西潘尼']
-                                            : ['堪萨斯城', '流动献血车', '1976', '1976年', '杰西·潘尼', '杰西潘尼', '东12街', '行刑室', '约翰·莫里西', '约翰莫里西', '尼比', '康查尔', '伦德格兰', '莫宁', '雷吉博士'];
+                                            : [
+                                                '堪萨斯城', '流动献血车', '1976', '1976年', '杰西·潘尼', '杰西潘尼', '东12街', '行刑室', '约翰·莫里西', '约翰莫里西',
+                                                '尼比', '康查尔', '伦德格兰', '莫宁', '雷吉博士', '罗格·毕比', '小德里克·维恩', '玛莎·迪亚兹', '朱莉', '塞勒斯', '瓦妮莎', '母亲',
+                                                '朱维尔·钱伯斯', '鲍里斯·斯米尔诺夫', '辛西娅·米勒',
+                                                '1971', '1968', '1967', '1985', '1972', '1973', '1982'
+                                            ];
 
                                         const keywordMap: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' }> = {
                                             '堪萨斯城': { id: 'kansas_city', type: 'clue' },
@@ -399,7 +404,25 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '康查尔': { id: 'conchar', type: 'person' },
                                             '伦德格兰': { id: 'lundgren', type: 'person' },
                                             '莫宁': { id: 'morning', type: 'person' },
-                                            '雷吉博士': { id: 'dr_reggie', type: 'person' }
+                                            '雷吉博士': { id: 'dr_reggie', type: 'person' },
+                                            '罗格·毕比': { id: 'roger_beebe', type: 'person' },
+                                            '小德里克·维恩': { id: 'little_derek_wayne', type: 'person' },
+                                            '玛莎·迪亚兹': { id: 'martha_diaz', type: 'person' },
+                                            '朱莉': { id: 'julie', type: 'person' },
+                                            '塞勒斯': { id: 'silas', type: 'person' },
+                                            '赛勒斯': { id: 'silas', type: 'person' },
+                                            '瓦妮莎': { id: 'vanessa', type: 'person' },
+                                            '母亲': { id: 'the_mother', type: 'person' },
+                                            '朱维尔·钱伯斯': { id: 'juvell_chambers', type: 'person' },
+                                            '鲍里斯·斯米尔诺夫': { id: 'boris_smirnov', type: 'person' },
+                                            '辛西娅·米勒': { id: 'cynthia_miller', type: 'person' },
+                                            '1971': { id: 'year_1971', type: 'year' },
+                                            '1968': { id: 'year_1968', type: 'year' },
+                                            '1967': { id: 'year_1967', type: 'year' },
+                                            '1985': { id: 'year_1985', type: 'year' },
+                                            '1972': { id: 'year_1972', type: 'year' },
+                                            '1973': { id: 'year_1973', type: 'year' },
+                                            '1982': { id: 'year_1982', type: 'year' }
                                         };
 
                                         const regex = new RegExp(`(${pickableKeywords.join('|')})`, 'g');
