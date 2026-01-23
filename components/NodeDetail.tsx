@@ -55,7 +55,8 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   const CONFESSION_1_KEYWORDS: Record<string, string> = {
     '康查尔': 'conchar',
     '尼比': 'nibi',
-    '肉体关系': 'relationship',
+    '肉体关系': 'twisted_relationship',
+    '扭曲关系': 'twisted_relationship',
     '雷吉博士': 'dr_reggie',
     '1971': 'year_1971'
   };
@@ -90,6 +91,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
 
   const CONFESSION_7_KEYWORDS: Record<string, string> = {
     '玛莎·迪亚兹': 'martha_diaz',
+    '扭曲关系': 'twisted_relationship',
     '1972': 'year_1972'
   };
 

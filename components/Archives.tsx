@@ -37,7 +37,7 @@ interface DetailedArchiveRecord {
         level: string;
         author: string;
         content: string;
-        template?: 'REGGIE' | 'ALTERMAN' | 'THORNE' | 'CRANE';
+        template?: 'REGGIE' | 'ALTERMAN' | 'THORNE' | 'CRANE' | 'BAKER';
     };
 }
 
@@ -479,6 +479,41 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 联邦调查局特别主管，匡提科，弗吉尼亚。`,
             template: 'ALTERMAN'
         }
+    },
+    {
+        id: 'kc_1965',
+        title: '1965年堪萨斯城百货公司争议案',
+        triggers: {
+            year: '1965',
+            person: ['john_morrissey', '约翰·莫里西', 'John Morrissey', '约翰莫里西']
+        },
+        newspaper: {
+            source: '《堪萨斯城商务日报》(Kansas City Business Journal)',
+            date: '1965年11月4日',
+            headline: '新晋零售大亨杰西·潘尼：我不做“旧货”生意',
+            content: [
+                '（地产业态观察） 本周，刚刚收购了第12街老旧纺织厂并计划将其改建为大型百货仓储中心的杰西·潘尼（Jesse Penney）先生，因其激进的安保措施引发了关注。虽然潘尼百货尚未正式开业，但他已经动用私人安保队清理了仓库周边的所有“不受欢迎因素”，包括一群长期盘踞在卸货区后巷、驾驶蓝色房车的流浪人员。',
+                '这群流浪者并未偷窃，但潘尼先生坚持将他们驱逐出境。在接受采访时，这位野心勃勃的爱尔兰裔商人阐述了他独特的经营哲学。“无论任何东西，哪怕是外包装，也不能有划痕。我做生意的原则很简单：完美交付。”潘尼站在他空旷整洁的卸货月台上说道，“那群人……即使他们不偷东西，他们的存在本身就是一种破坏。零售业正在改变，客户的需求会越来越明晰，我不能容忍任何人在我的货架之前，先毁了我的库存。',
+                '据附近居民称，那辆被潘尼形容为“霉味源头”的蓝色房车已于昨晚匆忙离开，朝着圣路易斯的方向驶去。随着清理工作的完成，潘尼百货庞大的地下仓储系统预计将在下月正式启用。'
+            ]
+        },
+        annotation: {
+            fileId: 'KC-65-PROP-DISPUTE',
+            date: '1966年2月15日',
+            level: '机密 (CONFIDENTIAL)',
+            author: '霍华德·贝克 (Howard Baker)',
+            content: `
+【关于杰西·潘尼百货公司的资产背景调查】
+洗钱嫌疑确认： 情报显示，“杰西·潘尼”实为爱尔兰帮派背景的约翰·莫里西。这家百货公司和其巨大的地下仓库，显然是为了掩盖其黑金流动而建立的空壳实体。
+
+关于“驱逐流浪汉”的真实意图（误读）： 莫里西（潘尼）在采访中提到的“商品瑕疵”和“留下记号”，显然是黑话，而那群房车流浪汉极有可能是当地的小偷集团，习惯在包装箱上做记号以便同伙盗窃（即所谓的“留下记号”），或者故意损坏商品以图低价收购。 莫里西之所以反应如此激烈，是因为他正在通过物流网络运输高价值的走私品（可能是烟草或电器），他绝不能允许任何外人在我的仓库周围转悠，更怕这些小偷无意中发现了混在百货商品里的违禁品。
+
+结论： 无需追踪那辆房车。这只是黑帮大佬在清理地盘上的「蛆虫」。重点监控潘尼百货的进出货运单，特别是来自东海岸的集装箱。
+
+[后人手写批注（字迹潦草，疑为雷吉博士早期笔记）]： 贝克，你这头蠢猪，无需多言。
+            `,
+            template: 'BAKER'
+        }
     }
 ];
 
@@ -516,6 +551,8 @@ export const Archives: React.FC<ArchivesProps> = ({
 
     // Keyword mapping for archives - for annotation highlighting
     const ARCHIVE_KEYWORD_MAP: Record<string, string> = {
+        '1965': 'year_1965',
+        '1965年': 'year_1965',
         '俄亥俄州': 'ohio',
         '祭祀案': 'ritual_case',
         '1967': 'year_1967',
@@ -567,7 +604,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         '鲍里斯·斯米尔诺夫': 'boris_smirnov',
         '朱维尔·钱伯斯': 'juvell_chambers',
         '辛西娅·米勒': 'cynthia_miller',
-        '混乱美学': 'chaos_aesthetics'
+        '混乱美学': 'chaos_aesthetics',
+        '圣路易斯': 'st_louis',
+        '蛆虫': 'maggots'
     };
 
     // Clue display mapping for quick selection chips
@@ -596,7 +635,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         'asian_woman': '亚裔女性',
         'missing': '失踪',
         'father': '父亲',
-        'relationship': '扭曲关系',
+        'twisted_relationship': '扭曲关系',
         'dirty_frank': '脏弗兰克酒吧',
         'morning': '莫宁',
         'ohio': '俄亥俄州',
@@ -626,7 +665,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         'east_12th_st': '东12街',
         'execution_room': '行刑室',
         'john_morrissey': '约翰·莫里西',
-        'chaos_aesthetics': '混乱美学'
+        'chaos_aesthetics': '混乱美学',
+        'st_louis': '圣路易斯',
+        'maggots': '蛆虫'
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
@@ -696,7 +737,7 @@ export const Archives: React.FC<ArchivesProps> = ({
 
             // Also populate inputs for convenience (optional, keeping for UX)
             // Check if it's a person or year based on simple heuristic or map
-            if (['1967', '1968', '1971', '1972', '1985', '1990'].includes(keyword)) {
+            if (['1965', '1967', '1968', '1971', '1972', '1973', '1975', '1976', '1985', '1986', '1990'].includes(keyword)) {
                 setYearInput(keyword);
             } else {
                 setPersonInput(keyword);
@@ -739,6 +780,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (yearTrimmed === '1986') usedYearIds.push('year_1986');
                 if (yearTrimmed === '1975') usedYearIds.push('year_1975');
                 if (yearTrimmed === '1976') usedYearIds.push('year_1976');
+                if (yearTrimmed === '1965') usedYearIds.push('year_1965');
 
                 // Match person
                 const personLower = personInput.trim().toLowerCase();
@@ -1031,7 +1073,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                             {activeCase.newspaper.content.map((para, i) => {
                                                                 const activeKeywords = activeCase.id === 'kan_1976'
                                                                     ? ['东12街', '行刑室']
-                                                                    : [];
+                                                                    : activeCase.id === 'kc_1965'
+                                                                        ? ['圣路易斯']
+                                                                        : [];
 
                                                                 if (activeKeywords.length > 0) {
                                                                     const pattern = `(${activeKeywords.join('|')})`;
@@ -1106,7 +1150,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 </div>
                                                                 <div>
                                                                     <span className="block text-[#c85a3f]/40 text-[10px] uppercase">
-                                                                        {activeCase.annotation.template === 'ALTERMAN' ? 'Authorized By' : activeCase.annotation.template === 'THORNE' ? 'Validated By' : 'Verified By'}
+                                                                        {activeCase.annotation.template === 'ALTERMAN' ? 'Authorized By' : activeCase.annotation.template === 'THORNE' ? 'Validated By' : activeCase.annotation.template === 'CRANE' ? 'Reviewed By' : activeCase.annotation.template === 'BAKER' ? 'Noted By' : 'Verified By'}
                                                                     </span>
                                                                     {activeCase.annotation.author}
                                                                 </div>
@@ -1134,7 +1178,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                                 ? ['KLUB-75号分析报告', '匡提科', 'Quantico']
                                                                                                 : activeCase.id === 'kan_1976'
                                                                                                     ? ['东12街', '行刑室']
-                                                                                                    : ['俄亥俄州', '祭祀案'];
+                                                                                                    : activeCase.id === 'kc_1965'
+                                                                                                        ? ['圣路易斯', '蛆虫']
+                                                                                                        : ['俄亥俄州', '祭祀案'];
 
                                                                 const activeKeywords = caseKeywords;
 
@@ -1145,7 +1191,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 const regex = new RegExp(pattern, 'g');
 
                                                                 return (
-                                                                    <p key={i} className="mb-4">
+                                                                    <p key={i} className={`mb-4 ${line.includes('后人手写批注') ? 'font-handwriting text-[#c85a3f]/90 text-lg rotate-1 py-4 px-2 bg-[#c85a3f]/5 border-y border-[#c85a3f]/10 my-6' : ''}`}>
                                                                         {line.split(regex).map((part, j) => {
 
                                                                             if (part === attachmentTrigger || part === wilmerTrigger) {
@@ -1303,6 +1349,39 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                         <text x="114" y="26" fontFamily="sans-serif" fontSize="7" fontWeight="black" fill="currentColor" opacity="0.6">REVIEWER</text>
                                                                     </svg>
                                                                     <div className="text-[9px] text-red-950/60 font-mono text-right mr-4 tracking-tighter uppercase font-bold italic">Senior Agent Analyst</div>
+                                                                </div>
+                                                            ) : activeCase.annotation.template === 'BAKER' ? (
+                                                                // Howard Baker's Signature - Old school bureaucracy, formal and stiff
+                                                                <div className="relative text-amber-800/85 transform -rotate-2 opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                    <svg width="160" height="70" viewBox="0 0 160 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        {/* Formal "H" */}
+                                                                        <path
+                                                                            d="M25 25 L 25 55 M 40 25 L 40 55 M 25 40 L 40 40"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2.2"
+                                                                            strokeLinecap="round"
+                                                                        />
+                                                                        {/* Formal "B" */}
+                                                                        <path
+                                                                            d="M55 25 L 55 55 M 55 25 C 75 25, 75 40, 55 40 L 80 55"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2.2"
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                        />
+                                                                        {/* Underline - straight but slightly shaky */}
+                                                                        <path
+                                                                            d="M 20 60 L 140 58"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="1.2"
+                                                                            opacity="0.6"
+                                                                        />
+                                                                        <text x="85" y="48" fontFamily="serif" fontSize="14" fill="currentColor" opacity="1" className="tracking-tight italic">H. Baker</text>
+                                                                        {/* Official Stamp */}
+                                                                        <circle cx="130" cy="35" r="18" stroke="currentColor" strokeWidth="1.2" opacity="0.35" />
+                                                                        <text x="118" y="38" fontFamily="sans-serif" fontSize="5" fontWeight="black" fill="currentColor" opacity="0.5">FIELD AGENT</text>
+                                                                    </svg>
+                                                                    <div className="text-[10px] text-amber-700/70 font-mono text-center mt-1 tracking-widest uppercase border-t border-amber-700/20 pt-1">Federal Investigation Bureau</div>
                                                                 </div>
                                                             ) : (
                                                                 // Reggie's Signature - Original flowing style

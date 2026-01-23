@@ -26,7 +26,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
             // Initial Keywords for search (Briefing content)
             collectedClues: [
                 'chicago', 'maine', 'small_bank', 'missing',
-                'relationship'
+                'twisted_relationship'
                 // Removed 'confession' (not a searchable keyword), persons, and years
             ],
 
@@ -69,7 +69,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
             collectedClues: [
                 // Intro / Base
                 'chicago', 'maine', 'small_bank', 'missing',
-                'relationship',
+                'twisted_relationship',
 
                 // Confession 2
                 'ohio', 'ritual_case',
@@ -120,7 +120,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
 
             collectedClues: [
                 // Previous
-                'chicago', 'maine', 'small_bank', 'missing', 'relationship',
+                'chicago', 'maine', 'small_bank', 'missing', 'twisted_relationship',
                 'ohio', 'ritual_case', 'family_massacre', 'dismemberment_case',
                 'year_1971', 'year_1968', 'year_1967', 'year_1985',
 
@@ -178,7 +178,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
 
             collectedClues: [
                 // Previous from Node 1 & 2
-                'chicago', 'maine', 'small_bank', 'missing', 'relationship',
+                'chicago', 'maine', 'small_bank', 'missing', 'twisted_relationship',
                 'ohio', 'ritual_case', 'family_massacre', 'dismemberment_case',
                 '1402_old_dominion_rd', 'training_day',
                 'nevada',

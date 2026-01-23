@@ -182,7 +182,7 @@ const App: React.FC = () => {
       'nevada': true, '内华达': true, '内华达州': true,
       'mojave': true, '莫哈韦': true, 'mojave rest stop': true, 'mojave_rest_stop': true, '休息站': true, '莫哈韦休息站': true,
       'roanoke': true, '罗阿诺克市': true,
-      'twisted_relationship': true, '扭曲关系': true,
+      'twisted_relationship': true, '扭曲关系': true, '肉体关系': true,
       'louisville': true, '路易斯维尔': true,
       'cincinnati': true, '辛辛那提': true,
       'st_louis': true, 'st louis': true, 'st. louis': true, '圣路易斯': true,
@@ -215,6 +215,7 @@ const App: React.FC = () => {
       '1990': true, 'year_1990': true,
       '1973': true, 'year_1973': true,
       '1986': true, 'year_1986': true,
+      '1965': true, 'year_1965': true, '1965年': true,
 
       // People
       'little_derek_wayne': true, '小德里克': true, 'derek wayne': true, 'wayne': true,
@@ -227,7 +228,6 @@ const App: React.FC = () => {
       'silas': true, '塞勒斯': true, '赛勒斯': true,
       'father': true, '父亲': true,
       'project': true, '青豆牡蛎汤计划': true,
-      'relationship': true,
       'conchar': true, '康查尔': true,
       'nibi': true, '尼比': true,
       'dr_reggie': true, '雷吉博士': true,
@@ -257,6 +257,7 @@ const App: React.FC = () => {
       'execution_room': true, '行刑室': true, 'execution room': true,
       'john_morrissey': true, '约翰·莫里西': true, 'john morrissey': true,
       'chaos_aesthetics': true, '混乱美学': true, 'chaos aesthetics': true,
+      'maggots': true, '蛆虫': true, 'vermin': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -306,7 +307,7 @@ const App: React.FC = () => {
         hasYear1971: lowerQuery.includes('1971') || lowerQuery.includes('year_1971'),
         hasLittleDerek: lowerQuery.includes('little_derek_wayne') || lowerQuery.includes('小德里克') || lowerQuery.includes('derek wayne') || lowerQuery.includes('wayne'),
         hasRoanoke: lowerQuery.includes('roanoke') || lowerQuery.includes('罗阿诺克'),
-        hasTwistedRelationship: lowerQuery.includes('twisted_relationship') || lowerQuery.includes('扭曲关系'),
+        hasTwistedRelationship: lowerQuery.includes('twisted_relationship') || lowerQuery.includes('扭曲关系') || lowerQuery.includes('肉体关系'),
         hasLouisville: lowerQuery.includes('louisville') || lowerQuery.includes('路易斯维尔'),
         hasBlueRV: lowerQuery.includes('blue_rv') || lowerQuery.includes('blue rv') || lowerQuery.includes('淡蓝色房车') || lowerQuery.includes('房车'),
         hasCincinnati: lowerQuery.includes('cincinnati') || lowerQuery.includes('辛辛那提'),
@@ -320,7 +321,9 @@ const App: React.FC = () => {
         hasYear1976: lowerQuery.includes('1976') || lowerQuery.includes('1976年') || lowerQuery.includes('year_1976'),
         hasJCPenney: lowerQuery.includes('jc_penney') || lowerQuery.includes('jc penney') || lowerQuery.includes('杰西·潘尼') || lowerQuery.includes('杰西潘尼'),
         hasEast12thSt: lowerQuery.includes('东12街') || lowerQuery.includes('east 12th st') || lowerQuery.includes('east_12th_st'),
-        hasExecutionRoom: lowerQuery.includes('行刑室') || lowerQuery.includes('execution room') || lowerQuery.includes('execution_room')
+        hasExecutionRoom: lowerQuery.includes('行刑室') || lowerQuery.includes('execution room') || lowerQuery.includes('execution_room'),
+        hasYear1965: lowerQuery.includes('1965') || lowerQuery.includes('year_1965'),
+        hasJohnMorrissey: lowerQuery.includes('john_morrissey') || lowerQuery.includes('john morrissey') || lowerQuery.includes('约翰·莫里西') || lowerQuery.includes('约翰莫里西')
       };
     };
 
@@ -962,6 +965,11 @@ const App: React.FC = () => {
       handleUnlockArchive('kan_1976');
     }
 
+    // Clipping 12 Unlock: 1965 + John Morrissey
+    if (validation.hasYear1965 && validation.hasJohnMorrissey) {
+      handleUnlockArchive('kc_1965');
+    }
+
     // Track consecutive invalid inputs for special easter egg
     const invalidInputKey = 'consecutive_invalid_inputs';
     const getInvalidCount = () => parseInt(sessionStorage.getItem(invalidInputKey) || '0');
@@ -992,12 +1000,14 @@ const App: React.FC = () => {
       response: string;
       priority?: number; // Higher = checked first
       fuzzyMatch?: boolean; // If true, matches partial/related questions
+      isReveal?: boolean;
     }> = [
         // ===== USER-PROVIDED EASTER EGGS (Highest Priority) =====
         {
           keywords: ['vanessa_consecutive_3'],
           response: '> [R. CAPONE]: "……够了。既然你这么执着挖掘我的伤口，那就看清楚了。瓦妮莎确实与别人不同……1976年，堪萨斯城，她哭着求我不要执行那个针对流动献血车的计划。但我没有听。我当时太想看那个城市燃烧了。"',
-          priority: 200
+          priority: 200,
+          isReveal: true
         },
         {
           keywords: ['真相', 'truth', '真实', 'reality', '是什么真相'],
@@ -1160,7 +1170,7 @@ const App: React.FC = () => {
     const sortedResponses = [...PRESET_RESPONSES].sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
     // Try to match query against preset responses
-    let matchedResponse: string | null = null;
+    let matchedItem: any = null;
     const effectiveQuery = finalQuery.toLowerCase().trim();
 
     for (const preset of sortedResponses) {
@@ -1181,13 +1191,13 @@ const App: React.FC = () => {
       });
 
       if (hasMatch) {
-        matchedResponse = preset.response;
+        matchedItem = preset;
         resetInvalidCount(); // Reset counter on valid match
         break;
       }
     }
 
-    if (matchedResponse) {
+    if (matchedItem) {
       // Found a preset response
       setTimeout(() => {
         setGameState(prev => ({
@@ -1195,7 +1205,12 @@ const App: React.FC = () => {
           consecutiveSearch: newConsecutive,
           history: [
             ...prev.history,
-            { type: 'info', content: matchedResponse!, timestamp: Date.now() }
+            {
+              type: 'info',
+              content: matchedItem.response,
+              isReveal: matchedItem.isReveal,
+              timestamp: Date.now()
+            }
           ]
         }));
         setIsProcessing(false);

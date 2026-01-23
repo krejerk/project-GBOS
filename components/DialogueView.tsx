@@ -21,7 +21,8 @@ const CLUE_DISPLAY_MAP: Record<string, string> = {
     'project': '青豆牡蛎汤计划',
     'kansas_city': '堪萨斯城',
     'mobile_blood_truck': '流动献血车',
-    'year_1976': '1976'
+    'year_1976': '1976',
+    'twisted_relationship': '扭曲关系'
 };
 
 

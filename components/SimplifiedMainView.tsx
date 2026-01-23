@@ -111,7 +111,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'father': '父亲',
         'project': '青豆牡蛎汤计划',
         'confession': '供述',
-        'relationship': '扭曲关系',
         'conchar': '康查尔',
         'nibi': '尼比',
         'dr_reggie': '雷吉博士',
@@ -164,7 +163,9 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         'distant_relatives': '远亲',
         'boris_smirnov': '鲍里斯·斯米尔诺夫',
         'john_morrissey': '约翰·莫里西',
-        'chaos_aesthetics': '混乱美学'
+        'chaos_aesthetics': '混乱美学',
+        'st_louis': '圣路易斯',
+        'maggots': '蛆虫'
     };
 
     // Mapping: Node ID -> [Keywords to HIDE when node is unlocked]
@@ -380,15 +381,20 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                         // Highlight pickable keywords
                                         const isConfession12 = (displayItem as any).id === 'confession_12';
+                                        const isReveal = (displayItem as any).isReveal;
 
-                                        const pickableKeywords = isConfession12
-                                            ? ['杰西·潘尼', '杰西潘尼']
-                                            : [
+                                        let pickableKeywords: string[] = [];
+                                        if (isConfession12) {
+                                            pickableKeywords = ['杰西·潘尼', '杰西潘尼'];
+                                        } else if (isReveal) {
+                                            pickableKeywords = [
                                                 '堪萨斯城', '流动献血车', '1976', '1976年', '杰西·潘尼', '杰西潘尼', '东12街', '行刑室', '约翰·莫里西', '约翰莫里西',
-                                                '尼比', '康查尔', '伦德格兰', '莫宁', '雷吉博士', '罗格·毕比', '小德里克·维恩', '玛莎·迪亚兹', '朱莉', '塞勒斯', '瓦妮莎', '母亲',
+                                                '尼比', '康查尔', '伦德格兰', '莫宁', '雷吉博士', '罗格·毕比', '小德里克·维恩', '玛莎·迪亚兹', '朱莉', '塞勒斯', '母亲',
                                                 '朱维尔·钱伯斯', '鲍里斯·斯米尔诺夫', '辛西娅·米勒',
-                                                '1971', '1968', '1967', '1985', '1972', '1973', '1982'
+                                                '1971', '1968', '1967', '1985', '1972', '1973', '1982',
+                                                '扭曲关系', '肉体关系'
                                             ];
+                                        }
 
                                         const keywordMap: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' }> = {
                                             '堪萨斯城': { id: 'kansas_city', type: 'clue' },
@@ -423,11 +429,21 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '1985': { id: 'year_1985', type: 'year' },
                                             '1972': { id: 'year_1972', type: 'year' },
                                             '1973': { id: 'year_1973', type: 'year' },
-                                            '1982': { id: 'year_1982', type: 'year' }
+                                            '1982': { id: 'year_1982', type: 'year' },
+                                            '扭曲关系': { id: 'twisted_relationship', type: 'clue' },
+                                            '肉体关系': { id: 'twisted_relationship', type: 'clue' }
                                         };
 
-                                        const regex = new RegExp(`(${pickableKeywords.join('|')})`, 'g');
-                                        const parts = displayContent.split(regex);
+                                        // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions
+                                        const activePickableKeywords = pickableKeywords.filter(k => {
+                                            const config = keywordMap[k];
+                                            return !config || !consumedKeywords.has(config.id);
+                                        });
+
+                                        const regex = activePickableKeywords.length > 0
+                                            ? new RegExp(`(${activePickableKeywords.join('|')})`, 'g')
+                                            : null;
+                                        const parts = regex ? displayContent.split(regex) : [displayContent];
 
                                         return (
                                             <motion.div

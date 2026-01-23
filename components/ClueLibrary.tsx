@@ -104,8 +104,8 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
             }
         ]
     },
-    'relationship': {
-        id: 'relationship',
+    'twisted_relationship': {
+        id: 'twisted_relationship',
         word: '扭曲关系',
         description: '尼比与康查尔之间存在某种超越普通同伙的、带有仪式感的肉体与精神链接。',
         source: 'Confession'
@@ -238,6 +238,18 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         word: '小A.W.威尔莫',
         description: '烟盒上的手写姓名，缩写为A.W.，可能是某个关键人物的标记或代号。',
         source: 'Confession'
+    },
+    'st_louis': {
+        id: 'st_louis',
+        word: '圣路易斯',
+        description: '密苏里州的一座城市。在1965年的记录中，那辆被驱逐的蓝色房车曾朝着此方向驶去。',
+        source: 'Archive'
+    },
+    'maggots': {
+        id: 'maggots',
+        word: '蛆虫',
+        description: 'FBI探员霍华德·贝克在早期档案中对那些流浪汉或干扰者的贬称。',
+        source: 'Archive'
     }
 };
 
