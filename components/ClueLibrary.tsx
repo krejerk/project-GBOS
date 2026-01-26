@@ -13,6 +13,8 @@ interface ClueLibraryProps {
     onCollectClue?: (id: string, word: string) => void; // For auto-collecting clues
     collectedDossierIds?: string[]; // For tracking dossier items like addresses
     collectedKeywords?: string[]; // For tracking collected keywords/clues
+    collectedPeople?: string[]; // For tracking collected/unlocked people
+    collectedYears?: string[]; // For tracking collected years
     unlockedNodeIds?: string[]; // For tracking unlocked confessions
     unlockedArchiveIds?: string[]; // For tracking unlocked archives
     currentStoryNode?: number; // Current story node (0 = not reached, 1 = node 1, etc.)
@@ -101,6 +103,13 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 type: 'image',
                 title: 'Silk Ribbon Evidence (1990)',
                 content: 'assets/wilmer_ribbon.jpg'
+            },
+            {
+                id: 'record_of_accounts',
+                type: 'image',
+                title: 'Record of Accounts',
+                content: 'assets/record_of_accounts.jpg',
+                description: '在特克萨卡纳节点发现的视觉残留。亚瑟·道森（Arthur Dawson）的笔记本，记录了某种高度机密的账户往来与代号。'
             }
         ]
     },
@@ -250,6 +259,54 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         word: '蛆虫',
         description: 'FBI探员霍华德·贝克在早期档案中对那些流浪汉或干扰者的贬称。',
         source: 'Archive'
+    },
+    'davenport': {
+        id: 'davenport',
+        word: '达文波特市',
+        description: '爱荷华州的一座城市。康查尔曾带着他的“新计划”前往此处。',
+        source: 'Confession'
+    },
+    'new_plan': {
+        id: 'new_plan',
+        word: '新计划',
+        description: '康查尔在圣路易斯行动后制定的秘密方案，具体内容仍然模糊。',
+        source: 'Confession'
+    },
+    'recruitment': {
+        id: 'recruitment',
+        word: '招募',
+        description: '雷吉博士筛选并引导卡彭进入“统一场论”计划的过程，标志着一段危险契约的开始。',
+        source: 'Dialogue'
+    },
+    'year_1974': {
+        id: 'year_1974',
+        word: '1974年',
+        description: '莫宁锁定时间轴的关键年份。这一年，部分关键人物的轨迹发生了交叉。',
+        source: 'Dialogue'
+    },
+    'texarkana': {
+        id: 'texarkana',
+        word: '特克萨卡纳',
+        description: '横跨三州的抛尸地。这里的地理特征与碎尸案的执行手法高度关联。',
+        source: 'Dialogue'
+    },
+    'priest': {
+        id: 'priest',
+        word: '牧师',
+        description: '活跃在埃尔帕索的中转站关联人物。他的身份似乎掩盖了某种跨国的情报或人口运送网络。',
+        source: 'Dialogue'
+    },
+    'el_paso': {
+        id: 'el_paso',
+        word: '埃尔帕索',
+        description: '边境城市，著名的情报中转站。许多被“采集”的样本或人员在这里消失。',
+        source: 'Dialogue'
+    },
+    'dismemberment_case': {
+        id: 'dismemberment_case',
+        word: '碎尸案',
+        description: '一起手段极其残忍的案件，是雷吉计划中用于摧毁目标人格稳定性的核心事件。',
+        source: 'Archive'
     }
 };
 
@@ -298,10 +355,22 @@ const JENNIFER_NODE_2_DIALOGUE = [
     `别忘了，卡彭没有阻止康查尔，他在享受。`,
     `在他见到“父亲”之前，腐化就已经开始。他已不再可靠。`,
     `我解密了一份被雷吉封存的原始记录。关于卡彭最后一次“灰水信标”投放。[查看记录](clue:view_iron_horse_record)`,
-    `在那之后，他进入了彻底的静默。`,
-    `去问他这件事，问他是否在那第一次见到父亲，见到那辆[淡蓝色房车](clue:blue_rv)的。`,
-    `我已经根据你目前的调查进展，以及新增的外部信息，\n整理并更新了案卷建档中的部分内容。`,
-    `你现在可以进入该模块，查看这些更新。`
+    `如果你需要更多细节，去问问他关于[内华达州](clue:nevada)的事情。`
+];
+
+// Node 4 Dialogue - Triggered when player completes confessions 12-15 and archives 11-13
+const JENNIFER_NODE_4_DIALOGUE = [
+    `效率低下。`,
+    `你在刚才那些无用的情感废料上浪费了太多算力。`,
+    `亨德森的道德胜利、房车里的原始仪式……别忘了你是建立证据链的，不是让你写纪实文学。`,
+    `不过，监测显示，你这种毫无章法的乱撞，确实击碎了目标的逻辑防御。`,
+    `我已撤销之前的屏蔽指令。既然你喜欢挖旧账，那就挖得精准点。`,
+    `听好了，别在这些哭鼻子话题上浪费时间，去组合这些新的坐标：`,
+    `[脏弗兰克酒吧](clue:dirty_frank) 是个地点。它对应的案件节点是 [招募](clue:recruitment)。`,
+    `[莫宁](clue:morning) 是个人名。锁定时间轴 [1974](clue:year_1974)。`,
+    `[碎尸案](clue:dismemberment_case) 是核心事件。那个横跨三州的抛尸地是 [特克萨卡纳](clue:texarkana)。`,
+    `[埃尔帕索](clue:el_paso) 是边境中转站。那里发生的事关联着 [牧师](clue:priest)。`,
+    `路径已铺好。别让我后悔把权限交还给你。`
 ];
 
 // Node 3 Dialogue - Triggered when player completes confessions 8-11 and archives 8-10
@@ -322,7 +391,7 @@ export const resetClueLibraryVisit = () => {
 };
 
 export const ClueLibrary: React.FC<ClueLibraryProps> = ({
-    collectedClueIds,
+    collectedClueIds = [],
     isOpen,
     onClose,
     collectedAttachments = [],
@@ -332,7 +401,9 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     unlockedArchiveIds = [],
     currentStoryNode = 0,
     collectedDossierIds = [], // Default to empty array
-    collectedKeywords = [], // New prop for dialogue parsing only
+    collectedKeywords = [], // For dialogue parsing
+    collectedPeople = [],
+    collectedYears = [],
     onStoryNodeComplete,
     onClearUnusedKeywords
 }) => {
@@ -361,7 +432,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         return parts.map((part, index) => {
             const match = part.match(/\[(.*?)\]\(clue:(.*?)\)/);
             if (match) {
-                const [_, text, clueId] = match;
+                const text = match[1];
+                const clueId = match[2].trim();
 
                 // Special handling for action links
                 if (clueId === 'view_iron_horse_record') {
@@ -379,8 +451,19 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     );
                 }
 
-                // Check if collected in keywords (clues) OR in the display list (dossiers)
-                const isCollected = collectedKeywords.includes(clueId) || collectedClueIds.includes(clueId);
+                // CRITICAL FIX: Force these Node 4 rewards to always be interactable
+                // There appears to be a state conflict where 'priest' node in RELATIONSHIP_TREE
+                // might be pre-adding 'priest' to unlockedPeople, causing it to appear "collected"
+                const FORCE_UNCOLLECTED = ['priest', 'recruitment'];
+                const forcedUncollected = FORCE_UNCOLLECTED.includes(clueId);
+
+                // Check if collected in ANY category (but override for forced keywords)
+                const isCollected = forcedUncollected ? false : (
+                    (collectedKeywords || []).includes(clueId) ||
+                    (collectedDossierIds || []).includes(clueId) ||
+                    (collectedPeople || []).includes(clueId) ||
+                    (collectedYears || []).includes(clueId)
+                );
 
                 return (
                     <span
@@ -392,10 +475,10 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                             }
                         }}
                         className={`
-                            relative inline-block px-1 rounded cursor-pointer transition-all duration-300 mx-0.5
+                            relative inline-block px-1 rounded transition-all duration-300 mx-0.5
                             ${isCollected
                                 ? 'text-[#38bdf8] bg-[#38bdf8]/10 border-b border-[#38bdf8]/30 cursor-default'
-                                : 'text-[#e2e8f0] hover:bg-[#38bdf8]/20 hover:scale-105 border-b border-dashed border-[#e2e8f0]/50 animate-pulse'
+                                : 'text-[#e2e8f0] cursor-pointer hover:bg-[#38bdf8]/20 hover:scale-105 border-b border-dashed border-[#e2e8f0]/50 animate-pulse'
                             }
                         `}
                     >
@@ -430,7 +513,21 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     // Vehicle photos viewer state
     const [showVehiclePhotos, setShowVehiclePhotos] = useState(false);
+
+    // Track Node 4 dialogue completion for map update timing
+    const [hasViewedNode4Dialogue, setHasViewedNode4Dialogue] = useState(false);
+
     // Check for node completion - prioritize higher nodes first
+    const checkNode4Completion = () => {
+        const requiredConfessions = ['confession_12', 'confession_13', 'confession_14', 'confession_15'];
+        const requiredArchives = ['kan_1976', 'kc_1965', 'ia_1976'];
+
+        const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
+        const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
+
+        return hasAllConfessions && hasAllArchives && currentStoryNode === 3;
+    };
+
     const checkNode3Completion = () => {
         const requiredConfessions = ['confession_8', 'confession_9', 'confession_10', 'confession_11'];
         const requiredArchives = ['cin_1973', 'nas_1973', 'ky_1973'];
@@ -465,6 +562,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     // Derived Node State (Calculated on-the-fly to avoid unmount state loss)
     const detectedNodeId = (() => {
+        if (checkNode4Completion()) return 4;
         if (checkNode3Completion()) return 3;
         if (checkNode2Completion()) return 2;
         if (checkNode1Completion()) return 1;
@@ -502,11 +600,20 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                 if (onCollectClue) onCollectClue('blue_rv', '淡蓝色房车');
                 setNewlyAddedItems(new Set(['crime_route_map', 'graywater_beacon']));
                 setTimeout(() => setNewlyAddedItems(new Set()), 10000);
-            } else if (detectedNodeId === 3) {
-                setNewlyAddedItems(new Set(['crime_route_map']));
-                setTimeout(() => setNewlyAddedItems(new Set()), 10000);
-                if (onClearUnusedKeywords) onClearUnusedKeywords();
             }
+        }
+
+        // SWEEP TRIGGER: Always sweep if ending Node 3 dialogue, regardless of what detectedNodeId says now
+        if (simulatedDialogue === JENNIFER_NODE_3_DIALOGUE) {
+            setNewlyAddedItems(new Set(['crime_route_map']));
+            setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+            if (onClearUnusedKeywords) onClearUnusedKeywords();
+        } else if (simulatedDialogue === JENNIFER_NODE_4_DIALOGUE || detectedNodeId === 4) {
+            // Visual feedback for Node 4
+            setNewlyAddedItems(new Set(['crime_route_map']));
+            setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+            // Mark Node 4 dialogue as viewed to trigger map update
+            setHasViewedNode4Dialogue(true);
         }
 
         setShowJennifer(false);
@@ -514,7 +621,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         setSimulatedDialogue(null);
 
         // SYNC: If the map is currently being viewed, refresh its content to the new version
-        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3)) {
+        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3 || detectedNodeId === 4)) {
             const updatedDefinition = getDynamicClueDefinition('crime_route_map');
             if (updatedDefinition.attachments?.[0]) {
                 setViewingAttachment(updatedDefinition.attachments[0]);
@@ -530,6 +637,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     const getJenniferDialogue = (simulated: string[] | null, detectedId: number | null, visited: boolean) => {
         if (simulated) return simulated;
+        if (detectedId === 4) return JENNIFER_NODE_4_DIALOGUE;
         if (detectedId === 3) return JENNIFER_NODE_3_DIALOGUE;
         if (detectedId === 2) return JENNIFER_NODE_2_DIALOGUE;
         if (detectedId === 1) return JENNIFER_NODE_1_DIALOGUE;
@@ -554,11 +662,24 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
         // Dynamic Rule: Crime Route Map updates based on story node progression
         if (id === 'crime_route_map') {
+            // Node 4: Only update AFTER player completes Jennifer's dialogue
+            const isNode4Ready = hasViewedNode4Dialogue && (currentStoryNode >= 4 || detectedNodeId === 4);
             const isNode3Ready = currentStoryNode >= 3 || detectedNodeId === 3;
             const isNode2Ready = currentStoryNode >= 2 || detectedNodeId === 2;
 
+            // Node 4: Add St. Louis, Kansas City, Chicago - extending westward
+            if (isNode4Ready) {
+                return {
+                    ...original,
+                    description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔 -> 圣路易斯 -> 堪萨斯城 -> 芝加哥',
+                    attachments: original.attachments ? [{
+                        ...original.attachments[0],
+                        content: 'assets/crime-route-map-v4.png'
+                    }] : []
+                };
+            }
             // Node 3: Add Burkesville and Nashville with route concentration
-            if (isNode3Ready) {
+            else if (isNode3Ready) {
                 return {
                     ...original,
                     description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔（房车密集活动区域）',
@@ -583,9 +704,10 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         return original;
     }
 
-    const collectedClues = collectedClueIds
+    // Dossier items are separate from search keywords. 
+    // Only dossier items are rendered as folders in the sidebar.
+    const collectedClues = (collectedDossierIds || [])
         .map(id => getDynamicClueDefinition(id))
-        // Filter out undefined and explicitly exclude known non-folder artifacts if they appear
         .filter(clue => clue && !['julip_symbol', 'project_symbol'].includes(clue.id));
 
     // Group clues by source
@@ -1142,6 +1264,15 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                             </p>
                                                         </div>
                                                     )}
+                                                    {/* Node 4 */}
+                                                    {(currentStoryNode >= 4) && (
+                                                        <div className="space-y-1 pt-2 border-t border-[#334155]/30">
+                                                            <div className="text-[10px] text-[#38bdf8] uppercase tracking-wider font-bold">Checkpoint 4: Coordinate Unlock</div>
+                                                            <p className="text-[#94a3b8] text-xs hover:text-[#e2e8f0] cursor-pointer" onClick={() => { setShowJennifer(true); setJenniferStep(0); setSimulatedDialogue(JENNIFER_NODE_4_DIALOGUE); setShowHistory(false); }}>
+                                                                Replay Sequence: "Low efficiency detected..."
+                                                            </p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <p className="text-[#e2e8f0] text-lg font-light tracking-wide leading-relaxed font-sans whitespace-pre-line">
@@ -1153,7 +1284,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                             )}
                                         </div>
 
-                                        <div className="absolute top-2 right-2 text-[#334155]/20">
+                                        <div className="absolute top-2 right-2 text-[#334155]/20 pointer-events-none">
                                             <Activity size={120} />
                                         </div>
                                     </div>

@@ -8,6 +8,7 @@ import { NodeDetail } from './NodeDetail';
 import { ClueLibrary } from './ClueLibrary';
 import { Archives } from './Archives';
 import { MemoryNode } from '../types';
+import { RELATIONSHIP_TREE, CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS } from '../constants';
 
 interface SimplifiedMainViewProps {
     nodes: MemoryNode[];
@@ -98,108 +99,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         }
     };
 
-    // Helper map for clue display names
-    const CLUE_DISPLAY_MAP: Record<string, string> = {
-        'rubick': '鲁比克',
-        'chicago': '芝加哥',
-        'asian_woman': '亚裔女性',
-        'maine': '缅因州',
-        'small_bank': '小银行',
-        'julip': '黄油朱莉普',
-        'headdress': '阿尔衮琴族头饰', // Ensure it has a name if present
-        'missing': '失踪',
-        'father': '父亲',
-        'project': '青豆牡蛎汤计划',
-        'confession': '供述',
-        'conchar': '康查尔',
-        'nibi': '尼比',
-        'dr_reggie': '雷吉博士',
-        'year_1971': '1971年',
-        'dirty_frank': '脏弗兰克酒吧',
-        'morning': '莫宁',
-        'lundgren': '伦德格兰',
-        'ohio': '俄亥俄州',
-        'ritual_case': '祭祀案',
-        'dismemberment_case': '碎尸案',
-        'year_1968': '1968年',
-        'year_1967': '1967年',
-        'phoenix': '凤凰城行动',
-        'architect': '建筑师',
-        'syndicate': '辛迪加',
-        '1402_old_dominion_rd': '1402 Old Dominion Rd.',
-        'family_massacre': '灭门案',
-        'nevada': '内华达州',
-        'training_day': '训练日',
-        'year_1985': '1985年',
-        'year_1976': '1976年',
-        'roger_beebe': '罗格·毕比',
-        'little_derek_wayne': '小德里克·维恩',
-        'mojave_rest_stop': '莫哈韦休息站',
-        'empty_cigarette_pack': '空烟盒',
-        'roanoke': '罗阿诺克市',
-        'graywater_beacon': '灰水信标',
-        'kansas_city': '堪萨斯城',
-        'mobile_blood_truck': '流动献血车',
-        'iron_horse_image': '铁马烟盒 (Visual)',
-        'aw_wilmo': '小A.W.威尔莫',
-        'jc_penney': '杰西·潘尼',
-        'east_12th_st': '东12街',
-        'execution_room': '行刑室',
-        'twisted_relationship': '扭曲关系', // Confession 6 keyword
-        'blue_rv': '淡蓝色房车',
-        'year_1973': '1973年',
-        'julie': '朱莉',
-        'the_mother': '母亲',
-        'vanessa': '瓦妮莎',
-        'silas': '塞勒斯',
-        'cincinnati': '辛辛那提',
-        'year_1986': '1986年',
-        'mint_plan': '薄荷计划',
-        'year_1982': '1982年',
-        'el_paso': '埃尔帕索',
-        'juvell_chambers': '朱维尔·钱伯斯',
-        'year_1975': '1975年',
-        'burkesville': '伯克斯维尔',
-        'distant_relatives': '远亲',
-        'boris_smirnov': '鲍里斯·斯米尔诺夫',
-        'john_morrissey': '约翰·莫里西',
-        'chaos_aesthetics': '混乱美学',
-        'st_louis': '圣路易斯',
-        'maggots': '蛆虫'
-    };
 
     // Mapping: Node ID -> [Keywords to HIDE when node is unlocked]
-    const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
-        // Node 1
-        'confession_1': ['maine', 'small_bank'],
-        'confession_2': ['ohio', 'ritual_case'], // Corrected: C2 triggers by Ohio/Ritual, consumes them
-        'confession_3': ['chicago', 'missing'], // Corrected: C3 triggers by Chicago/Missing, consumes them
-
-        // Archives (Usually unlocked by Year + specialized keyword)
-        // We REMOVE years from here to prevent global hiding, only hide the specialized keyword
-        // These are mostly discovery-based
-        'oh_1968': ['ritual_case'],
-        'me_1971': ['maine'],
-        'dc_1967': ['phoenix'],
-        'il_1985': ['roger_beebe'],
-
-        // Node 2 (Confessions 4-7)
-        'confession_4': ['1402_old_dominion_rd', 'training_day'],
-        'confession_5': ['nevada', 'family_massacre'], // Corrected to match App.tsx
-        'confession_6': ['mojave_rest_stop', 'empty_cigarette_pack'], // Corrected to match App.tsx
-        'confession_7': ['roanoke', 'twisted_relationship'], // Corrected to match App.tsx
-
-        // Archives Node 2 (No consumption needed for pure years)
-        'va_1990': [],
-
-        // Confession 8-13
-        'confession_8': ['louisville', 'blue_rv'],
-        'confession_9': ['cincinnati', 'mint_plan'],
-        'confession_10': ['burkesville', 'distant_relatives'],
-        'confession_11': ['klub75_report', 'quantico'],
-        'confession_12': ['kansas_city', 'mobile_blood_truck'],
-        'confession_13': ['east_12th_st', 'execution_room']
-    };
+    // Consolidating KEYWORD_CONSUMPTION_MAP into constants.tsx
+    // Removing local definition to avoid logic drift.
 
     // Derived Set of keywords that ARE part of a consumption rule (i.e. case-specific targets)
     const CASE_TARGET_KEYWORDS = React.useMemo(() => {
@@ -215,7 +118,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     const consumedKeywords = React.useMemo(() => {
         const consumed = new Set<string>();
         // Add consumed from unlocked nodes (Confessions)
-        nodes.forEach(node => {
+        nodes.filter(Boolean).forEach(node => {
             const keywords = KEYWORD_CONSUMPTION_MAP[node.id];
             if (keywords) {
                 keywords.forEach(k => consumed.add(k));
@@ -228,6 +131,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 keywords.forEach(k => consumed.add(k));
             }
         });
+
+        // NOTE: Node 4 keywords from Jennifer's dialogue (retrieval_node_4) 
+        // should NOT be consumed. They are intended to stay in the player's 
+        // inventory as chips for use in Floor 5/Node 4 investigation.
+        // (Removed previous auto-consumption logic here)
+
         return consumed;
     }, [nodes, unlockedArchiveIds]);
 
@@ -392,21 +301,15 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                                 '尼比', '康查尔', '伦德格兰', '莫宁', '雷吉博士', '罗格·毕比', '小德里克·维恩', '玛莎·迪亚兹', '朱莉', '塞勒斯', '母亲',
                                                 '朱维尔·钱伯斯', '鲍里斯·斯米尔诺夫', '辛西娅·米勒',
                                                 '1971', '1968', '1967', '1985', '1972', '1973', '1982',
-                                                '扭曲关系', '肉体关系'
+                                                '扭曲关系', '肉体关系', '达文波特', '新计划',
+                                                '脏弗兰克酒吧', '招募', '莫宁', '1974', '碎尸案', '特克萨卡纳', '埃尔帕索', '牧师'
                                             ];
                                         }
 
                                         const keywordMap: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' }> = {
-                                            '堪萨斯城': { id: 'kansas_city', type: 'clue' },
-                                            '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
-                                            '1976': { id: 'year_1976', type: 'year' },
-                                            '1976年': { id: 'year_1976', type: 'year' },
-                                            '杰西·潘尼': { id: 'jc_penney', type: 'person' },
-                                            '杰西潘尼': { id: 'jc_penney', type: 'person' },
-                                            '东12街': { id: 'east_12th_st', type: 'location' },
-                                            '行刑室': { id: 'execution_room', type: 'clue' },
-                                            '约翰·莫里西': { id: 'john_morrissey', type: 'person' },
-                                            '约翰莫里西': { id: 'john_morrissey', type: 'person' },
+                                            // People
+                                            '罗伯特·卡彭': { id: 'capone', type: 'person' },
+                                            '父亲': { id: 'father', type: 'person' },
                                             '尼比': { id: 'nibi', type: 'person' },
                                             '康查尔': { id: 'conchar', type: 'person' },
                                             '伦德格兰': { id: 'lundgren', type: 'person' },
@@ -423,6 +326,14 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '朱维尔·钱伯斯': { id: 'juvell_chambers', type: 'person' },
                                             '鲍里斯·斯米尔诺夫': { id: 'boris_smirnov', type: 'person' },
                                             '辛西娅·米勒': { id: 'cynthia_miller', type: 'person' },
+                                            '杰西·潘尼': { id: 'jc_penney', type: 'person' },
+                                            '杰西潘尼': { id: 'jc_penney', type: 'person' },
+                                            '约翰·莫里西': { id: 'john_morrissey', type: 'person' },
+                                            '约翰莫里西': { id: 'john_morrissey', type: 'person' },
+                                            '皮特·亨德森': { id: 'peter_henderson', type: 'person' },
+                                            '牧师': { id: 'priest', type: 'person' },
+
+                                            // Years
                                             '1971': { id: 'year_1971', type: 'year' },
                                             '1968': { id: 'year_1968', type: 'year' },
                                             '1967': { id: 'year_1967', type: 'year' },
@@ -430,8 +341,42 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '1972': { id: 'year_1972', type: 'year' },
                                             '1973': { id: 'year_1973', type: 'year' },
                                             '1982': { id: 'year_1982', type: 'year' },
+                                            '1974': { id: 'year_1974', type: 'year' },
+                                            '1965': { id: 'year_1965', type: 'year' },
+                                            '1976': { id: 'year_1976', type: 'year' },
+                                            '1976年': { id: 'year_1976', type: 'year' },
+
+                                            // Locations
+                                            '缅因州': { id: 'maine', type: 'location' },
+                                            '俄亥俄州': { id: 'ohio', type: 'location' },
+                                            '芝加哥': { id: 'chicago', type: 'location' },
+                                            '内华达州': { id: 'nevada', type: 'location' },
+                                            '弗吉尼亚州': { id: 'virginia', type: 'location' },
+                                            '罗阿诺克': { id: 'roanoke', type: 'location' },
+                                            '波特兰': { id: 'portland', type: 'location' },
+                                            '堪萨斯城': { id: 'kansas_city', type: 'location' },
+                                            '东12街': { id: 'east_12th_st', type: 'location' },
+                                            '达文波特': { id: 'davenport', type: 'location' },
+                                            '脏弗兰克酒吧': { id: 'dirty_frank', type: 'location' },
+                                            '特克萨卡纳': { id: 'texarkana', type: 'location' },
+                                            '埃尔帕索': { id: 'el_paso', type: 'location' },
+
+                                            // Cases / Details
+                                            '小银行': { id: 'small_bank', type: 'clue' },
+                                            '仪式案': { id: 'ritual_case', type: 'clue' },
+                                            '失踪': { id: 'missing', type: 'clue' },
+                                            '训练日': { id: 'training_day', type: 'clue' },
+                                            '灭门案': { id: 'family_massacre', type: 'clue' },
+                                            '空烟盒': { id: 'empty_cigarette_pack', type: 'clue' },
+                                            '灰水信标': { id: 'graywater_beacon', type: 'clue' },
+                                            '碎尸案': { id: 'dismemberment_case', type: 'clue' },
                                             '扭曲关系': { id: 'twisted_relationship', type: 'clue' },
-                                            '肉体关系': { id: 'twisted_relationship', type: 'clue' }
+                                            '肉体关系': { id: 'twisted_relationship', type: 'clue' },
+                                            '薄荷计划': { id: 'mint_plan', type: 'clue' },
+                                            '新计划': { id: 'new_plan', type: 'clue' },
+                                            '招募': { id: 'recruitment', type: 'clue' },
+                                            '行刑室': { id: 'execution_room', type: 'clue' },
+                                            '流动献血车': { id: 'mobile_blood_truck', type: 'clue' }
                                         };
 
                                         // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions
@@ -686,25 +631,21 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         exit={{ opacity: 0, y: -10 }}
                                         className="w-full max-w-2xl px-4 flex flex-wrap gap-2 justify-center mt-4 absolute top-full left-0 z-20"
                                     >
-                                        {/* Combine clues and people for chips */}
-                                        {[...new Set([...collectedClues, ...unlockedPeople])]
+                                        {/* Combine clues for chips. PEOPLE ARE REMOVED (Syndicate Board handles these). YEARS ARE REMOVED (Archives handle these). */}
+                                        {[...new Set([...(collectedClues || [])].filter(Boolean))]
                                             .filter(id => {
-                                                const isPerson = unlockedPeople.includes(id);
-                                                // STRICT: Only show people if they are explicit case targets (hides core Syndicate)
-                                                if (isPerson && !CASE_TARGET_KEYWORDS.has(id)) return false;
+                                                const lowerId = id.toLowerCase();
+                                                const isLocation = CATEGORY_IDS.LOCATIONS.includes(id);
+                                                const isCase = CATEGORY_IDS.CASES.includes(id);
+
+                                                if (!isLocation && !isCase) return false;
 
                                                 return (
-                                                    (!id.startsWith('year_') || id === 'year_1976') &&
-                                                    (!/^\d{4}$/.test(id) || id === '1976') &&
-                                                    id.toLowerCase() !== 'capone' &&
-                                                    id.toLowerCase() !== 'robert' &&
-                                                    id !== 'dr_reggie' &&
-                                                    id !== 'graywater_beacon' &&
-                                                    id !== 'iron_horse_image' &&
                                                     !!CLUE_DISPLAY_MAP[id] && // STRICT: Only show if it has a valid mapping
                                                     !consumedKeywords.has(id) // HIDE CONSUMED KEYWORDS
                                                 );
                                             })
+                                            .filter(Boolean)
                                             .map(id => (
                                                 <button
                                                     key={id}
@@ -776,7 +717,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                 <X size={18} />
                             </button>
                             <ConfessionLog
-                                unlockedNodeIds={nodes.map(n => n.id)}
+                                unlockedNodeIds={nodes.filter(Boolean).map(n => n.id)}
                                 onClose={() => setShowTerminal(false)}
                                 onViewNode={(id) => {
                                     setShowTerminal(false);
@@ -889,13 +830,15 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             <ClueLibrary
                 isOpen={showClueLibrary}
                 onClose={() => setShowClueLibrary(false)}
-                collectedClueIds={collectedDossierIds} // Revert: Main list shows Dossiers
-                collectedKeywords={collectedClues} // New: Keywords for dialogue parser
+                collectedClueIds={collectedClues} // Fix: Pass collectedClues as collectedClueIds
+                collectedKeywords={collectedClues}
+                collectedPeople={unlockedPeople}
+                collectedYears={collectedYears}
                 collectedDossierIds={collectedDossierIds}
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}
                 onCollectClue={onCollectClue}
-                unlockedNodeIds={nodes.filter(n => n.id.includes('confession')).map(n => n.id)}
+                unlockedNodeIds={nodes.filter(Boolean).map(n => n.id)}
                 unlockedArchiveIds={unlockedArchiveIds}
                 currentStoryNode={currentStoryNode}
                 onStoryNodeComplete={onStoryNodeComplete}
@@ -915,6 +858,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 collectedAttachments={collectedAttachments}
                 onCollectAttachment={onCollectAttachment}
                 currentStoryNode={currentStoryNode}
+                unlockedNodeIds={nodes.filter(Boolean).map(n => n.id)}
             />
         </div >
     );

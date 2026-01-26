@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Archive, Search, X, ShieldAlert, Stamp, ChevronRight, File, FolderOpen, Folder } from 'lucide-react';
+import { CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS } from '../constants';
 
 interface ArchivesProps {
     isOpen: boolean;
@@ -16,6 +17,7 @@ interface ArchivesProps {
     collectedAttachments?: string[];
     onCollectAttachment?: (id: string) => void;
     currentStoryNode?: number;
+    unlockedNodeIds?: string[];
 }
 
 interface DetailedArchiveRecord {
@@ -514,6 +516,40 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
             `,
             template: 'BAKER'
         }
+    },
+    {
+        id: 'ia_1976',
+        title: '1976年达文波特“静默屠杀”案',
+        triggers: {
+            year: '1976',
+            person: ['peter_henderson', '皮特·亨德森', '彼特·亨德森', 'Peter Henderson']
+        },
+        newspaper: {
+            source: '《四城时报》(Quad-City Times)',
+            date: '1976年3月27日',
+            headline: '郊区民宅内的“静默屠杀”：亨德森一家四口遇害，现场未发现强行闯入痕迹',
+            content: [
+                '（本报讯） 达文波特警方昨日在西郊的一处民宅内发现了一起令人毛骨悚然的灭门惨案。高中数学教师彼特·亨德森（Peter Henderson）及其妻子和两名女儿被发现死于自家客厅。',
+                '这起案件令有着30年经验的警长迈克尔·杜根感到“极度困惑”。 “这不像是我们见过的任何一种犯罪现场，”杜根警长在发布会上说道，“凶手使用了极其猛烈的火力，这显然是一场处决。但奇怪的是，桌子上放着大量现金和贵重首饰，凶手分文未取。”',
+                '更令警方不解的是受害者的姿态。与通常入室行凶案中受害者四散奔逃的惨状不同，亨德森一家被发现时聚在一起。根据现场还原，在枪击发生时，亨德森先生正紧紧抱着他的小女儿，捂着她的耳朵，而他的妻子抱着大女儿靠在他的背上。法医报告显示，所有受害者均未遭受性侵犯或死后虐待。',
+                '“他们看起来……很平静。”一位现场警员描述道，“就像是他们知道结局将至，于是选择在拥抱中迎接它。这不仅是谋杀，这更像是一种仪式。”目前警方排除了流窜作案的可能，正在深入调查亨德森先生的社会关系。'
+            ]
+        },
+        annotation: {
+            fileId: 'IOWA-76-HOM-SUS',
+            date: '1976年4月20日',
+            level: '机密 (CONFIDENTIAL / INTERNAL USE ONLY)',
+            author: '霍华德·贝克 (Howard Baker)',
+            content: `
+【关于亨德森灭门案的非连环杀手定性】
+
+排除随机作案： 尽管现场的弹道特征与我们在中西部追踪的几起“旅行杀手”案件有相似之处（大口径左轮手枪），但我建议将此案从“家族/邪教”调查线中剔除。
+
+受害者背景疑点： 一个普通的高中数学老师，面对全家被杀的威胁，竟然没有反抗痕迹，也没有试图逃跑？我有理由怀疑，彼特·亨德森不仅是个数学老师，他极有可能利用其数学专长，长期为达文波特当地的非法博彩或地下赌场做假账（Numbers Running）。 那种“一家人抱在一起平静赴死”的场面，不是什么宗教仪式，那是典型的黑帮行规处决。凶手没拿钱，没碰他的家人（无性侵），是因为这是“生意上的清理”，甚至可以说是仁至义尽。
+
+建议： 移交经济犯罪科，调查亨德森的银行账户。`,
+            template: 'BAKER'
+        }
     }
 ];
 
@@ -530,8 +566,25 @@ export const Archives: React.FC<ArchivesProps> = ({
     onConsumeKeywords,
     collectedAttachments = [],
     onCollectAttachment,
-    currentStoryNode = 0
+    currentStoryNode = 0,
+    unlockedNodeIds = []
 }) => {
+    // Calculate currently consumed keywords based on unlocked nodes
+    const consumedKeywords = React.useMemo(() => {
+        const consumed = new Set<string>();
+        // Add consumed from unlocked nodes (Confessions)
+        unlockedNodeIds.filter(Boolean).forEach(nodeId => {
+            const keywords = KEYWORD_CONSUMPTION_MAP[nodeId];
+            if (keywords) keywords.forEach(k => consumed.add(k));
+        });
+        // Add consumed from unlocked archives
+        unlockedArchiveIds.filter(Boolean).forEach(archiveId => {
+            const keywords = KEYWORD_CONSUMPTION_MAP[archiveId];
+            if (keywords) keywords.forEach(k => consumed.add(k));
+        });
+        return consumed;
+    }, [unlockedNodeIds, unlockedArchiveIds]);
+
     const [yearInput, setYearInput] = useState('');
     const [personInput, setPersonInput] = useState('');
     const [activeCase, setActiveCase] = useState<DetailedArchiveRecord | null>(null);
@@ -606,69 +659,15 @@ export const Archives: React.FC<ArchivesProps> = ({
         '辛西娅·米勒': 'cynthia_miller',
         '混乱美学': 'chaos_aesthetics',
         '圣路易斯': 'st_louis',
-        '蛆虫': 'maggots'
+        '蛆虫': 'maggots',
+        '达文波特市': 'davenport',
+        '皮特·亨德森': 'peter_henderson',
+        '彼特·亨德森': 'peter_henderson'
     };
 
     // Clue display mapping for quick selection chips
-    const CLUE_DISPLAY_MAP: Record<string, string> = {
-        'year_1971': '1971',
-        'year_1968': '1968',
-        'year_1967': '1967',
-        'year_1985': '1985',
-        'year_1990': '1990',
-        'year_1972': '1972',
-        'year_1973': '1973',
-        'nibi': '尼比',
-        'lundgren': '伦德格兰',
-        'conchar': '康查尔',
-        'dismemberment_case': '碎尸案',
-        'dr_reggie': '雷吉博士',
-        'roger_beebe': '罗格·毕比',
-        'little_derek_wayne': '小德里克·维恩',
-        'project': '青豆牡蛎汤计划',
-        'julip': '黄油朱莉普',
-        'family': '诡异家族',
-        'maine': '缅因州',
-        'small_bank': '小银行',
-        'chicago': '芝加哥',
-        'robert': '罗伯特',
-        'asian_woman': '亚裔女性',
-        'missing': '失踪',
-        'father': '父亲',
-        'twisted_relationship': '扭曲关系',
-        'dirty_frank': '脏弗兰克酒吧',
-        'morning': '莫宁',
-        'ohio': '俄亥俄州',
-        'ritual_case': '祭祀案',
-        'headdress': '原住民头饰',
-        'mojave_rest_stop': '莫哈韦休息站',
-        'empty_cigarette_pack': '空烟盒',
-        'aw_wilmo': '小A.W.威尔莫',
-        'crime_route_map': '罗伯特·卡彭：犯罪路线',
-        'graywater_beacon': '灰水信标',
-        'martha_diaz': '玛莎·迪亚兹',
-        'julie': '朱莉',
-        'the_mother': '母亲',
-        'vanessa': '瓦妮莎',
-        'silas': '塞勒斯',
-        'cincinnati': '辛辛那提',
-        'year_1986': '1986',
-        'mint_plan': '薄荷计划',
-        'year_1975': '1975',
-        'burkesville': '伯克斯维尔',
-        'klub75_report': 'KLUB-75号分析报告',
-        'quantico': '匡提科',
-        'kansas_city': '堪萨斯城',
-        'mobile_blood_truck': '流动献血车',
-        'year_1976': '1976',
-        'jc_penney': '杰西·潘尼',
-        'east_12th_st': '东12街',
-        'execution_room': '行刑室',
-        'john_morrissey': '约翰·莫里西',
-        'chaos_aesthetics': '混乱美学',
-        'st_louis': '圣路易斯',
-        'maggots': '蛆虫'
-    };
+    // Consolidating CLUE_DISPLAY_MAP into constants.tsx
+    // Removing local definition to avoid logic drift.
 
     const handleAttemptCollect = (targetClueId: string) => {
         // Special mapping: wilmer_ribbon goes to project dossier
@@ -969,43 +968,52 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                         <div className="flex flex-wrap gap-2 justify-center">
                                                             <div className="text-[10px] text-[#c85a3f]/40 uppercase tracking-widest w-full text-center mb-2">快速选择 / Quick Select</div>
 
-                                                            {[...new Set([...collectedYears, ...unlockedPeople])]
+                                                            {[...new Set([...collectedYears, ...unlockedPeople].filter(Boolean))]
                                                                 .filter(id => {
                                                                     const lowerId = id.toLowerCase();
                                                                     const isPerson = unlockedPeople.includes(id);
+                                                                    const isYear = collectedYears.includes(id);
 
                                                                     // Exclusion list (same as SimplifiedMainView)
                                                                     if (['robert', 'capone', 'robert_capone', 'rubick', 'father', 'dr_reggie'].includes(lowerId)) return false;
 
                                                                     // For people: only show if they have an ARCHIVE trigger (or are JC Penney for search context)
                                                                     // We use a simplified check: does it have a display mapping AND is it relevant?
+                                                                    if (!isPerson && !isYear) return false;
+
                                                                     if (isPerson) {
-                                                                        const relevantPeople = [
-                                                                            'roger_beebe', 'aw_wilmo', 'martha_diaz', 'julie', 'boris_smirnov', 'jc_penney', 'juvell_chambers', 'john_morrissey',
-                                                                            'nibi', 'conchar', 'lundgren', 'morning', 'silas', 'vanessa', 'the_mother', 'little_derek_wayne', 'cynthia_miller'
-                                                                        ];
-                                                                        if (!relevantPeople.includes(id)) return false;
+                                                                        if (!CATEGORY_IDS.PEOPLE.includes(id)) return false;
                                                                     }
 
-                                                                    return !!CLUE_DISPLAY_MAP[id];
+                                                                    if (isYear) {
+                                                                        if (!CATEGORY_IDS.YEARS.includes(id)) return false;
+                                                                    }
+
+                                                                    // Hide consumed keywords (including years that have been used)
+                                                                    return !!CLUE_DISPLAY_MAP[id] && !consumedKeywords.has(id);
                                                                 })
-                                                                .map(id => (
-                                                                    <button
-                                                                        key={id}
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            const display = CLUE_DISPLAY_MAP[id];
-                                                                            if (['1967', '1968', '1971', '1972', '1973', '1975', '1976', '1985', '1986', '1990'].includes(display)) {
-                                                                                setYearInput(display);
-                                                                            } else {
-                                                                                setPersonInput(display);
-                                                                            }
-                                                                        }}
-                                                                        className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
-                                                                    >
-                                                                        {CLUE_DISPLAY_MAP[id]}
-                                                                    </button>
-                                                                ))}
+                                                                .map(id => {
+                                                                    const isPerson = unlockedPeople.includes(id);
+                                                                    const isYear = collectedYears.includes(id);
+
+                                                                    return (
+                                                                        <button
+                                                                            key={id}
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                const display = CLUE_DISPLAY_MAP[id];
+                                                                                if (isYear) {
+                                                                                    setYearInput(display);
+                                                                                } else if (isPerson) {
+                                                                                    setPersonInput(display);
+                                                                                }
+                                                                            }}
+                                                                            className="px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
+                                                                        >
+                                                                            {CLUE_DISPLAY_MAP[id]}
+                                                                        </button>
+                                                                    );
+                                                                })}
                                                         </div>
                                                     )}
 
@@ -1054,65 +1062,160 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                 onMouseEnter={() => setFocusedPane('newspaper')}
                                                 onClick={() => setFocusedPane('newspaper')}
                                             >
-                                                <div className="h-full overflow-y-auto bg-[#eaddcf] text-neutral-900 p-8 md:p-12 relative group scrollbar-thin scrollbar-thumb-neutral-400">
-                                                    <div className="absolute inset-0 opacity-10 pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/aged-paper.png')]"></div>
+                                                {/* Vintage Newspaper Container with Striking Effects */}
+                                                <div className="h-full overflow-y-auto relative group scrollbar-thin scrollbar-thumb-neutral-400"
+                                                    style={{
+                                                        backgroundColor: '#b88d5c', // Slightly warmer amber
+                                                        backgroundImage: `
+                                                                radial-gradient(circle at 50% 30%, #f2d2a9 0%, #b88d5c 60%, #7d5a36 100%),
+                                                                url('https://www.transparenttextures.com/patterns/old-map.png')
+                                                            `,
+                                                        backgroundBlendMode: 'soft-light',
+                                                        filter: 'sepia(0.25) saturate(1.1) contrast(1.02)' // Global unification
+                                                    }}
+                                                >
+                                                    {/* Heavy Texture Layers */}
+                                                    <div className="absolute inset-0 opacity-60 pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/pulp.png')]"></div>
+                                                    <div className="absolute inset-0 opacity-30 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cardboard.png')]"></div>
 
-                                                    <div className="max-w-2xl mx-auto relative z-10 font-serif origin-top transition-transform duration-500">
-                                                        <div className="border-b-4 border-black mb-8 pb-4 text-center">
-                                                            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-2">{activeCase.newspaper.source}</h2>
-                                                            <div className="flex justify-between items-center border-t border-black pt-2 text-xs md:text-sm font-bold uppercase tracking-wide">
-                                                                <span>{activeCase.newspaper.date}</span>
-                                                                <span className="bg-black text-[#eaddcf] px-2 py-0.5">EXTRA EDITION</span>
-                                                                <span>10 CENTS</span>
+                                                    {/* Analog Projector Effect: Layered Spotlight & Vignette */}
+                                                    <div className="absolute inset-0 pointer-events-none"
+                                                        style={{
+                                                            background: `
+                                                                radial-gradient(circle at 50% 40%, rgba(255, 253, 230, 0.45) 0%, transparent 55%),
+                                                                radial-gradient(circle at 50% 40%, rgba(255, 252, 245, 0.4) 0%, transparent 75%),
+                                                                radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.5) 100%)
+                                                            `,
+                                                        }}
+                                                    ></div>
+
+                                                    {/* Dust & Micro-Scratches Layer */}
+                                                    <div className="absolute inset-0 opacity-[0.15] pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/dust.png')]"></div>
+                                                    <div className="absolute inset-0 opacity-[0.08] pointer-events-none mix-blend-screen bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+
+
+                                                    {/* Static Noise / Grain Overlay */}
+                                                    <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
+
+                                                    {/* Irregular Aged Edges */}
+                                                    <div className="absolute top-0 left-0 right-0 h-8 opacity-40 pointer-events-none"
+                                                        style={{
+                                                            background: 'linear-gradient(180deg, rgba(60, 40, 20, 0.8), transparent)',
+                                                        }}
+                                                    ></div>
+                                                    <div className="absolute bottom-0 left-0 right-0 h-16 opacity-50 pointer-events-none"
+                                                        style={{
+                                                            background: 'linear-gradient(0deg, rgba(50, 30, 10, 0.9), transparent)',
+                                                        }}
+                                                    ></div>
+
+                                                    {/* Physical Stains (more pronounced) */}
+                                                    <div className="absolute top-[15%] left-[10%] w-64 h-48 opacity-20 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/brushed-alum.png')]"
+                                                        style={{
+                                                            filter: 'invert(1) opacity(0.5) blur(2px)',
+                                                            transform: 'rotate(15deg) scale(2)',
+                                                            mixBlendMode: 'multiply'
+                                                        }}
+                                                    ></div>
+
+                                                    {/* Main Content with Ink-Bleed & High-Contrast Look */}
+                                                    <div className="p-8 md:p-14 relative"
+                                                        style={{
+                                                            filter: 'contrast(1.1) brightness(0.98)',
+                                                        }}
+                                                    >
+                                                        <div className="max-w-2xl mx-auto relative z-10 font-serif origin-top transition-transform duration-500">
+                                                            {/* Newspaper Header - Bold Vintage */}
+                                                            <div className="border-b-[4px] border-black/80 mb-10 pb-6 text-center relative">
+                                                                <div className="absolute -top-3 left-0 right-0 h-[2px] bg-black/60"></div>
+
+                                                                <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter mb-2 relative italic"
+                                                                    style={{
+                                                                        filter: 'blur(0.35px) contrast(1.2) opacity(0.95)',
+                                                                        color: 'rgba(5, 5, 5, 0.94)',
+                                                                        letterSpacing: '-0.02em',
+                                                                        mixBlendMode: 'multiply'
+                                                                    }}
+                                                                >
+                                                                    {activeCase.newspaper.source}
+                                                                </h2>
+
+                                                                <div className="flex justify-between items-center border-t-[2px] border-black/80 pt-3 text-xs md:text-sm font-black uppercase tracking-widest">
+                                                                    <span className="text-black/90 drop-shadow-sm">{activeCase.newspaper.date}</span>
+                                                                    <div className="flex flex-col items-center">
+                                                                        <span className="bg-black/90 text-[#e6bc8a] px-4 py-0.5 text-[10px] mb-1">LATE CITY FINAL</span>
+                                                                        <span className="text-[9px] text-black/80 font-bold">Vol. LXXVIII... No. 124</span>
+                                                                    </div>
+                                                                    <span className="text-black/90 drop-shadow-sm">PRICE 15 CENTS</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
 
-                                                        <h1 className="text-3xl md:text-4xl font-extrabold leading-[1.1] mb-6 font-serif">{activeCase.newspaper.headline}</h1>
+                                                            {/* Headline - "Sunken Ink" Effect */}
+                                                            <h1 className="text-4xl md:text-5xl font-black leading-[1.05] mb-8 font-serif italic"
+                                                                style={{
+                                                                    color: 'rgba(15, 15, 15, 0.92)',
+                                                                    filter: 'blur(0.28px) contrast(1.3) grayscale(0.2)',
+                                                                    letterSpacing: '-0.015em',
+                                                                    mixBlendMode: 'multiply',
+                                                                    textShadow: '0.5px 0.5px 1px rgba(0,0,0,0.1)'
+                                                                }}
+                                                            >
+                                                                {activeCase.newspaper.headline}
+                                                            </h1>
 
-                                                        <div className="columns-1 md:columns-2 gap-8 text-sm md:text-base leading-relaxed text-justify space-y-4 font-serif text-neutral-800">
-                                                            {activeCase.newspaper.content.map((para, i) => {
-                                                                const activeKeywords = activeCase.id === 'kan_1976'
-                                                                    ? ['东12街', '行刑室']
-                                                                    : activeCase.id === 'kc_1965'
-                                                                        ? ['圣路易斯']
-                                                                        : [];
+                                                            {/* Article Text - Deep fibre Integration */}
+                                                            <div className="columns-1 md:columns-2 gap-10 text-sm md:text-base leading-relaxed text-justify space-y-5 font-serif"
+                                                                style={{
+                                                                    color: 'rgba(30, 30, 30, 0.9)',
+                                                                    filter: 'blur(0.25px) contrast(1.15)',
+                                                                    mixBlendMode: 'multiply',
+                                                                    opacity: 0.92
+                                                                }}
+                                                            >
+                                                                {activeCase.newspaper.content.map((para, i) => {
+                                                                    const activeKeywords = activeCase.id === 'kan_1976'
+                                                                        ? ['东12街', '行刑室']
+                                                                        : activeCase.id === 'kc_1965'
+                                                                            ? ['圣路易斯']
+                                                                            : [];
 
-                                                                if (activeKeywords.length > 0) {
-                                                                    const pattern = `(${activeKeywords.join('|')})`;
-                                                                    const regex = new RegExp(pattern, 'g');
+                                                                    if (activeKeywords.length > 0) {
+                                                                        const pattern = `(${activeKeywords.join('|')})`;
+                                                                        const regex = new RegExp(pattern, 'g');
+                                                                        return (
+                                                                            <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
+                                                                                {para.split(regex).map((part, j) => {
+                                                                                    if (activeKeywords.includes(part)) {
+                                                                                        return (
+                                                                                            <span
+                                                                                                key={j}
+                                                                                                onClick={() => handleKeywordClick(part)}
+                                                                                                className="cursor-pointer font-bold text-[#c85a3f] border-b border-[#c85a3f] hover:bg-[#c85a3f]/10"
+                                                                                            >
+                                                                                                {part}
+                                                                                            </span>
+                                                                                        );
+                                                                                    }
+                                                                                    return <span key={j}>{part}</span>;
+                                                                                })}
+                                                                            </p>
+                                                                        );
+                                                                    }
+
                                                                     return (
                                                                         <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
-                                                                            {para.split(regex).map((part, j) => {
-                                                                                if (activeKeywords.includes(part)) {
-                                                                                    return (
-                                                                                        <span
-                                                                                            key={j}
-                                                                                            onClick={() => handleKeywordClick(part)}
-                                                                                            className="cursor-pointer font-bold text-[#c85a3f] border-b border-[#c85a3f] hover:bg-[#c85a3f]/10"
-                                                                                        >
-                                                                                            {part}
-                                                                                        </span>
-                                                                                    );
-                                                                                }
-                                                                                return <span key={j}>{part}</span>;
-                                                                            })}
+                                                                            {para}
                                                                         </p>
                                                                     );
-                                                                }
-
-                                                                return (
-                                                                    <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
-                                                                        {para}
-                                                                    </p>
-                                                                );
-                                                            })}
+                                                                })}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                                {/* Label */}
-                                                <div className="absolute bottom-4 left-4 bg-black/80 text-[#eaddcf] text-[10px] px-2 py-1 uppercase tracking-widest pointer-events-none">
-                                                    EVIDENCE TYPE: PRESS CLIPPING
+                                                    {/* UI Label - Compact tag in the corner */}
+                                                    <div className="absolute top-4 right-4 bg-black/60 text-[#d4a261] text-[9px] px-2 py-0.5 uppercase tracking-[0.2em] pointer-events-none backdrop-blur-[4px] border border-white/10 w-fit whitespace-nowrap z-20">
+                                                        EVIDENCE TYPE: PRESS CLIPPING
+                                                    </div>
                                                 </div>
                                             </div>
 

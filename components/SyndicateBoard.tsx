@@ -67,7 +67,10 @@ export const SyndicateBoard: React.FC<SyndicateBoardProps> = ({
             .filter(node => node.parentId)
             .map(node => {
                 const parentId = node.parentId!;
-                const parentPos = nodePositions[parentId] || visibleNodes.find(n => n.id === parentId)?.position;
+                // Safe check: Ensure parent exists in visibleNodes OR has a position in map
+                const parentNode = visibleNodes.find(n => n.id === parentId);
+                const parentPos = nodePositions[parentId] || parentNode?.position;
+
                 const nodePos = nodePositions[node.id] || node.position;
 
                 if (!parentPos || !nodePos) return null;

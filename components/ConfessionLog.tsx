@@ -152,6 +152,39 @@ const CONFESSION_REGISTRY = [
         people: ['父亲 (Father)', '罗伯特·卡彭 (Robert Capone)'],
         summary: '关于莫里西（杰西·潘尼）被捕后的对话揭密。揭示了"父亲"对"混乱"的独特哲学见解，以及卡彭如何通过制造混乱，在不经意间摧毁了连联邦政府都无法撼动的犯罪堡垒。',
         status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_14',
+        displayId: 'REC-1976-SL',
+        title: '供述 No.14: 圣路易斯之夜',
+        eventTime: '1976',
+        location: '密苏里州 圣路易斯市 (St. Louis)',
+        keywords: ['圣路易斯', '蛆虫'],
+        people: ['母亲 (The Mother)', '塞勒斯 (Silas)', '瓦妮莎 (Vanessa)'],
+        summary: '关于堪萨斯城行动后，在圣路易斯市郊房车内发生的古老且极其令人不适的仪式。揭示了“母亲”与“父亲”之间通过鲜血构建的共生关系本质。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_15',
+        displayId: 'REC-1976-IA',
+        title: '供述 No.15: 达文波特静默屠杀',
+        eventTime: '1976',
+        location: '爱荷华州 达文波特市 (Davenport)',
+        keywords: ['达文波特市', '新计划', '1976', '静默屠杀'],
+        people: ['皮特·亨德森 (Peter Henderson)', '康查尔 (Conchar)', '罗伯特·卡彭 (Robert Capone)'],
+        summary: '关于爱荷华州达文波特郊区亨德森一家灭门案的供述。康查尔以“新计划”为名，对一户普通中产家庭施加极端心理拷问，却在男主人皮特·亨德森拒绝成为“怪物”的选择面前首次感到挫败；这一刻也让卡彭在房车内重新想起自己身为警探的身份与使命。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_16',
+        displayId: 'REC-1967-TX',
+        title: '供述 No.16: 特克萨卡纳碎尸案',
+        eventTime: '1967',
+        location: '得克萨斯州 特克萨卡纳 (Texarkana)',
+        keywords: ['特克萨卡纳', '碎尸案', '亚瑟·道森'],
+        people: ['亚瑟·道森 (Arthur Dawson)', '康查尔 (Conchar)', '瓦妮莎 (Vanessa)'],
+        summary: '关于1967年特克萨卡纳碎尸案的真相，以及卡彭从房车大梁下意外发现的亚瑟·道森笔记。揭示了亚瑟对“远亲”网络真实性的早期质疑，以及这种质疑如何导致了他的死亡。',
+        status: 'DECRYPTED'
     }
 ];
 

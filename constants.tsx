@@ -23,6 +23,135 @@ export const INITIAL_DOSSIER = {
   ]
 };
 
+export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
+  // Node 1
+  'confession_1': ['maine', 'small_bank', 'nibi', 'conchar'],
+  'confession_2': ['ohio', 'ritual_case', 'lundgren'],
+  'confession_3': ['chicago', 'missing', 'roger_beebe'],
+  'me_1971': ['maine', 'year_1971', 'nibi'],
+  'oh_1968': ['ritual_case', 'year_1968', 'lundgren'],
+  'dc_1967': ['phoenix', 'year_1967'],
+  'il_1985': ['roger_beebe', 'year_1985'],
+
+  // Node 2
+  'confession_4': ['1402_old_dominion_rd', 'training_day'],
+  'confession_5': ['nevada', 'family_massacre', 'little_derek_wayne'],
+  'confession_6': ['mojave_rest_stop', 'empty_cigarette_pack', 'graywater_beacon'],
+  'confession_7': ['roanoke', 'twisted_relationship', 'martha_diaz'],
+  'va_1990': ['aw_wilmo', 'year_1990'],
+
+  // Node 3
+  'confession_8': ['louisville', 'blue_rv', 'julie', 'the_mother', 'vanessa', 'silas', 'year_1973'],
+  'confession_9': ['cincinnati', 'mint_plan', 'juvell_chambers', 'distant_relatives'], // Removed 'el_paso'
+  'confession_10': ['burkesville', 'boris_smirnov'],
+  'confession_11': ['klub75_report', 'quantico', 'cynthia_miller'],
+  'confession_12': ['kansas_city', 'mobile_blood_truck'],
+  'confession_13': ['east_12th_st', 'execution_room', 'john_morrissey', 'jc_penney'],
+  'cin_1973': ['julie', 'year_1973'],
+  'nas_1973': ['cincinnati', 'year_1973'],
+  'ky_1973': ['burkesville', 'year_1973'],
+
+  // Node 4
+  'confession_14': ['st_louis', 'maggots'],
+  'confession_15': ['davenport', 'new_plan', 'peter_henderson'],
+  'kan_1976': ['jc_penney', 'east_12th_st', 'year_1976'],
+  'kc_1965': ['john_morrissey', 'year_1965'],
+  'ia_1976': ['peter_henderson', 'year_1976'],
+  'confession_16': ['texarkana', 'dismemberment_case', 'arthur_dawson'],
+
+  // Node 4 Retrieval Targets (Meta-group for visual removal AFTER Jennifer dialogue)
+
+};
+
+// Categorization for split UI views
+export const CATEGORY_IDS = {
+  LOCATIONS: [
+    'east_12th_st', 'davenport', 'texarkana', 'el_paso', 'dirty_frank',
+    'st_louis', 'cincinnati', 'chicago', 'louisville', 'burkesville',
+    'quantico', 'kansas_city', 'roanoke', 'nevada', 'ohio', 'maine',
+    'mojave_rest_stop', '1402_old_dominion_rd'
+  ],
+  CASES: [
+    'new_plan', 'recruitment', 'dismemberment_case',
+    'ritual_case', 'small_bank', 'missing', 'family_massacre',
+    'twisted_relationship', 'mint_plan', 'klub75_report',
+    'mobile_blood_truck', 'execution_room', 'chaos_aesthetics', 'maggots'
+  ],
+  PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson'],
+  YEARS: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975', 'year_1976', 'year_1974', 'year_1965']
+};
+
+export const CLUE_DISPLAY_MAP: Record<string, string> = {
+  'year_1971': '1971',
+  'year_1968': '1968',
+  'year_1967': '1967',
+  'year_1985': '1985',
+  'year_1990': '1990',
+  'year_1972': '1972',
+  'year_1973': '1973',
+  'year_1974': '1974',
+  'year_1975': '1975',
+  'year_1976': '1976',
+  'year_1986': '1986',
+  'year_1965': '1965',
+  'nibi': '尼比',
+  'lundgren': '伦德格兰',
+  'conchar': '康查尔',
+  'dismemberment_case': '碎尸案',
+  'dr_reggie': '雷吉博士',
+  'roger_beebe': '罗格·毕比',
+  'arthur_dawson': '亚瑟·道森',
+  'little_derek_wayne': '小德里克·维恩',
+  'project': '青豆牡蛎汤计划',
+  'julip': '黄油朱莉普',
+  'family': '诡异家族',
+  'maine': '缅因州',
+  'small_bank': '小银行',
+  'chicago': '芝加哥',
+  'robert': '罗伯特',
+  'asian_woman': '亚裔女性',
+  'missing': '失踪',
+  'father': '父亲',
+  'twisted_relationship': '扭曲关系',
+  'dirty_frank': '脏弗兰克酒吧',
+  'morning': '莫宁',
+  'ohio': '俄亥俄州',
+  'ritual_case': '祭祀案',
+  'headdress': '原住民头饰',
+  'mojave_rest_stop': '莫哈韦休息站',
+  'empty_cigarette_pack': '空烟盒',
+  'aw_wilmo': '小A.W.威尔莫',
+  'crime_route_map': '罗伯特·卡彭：犯罪路线',
+  'blue_rv': '淡蓝色房车',
+  'graywater_beacon': '灰水信标',
+  'martha_diaz': '玛莎·迪亚兹',
+  'julie': '朱莉',
+  'the_mother': '母亲',
+  'vanessa': '瓦妮莎',
+  'silas': '塞勒斯',
+  'cincinnati': '辛辛那提',
+  'mint_plan': '薄荷计划',
+  'burkesville': '伯克斯维尔',
+  'klub75_report': 'KLUB-75号分析报告',
+  'quantico': '匡提科',
+  'kansas_city': '堪萨斯城',
+  'mobile_blood_truck': '流动献血车',
+  'jc_penney': '杰西·潘尼',
+  'east_12th_st': '东12街',
+  'execution_room': '行刑室',
+  'john_morrissey': '约翰·莫里西',
+  'chaos_aesthetics': '混乱美学',
+  'st_louis': '圣路易斯',
+  'maggots': '蛆虫',
+  'davenport': '达文波特市',
+  'peter_henderson': '皮特·亨德森',
+  'recruitment': '招募',
+  'texarkana': '特克萨卡纳',
+  'priest': '牧师',
+  'el_paso': '埃尔帕索',
+  'new_plan': '新计划'
+};
+
 export const CORE_NODES: MemoryNode[] = [
   {
     id: "capone",
@@ -426,6 +555,84 @@ export const CORE_NODES: MemoryNode[] = [
       }
     },
     connectedTo: ["confession_12", "capone"]
+  },
+  {
+    id: "confession_14",
+    keyword: "confession",
+    title: "供述 No.14",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.75, y: window.innerHeight * 0.85 },
+    revealedKeywords: ['davenport', 'new_plan'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "你是怎么知道这件事的？\n\n是的，那才是圣路易斯之夜真正的庆功宴。虽然我在外面搞了一场轰轰烈烈的达达主义荒诞剧，用红油漆和假人嘲弄了整个警察局，但在那辆淡蓝色的房车里，发生的是另一种更古老、更令人作呕的仪式。在我们将油漆泵接入采血车之前，\"母亲\"让赛勒斯清空了车上的冷藏柜，把那几十袋刚刚采集的血浆放了进去。\n\n当任务结束之后，我们驱车前往圣路易斯，落地休整的当晚，在那逼仄的后车厢里，在那张铺着褪色碎花床单的折叠床上……我不想描述细节。我只能说，那不是人类的性爱。父亲像个干枯的帝王一样躺在那里，而\"母亲\"……她剪开了那些血袋。那股浓烈的、带着生鲜铁锈味的腥气瞬间炸开，盖过了车厢里常年弥漫的止咳糖浆味和老人味。他们在血泊中纠缠，发出那种黏腻的、令人毛骨悚然的水声——那是肉体与肉体在半凝固的液体中摩擦时发出的声音，就像是两个软体动物在泥沼里翻滚。",
+        attitude: "",
+        visual: "https://picsum.photos/seed/confession_14_surface/800/450"
+      },
+      [MemoryLayer.DEEP]: {
+        event: "\"母亲\"变得力大无穷，那个平日里总是带着绝望气息的虚弱女人不见了，取而代之的是一头尝到了腥味的母兽。她用沾满鲜血的手疯狂涂抹父亲那张满是皱纹的脸，把血浆强行灌进他的皱纹、他的嘴唇、他松弛的眼袋里。她在尖叫，在喘息，仿佛那些从陌生人身……那一刻我站在门缝外，看着这一幕，我第一次没有感到恐惧，而是感到了一种……\n\n怎么说呢。我一直觉得母亲和父亲之间有条特殊的纽带，那是某种默契，他们彼此相互信任，几乎很少说话，除这次之外，我甚至很少见到他们有过肢体接触，但我隐隐觉得，这两人无法没有彼此。就像是某种连体生物被强行剥离后的两半。父亲是那个冷酷的、只有骨骼和逻辑的'大脑'，而母亲则是包裹着他的、潮湿且充满病态欲望的'血肉'。平日里，他们靠眼神交换指令，仿佛共享着同一套神经系统。父亲负责用暴力把猎物敲骨吸髓，母亲负责用温柔把残渣消化殆尽。在那晚的血泊中，我终于看清了这种共生的本质，他们似乎想通过鲜血作为粘合剂而重新融合，变回那个完整的、不可名状的怪物。",
+        attitude: "",
+        visual: "https://picsum.photos/seed/confession_14_deep/800/450"
+      },
+      [MemoryLayer.CORE]: {
+        event: "等等。这不对。\n\n那晚房车停在荒郊野外。虽然林子里潜伏着其他远亲，但窗帘被拉得密不透风。康查尔当时不在，他带着新计划去了达文波特。瓦妮莎把自己反锁在厕所里，而赛勒斯……那疯子整张脸都贴在后窗上，仿佛想用牙齿咬碎玻璃加入他们，但他没能得逞，只是留下了一整面窗的唾液和体液。所以我大概是唯一目睹过这一切的人。\n\n你又是怎么知道的？",
+        attitude: "",
+        visual: "https://picsum.photos/seed/confession_14_core/800/450"
+      }
+    },
+    connectedTo: ["confession_13", "capone"]
+  },
+  {
+    id: "confession_15",
+    keyword: "confession",
+    title: "供述 No.15",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.35, y: window.innerHeight * 0.2 },
+    revealedKeywords: ['year_1976', 'peter_henderson'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "达文波特。\n\n那是康查尔的杰作。那一周，“父亲”因为过量吸食那种混合了血液的药剂而陷入昏睡，所以我留下来看守房车。康查尔带着几个想在“家族”里晋升的“远亲”去了爱荷华州的达文波特。我不在现场。感谢上帝，我不在现场。\n\n关于那栋房子里发生的事，后来在“远亲”的圈子里变成了传说。那些跟着康查尔回来的年轻人，以前都是杀人不眨眼的暴徒，但那天晚上回来时，他们却像受惊的鹌鹑一样发抖，甚至不敢直视康查尔的眼睛。他随机选中了郊区的一户中产家庭——亨德森一家。男主人皮特·亨德森是个教数学的高中老师，一家四口过着那种令人厌烦的规律生活。周五的晚上，康查尔带着人闯进去，没有大喊大叫，而是像客人一样坐在餐桌旁。因为他知道，他拥有一整个周末的时间。\n\n他给这家人制定了规则：生活必须继续。据那些“远亲”描述，康查尔强迫这家人在接下来的两天里，必须严格按照时间表吃饭、睡觉、看电视。唯一的区别是，如果谁露出了一丁点恐惧，他就会用刀切掉另一个人的一节手指。“太有意思了，”康查尔微笑着告诉我，“亨德森一家绝对堪称某种人类学典范。他们一家人训练有素，孩子不哭不闹，大人连眉头都不皱一下。这让我觉得，这个计划的确颇值一搞。”\n\n从一开始，康查尔的马仔就搜出了亨德森家中的财务，但他们只是把它放置在餐桌正中心，从没正眼看过这些东西，直到周日的晚上，当晚饭结束后，康查尔用餐巾擦干净嘴，赞美了食物之后下达了他的最后通牒，他说别担心，这个令人厌烦的游戏马上就会结束，如果一家人通过最后这关，他们便会带着餐桌上的财物离开，至此亨德森一家遭遇的，便只是一桩普通的入室抢劫案件了。",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.DEEP]: {
+        event: "他说完，马仔递来一支左轮手枪，康查尔往其中塞入一颗子弹，拨动转轮，然后连开数枪直到子弹射到墙里。接着他又往弹夹里塞进一颗子弹。然后告诉男主人，说这就是这场考试的最后一道题了。现在枪里只有一颗子弹，六分之一的概率。由他持枪，分别瞄准三位家人射击，直到子弹打出。一旦子弹打出，游戏结束，他们会带着财务撤离，现场会被伪装成入室抢劫，行凶者可以归罪到抢劫者身上，没人知道他们经历过这些。但如果男主选择持枪自杀或袭击其他人，那他们便会抹除他们存在的痕迹，然后所有人都会死，“不仅如此，”康查尔坏笑着说，“当天早些时候，我们从他身上‘强制采集’了样本。所以即便他像个英雄一样死了，警方也会在他小女儿的体内提取到这些样本。他会作为芝加哥历史上最恶心的乱伦强奸犯和屠夫被载入史册。”\n\n“罗伯特，那本是一个完美的命题。”康查尔感叹道，像是在评价一道精美的数学题，“我把‘名誉’和‘负罪感’放在了天平的两端。我本以为我会看到一个凡人在绝对的社会性死亡威胁下，是如何为了保全那个虚假的‘清白’而把自己变成野兽的。但那个数学老师……”\n\n康查尔告诉我，当空气凝固，那把只有一颗子弹的枪躺在桌上时，亨德森没有崩溃，也没有求饶。他拿起了枪，但没有对准任何人。众目睽睽之下，他做了一个康查尔完全无法理解的动作。他打开了转轮，把那颗唯一的子弹倒了出来。\n\n子弹滚落在地。亨德森把空枪像垃圾一样扔到了康查尔脚边。“他看着我，罗伯特。那种眼神里没有恐惧。”康查尔歪了歪头，似乎至今仍在试图解析那个眼神，“他说如果我想毁了他的名声，那就请便。但他不会因为恐惧而变成怪物。然后，他做了一件更不可理喻的事。”",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.CORE]: {
+        event: "康查尔描述说，男主人转过身，背对着黑洞洞的枪口。他蹲下来，用那双颤抖的大手捂住了那个吓得失禁的小女儿的耳朵，把她的脸埋进自己怀里。那个即将身败名裂的父亲，在死前的最后几秒，温柔地对家人说：“别看他，看着我。宝贝，看着爸爸。不管明天报纸上怎么写，不管警察怎么说……在这最后一刻，你知道爸爸是爱你的，对吗？你知道爸爸没有把枪口对准你，对吗？”康查尔说，在那女孩拼命点头的时候，亨德森抬起头，而像是在宣告某种胜利。说到这里，康查尔突然笑了一声，那笑声里带着一丝从未有过的挫败感。\n\n你知道吗？就在听着康查尔描述的那一瞬间，我就从那种漫长的麻木中惊醒了。哪怕手里没有警徽，我也重新记起了我究竟是谁，记起了我为什么会在这辆该死的车上，以及……为了结束这一切，我到底该做什么了。",
+        attitude: "",
+        visual: ""
+      }
+    },
+    connectedTo: ["confession_14", "capone"]
+  },
+  {
+    id: "confession_16",
+    keyword: "confession",
+    title: "供述 No.16",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.5, y: window.innerHeight * 0.1 },
+    revealedKeywords: ['arthur_dawson'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "关于1967年的特克萨卡纳碎尸案，我在“家族”里听过至少三个版本。有人说那个叫亚瑟的人是FBI的线人，被父亲识破后切碎了喂狗；有人说他试图偷走父亲的积蓄私奔。而康查尔则会用轻蔑的语气，说亚瑟是个“缺乏想象力的会计”，死于平庸。\n\n无论如何，原本我根本不应该知道存在着这样一个人。那是我们离开芝加哥，一路向北抵达威斯康辛州之前的某一天，房车在路边抛锚了。康查尔那个洁癖鬼当然不会碰油污，赛勒斯那个蠢货只会用蛮力砸。于是，“父亲”指了指我，让我钻下去看看。我躺在滑板上，滑进了阴影之中。回想起来，我仿佛还能闻到机油味、铁锈味，还有路面上被碾碎的动物尸体的味道，总之，就在检查支架的时候，我发现了一处不自然的凸起。",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.DEEP]: {
+        event: "那里的防锈漆颜色不对，比周围要新一些，但也被泥浆覆盖了很多年。我用扳手敲了敲。空心的。我屏住呼吸，用随身携带的瑞士军刀撬开了那块锈蚀的铁皮，一个东西随即落下，被我悄然接住。我回头看了一眼，赛勒斯的一双大脚就在两米外的路边来回踱步，康查尔正在和“父亲”讨论接下来的路线，似乎没人察觉到我的发现。\n\n昏暗的光线下，眼前之物被几层厚厚的油布紧紧裹，像一具迷你木乃伊。我撕开油布，这是一个黑色皮面的笔记本，扉页上写，“赠予我的亚瑟，家族的荣耀”。就在这时，我头顶的底板突然发出了“吱呀”一声巨响。我能认出，这是父亲的脚步声，此刻他就站在我正上方的地板上。灰尘随着他的脚步震动，簌簌地落在我的脸上。“罗伯特！还没修好吗？”康查尔的声音从外面传来。\n\n我把油布包塞进满是油污的工装裤内层，贴着我的肚皮。“马上就好。”我朝外边大喊。\n\n那晚，房车停在威斯康星州一片枯死的玉米地旁。其他人围着篝火分食罐头，而瓦妮莎则独自坐在车尾发呆，我走过去，没有寒暄，只是在点烟瞬间，冷不丁问了一句，“亚瑟是谁？”瓦妮莎的手猛地一抖，抬头问，“你……你怎么知道的。”\n\n“我在修车时看到的名字，刻在大梁上。”我撒谎时连心跳都没变。瓦妮莎没有质疑，他告诉我，他是父亲的养子，塞勒斯之前的记路人，但他已经死了，那时候她还小，并不知道发生了什么。\n\n“谁在提亚瑟？那个亚瑟·道森的亚瑟？”康查尔不知何时已经站在了阴影里，手里端着一杯冒着热气的咖啡。瓦妮莎缩成一团，绝望地看向我。我吐出一口烟圈，说是她在那自言自语，念叨着什么亚瑟，搞得我心里发毛，这才顺口问了一句。",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.CORE]: {
+        event: "瓦妮莎张大了嘴，但她不敢反驳。康查尔厌恶地瞥了她一眼：“去把地板擦干净。如果再让我听到那个名字，你就去外面睡。”\n\n由此，我撬开了康查尔的嘴，从他和其他人嘴里我得到了一些说法，并且全程装作不在意。直到所有人都睡去，只剩我一人放哨时，我才把笔记本拿出来，就着篝火查看其中内容。\n\n亚瑟的笔记工整而刻板，列出了日期、城市、代号。此人显然是个强迫症患者，他在试图做一件这辆车上从未有人做过的事——建档。亚瑟记录了“父亲”口中那些散落在全美的“远亲”据点，什么“底特律收割者”、“新奥尔良药剂师”、“西雅图守夜人”……宛如一个庞大的地下恐怖网络，如果FBI拿到这个笔记本，那统一场论便无可疑。可奇怪的是，到了笔记后半部分，工整刻板的记录风格却完全变了，整洁的表格被粗暴的红色马克笔涂抹，很多地方都画上了问号，就像是亚瑟在质疑这些联络人是否真的存在一样。\n\n我不禁想到一种可能性……如果亚瑟是对的呢？整个社会处于一种“遍地是杀手”的集体癔症中，信息闭塞，恐惧却四通八达。而“父亲”，这个瘫痪在房车里的老头，敏锐地嗅到了这股时代的尸臭味。康查尔之所以死心塌地，是因为他以为自己在为一个庞大的、遍布全美的地下哲学帝国服务；瓦妮莎之所以不敢逃跑，是因为她相信无论她逃到哪里，总有一个受“父亲”指挥的“远亲”在盯着她。\n\n亚瑟死于试图拆穿谎言。连我……我是不是正在走进一个专门为我编织的更巨大的谎言里？这本笔记是我唯一的证据，而我最后一次见到它是在北达科他州的法戈市。在那场混乱的暴风雪中我遭遇了一些情况，它被永远地遗失在了冰原里。\n\n或许，是这辆车在保护它最后的秘密。",
+        attitude: "",
+        visual: "assets/record_of_accounts.jpg"
+      }
+    },
+    connectedTo: ["confession_14", "capone"]
   }
 ];
 
@@ -558,5 +765,115 @@ export const RELATIONSHIP_TREE: SyndicateMember[] = [
     status: 'ACTIVE',
     phase: 1,
     description: 'Department Store / Target'
+  },
+  {
+    id: 'martha_diaz',
+    name: 'MARTHA DIAZ',
+    role: 'ASSOCIATE',
+    parentId: 'conchar',
+    position: { x: 80, y: 80 },
+    status: 'DECEASED',
+    phase: 1,
+    description: 'Laundromat Victim'
+  },
+  {
+    id: 'julie',
+    name: 'JULIE',
+    role: 'ASSOCIATE',
+    parentId: 'conchar',
+    position: { x: 60, y: 85 },
+    status: 'DECEASED',
+    phase: 1,
+    description: 'Frozen Child'
+  },
+  {
+    id: 'the_mother',
+    name: 'THE MOTHER',
+    role: 'UNDERBOSS',
+    parentId: 'father',
+    position: { x: 40, y: 20 },
+    status: 'ACTIVE',
+    phase: 1,
+    description: 'Matriarch'
+  },
+  {
+    id: 'vanessa',
+    name: 'VANESSA',
+    role: 'ASSOCIATE',
+    parentId: 'the_mother',
+    position: { x: 30, y: 30 },
+    status: 'ACTIVE',
+    phase: 1,
+    description: 'Adopted Daughter'
+  },
+  {
+    id: 'silas',
+    name: 'SILAS',
+    role: 'LIEUTENANT',
+    parentId: 'father',
+    position: { x: 60, y: 20 },
+    status: 'ACTIVE',
+    phase: 1,
+    description: 'Second Son'
+  },
+  {
+    id: 'juvell_chambers',
+    name: 'JUVELL CHAMBERS',
+    role: 'SOLDIER',
+    parentId: 'father',
+    position: { x: 10, y: 40 },
+    status: 'ACTIVE',
+    phase: 1,
+    description: 'Ex-Cop / Recruit'
+  },
+  {
+    id: 'boris_smirnov',
+    name: 'BORIS SMIRNOV',
+    role: 'SOLDIER',
+    parentId: 'father',
+    position: { x: 90, y: 40 },
+    status: 'ARRESTED',
+    phase: 1,
+    description: 'Burkesville Gang'
+  },
+  {
+    id: 'cynthia_miller',
+    name: 'CYNTHIA MILLER',
+    role: 'ASSOCIATE',
+    parentId: 'silas',
+    position: { x: 70, y: 15 },
+    status: 'MISSING',
+    phase: 1,
+    description: 'Static Snow Victim'
+  },
+  {
+    id: 'aw_wilmo',
+    name: 'A.W. WILMER',
+    role: 'ASSOCIATE',
+    parentId: 'conchar',
+    position: { x: 85, y: 70 },
+    status: 'ARRESTED',
+    phase: 1,
+    description: 'The Scapegoat? (1990)'
+  },
+  {
+    id: 'peter_henderson',
+    name: 'PETER HENDERSON',
+    role: 'ASSOCIATE',
+    parentId: 'conchar',
+    position: { x: 20, y: 80 },
+    status: 'DECEASED',
+    phase: 1,
+    description: 'Davenport Victim'
+  },
+  {
+    id: 'priest',
+    name: 'THE PRIEST',
+    role: 'ASSOCIATE',
+    parentId: 'lundgren',
+    position: { x: 85, y: 50 },
+    status: 'MISSING',
+    phase: 1,
+    description: 'Texarkana Connection'
   }
 ];

@@ -5,9 +5,10 @@ import { BriefingView } from './components/BriefingView';
 import { BriefingDetailView } from './components/BriefingDetailView';
 import { DialogueView } from './components/DialogueView';
 import { SimplifiedMainView } from './components/SimplifiedMainView';
-import { CORE_NODES } from './constants';
-import { GameState, MemoryLayer } from './types';
+import { MemoryNode, MemoryLayer, GameState } from './types';
+import { INITIAL_DOSSIER, CORE_NODES, RELATIONSHIP_TREE, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS } from './constants';
 import { DebugController } from './components/DebugController';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -77,13 +78,15 @@ const App: React.FC = () => {
 
   // Handle clearing unused keywords (Jennifer回收未使用的关键词) after Node 3
   const handleClearUnusedKeywords = useCallback(() => {
-    // Aggressively clear all keywords and years for a clean UI state after Node 3 completion
+    // PERSISTENCE REFINED: We clear "searchable" items to clean the UI as Jennifer "sweeps" data.
+    // Core people are kept for Mind Map stability; others are swept for re-collection.
+    const CORE_KEEPS = ['capone', 'father', 'dr_reggie', 'robert', 'robert_capone'];
+
     setGameState(prev => ({
       ...prev,
       collectedClues: [],
       collectedYears: [],
-      unlockedPeople: [], // CLEAR: People keywords should also be reset after Node 3
-      // We keep unlockedPeople for the Mind Map/Relationship view only
+      unlockedPeople: prev.unlockedPeople.filter(id => CORE_KEEPS.includes(id.toLowerCase())),
       history: [
         ...prev.history,
         { type: 'info', content: '[JENNIFER]: 已回收并封存所有未使用的关键词', timestamp: Date.now() }
@@ -99,76 +102,6 @@ const App: React.FC = () => {
       ...prev,
       history: [...prev.history, { type: 'search', content: query, timestamp: Date.now() }]
     }));
-
-    // ===== KEYWORD-CONTENT MAPPING FOR AUTO-CLEANUP =====
-    // Define which keywords should be removed when confessions are unlocked
-    const CONFESSION_KEYWORDS: Record<string, { clues: string[], years: string[], people: string[] }> = {
-      confession_1: {
-        clues: ['maine', 'small_bank'],
-        years: [],
-        people: []
-      },
-      confession_2: {
-        clues: ['ohio', 'ritual_case'],
-        years: [],
-        people: []
-      },
-      confession_3: {
-        clues: ['chicago', 'missing'],
-        years: [],
-        people: []
-      },
-      confession_4: {
-        clues: ['1402_old_dominion_rd', 'training_day'],
-        years: [],
-        people: []
-      },
-      confession_5: {
-        clues: ['nevada', 'family_massacre'],
-        years: [],
-        people: []
-      },
-      confession_6: {
-        clues: ['mojave_rest_stop', 'empty_cigarette_pack'],
-        years: [],
-        people: []
-      },
-      confession_7: {
-        clues: ['roanoke', 'twisted_relationship'],
-        years: [],
-        people: []
-      },
-      confession_8: {
-        clues: ['louisville', 'blue_rv'],
-        years: [],
-        people: []
-      },
-      confession_9: {
-        clues: ['cincinnati', 'mint_plan'],
-        years: [],
-        people: []
-      },
-      confession_10: {
-        clues: ['burkesville', 'distant_relatives'],
-        years: [],
-        people: []
-      },
-      confession_11: {
-        clues: ['klub75_report', 'quantico'],
-        years: [],
-        people: []
-      },
-      confession_12: {
-        clues: ['kansas_city', 'mobile_blood_truck'],
-        years: [],
-        people: []
-      },
-      confession_13: {
-        clues: ['east_12th_st', 'execution_room'],
-        years: [],
-        people: []
-      }
-    };
 
     // ===== STRICT KEYWORD VALIDATION SYSTEM =====
 
@@ -258,6 +191,14 @@ const App: React.FC = () => {
       'john_morrissey': true, '约翰·莫里西': true, 'john morrissey': true,
       'chaos_aesthetics': true, '混乱美学': true, 'chaos aesthetics': true,
       'maggots': true, '蛆虫': true, 'vermin': true,
+      'davenport': true, '达文波特': true, '达文波特市': true,
+      'new_plan': true, '新计划': true, 'new plan': true,
+      'peter_henderson': true, '皮特·亨德森': true, '彼特·亨德森': true, 'peter henderson': true,
+      'recruitment': true, '招募': true,
+      'year_1974': true, '1974': true, '1974年': true,
+      'texarkana': true, '特克萨卡纳': true,
+      'priest': true, '牧师': true,
+      'arthur_dawson': true, 'arthur dawson': true, '亚瑟·道森': true, '亚瑟': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -323,7 +264,18 @@ const App: React.FC = () => {
         hasEast12thSt: lowerQuery.includes('东12街') || lowerQuery.includes('east 12th st') || lowerQuery.includes('east_12th_st'),
         hasExecutionRoom: lowerQuery.includes('行刑室') || lowerQuery.includes('execution room') || lowerQuery.includes('execution_room'),
         hasYear1965: lowerQuery.includes('1965') || lowerQuery.includes('year_1965'),
-        hasJohnMorrissey: lowerQuery.includes('john_morrissey') || lowerQuery.includes('john morrissey') || lowerQuery.includes('约翰·莫里西') || lowerQuery.includes('约翰莫里西')
+        hasJohnMorrissey: lowerQuery.includes('john_morrissey') || lowerQuery.includes('john morrissey') || lowerQuery.includes('约翰·莫里西') || lowerQuery.includes('约翰莫里西'),
+        hasStLouis: lowerQuery.includes('st_louis') || lowerQuery.includes('圣路易斯') || lowerQuery.includes('st louis'),
+        hasMaggots: lowerQuery.includes('maggots') || lowerQuery.includes('蛆虫') || lowerQuery.includes('vermin'),
+        hasDavenport: lowerQuery.includes('davenport') || lowerQuery.includes('达文波特') || lowerQuery.includes('达文波特市'),
+        hasNewPlan: lowerQuery.includes('new_plan') || lowerQuery.includes('new plan') || lowerQuery.includes('新计划'),
+        hasPeterHenderson: lowerQuery.includes('peter_henderson') || lowerQuery.includes('peter henderson') || lowerQuery.includes('皮特·亨德森') || lowerQuery.includes('彼特·亨德森'),
+        hasRecruitment: lowerQuery.includes('recruitment') || lowerQuery.includes('招募'),
+        hasYear1974: lowerQuery.includes('1974') || lowerQuery.includes('year_1974'),
+        hasTexarkana: lowerQuery.includes('texarkana') || lowerQuery.includes('特克萨卡纳'),
+        hasPriest: lowerQuery.includes('priest') || lowerQuery.includes('牧师'),
+        hasDirtyFrank: lowerQuery.includes('dirty_frank') || lowerQuery.includes('脏弗兰克酒吧') || lowerQuery.includes('dirty frank'),
+        hasDismemberment: lowerQuery.includes('dismemberment_case') || lowerQuery.includes('碎尸案') || lowerQuery.includes('dismemberment')
       };
     };
 
@@ -345,9 +297,8 @@ const App: React.FC = () => {
       }
 
       setTimeout(() => {
-        const node = nodes.find(n => n.id === 'confession_1');
+        const node = nodes.find(id => id.id === 'confession_1');
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_1;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -355,9 +306,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -385,9 +333,8 @@ const App: React.FC = () => {
       }
 
       setTimeout(() => {
-        const node = nodes.find(n => n.id === 'confession_2');
+        const node = nodes.find(id => id.id === 'confession_2');
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_2;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -395,9 +342,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -425,9 +369,8 @@ const App: React.FC = () => {
       }
 
       setTimeout(() => {
-        const node = nodes.find(n => n.id === 'confession_3');
+        const node = nodes.find(id => id.id === 'confession_3');
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_3;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -435,9 +378,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -465,9 +405,17 @@ const App: React.FC = () => {
       }
 
       setTimeout(() => {
-        const node = nodes.find(n => n.id === 'confession_13');
+        let node = nodes.find(n => n.id === 'confession_13');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_13');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_13;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -475,9 +423,142 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+
+    // Confession 14: St. Louis AND Maggots (STRICT)
+    if (validation.hasStLouis && validation.hasMaggots) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: "你在说什么？想从我这套话,你得有点东西交换才行。"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_14');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_14');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 15: Davenport AND New Plan (STRICT)
+    if (validation.hasDavenport && validation.hasNewPlan) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: "你在说什么？想从我这套话,你得有点东西交换才行。"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_15');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_15');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 16: Texarkana AND Dismemberment Case (STRICT)
+    if (validation.hasTexarkana && validation.hasDismemberment) {
+      if (!validation.valid) {
+        setGameState(prev => ({
+          ...prev,
+          history: [
+            ...prev.history,
+            { type: 'info', content: '> [R. CAPONE]: "你在说什么？想从我这套话,你得有点东西交换才行。"', timestamp: Date.now() }
+          ]
+        }));
+        setIsProcessing(false);
+        return;
+      }
+
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_16');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_16');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -507,7 +588,6 @@ const App: React.FC = () => {
       setTimeout(() => {
         const node = nodes.find(n => n.id === 'confession_4');
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_4;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -515,9 +595,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -557,7 +634,6 @@ const App: React.FC = () => {
         }
 
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_5;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -565,9 +641,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -639,22 +712,16 @@ const App: React.FC = () => {
         }
 
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_6;
           const isAlreadyUnlocked = gameState.unlockedNodeIds.includes(node.id);
 
           setGameState(prev => ({
             ...prev,
             activeNodeId: node!.id,
-            // Only add to unlocked and consume keywords if not already unlocked
             unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
             systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-            collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-            collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-            unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
             history: isAlreadyUnlocked ? prev.history : [
               ...prev.history,
               { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
-
             ]
           }));
         }
@@ -689,7 +756,6 @@ const App: React.FC = () => {
         }
 
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_7;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -697,9 +763,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -738,7 +801,6 @@ const App: React.FC = () => {
         }
 
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_8;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -746,9 +808,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -787,7 +846,6 @@ const App: React.FC = () => {
         }
 
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_9;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -795,9 +853,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -836,7 +891,6 @@ const App: React.FC = () => {
         }
 
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_10;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -844,9 +898,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -885,7 +936,6 @@ const App: React.FC = () => {
         }
 
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_11;
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -893,9 +943,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -934,8 +981,6 @@ const App: React.FC = () => {
         }
 
         if (node) {
-          const keywords = CONFESSION_KEYWORDS.confession_12;
-
           setGameState(prev => {
             const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
             return {
@@ -943,9 +988,6 @@ const App: React.FC = () => {
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
-              collectedClues: isAlreadyUnlocked ? prev.collectedClues : prev.collectedClues.filter(id => !keywords.clues.includes(id)),
-              collectedYears: isAlreadyUnlocked ? prev.collectedYears : prev.collectedYears.filter(id => !keywords.years.includes(id)),
-              unlockedPeople: isAlreadyUnlocked ? prev.unlockedPeople : prev.unlockedPeople.filter(id => !keywords.people.includes(id)),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
@@ -968,6 +1010,11 @@ const App: React.FC = () => {
     // Clipping 12 Unlock: 1965 + John Morrissey
     if (validation.hasYear1965 && validation.hasJohnMorrissey) {
       handleUnlockArchive('kc_1965');
+    }
+
+    // Clipping 13 Unlock: 1976 + Peter Henderson
+    if (validation.hasYear1976 && validation.hasPeterHenderson) {
+      handleUnlockArchive('ia_1976');
     }
 
     // Track consecutive invalid inputs for special easter egg
@@ -1251,6 +1298,22 @@ const App: React.FC = () => {
     }
   }, [gameState.consecutiveSearch, gameState.history, nodes]);
 
+  // --- SYNC NODES WITH UNLOCKED IDS (Safety for Debug Jumps) ---
+  React.useEffect(() => {
+    const missingNodes = gameState.unlockedNodeIds.filter(id => !nodes.some(n => n.id === id));
+    if (missingNodes.length > 0) {
+      const newNodes = missingNodes.map(id => CORE_NODES.find(n => n.id === id)).filter(Boolean) as MemoryNode[];
+      if (newNodes.length > 0) {
+        setNodes(prev => {
+          // Double check to prevent duplicates in race conditions
+          const existingIds = new Set(prev.map(n => n.id));
+          const uniqueNewNodes = newNodes.filter(n => !existingIds.has(n.id));
+          return uniqueNewNodes.length > 0 ? [...prev, ...uniqueNewNodes] : prev;
+        });
+      }
+    }
+  }, [gameState.unlockedNodeIds, nodes]);
+
   const handleShatter = (id: string) => {
     // Logic to "Break" the bubble and go deeper
     setNodes(prev => prev.map(n => {
@@ -1283,88 +1346,69 @@ const App: React.FC = () => {
   };
 
   const handleCollectClue = (clueId: string, word: string) => {
-    // Define Categories - COMPREHENSIVE CLASSIFICATION SYSTEM
-    const DOSSIER_WHITELIST = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'];
-    const PEOPLE_IDS = ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller'];
-    const YEAR_IDS = ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975', 'year_1976'];
-    const LOCATION_IDS = ['east_12th_st'];
-
-    const isDossier = DOSSIER_WHITELIST.includes(clueId);
-    const isPerson = PEOPLE_IDS.includes(clueId);
-    const isYear = YEAR_IDS.includes(clueId);
+    const isDossier = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'].includes(clueId);
+    const isPerson = CATEGORY_IDS.PEOPLE.includes(clueId);
+    const isYear = CATEGORY_IDS.YEARS.includes(clueId);
+    const isLocation = CATEGORY_IDS.LOCATIONS.includes(clueId);
+    const isCase = CATEGORY_IDS.CASES.includes(clueId);
 
     // Use functional update to ensure we always have the latest state
     setGameState(prev => {
+      const currentConsumed = new Set<string>();
+      prev.unlockedNodeIds.forEach(id => {
+        const list = KEYWORD_CONSUMPTION_MAP[id];
+        if (list) list.forEach(k => currentConsumed.add(k));
+      });
+
       const updates: Partial<GameState> = {};
       const newHistory: Array<{ type: 'search' | 'info' | 'shatter'; content: string; timestamp: number }> = [];
 
-      // --- LOGIC: RELATIONSHIPS ---
+      // REWARDS: These skip consumption checks
+      const REWARD_IDS = ['recruitment', 'priest', 'morning', 'year_1974', 'texarkana', 'el_paso', 'dirty_frank', 'dismemberment_case'];
+      const isReward = REWARD_IDS.includes(clueId);
+
+      if (!isReward && currentConsumed.has(clueId)) return prev;
+
+      // UNIFIED COLLECTION LOGIC
       if (isPerson) {
         let unlockedId = clueId;
         if (clueId === 'robert' || clueId === 'robert_capone') unlockedId = 'capone';
-
         if (!prev.unlockedPeople.includes(unlockedId)) {
           updates.unlockedPeople = [...prev.unlockedPeople, unlockedId];
-          newHistory.push({
-            type: 'info',
-            content: `[PERSON IDENTIFIED]: ${word} 已收录到人物关系与关键词`,
-            timestamp: Date.now()
-          });
+          newHistory.push({ type: 'info', content: `[PERSON IDENTIFIED]: ${word} 已收录到人物关系`, timestamp: Date.now() });
         }
       }
-      // --- LOGIC: CASE DOSSIER (EXCLUSIVE) ---
       else if (isDossier) {
         if (!prev.collectedDossierIds.includes(clueId)) {
           updates.collectedDossierIds = [...(prev.collectedDossierIds || []), clueId];
-
-          const isMainFolder = ['project', 'julip', 'graywater_beacon'].includes(clueId);
-          const feedbackMsg = isMainFolder
-            ? `[EVIDENCE FILED]: ${word} >>> 已在案卷建档中建立文件夹`
-            : `[EVIDENCE FILED]: ${word} 已收录到案卷建档`;
-
-          newHistory.push({
-            type: 'info',
-            content: feedbackMsg,
-            timestamp: Date.now()
-          });
+          newHistory.push({ type: 'info', content: `[EVIDENCE FILED]: ${word} 已收录到案卷建档`, timestamp: Date.now() });
         }
-
-        if (clueId === 'julip') {
-          if (!prev.collectedClues.includes(clueId)) {
-            updates.collectedClues = [...prev.collectedClues, clueId];
-            newHistory.push({
-              type: 'info',
-              content: `[KEYWORD RECORDED]: ${word} 已同时收录到关键词提示`,
-              timestamp: Date.now()
-            });
-          }
+        if (clueId === 'julip' && !prev.collectedClues.includes(clueId)) {
+          updates.collectedClues = [...prev.collectedClues, clueId];
+          newHistory.push({ type: 'info', content: `[KEYWORD RECORDED]: ${word} 已收录至检索提示`, timestamp: Date.now() });
         }
       }
-      // --- LOGIC: YEARS (Silent Archive Prompts) ---
       else if (isYear) {
-        if (!prev.collectedYears.includes(clueId)) {
-          updates.collectedYears = [...prev.collectedYears, clueId];
+        // Years can be re-collected for different archive triggers
+        // Always add to array (even if duplicate) to support multiple uses
+        updates.collectedYears = [...prev.collectedYears, clueId];
+      }
+      else if (isLocation || isCase) {
+        if (!prev.collectedClues.includes(clueId)) {
+          updates.collectedClues = [...prev.collectedClues, clueId];
+          const label = isLocation ? 'LOCATION' : 'CASE';
+          newHistory.push({ type: 'info', content: `[${label} IDENTIFIED]: ${word} 已收录`, timestamp: Date.now() });
         }
       }
-      // --- LOGIC: GENERIC KEYWORDS (Prompts Only) ---
       else {
         if (!prev.collectedClues.includes(clueId)) {
           updates.collectedClues = [...prev.collectedClues, clueId];
-          newHistory.push({
-            type: 'info',
-            content: `[KEYWORD RECORDED]: ${word} 已收录到关键词提示`,
-            timestamp: Date.now()
-          });
+          newHistory.push({ type: 'info', content: `[KEYWORD RECORDED]: ${word} 已记下`, timestamp: Date.now() });
         }
       }
 
-      // Only update if there are changes
       if (Object.keys(updates).length > 0 || newHistory.length > 0) {
-        return {
-          ...prev,
-          ...updates,
-          history: [...prev.history, ...newHistory]
-        };
+        return { ...prev, ...updates, history: [...prev.history, ...newHistory] };
       }
       return prev;
     });
@@ -1387,13 +1431,13 @@ const App: React.FC = () => {
   };
 
   const handleConsumeKeywords = (yearIds: string[], personIds: string[]) => {
+    // PERSISTENCE OVERHAUL: We no longer physically remove keywords from state.
+    // Visual consumption is handled by KEYWORD_CONSUMPTION_MAP in components.
     setGameState(prev => ({
       ...prev,
-      collectedYears: prev.collectedYears.filter(id => !yearIds.includes(id)),
-      unlockedPeople: prev.unlockedPeople.filter(id => !personIds.includes(id)), // Fixed: Remove from unlockedPeople, not collectedClues
       history: [
         ...prev.history,
-
+        { type: 'info', content: '[SYSTEM LOG]: 信息已关联至指定卷宗', timestamp: Date.now() }
       ]
     }));
   };
@@ -1448,31 +1492,32 @@ const App: React.FC = () => {
 
       {gameState.phase === 'immersion' && (
         <motion.div key="immersion" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-          <SimplifiedMainView
-            nodes={visibleNodes}
-            onNodeClick={(id) => setGameState(p => ({ ...p, activeNodeId: id }))}
-            activeNodeId={gameState.activeNodeId}
-            onSearch={handleSearch}
-            history={gameState.history}
-            isProcessing={isProcessing}
-            activeNode={activeNode}
-            onShatter={handleShatter}
-            collectedClues={gameState.collectedClues}
-            collectedYears={gameState.collectedYears}
-            unlockedPeople={gameState.unlockedPeople}
-            onCollectClue={handleCollectClue}
-            unlockedArchiveIds={gameState.unlockedArchiveIds}
-            onUnlockArchive={handleUnlockArchive}
-            onConsumeKeywords={handleConsumeKeywords}
-            onCollectAttachment={handleCollectAttachment}
-            collectedDossierIds={gameState.collectedDossierIds || []}
-            collectedAttachments={gameState.collectedAttachments || []}
-            systemStability={gameState.systemStability}
-            onStoryNodeComplete={handleStoryNodeComplete}
-            onRetrace={handleRetrace}
-            onClearUnusedKeywords={handleClearUnusedKeywords}
-            currentStoryNode={gameState.currentStoryNode}
-          />
+          <ErrorBoundary>
+            <SimplifiedMainView
+              nodes={visibleNodes}
+              onNodeClick={(id) => setGameState(p => ({ ...p, activeNodeId: id }))}
+              activeNodeId={gameState.activeNodeId}
+              onSearch={handleSearch}
+              history={gameState.history}
+              isProcessing={isProcessing}
+              activeNode={activeNode}
+              onShatter={handleShatter}
+              collectedClues={gameState.collectedClues}
+              collectedYears={gameState.collectedYears}
+              unlockedPeople={gameState.unlockedPeople}
+              onCollectClue={handleCollectClue}
+              unlockedArchiveIds={gameState.unlockedArchiveIds}
+              onUnlockArchive={handleUnlockArchive}
+              onConsumeKeywords={handleConsumeKeywords}
+              onCollectAttachment={handleCollectAttachment}
+              collectedDossierIds={gameState.collectedDossierIds || []}
+              collectedAttachments={gameState.collectedAttachments || []}
+              onStoryNodeComplete={handleStoryNodeComplete}
+              onRetrace={handleRetrace}
+              onClearUnusedKeywords={handleClearUnusedKeywords}
+              currentStoryNode={gameState.currentStoryNode}
+            />
+          </ErrorBoundary>
         </motion.div>
       )}
     </AnimatePresence>

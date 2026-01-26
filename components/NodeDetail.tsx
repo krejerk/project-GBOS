@@ -23,7 +23,8 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   collectedAttachments = [],
   clueDisplayMap = {}
 }) => {
-  const current = node.layers[node.currentLayer] || node.layers[MemoryLayer.SURFACE];
+  // Safety: Fallback to SURFACE if current layer is missing (e.g. CORE not yet defined)
+  const current = (node.layers[node.currentLayer] || node.layers[MemoryLayer.SURFACE])!;
   const currentContent = node.layers[node.currentLayer];
   const canShatter = node.currentLayer !== MemoryLayer.CORE;
   const currentLayerNum = node.currentLayer === MemoryLayer.SURFACE ? 1 : node.currentLayer === MemoryLayer.DEEP ? 2 : 3;
@@ -33,14 +34,14 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   const [collectionFeedback, setCollectionFeedback] = React.useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
 
   const handleAttemptCollect = (targetClueId: string) => {
-    if (targetClueId === 'graywater_beacon') {
-      if (onCollectAttachment) onCollectAttachment('graywater_beacon'); // Collect the image/dossier linkage
+    if (targetClueId === 'graywater_beacon' || (node.id === 'confession_16' && targetClueId === 'project')) {
+      if (onCollectAttachment) {
+        onCollectAttachment(node.id === 'confession_16' ? 'record_of_accounts' : 'graywater_beacon');
+      }
       setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
       setTimeout(() => {
         setIsSelectingFolder(false);
         setCollectionFeedback({ type: null, msg: '' });
-        // Also update local state to hide visual if desired, or just show it's collected.
-        // We rely on parent state update re-rendering this component used in `isImageCollected` check below.
       }, 1500);
     } else {
       setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
@@ -132,37 +133,60 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     '混乱美学': 'chaos_aesthetics'
   };
 
+  const CONFESSION_14_KEYWORDS: Record<string, string> = {
+    '达文波特': 'davenport',
+    '新计划': 'new_plan'
+  };
+
+  const CONFESSION_15_KEYWORDS: Record<string, string> = {
+    '皮特·亨德森': 'peter_henderson',
+    '彼特·亨德森': 'peter_henderson'
+  };
+
+  const CONFESSION_16_KEYWORDS: Record<string, string> = {
+    '亚瑟·道森': 'arthur_dawson',
+    '亚瑟': 'arthur_dawson'
+  };
+
   // Select keyword map based on node ID
-  const KEYWORD_MAP = node.id === 'confession_13'
-    ? CONFESSION_13_KEYWORDS
-    : node.id === 'confession_12'
-      ? CONFESSION_12_KEYWORDS
-      : node.id === 'confession_11'
-        ? CONFESSION_11_KEYWORDS
-        : node.id === 'confession_10'
-          ? CONFESSION_10_KEYWORDS
-          : node.id === 'confession_9'
-            ? CONFESSION_9_KEYWORDS
-            : node.id === 'confession_8'
-              ? CONFESSION_8_KEYWORDS
-              : node.id === 'confession_7'
-                ? CONFESSION_7_KEYWORDS
-                : node.id === 'confession_6'
-                  ? CONFESSION_6_KEYWORDS
-                  : node.id === 'confession_5'
-                    ? CONFESSION_5_KEYWORDS
-                    : node.id === 'confession_4'
-                      ? CONFESSION_4_KEYWORDS
-                      : node.id === 'confession_3'
-                        ? CONFESSION_3_KEYWORDS
-                        : node.id === 'confession_2'
-                          ? CONFESSION_2_KEYWORDS
-                          : CONFESSION_1_KEYWORDS;
+  const KEYWORD_MAP = node.id === 'confession_16'
+    ? CONFESSION_16_KEYWORDS
+    : node.id === 'confession_15'
+      ? CONFESSION_15_KEYWORDS
+      : node.id === 'confession_14'
+        ? CONFESSION_14_KEYWORDS
+        : node.id === 'confession_13'
+          ? CONFESSION_13_KEYWORDS
+          : node.id === 'confession_12'
+            ? CONFESSION_12_KEYWORDS
+            : node.id === 'confession_11'
+              ? CONFESSION_11_KEYWORDS
+              : node.id === 'confession_10'
+                ? CONFESSION_10_KEYWORDS
+                : node.id === 'confession_9'
+                  ? CONFESSION_9_KEYWORDS
+                  : node.id === 'confession_8'
+                    ? CONFESSION_8_KEYWORDS
+                    : node.id === 'confession_7'
+                      ? CONFESSION_7_KEYWORDS
+                      : node.id === 'confession_6'
+                        ? CONFESSION_6_KEYWORDS
+                        : node.id === 'confession_5'
+                          ? CONFESSION_5_KEYWORDS
+                          : node.id === 'confession_4'
+                            ? CONFESSION_4_KEYWORDS
+                            : node.id === 'confession_3'
+                              ? CONFESSION_3_KEYWORDS
+                              : node.id === 'confession_2'
+                                ? CONFESSION_2_KEYWORDS
+                                : CONFESSION_1_KEYWORDS;
 
   // Track animation states for collected keywords
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});
   const [isVisualRevealed, setIsVisualRevealed] = React.useState(false);
-  const isImageCollected = collectedAttachments.includes('graywater_beacon');
+  const isImageCollected = node.id === 'confession_16'
+    ? collectedAttachments.includes('record_of_accounts')
+    : collectedAttachments.includes('graywater_beacon');
   const [isStabilized, setIsStabilized] = React.useState(false);
 
   React.useEffect(() => {
@@ -503,6 +527,74 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                           <div className="absolute bottom-0 left-0 w-full bg-black/90 p-3 text-center transition-transform duration-500 translate-y-full group-hover/image:translate-y-0">
                             <span className="text-[10px] font-mono tracking-[0.4em] text-[#d89853]">
                               {isImageCollected ? '>> DATA PERMANENTLY STORED <<' : 'ADD TO CASE FOLDER (DOSSIER)'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Special Case: Confession 16 Visual Signal */}
+                {node.id === 'confession_16' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2, duration: 1 }}
+                    className="mt-16 p-8 bg-[#c85a3f]/5 border border-[#c85a3f]/20 rounded-sm relative overflow-hidden group/visual"
+                  >
+                    <div className="absolute top-0 right-0 p-2 opacity-50">
+                      <AlertCircle size={16} className="text-[#c85a3f] animate-pulse" />
+                    </div>
+
+                    {!isVisualRevealed ? (
+                      <div
+                        className="cursor-pointer hover:bg-[#c85a3f]/10 p-4 rounded text-center transition-all group-hover/visual:scale-[1.01]"
+                        onClick={() => setIsVisualRevealed(true)}
+                      >
+                        <p className="text-xs text-[#c85a3f] font-mono tracking-[0.3em] mb-3 animate-pulse">
+                          [SYSTEM]: 侦测到残留视觉信号 (VISUAL TRACE)
+                        </p>
+                        <div className="inline-block border border-[#d89853]/40 px-6 py-2 text-sm text-[#d89853] hover:bg-[#d89853] hover:text-black transition-all font-bold">
+                          解析视觉记忆块 {" >> "}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-6 animate-in fade-in zoom-in duration-1000">
+                        <div className="flex items-center justify-between border-b border-[#c85a3f]/30 pb-2">
+                          <span className="text-[10px] text-[#c85a3f] font-mono tracking-widest uppercase">Visual Artifact Extracted</span>
+                          <div className="h-1 flex-1 mx-4 bg-[repeating-linear-gradient(90deg,#c85a3f,#c85a3f_2px,transparent_2px,transparent_4px)] opacity-20" />
+                        </div>
+
+                        <div
+                          className="relative group/image cursor-pointer overflow-hidden border border-[#d89853]/20 shadow-2xl"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (!isImageCollected) setIsSelectingFolder(true);
+                          }}
+                        >
+                          <img
+                            src="assets/record_of_accounts.jpg"
+                            alt="Record of Accounts"
+                            className={`w-full h-auto object-cover grayscale brightness-50 group-hover/image:grayscale-0 group-hover/image:brightness-100 transition-all duration-1000 ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`}
+                          />
+
+                          {/* Success Stamp */}
+                          {isImageCollected && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <motion.div
+                                initial={{ scale: 2, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 0.8 }}
+                                className="border-8 border-[#d89853] text-[#d89853] p-4 font-black text-4xl tracking-widest uppercase rotate-[-15deg] bg-black/40 backdrop-blur-sm mix-blend-screen"
+                              >
+                                ARCHIVED
+                              </motion.div>
+                            </div>
+                          )}
+
+                          <div className="absolute bottom-0 left-0 w-full bg-black/90 p-3 text-center transition-transform duration-500 translate-y-full group-hover/image:translate-y-0">
+                            <span className="text-[10px] font-mono tracking-[0.4em] text-[#d89853]">
+                              {isImageCollected ? '>> DATA PERMANENTLY STORED <<' : 'ADD TO CASE FOLDER (RECORD OF ACCOUNTS)'}
                             </span>
                           </div>
                         </div>
