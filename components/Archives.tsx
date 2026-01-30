@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Archive, Search, X, ShieldAlert, Stamp, ChevronRight, File, FolderOpen, Folder } from 'lucide-react';
-import { CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS } from '../constants';
+import { CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS, ARCHIVE_CASE_HIGHLIGHT_MAP, GLOBAL_KEYWORD_MAP } from '../constants';
 
 interface ArchivesProps {
     isOpen: boolean;
@@ -58,7 +58,7 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
             content: [
                 '本报讯 —— 本周一晨，两名武装劫匪袭击了索科区主街的州立储蓄银行。作案过程极为迅速，歹徒表现出的残暴程度令全镇陷入恐慌。',
                 '据现场目击者描述，劫匪在警方抵达前几分钟便已携带数额不明的现金，驾驶深色福特轿车逃离。令人不寒而栗的是，即便在如此短的响应时间里，且职员已完全配合交出财物的情况下，劫匪仍对多名人质实施了残暴且毫无必要的殴打与凌虐。一名治安官发言人表示：“这不像是为了钱，更像是在宣泄某种纯粹的恶意。”',
-                '据多名证人证实，两名劫匪作案时均佩戴着显眼的异族头饰，目前尚不清楚这是否是劫匪故意留下的某种符号。州警署现已封锁现场，案件仍在紧张侦办中。'
+                '据多名证人证实，两名劫匪作案时均佩戴着显眼的异族头饰，目前尚不清楚这是否是劫匪故意留下的某种符号。州警署现已封载现场，案件仍在紧张侦办中。'
             ]
         },
         annotation: {
@@ -76,6 +76,71 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 **符号污染（Symbolic Contamination）：**
 关于“阿尔衮琴头饰”的目击记录引起了我的高度关注。这并非简单的伪装。根据此前对该邪教原型的研究，这很可能是一种“剥夺式标记”。他们通过佩戴传统饰品以对犯罪动机进行宣言式展示，但表演性令人可疑。建议将此细节与“1968年「俄亥俄州」「祭祀案」”中的面具特征进行交叉比对。
             `,
+            template: 'REGGIE'
+        }
+    },
+    {
+        id: 'archive_15',
+        title: '1977年沙丘公园遗骸案',
+        triggers: {
+            year: '1977',
+            person: ['richie_dreyfuss', '里奇', '里奇·德莱弗斯', 'Richie']
+        },
+        newspaper: {
+            source: '《加里邮报论坛》',
+            date: '1977年3月14日',
+            headline: '沙丘公园惊现外地逃犯遗骸，警方怀疑涉及东海岸黑帮纠纷',
+            content: [
+                '本报讯（印第安纳州，加里市）——随着冬雪消融，印第安纳沙丘州立公园（Indiana Dunes State Park）的一名巡林员在距湖岸线约半英里的树林中发现了一处被动物刨开的浅坑。坑内发现了一具男性人类骸骨。',
+                '现场极其惨烈。据验尸官办公室透露，死者死亡时间估计在八到十年前，由于埋藏极浅（深度不足两英尺），尸体大部分骨骼已被野狼和食腐动物啃食并拖散，导致遗骸分布在方圆三十码的范围内。',
+                '尽管尸体破坏严重，但警方在残留的衣物碎片中发现了一个用防水胶带层层包裹的皮夹。经联邦调查局指纹比对及证件确认，死者为38岁的里奇·德莱弗斯（Richie Dreyfuss）。',
+                '德莱弗斯是费城警方记录在案的犯罪分子，涉及多起诈骗、销赃及伪造证件案件。他于1971年秋季在费城最后一次露面后失踪。费城警局有组织犯罪科此前一直认为他因卷入帮派债务纠纷而被水泥封尸沉入了斯库基尔河。莱克县警长表示：“这显然是一起典型的黑帮处决。凶手将受害者从东海岸绑架至此，杀害后草草掩埋。”'
+            ]
+        },
+        annotation: {
+            fileId: 'E-1981-CR-09',
+            date: '1981年4月5日',
+            level: 'FBI 行为科学部',
+            author: '雷吉博士 (Dr. Reggie)',
+            content: `【针对“印第安纳沙丘尸体”与中西部走廊网络的化学关联证据】\n\n局长：\n这些结论既懒惰又可笑。县警长的结论仅仅是因为死者生前是个黑帮成员。如果这是黑帮处决，为什么要把尸体运到离费城700英里的印第安纳荒野？\n\n看看里奇·德莱弗斯的骨头报告吧。肋骨和腿骨虽然被狼叼走了，但头骨是完整的。没有弹孔。没有裂痕。一个被仇家追杀千里的混混，身上没有任何致命外伤？难道黑帮是把他活活骂死的吗？\n\n我要求对那个皮夹进行了二次质谱分析。结果证实了我的猜想「见附录」。\n\n在驾照的塑封边缘，我们分离出了一种极微量的粘性残留物。其成分包括：结晶蔗糖、薄荷油提取物、波本威士忌，以及高浓度的乳脂酸。这种独特的化学指纹，我们之前在哪里见过？请调阅1969年圣路易斯“河船赌场失踪案” 的现场勘查报告。在这起案件的关联证物上，也出现了这种相同的痕迹。`,
+            template: 'REGGIE'
+        }
+    },
+    {
+        id: 'archive_16',
+        title: '1974年费城酒吧凶案',
+        triggers: {
+            year: '1974',
+            person: ['morning', '莫宁', 'Morning']
+        },
+        newspaper: {
+            source: '《费城询问报》(The Philadelphia Inquirer)',
+            date: '1974年7月12日',
+            headline: '南费城酒吧惨案：深受爱戴的老板在自家店中遇害',
+            content: [
+                '本报讯——费城警方正在调查一起发生在南区著名的"脏弗兰克"酒吧内的恶性凶杀案。酒吧老板，现年58岁的莫宁·斯塔尔，于今日凌晨被送货司机发现死于吧台后。现场情况极其残忍，警方未透露细节，但据知情人士称，受害者遭受了"极度过度的暴力攻击"，凶器疑似为酒吧常用的冰锥。',
+                '斯塔尔先生在社区内颇有人缘，警方目前排除了抢劫杀人的可能性，因为收银机内的现金分文未动。凶案组正在寻找一名关键目击者/嫌疑人。据附近居民描述，案发前后曾看到一名年轻女性慌张地从酒吧后巷跑出。',
+                '令人困惑的是目击者对该女子的描述："她看起来很年轻，大概二十岁出头，穿着那种去教堂才会穿的白色裙子，长着一张像洋娃娃一样无辜的脸。她看起来吓坏了，但这很奇怪，因为她身上并没有明显的血迹。"警方呼吁任何知情者提供线索。社区居民对斯塔尔先生的遭遇感到震惊和悲痛，称他是一个"只想退休过安稳日子的好人"。'
+            ]
+        },
+        annotation: {
+            fileId: 'E-1981-CR-12',
+            date: '1981年5月10日',
+            level: 'FBI 行为科学部 (BSU)',
+            author: '雷吉博士 (Dr. Reggie)',
+            content: `【FBI 内部评估批注】
+
+抄送：BSU全体成员
+
+先生们：
+
+上周早些时候，三年前丹佛市郊的一起警员遇害案的凶器终于被找到，通过跨州证物部门的合作，这件冰锥被认为与数年前一起旧案存在关联，目前相关性还在核实，但我要求你们，重新审视这起1974年的费城旧案。
+
+地方警察把它当成了变态杀手随机作案，但他们错了。莫宁·斯塔尔不是什么"好人"。根据我最新的情报交叉比对，他是那个跨州犯罪网络在东海岸最早的"节点"之一。这间酒吧就是他们的安全屋和联络站。
+
+他的死，标志着该组织从"潜伏期"进入了"活跃清洗期"。这是一次内部处决。但最让我感兴趣的，是那个目击者描述的嫌疑人——"穿着白裙子的洋娃娃脸女孩"。这个描述与我们目前掌握的该组织已知女性成员的侧写完全不符，后者通常被描述为紧张、憔悴、是被动的受害者。而费城这个女孩……看看验尸报告。死者身上有四十二处冰锥伤口，大部分是在死后造成的，这显示出不受抑制的攻击性和仪式感。
+
+一个年轻、女性、具有极高反社会人格特质、且极其擅长伪装成无辜者的新成员加入了那个移动的杀戮小组。我们必须找出这个女人是谁。如果她已经上了那辆房车，那么那个原本极其不稳定的化学反应堆，刚刚又被加入了一种新的催化剂。`,
             template: 'REGGIE'
         }
     },
@@ -603,67 +668,11 @@ export const Archives: React.FC<ArchivesProps> = ({
     const [collectionFeedback, setCollectionFeedback] = useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
 
     // Keyword mapping for archives - for annotation highlighting
-    const ARCHIVE_KEYWORD_MAP: Record<string, string> = {
-        '1965': 'year_1965',
-        '1965年': 'year_1965',
-        '俄亥俄州': 'ohio',
-        '祭祀案': 'ritual_case',
-        '1967': 'year_1967',
-        '碎尸案': 'dismemberment_case',
-        '1402 Old Dominion Rd.': '1402_old_dominion_rd',
-        '灭门案': 'family_massacre',
-        '训练日': 'training_day',
-        '莫哈韦休息站': 'mojave_rest_stop',
-        '空烟盒': 'empty_cigarette_pack',
-        '1972': 'year_1972',
-        '玛莎·迪亚兹': 'martha_diaz',
-        '1990': 'year_1990',
-        '1990年': 'year_1990',
-        '小A.W.威尔莫': 'aw_wilmo',
-        '小威尔莫': 'aw_wilmo',
-        '1973': 'year_1973',
-        '1973年': 'year_1973',
-        '朱莉': 'julie',
-        '母亲': 'the_mother',
-        '瓦妮莎': 'vanessa',
-        '塞勒斯': 'silas',
-        '赛勒斯': 'silas',
-        '辛辛那提': 'cincinnati',
-        '1986': 'year_1986',
-        '1986年': 'year_1986',
-        '薄荷计划': 'mint_plan',
-        '伯克斯维尔': 'burkesville',
-        '1975': 'year_1975',
-        '1975年': 'year_1975',
-        'KLUB-75号分析报告': 'klub75_report',
-        'KLUB-75': 'klub75_report',
-        '匡提科': 'quantico',
-        'Quantico': 'quantico',
-        '堪萨斯城': 'kansas_city',
-        '流动献血车': 'mobile_blood_truck',
-        '1976': 'year_1976',
-        '1976年': 'year_1976',
-        '杰西潘尼': 'jc_penney',
-        '东12街': 'east_12th_st',
-        '行刑室': 'execution_room',
-        '尼比': 'nibi',
-        '康查尔': 'conchar',
-        '伦德格兰': 'lundgren',
-        '莫宁': 'morning',
-        '雷吉博士': 'dr_reggie',
-        '约翰·莫里西': 'john_morrissey',
-        '罗格·毕比': 'roger_beebe',
-        '小德里克·维恩': 'little_derek_wayne',
-        '鲍里斯·斯米尔诺夫': 'boris_smirnov',
-        '朱维尔·钱伯斯': 'juvell_chambers',
-        '辛西娅·米勒': 'cynthia_miller',
-        '混乱美学': 'chaos_aesthetics',
-        '圣路易斯': 'st_louis',
-        '蛆虫': 'maggots',
-        '达文波特市': 'davenport',
-        '皮特·亨德森': 'peter_henderson',
-        '彼特·亨德森': 'peter_henderson'
-    };
+    // Derived from GLOBAL_KEYWORD_MAP for search and click handling
+    const ARCHIVE_KEYWORD_MAP: Record<string, string> = Object.entries(GLOBAL_KEYWORD_MAP).reduce((acc, [word, info]) => {
+        acc[word] = info.id;
+        return acc;
+    }, {} as Record<string, string>);
 
     // Clue display mapping for quick selection chips
     // Consolidating CLUE_DISPLAY_MAP into constants.tsx
@@ -721,6 +730,20 @@ export const Archives: React.FC<ArchivesProps> = ({
             return;
         }
 
+        // Richie's ID card goes to julip dossier
+        if (attachmentImage === 'assets/richie_id_card.jpg' && targetClueId === 'julip') {
+            if (onCollectAttachment) {
+                onCollectAttachment('richie_id_card');
+            }
+            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+            setTimeout(() => {
+                setAttachmentImage(null);
+                setIsSelectingFolder(false);
+                setCollectionFeedback({ type: null, msg: '' });
+            }, 1500);
+            return;
+        }
+
         setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
         setTimeout(() => setCollectionFeedback({ type: null, msg: '' }), 2000);
     };
@@ -728,17 +751,15 @@ export const Archives: React.FC<ArchivesProps> = ({
     const handleKeywordClick = (keyword: string) => {
         const clueId = ARCHIVE_KEYWORD_MAP[keyword];
         if (clueId) {
-            // Restore collection logic while keeping strict lane routing (handled by App.tsx)
-            // This ensures feedback and recording happens.
             if (onCollectClue) {
                 onCollectClue(clueId, keyword);
             }
 
-            // Also populate inputs for convenience (optional, keeping for UX)
-            // Check if it's a person or year based on simple heuristic or map
-            if (['1965', '1967', '1968', '1971', '1972', '1973', '1975', '1976', '1985', '1986', '1990'].includes(keyword)) {
-                setYearInput(keyword);
-            } else {
+            // Use GLOBAL_KEYWORD_MAP to determine the input field
+            const info = GLOBAL_KEYWORD_MAP[keyword];
+            if (info && info.type === 'year') {
+                setYearInput(keyword.replace('年', '')); // Strip '年' for the input if present
+            } else if (info && (info.type === 'person' || info.type === 'archive')) {
                 setPersonInput(keyword);
             }
         }
@@ -964,22 +985,21 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                     </div>
 
                                                     {/* Quick Select Keywords - ARCHIVES ONLY: Years + Archive People */}
-                                                    {(collectedYears.length > 0 || unlockedPeople.length > 0) && (
+                                                    {(collectedYears.length > 0 || unlockedPeople.length > 0 || (collectedClues && collectedClues.length > 0)) && (
                                                         <div className="flex flex-wrap gap-2 justify-center">
                                                             <div className="text-[10px] text-[#c85a3f]/40 uppercase tracking-widest w-full text-center mb-2">快速选择 / Quick Select</div>
 
-                                                            {[...new Set([...collectedYears, ...unlockedPeople].filter(Boolean))]
+                                                            {[...new Set([...collectedYears, ...unlockedPeople, ...(collectedClues || [])].filter(Boolean))]
                                                                 .filter(id => {
                                                                     const lowerId = id.toLowerCase();
                                                                     const isPerson = unlockedPeople.includes(id);
                                                                     const isYear = collectedYears.includes(id);
+                                                                    const isClue = collectedClues?.includes(id);
 
                                                                     // Exclusion list (same as SimplifiedMainView)
                                                                     if (['robert', 'capone', 'robert_capone', 'rubick', 'father', 'dr_reggie'].includes(lowerId)) return false;
 
-                                                                    // For people: only show if they have an ARCHIVE trigger (or are JC Penney for search context)
-                                                                    // We use a simplified check: does it have a display mapping AND is it relevant?
-                                                                    if (!isPerson && !isYear) return false;
+                                                                    if (!isPerson && !isYear && !isClue) return false;
 
                                                                     if (isPerson) {
                                                                         if (!CATEGORY_IDS.PEOPLE.includes(id)) return false;
@@ -1182,19 +1202,24 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     if (activeKeywords.length > 0) {
                                                                         const pattern = `(${activeKeywords.join('|')})`;
                                                                         const regex = new RegExp(pattern, 'g');
+                                                                        const highlightedIds = new Set<string>();
                                                                         return (
                                                                             <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
                                                                                 {para.split(regex).map((part, j) => {
                                                                                     if (activeKeywords.includes(part)) {
-                                                                                        return (
-                                                                                            <span
-                                                                                                key={j}
-                                                                                                onClick={() => handleKeywordClick(part)}
-                                                                                                className="cursor-pointer font-bold text-[#c85a3f] border-b border-[#c85a3f] hover:bg-[#c85a3f]/10"
-                                                                                            >
-                                                                                                {part}
-                                                                                            </span>
-                                                                                        );
+                                                                                        const clueId = ARCHIVE_KEYWORD_MAP[part];
+                                                                                        if (clueId && !highlightedIds.has(clueId)) {
+                                                                                            highlightedIds.add(clueId);
+                                                                                            return (
+                                                                                                <span
+                                                                                                    key={j}
+                                                                                                    onClick={() => handleKeywordClick(part)}
+                                                                                                    className="cursor-pointer font-bold text-[#c85a3f] border-b border-[#c85a3f] hover:bg-[#c85a3f]/10"
+                                                                                                >
+                                                                                                    {part}
+                                                                                                </span>
+                                                                                            );
+                                                                                        }
                                                                                     }
                                                                                     return <span key={j}>{part}</span>;
                                                                                 })}
@@ -1262,86 +1287,67 @@ export const Archives: React.FC<ArchivesProps> = ({
 
                                                         <div className="font-mono text-sm md:text-base leading-7 space-y-6 text-neutral-300 font-light border-l border-[#c85a3f]/10 pl-6">
                                                             {activeCase.annotation.content.split('\n').map((line, i) => {
-                                                                // Define keywords based on case ID
-                                                                const caseKeywords = activeCase.id === 'oh_1968'
-                                                                    ? ['俄亥俄州', '祭祀案', '1967']
-                                                                    : activeCase.id === 'dc_1967'
-                                                                        ? ['碎尸案']
-                                                                        : activeCase.id === 'va_1990'
-                                                                            ? []
-                                                                            : activeCase.id === 'il_1985'
-                                                                                ? ['1402 Old Dominion Rd.', '灭门案', '训练日']
-                                                                                : activeCase.id === 'nv_1971'
-                                                                                    ? ['莫哈韦休息站', '空烟盒']
-                                                                                    : activeCase.id === 'cin_1973'
-                                                                                        ? ['1986', '1986年', '薄荷计划']
-                                                                                        : activeCase.id === 'nas_1973'
-                                                                                            ? ['伯克斯维尔', '1975', '1975年']
-                                                                                            : activeCase.id === 'ky_1973'
-                                                                                                ? ['KLUB-75号分析报告', '匡提科', 'Quantico']
-                                                                                                : activeCase.id === 'kan_1976'
-                                                                                                    ? ['东12街', '行刑室']
-                                                                                                    : activeCase.id === 'kc_1965'
-                                                                                                        ? ['圣路易斯', '蛆虫']
-                                                                                                        : ['俄亥俄州', '祭祀案'];
-
-                                                                const activeKeywords = caseKeywords;
+                                                                const activeKeywords = ARCHIVE_CASE_HIGHLIGHT_MAP[activeCase.id] || [];
 
                                                                 const attachmentTrigger = '「图片见附录」';
                                                                 const wilmerTrigger = '「附注」';
+                                                                const attachmentTrigger2 = '「见附录」'; // For archive_15
                                                                 // Create a combined regex for keywords and the specific attachment text
-                                                                const pattern = `(${[...activeKeywords, attachmentTrigger, wilmerTrigger].join('|')})`;
+                                                                const pattern = `(${[...activeKeywords, attachmentTrigger, wilmerTrigger, attachmentTrigger2].join('|')})`;
                                                                 const regex = new RegExp(pattern, 'g');
 
+                                                                const highlightedIds = new Set<string>();
                                                                 return (
                                                                     <p key={i} className={`mb-4 ${line.includes('后人手写批注') ? 'font-handwriting text-[#c85a3f]/90 text-lg rotate-1 py-4 px-2 bg-[#c85a3f]/5 border-y border-[#c85a3f]/10 my-6' : ''}`}>
                                                                         {line.split(regex).map((part, j) => {
 
-                                                                            if (part === attachmentTrigger || part === wilmerTrigger) {
+                                                                            if (part === attachmentTrigger || part === wilmerTrigger || part === attachmentTrigger2) {
+                                                                                // ... keep existing attachment trigger logic
+                                                                                const isVisible = part === attachmentTrigger ? attachmentImage === 'assets/butter_julep_evidence.jpg' || attachmentImage === 'assets/richie_id_card.jpg'
+                                                                                    : part === wilmerTrigger ? attachmentImage === 'assets/wilmer_ribbon.jpg'
+                                                                                        : attachmentImage === 'assets/fbi-symbol.png' && activeCase.id === 'archive_15';
+
                                                                                 return (
                                                                                     <span
                                                                                         key={j}
+                                                                                        className={`mx-1 cursor-pointer font-bold border-b border-dashed transition-all duration-300 ${isVisible ? 'text-green-500 border-green-500 hover:bg-green-500/10' : 'text-blue-500 border-blue-500 hover:bg-blue-500/10'}`}
                                                                                         onClick={() => {
-                                                                                            // Special case for different archives
-                                                                                            if (activeCase.id === 'va_1990') {
-                                                                                                setAttachmentImage('assets/wilmer_ribbon.jpg');
-                                                                                            } else if (activeCase.id === 'cin_1973') {
-                                                                                                setAttachmentImage('assets/butter_julep_evidence.jpg');
-                                                                                            } else {
-                                                                                                setAttachmentImage('assets/fbi-symbol.png');
-                                                                                            }
+                                                                                            if (part === attachmentTrigger) setAttachmentImage('assets/butter_julep_evidence.jpg');
+                                                                                            else if (part === wilmerTrigger) setAttachmentImage('assets/wilmer_ribbon.jpg');
+                                                                                            else setAttachmentImage('assets/fbi-symbol.png');
                                                                                         }}
-                                                                                        className="inline-flex items-center gap-1 text-[#d89853] cursor-pointer hover:text-white hover:underline decoration-1 underline-offset-4 ml-1 transition-colors group/link align-baseline font-bold"
-                                                                                        title="查看附录图片"
                                                                                     >
-                                                                                        <File size={14} className="inline group-hover/link:scale-110 transition-transform" />
-                                                                                        {part === '「附注」' ? '「附注」' : part}
+                                                                                        {part}
                                                                                     </span>
                                                                                 );
                                                                             }
 
                                                                             if (activeKeywords.includes(part)) {
                                                                                 const clueId = ARCHIVE_KEYWORD_MAP[part];
-                                                                                // Check visual feedback against global props
-                                                                                const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId);
+                                                                                if (clueId && !highlightedIds.has(clueId)) {
+                                                                                    highlightedIds.add(clueId);
 
-                                                                                return (
-                                                                                    <span
-                                                                                        key={j}
-                                                                                        onClick={() => handleKeywordClick(part)}
-                                                                                        className={`
-                                                                                        cursor-pointer font-bold inline-block transform hover:scale-105 transition-all duration-200
-                                                                                        ${isCollected
-                                                                                                ? 'text-white bg-[#c85a3f] px-1 shadow-lg'
-                                                                                                : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20 animate-pulse'
-                                                                                            }
-                                                                                    `}
-                                                                                        title={isCollected ? "已收录" : "点击收集线索"}
-                                                                                    >
-                                                                                        {part}
-                                                                                    </span>
-                                                                                );
+                                                                                    const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId);
+
+                                                                                    return (
+                                                                                        <span
+                                                                                            key={j}
+                                                                                            onClick={() => handleKeywordClick(part)}
+                                                                                            className={`
+                                                                                                cursor-pointer font-bold inline-block transform hover:scale-105 transition-all duration-200
+                                                                                                ${isCollected
+                                                                                                    ? 'text-white bg-[#c85a3f] px-1 shadow-lg'
+                                                                                                    : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20 animate-pulse'
+                                                                                                }
+                                                                                            `}
+                                                                                            title={isCollected ? "已收录" : "点击收集线索"}
+                                                                                        >
+                                                                                            {part}
+                                                                                        </span>
+                                                                                    );
+                                                                                }
                                                                             }
+
                                                                             return <span key={j}>{part}</span>;
                                                                         })}
                                                                     </p>
@@ -1630,7 +1636,8 @@ export const Archives: React.FC<ArchivesProps> = ({
                         )}
                     </AnimatePresence>
                 </motion.div>
-            )}
-        </AnimatePresence>
+            )
+            }
+        </AnimatePresence >
     );
 };

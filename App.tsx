@@ -6,7 +6,11 @@ import { BriefingDetailView } from './components/BriefingDetailView';
 import { DialogueView } from './components/DialogueView';
 import { SimplifiedMainView } from './components/SimplifiedMainView';
 import { MemoryNode, MemoryLayer, GameState } from './types';
-import { INITIAL_DOSSIER, CORE_NODES, RELATIONSHIP_TREE, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS } from './constants';
+import {
+  INITIAL_DOSSIER, CORE_NODES, RELATIONSHIP_TREE, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS,
+  GLOBAL_KEYWORD_MAP, BRIEFING_SECTIONS,
+  JENNIFER_NODE_1_DIALOGUE, JENNIFER_NODE_2_DIALOGUE, JENNIFER_NODE_3_DIALOGUE, JENNIFER_NODE_4_DIALOGUE, JENNIFER_NODE_5_DIALOGUE
+} from './constants';
 import { DebugController } from './components/DebugController';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -27,6 +31,7 @@ const App: React.FC = () => {
     history: [
       { type: 'info', content: '[SYSTEM]: NEURAL LINK ESTABLISHED...', timestamp: Date.now() }
     ],
+    isHacked: false,
     consecutiveSearch: undefined
   });
 
@@ -35,34 +40,81 @@ const App: React.FC = () => {
 
   // --- SUBCONSCIOUS RETRACE LOGIC ---
   const handleRetrace = useCallback(() => {
-    // 1. Check Stability
-    if (gameState.systemStability <= 0) {
+    // 1. Check Stability - Be extremely defensive
+    const stability = typeof gameState.systemStability === 'number' ? gameState.systemStability : 84;
+
+    if (stability <= 0) {
       return { success: false, reason: 'STABILITY_CRITICAL' };
     }
 
     // 2. Calculate Missed Keywords
-    // Get distinct keywords from all UNLOCKED nodes
-    const unlockedIdSet = new Set(gameState.unlockedNodeIds);
     let allAvailableKeywords: string[] = [];
 
+    // A. Briefing Sections
+    BRIEFING_SECTIONS.forEach(section => {
+      // Find all [word](clue:id) matches
+      const matches = section.content.matchAll(/\[(.*?)\]\(clue:(.*?)\)/g);
+      for (const match of matches) {
+        allAvailableKeywords.push(match[2].trim());
+      }
+    });
+
+    // B. Unlocked Nodes (CORE_NODES)
+    const unlockedIdSet = new Set(gameState.unlockedNodeIds);
     CORE_NODES.forEach(node => {
       if (unlockedIdSet.has(node.id) && node.revealedKeywords) {
         allAvailableKeywords = [...allAvailableKeywords, ...node.revealedKeywords];
       }
     });
 
+    // C. Jennifer Story Dialogues
+    const jenniferDialogues: string[][] = [];
+    if (gameState.currentStoryNode >= 1) jenniferDialogues.push(JENNIFER_NODE_1_DIALOGUE);
+    if (gameState.currentStoryNode >= 2) jenniferDialogues.push(JENNIFER_NODE_2_DIALOGUE);
+    if (gameState.currentStoryNode >= 3) jenniferDialogues.push(JENNIFER_NODE_3_DIALOGUE);
+    if (gameState.currentStoryNode >= 4) jenniferDialogues.push(JENNIFER_NODE_4_DIALOGUE);
+    if (gameState.currentStoryNode >= 5) jenniferDialogues.push(JENNIFER_NODE_5_DIALOGUE);
+
+    jenniferDialogues.forEach(dialog => {
+      dialog.forEach(line => {
+        const matches = line.matchAll(/\[(.*?)\]\(clue:(.*?)\)/g);
+        for (const match of matches) {
+          allAvailableKeywords.push(match[2].trim());
+        }
+      });
+    });
+
+    // D. Scan History for Preset Responses / Easter Eggs
+    gameState.history.forEach(item => {
+      if (typeof item.content === 'string') {
+        Object.entries(GLOBAL_KEYWORD_MAP).forEach(([word, info]) => {
+          if (item.content.includes(word)) {
+            allAvailableKeywords.push(info.id);
+          }
+        });
+      }
+    });
+
     // Filter out already collected ones
-    const collectedSet = new Set([...gameState.collectedClues, ...gameState.collectedDossierIds, ...gameState.collectedYears, ...gameState.unlockedPeople]);
+    const collectedSet = new Set([
+      ...gameState.collectedClues,
+      ...gameState.collectedDossierIds,
+      ...gameState.collectedYears,
+      ...gameState.unlockedPeople
+    ]);
     const missedKeywords = [...new Set(allAvailableKeywords.filter(k => !collectedSet.has(k)))];
 
     // 3. Apply Penalty
-    setGameState(prev => ({
-      ...prev,
-      systemStability: Math.max(0, prev.systemStability - 20)
-    }));
+    setGameState(prev => {
+      const currentStability = typeof prev.systemStability === 'number' ? prev.systemStability : 84;
+      return {
+        ...prev,
+        systemStability: Math.max(0, currentStability - 20)
+      };
+    });
 
     return { success: true, keywords: missedKeywords };
-  }, [gameState.systemStability, gameState.unlockedNodeIds, gameState.collectedClues, gameState.collectedDossierIds, gameState.collectedYears, gameState.unlockedPeople]);
+  }, [gameState.systemStability, gameState.unlockedNodeIds, gameState.currentStoryNode, gameState.history, gameState.collectedClues, gameState.collectedDossierIds, gameState.collectedYears, gameState.unlockedPeople]);
 
   // Handle story node completion
   const handleStoryNodeComplete = useCallback((nodeId: number) => {
@@ -96,12 +148,54 @@ const App: React.FC = () => {
 
 
 
+  /* New Animation State for Node 6 Awakening */
+  const [isPersonaGlitching, setIsPersonaGlitching] = useState(false);
+
   const handleSearch = useCallback(async (query: string) => {
     setIsProcessing(true);
     setGameState(prev => ({
       ...prev,
       history: [...prev.history, { type: 'search', content: query, timestamp: Date.now() }]
     }));
+
+    // === SPECIAL: Node 6 Awakening / Reboot Command ===
+    if (query.includes('FORCE_LOAD_MONSTER') || query.includes('0x524F42455254_PURGE')) {
+      // Trigger INTENSE visual glitch (Persona Swap)
+      setIsPersonaGlitching(true);
+
+      // Flicker effect sequence
+      setTimeout(() => setIsPersonaGlitching(false), 100);
+      setTimeout(() => setIsPersonaGlitching(true), 150);
+      setTimeout(() => setIsPersonaGlitching(false), 300);
+      setTimeout(() => setIsPersonaGlitching(true), 400); // Longest hold
+      setTimeout(() => setIsPersonaGlitching(false), 1200); // End glitch
+
+      // Response Logic
+      setTimeout(() => {
+        setGameState(prev => {
+          // Remove the reboot command chip so it 'disappears'
+          const newCollectedClues = prev.collectedClues.filter(c => c !== 'reboot_command');
+
+          return {
+            ...prev,
+            history: [
+              ...prev.history,
+              {
+                type: 'dialogue',
+                id: 'node_6_awakening',
+                content: '> [ROBERT_CAPONE]: "你对我做了什么？感觉就像脑子里被插进了一根烧红的铁条。 趁我现在还清醒，你不想知道我为什么始终像条狗一样听话吗？ 检索关键词：80号洲际公路、守夜人，看看在我变成怪物之前，他们是怎么造出这个该死的笼子的。"',
+                timestamp: Date.now()
+              }
+            ],
+            // DO NOT auto-unlock. Let user pick them from dialogue.
+            collectedClues: newCollectedClues,
+            collectedDossierIds: prev.collectedDossierIds,
+          };
+        });
+        setIsProcessing(false);
+      }, 1300); // Sync with glitch end
+      return;
+    }
 
     // ===== STRICT KEYWORD VALIDATION SYSTEM =====
 
@@ -149,6 +243,7 @@ const App: React.FC = () => {
       '1973': true, 'year_1973': true,
       '1986': true, 'year_1986': true,
       '1965': true, 'year_1965': true, '1965年': true,
+      '1977': true, 'year_1977': true, '1977年': true,
 
       // People
       'little_derek_wayne': true, '小德里克': true, 'derek wayne': true, 'wayne': true,
@@ -197,6 +292,8 @@ const App: React.FC = () => {
       'recruitment': true, '招募': true,
       'year_1974': true, '1974': true, '1974年': true,
       'texarkana': true, '特克萨卡纳': true,
+      'richie_dreyfuss': true, 'richie dreyfuss': true, '里奇·德莱弗斯': true, '里奇': true,
+      'rockford': true, '罗克福德': true, '罗克福德市': true,
       'priest': true, '牧师': true,
       'arthur_dawson': true, 'arthur dawson': true, '亚瑟·道森': true, '亚瑟': true,
     };
@@ -275,12 +372,137 @@ const App: React.FC = () => {
         hasTexarkana: lowerQuery.includes('texarkana') || lowerQuery.includes('特克萨卡纳'),
         hasPriest: lowerQuery.includes('priest') || lowerQuery.includes('牧师'),
         hasDirtyFrank: lowerQuery.includes('dirty_frank') || lowerQuery.includes('脏弗兰克酒吧') || lowerQuery.includes('dirty frank'),
-        hasDismemberment: lowerQuery.includes('dismemberment_case') || lowerQuery.includes('碎尸案') || lowerQuery.includes('dismemberment')
+        hasDismemberment: lowerQuery.includes('dismemberment_case') || lowerQuery.includes('碎尸案') || lowerQuery.includes('dismemberment'),
+        hasYear1977: lowerQuery.includes('1977') || lowerQuery.includes('year_1977'),
+        hasRichie: lowerQuery.includes('richie_dreyfuss') || lowerQuery.includes('richie dreyfuss') || lowerQuery.includes('里奇·德莱弗斯') || lowerQuery.includes('里奇'),
+        hasDenverSuburb: lowerQuery.includes('denver_suburb') || lowerQuery.includes('丹佛市郊'),
+        hasPoliceKilling: lowerQuery.includes('police_killing') || lowerQuery.includes('警员遇害案'),
+        hasElPaso: lowerQuery.includes('el_paso') || lowerQuery.includes('埃尔帕索')
       };
     };
 
 
     const validation = validateQuery(query);
+
+    // Confession 17: Dirty Frank + Recruitment
+    if (validation.hasDirtyFrank && validation.hasRecruitment) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_17');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_17');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 18: Denver Suburb + Police Killing
+    if (validation.hasDenverSuburb && validation.hasPoliceKilling) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_18');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_18');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 19: El Paso + Priest
+    if (validation.hasElPaso && validation.hasPriest) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_19');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_19');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Archive 15: 1977 + Richie
+    if (validation.hasYear1977 && validation.hasRichie) {
+      setTimeout(() => {
+        setGameState(prev => {
+          if (prev.unlockedArchiveIds.includes('archive_15')) {
+            return prev;
+          }
+          return {
+            ...prev,
+            unlockedArchiveIds: [...prev.unlockedArchiveIds, 'archive_15'],
+            history: [
+              ...prev.history,
+              { type: 'info', content: '[归档系统]: 外部调查记录已导入——E-1981-CR-09', timestamp: Date.now() }
+            ]
+          };
+        });
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
 
     // Confession 1: Maine + Small Bank (STRICT)
     if (validation.hasMaine && validation.hasSmallBank) {
@@ -1023,8 +1245,9 @@ const App: React.FC = () => {
     const incrementInvalidCount = () => sessionStorage.setItem(invalidInputKey, String(getInvalidCount() + 1));
     const resetInvalidCount = () => sessionStorage.removeItem(invalidInputKey);
 
-    // Track Vanessa consecutive searches
+    // Track Vanessa and Jennifer consecutive searches
     const isVanessaQuery = lowerQuery === '瓦妮莎' || lowerQuery === 'vanessa';
+    const isJenniferQuery = lowerQuery === '詹妮弗' || lowerQuery === 'jennifer' || lowerQuery === '珍妮弗';
     let finalQuery = query;
     let newConsecutive: { keyword: string, count: number } | undefined = undefined;
 
@@ -1035,6 +1258,19 @@ const App: React.FC = () => {
 
       if (newCount === 3) {
         finalQuery = 'vanessa_consecutive_3';
+        newConsecutive = undefined; // Reset after trigger
+      }
+    } else if (isJenniferQuery) {
+      const prevCount = gameState.consecutiveSearch?.keyword === 'jennifer' ? gameState.consecutiveSearch.count : 0;
+      const newCount = prevCount + 1;
+      newConsecutive = { keyword: 'jennifer', count: newCount };
+
+      if (newCount === 1) {
+        finalQuery = 'jennifer_consecutive_1';
+      } else if (newCount === 2) {
+        finalQuery = 'jennifer_consecutive_2';
+      } else if (newCount >= 3) {
+        finalQuery = 'jennifer_consecutive_3';
         newConsecutive = undefined; // Reset after trigger
       }
     } else {
@@ -1048,6 +1284,7 @@ const App: React.FC = () => {
       priority?: number; // Higher = checked first
       fuzzyMatch?: boolean; // If true, matches partial/related questions
       isReveal?: boolean;
+      revealKeywords?: string[]; // Specific keywords to reveal (if isReveal is true)
     }> = [
         // ===== USER-PROVIDED EASTER EGGS (Highest Priority) =====
         {
@@ -1095,9 +1332,21 @@ const App: React.FC = () => {
           priority: 90
         },
         {
-          keywords: ['詹妮弗', 'jennifer', '珍妮弗'],
+          keywords: ['jennifer_consecutive_1'],
           response: '> [R. CAPONE]: "别逗了，你收到的档案里根本就没有詹妮弗这个名字，你想问的是那只银喜鹊，我们在营地的时候，她是那个负责在大家睡觉时，从外面反锁车门的人。"',
-          priority: 95
+          priority: 210
+        },
+        {
+          keywords: ['jennifer_consecutive_2'],
+          response: '> [R. CAPONE]: "她喜欢收集亮晶晶的垃圾，是个哑巴，或者只是不想跟我们要这种人说话。别浪费时间了，下一个问题。"',
+          priority: 211
+        },
+        {
+          keywords: ['jennifer_consecutive_3'],
+          response: '> [R. CAPONE]: "难道说真的是她……那天在埃尔帕索，当我绝望地把烟盒揉烂的时候，她就在教堂的角落里看着，对吗？"',
+          priority: 212,
+          isReveal: true,
+          revealKeywords: ['教堂']
         },
         {
           keywords: ['铁马', 'iron horse', 'iron-horse', '烟盒', '香烟盒'],
@@ -1256,6 +1505,7 @@ const App: React.FC = () => {
               type: 'info',
               content: matchedItem.response,
               isReveal: matchedItem.isReveal,
+              revealKeywords: matchedItem.revealKeywords,
               timestamp: Date.now()
             }
           ]
@@ -1338,9 +1588,25 @@ const App: React.FC = () => {
     setGameState(prev => {
       if (prev.collectedAttachments?.includes(id)) return prev;
 
+      const newAttachments = [...(prev.collectedAttachments || []), id];
+      const updates: Partial<GameState> = {
+        collectedAttachments: newAttachments
+      };
+
+      // SPECIAL REWARD: Richie's ID card unlocks the julip folder
+      if (id === 'richie_id_card') {
+        if (!prev.collectedDossierIds.includes('julip')) {
+          updates.collectedDossierIds = [...prev.collectedDossierIds, 'julip'];
+        }
+        updates.history = [
+          ...prev.history,
+          { type: 'info', content: `[SYSTEM]: 附件已存入 - 线索库中发现关键关联案卷「黄油朱莉普」。`, timestamp: Date.now() }
+        ];
+      }
+
       return {
         ...prev,
-        collectedAttachments: [...(prev.collectedAttachments || []), id]
+        ...updates
       };
     });
   };
@@ -1516,6 +1782,8 @@ const App: React.FC = () => {
               onRetrace={handleRetrace}
               onClearUnusedKeywords={handleClearUnusedKeywords}
               currentStoryNode={gameState.currentStoryNode}
+              systemStability={gameState.systemStability}
+              isPersonaGlitching={isPersonaGlitching}
             />
           </ErrorBoundary>
         </motion.div>

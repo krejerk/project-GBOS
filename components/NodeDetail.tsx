@@ -3,6 +3,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MemoryNode, MemoryLayer } from '../types';
 import { Quote, Sparkles, AlertCircle, Maximize2, Folder, FolderOpen, X } from 'lucide-react';
+import { TextFragment } from './TextFragment';
 
 interface NodeDetailProps {
   node: MemoryNode;
@@ -49,8 +50,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     }
   };
 
-  // Track seen keywords for first-instance highlighting
-  const seenKeywords = new Set<string>();
+  // Track seen keywords for first-instance highlighting - Optimally handled by fragmentHighlightMap now
 
   // Keyword Mappings - Different for each confession
   const CONFESSION_1_KEYWORDS: Record<string, string> = {
@@ -145,41 +145,84 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
 
   const CONFESSION_16_KEYWORDS: Record<string, string> = {
     '亚瑟·道森': 'arthur_dawson',
-    '亚瑟': 'arthur_dawson'
+    '1967年': 'year_1967',
+    '1967': 'year_1967'
   };
 
+  const CONFESSION_17_KEYWORDS: Record<string, string> = {
+    '里奇·德莱弗斯': 'richie_dreyfuss'
+  };
+
+
   // Select keyword map based on node ID
-  const KEYWORD_MAP = node.id === 'confession_16'
-    ? CONFESSION_16_KEYWORDS
-    : node.id === 'confession_15'
-      ? CONFESSION_15_KEYWORDS
-      : node.id === 'confession_14'
-        ? CONFESSION_14_KEYWORDS
-        : node.id === 'confession_13'
-          ? CONFESSION_13_KEYWORDS
-          : node.id === 'confession_12'
-            ? CONFESSION_12_KEYWORDS
-            : node.id === 'confession_11'
-              ? CONFESSION_11_KEYWORDS
-              : node.id === 'confession_10'
-                ? CONFESSION_10_KEYWORDS
-                : node.id === 'confession_9'
-                  ? CONFESSION_9_KEYWORDS
-                  : node.id === 'confession_8'
-                    ? CONFESSION_8_KEYWORDS
-                    : node.id === 'confession_7'
-                      ? CONFESSION_7_KEYWORDS
-                      : node.id === 'confession_6'
-                        ? CONFESSION_6_KEYWORDS
-                        : node.id === 'confession_5'
-                          ? CONFESSION_5_KEYWORDS
-                          : node.id === 'confession_4'
-                            ? CONFESSION_4_KEYWORDS
-                            : node.id === 'confession_3'
-                              ? CONFESSION_3_KEYWORDS
-                              : node.id === 'confession_2'
-                                ? CONFESSION_2_KEYWORDS
-                                : CONFESSION_1_KEYWORDS;
+  // Select keyword map based on node ID - Memoized to prevent recreation
+  const KEYWORD_MAP = React.useMemo(() => {
+    if (node.id === 'confession_17') return CONFESSION_17_KEYWORDS;
+    if (node.id === 'confession_16') return CONFESSION_16_KEYWORDS;
+    if (node.id === 'confession_15') return CONFESSION_15_KEYWORDS;
+    if (node.id === 'confession_14') return CONFESSION_14_KEYWORDS;
+    if (node.id === 'confession_13') return CONFESSION_13_KEYWORDS;
+    const map = node.id === 'confession_12'
+      ? CONFESSION_12_KEYWORDS
+      : node.id === 'confession_11'
+        ? CONFESSION_11_KEYWORDS
+        : node.id === 'confession_10'
+          ? CONFESSION_10_KEYWORDS
+          : node.id === 'confession_9'
+            ? CONFESSION_9_KEYWORDS
+            : node.id === 'confession_8'
+              ? CONFESSION_8_KEYWORDS
+              : node.id === 'confession_7'
+                ? CONFESSION_7_KEYWORDS
+                : node.id === 'confession_6'
+                  ? CONFESSION_6_KEYWORDS
+                  : node.id === 'confession_5'
+                    ? CONFESSION_5_KEYWORDS
+                    : node.id === 'confession_4'
+                      ? CONFESSION_4_KEYWORDS
+                      : node.id === 'confession_3'
+                        ? CONFESSION_3_KEYWORDS
+                        : node.id === 'confession_2'
+                          ? CONFESSION_2_KEYWORDS
+                          : CONFESSION_1_KEYWORDS;
+    return map;
+  }, [node.id]);
+
+  // Pre-calculate which keyword instances are valid (first occurrence)
+  // This avoids mutating a set during render and keeps TextFragment pure.
+  const fragmentHighlightMap = React.useMemo(() => {
+    const map: Record<string, Set<string>> = {}; // key: "layer-pIndex", value: Set of keywords to highlight in this fragment
+    const globalSeen = new Set<string>();
+    const processingLayers = [
+      node.layers[MemoryLayer.SURFACE]?.event,
+      node.layers[MemoryLayer.DEEP]?.event,
+      node.layers[MemoryLayer.CORE]?.event
+    ];
+
+    processingLayers.forEach((eventText, layerIndex) => {
+      if (!eventText) return;
+      const paragraphs = eventText.split('\n').filter(p => p.trim());
+      paragraphs.forEach((text, pIndex) => {
+        const fragmentId = `${layerIndex}-${pIndex}`;
+        const fragmentSet = new Set<string>();
+        const keywords = Object.keys(KEYWORD_MAP);
+        if (keywords.length > 0) {
+          const regex = new RegExp(`(${keywords.join('|')})`, 'g');
+          const parts = text.split(regex);
+          parts.forEach(part => {
+            if (keywords.includes(part)) {
+              if (!globalSeen.has(part)) {
+                globalSeen.add(part);
+                fragmentSet.add(part);
+              }
+            }
+          });
+        }
+        map[fragmentId] = fragmentSet;
+      });
+    });
+    return map;
+  }, [node.layers, KEYWORD_MAP]);
 
   // Track animation states for collected keywords
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});
@@ -299,172 +342,19 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                 ].filter(Boolean).map((eventText, layerIndex) => {
                   const paragraphs = eventText.split('\n').filter(p => p.trim());
 
-                  return paragraphs.map((text, pIndex) => {
-                    const fragmentId = `${layerIndex}-${pIndex}`;
-                    const seed = (layerIndex + 1) * (pIndex + 5);
-                    const rotate = (seed % 6) - 3;
-                    const offsetX = (seed % 30) - 15; // Slightly reduced offset to prevent clipping
-                    const zIndex = 10 + layerIndex;
-
-                    // Generate unique irregular edge pattern based on seed
-                    const clipPathVariations = [
-                      'polygon(2% 0%, 98% 1%, 99% 3%, 100% 97%, 97% 100%, 3% 99%, 0% 95%, 1% 2%)',
-                      'polygon(1% 3%, 4% 1%, 96% 0%, 99% 2%, 100% 96%, 98% 99%, 4% 100%, 0% 97%, 2% 5%)',
-                      'polygon(0% 2%, 97% 0%, 100% 4%, 99% 98%, 96% 100%, 2% 99%, 1% 96%, 0% 4%)',
-                      'polygon(3% 0%, 99% 2%, 100% 95%, 98% 100%, 1% 98%, 0% 3%, 2% 1%)',
-                      'polygon(1% 1%, 98% 0%, 100% 3%, 99% 97%, 97% 100%, 3% 99%, 0% 96%, 1% 4%)',
-                      'polygon(2% 2%, 96% 1%, 99% 0%, 100% 98%, 98% 100%, 4% 98%, 1% 99%, 0% 5%)'
-                    ];
-                    const clipPath = clipPathVariations[seed % clipPathVariations.length];
-
-                    // Vary corner decoration lengths
-                    const topLeftSize = 6 + (seed % 4);
-                    const bottomRightSize = 5 + ((seed * 3) % 5);
-                    const decorOpacity = 0.2 + ((seed % 3) * 0.1);
-
-                    return (
-                      <motion.div
-                        key={fragmentId}
-                        initial={{ opacity: 0, scale: 0.95, y: 30, rotate: rotate + 3 }}
-                        animate={{
-                          opacity: isStabilized ? 1 : 0.8,
-                          scale: 1,
-                          y: 0,
-                          rotate: rotate
-                        }}
-                        transition={{
-                          opacity: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.6, ease: "easeOut" },
-                          y: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" },
-                          scale: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" },
-                          rotate: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" }
-                        }}
-                        whileHover={{
-                          scale: 1.02,
-                          zIndex: 100,
-                          rotate: 0,
-                          transition: { duration: 0.2, ease: "easeOut" }
-                        }}
-                        className="relative mb-16 p-8 bg-[#1a1410]/80 border border-[#d89853]/15 shadow-[0_20px_40px_rgba(0,0,0,0.5)] group/fragment backdrop-blur-sm overflow-hidden"
-                        style={{
-                          marginLeft: `${offsetX}px`,
-                          transform: `rotate(${rotate}deg) translateZ(0)`,
-                          zIndex: zIndex,
-                          clipPath: clipPath,
-                          willChange: 'transform, opacity'
-                        }}
-                      >
-                        {/* Paper Texture Overlay */}
-                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')] opacity-[0.08] mix-blend-overlay pointer-events-none" />
-
-                        {/* Irregular Fragment Decor - Varied sizes */}
-                        <div
-                          className="absolute top-0 left-0 bg-[#d89853]"
-                          style={{
-                            width: `${topLeftSize * 4}px`,
-                            height: '1px',
-                            opacity: decorOpacity
-                          }}
-                        />
-                        <div
-                          className="absolute top-0 left-0 bg-[#d89853]"
-                          style={{
-                            width: '1px',
-                            height: `${topLeftSize * 4}px`,
-                            opacity: decorOpacity
-                          }}
-                        />
-                        <div
-                          className="absolute bottom-0 right-0 bg-[#c85a3f]"
-                          style={{
-                            width: `${bottomRightSize * 4}px`,
-                            height: '1px',
-                            opacity: decorOpacity * 0.7
-                          }}
-                        />
-
-                        {/* Enhanced Technical Label with Glitch Effect */}
-                        <div className="absolute -top-4 -left-3 font-mono select-none group-hover/fragment:animate-pulse">
-                          <div className="relative">
-                            {/* Main label */}
-                            <div
-                              className="text-[9px] tracking-wider text-[#d89853] relative z-10"
-                              style={{
-                                opacity: 0.3 + ((seed % 4) * 0.1),
-                                textShadow: '0 0 8px rgba(216, 152, 83, 0.3)'
-                              }}
-                            >
-                              <span className="opacity-60">[</span>
-                              FRAGMENT_{fragmentId}
-                              <span className="opacity-60">]</span>
-                            </div>
-                            {/* Glitch layer - only visible on hover */}
-                            <div
-                              className="absolute top-0 left-0 text-[9px] tracking-wider text-[#c85a3f] opacity-0 group-hover/fragment:opacity-40 transition-opacity duration-75"
-                              style={{
-                                transform: 'translate(1px, -0.5px)',
-                                mixBlendMode: 'screen'
-                              }}
-                            >
-                              [FRAGMENT_{fragmentId}]
-                            </div>
-                            {/* Corruption bar */}
-                            {seed % 3 === 0 && (
-                              <div
-                                className="absolute top-1/2 left-0 h-[1px] bg-[#d89853]/20"
-                                style={{ width: `${40 + (seed % 20)}px` }}
-                              />
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Content with Keyword Highlighting */}
-                        <p className="font-serif leading-relaxed text-lg text-[#d89853]/90 text-justify">
-                          {text.split(new RegExp(`(${Object.keys(KEYWORD_MAP).join('|')})`, 'g')).map((part, j) => {
-                            if (Object.keys(KEYWORD_MAP).includes(part)) {
-                              if (!seenKeywords.has(part)) {
-                                seenKeywords.add(part);
-                                const isCollected = collectionEffects[part];
-                                return (
-                                  <span
-                                    key={j}
-                                    onClick={(e) => handleKeywordClick(e, part)}
-                                    className={`
-                                      cursor-pointer font-bold inline-block mx-1 relative
-                                      ${isCollected
-                                        ? 'text-white bg-[#c85a3f] px-1 animate-pulse shadow-lg scale-110'
-                                        : 'text-[#c85a3f] border-b border-dashed border-[#c85a3f] hover:text-white transition-all underline-offset-4'
-                                      }
-                                  `}
-                                  >
-                                    {part}
-                                    {/* Sparkle effect on collectable */}
-                                    {!isCollected && (
-                                      <motion.span
-                                        animate={{ opacity: [0, 1, 0] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        className="absolute -top-1 -right-1"
-                                      >
-                                        <Sparkles size={8} />
-                                      </motion.span>
-                                    )}
-                                  </span>
-                                );
-                              }
-                            }
-                            return <span key={j} className="opacity-90">{part}</span>;
-                          })}
-                        </p>
-
-                        {/* Scribbled notes for deeper layers */}
-                        {layerIndex > 0 && pIndex === paragraphs.length - 1 && (
-                          <div className="mt-4 pt-4 border-t border-[#d89853]/5 italic text-sm text-[#c85a3f]/60 font-mono flex justify-between">
-                            <span className="opacity-50">[TRUNCATED...]</span>
-                            <span className="rotate-2">"难以找回的片段"</span>
-                          </div>
-                        )}
-                      </motion.div>
-                    );
-                  });
+                  return paragraphs.map((text, pIndex) => (
+                    <TextFragment
+                      key={`${layerIndex}-${pIndex}`}
+                      text={text}
+                      layerIndex={layerIndex}
+                      pIndex={pIndex}
+                      isStabilized={isStabilized}
+                      keywordMap={KEYWORD_MAP}
+                      highlightKeywords={fragmentHighlightMap[`${layerIndex}-${pIndex}`] || new Set()}
+                      collectionEffects={collectionEffects}
+                      onKeywordClick={handleKeywordClick}
+                    />
+                  ));
                 })}
 
                 {/* Special Case: Confession 6 Visual Signal */}

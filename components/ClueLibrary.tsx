@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Database, Folder, File, X, Image as ImageIcon, Paperclip, FileText, Search, Tag, Eye, Lock, Hash, MessageCircle, Mic, ChevronRight, Activity, Brain } from 'lucide-react';
 import { Clue, ClueAttachment } from '../types';
+import {
+    CLUE_DISPLAY_MAP, CATEGORY_IDS,
+    JENNIFER_FIRST_VISIT_DIALOGUE as JENNIFER_DIALOGUE,
+    JENNIFER_RETURN_DIALOGUE,
+    JENNIFER_NODE_1_DIALOGUE,
+    JENNIFER_NODE_2_DIALOGUE,
+    JENNIFER_NODE_3_DIALOGUE,
+    JENNIFER_NODE_4_DIALOGUE,
+    JENNIFER_NODE_5_DIALOGUE
+} from '../constants';
 import { VehiclePhotosViewer } from './VehiclePhotosViewer';
 
 interface ClueLibraryProps {
@@ -20,6 +30,8 @@ interface ClueLibraryProps {
     currentStoryNode?: number; // Current story node (0 = not reached, 1 = node 1, etc.)
     onStoryNodeComplete?: (nodeId: number) => void; // Callback when node dialogue is completed
     onClearUnusedKeywords?: () => void; // Callback to clear unused keywords (for Jennifer node 3)
+    onSetFilingEvidence?: (evidence: { id: string, title: string, content: string, type: 'image' | 'text' } | null) => void;
+    initialSelectedClueId?: string | null;
 }
 
 const CLUE_DEFINITIONS: Record<string, Clue> = {
@@ -47,6 +59,13 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 title: 'Butter Julep Evidence (1973)',
                 content: 'assets/butter_julep_evidence.jpg',
                 description: '1973年辛辛那提少女冻死案证物。热感成像技术扫描显示，毛毯上残留着一个由高纯度工业油脂与未知染料混合而成的热敏化学印记。该标记呈现半透明蜡黄色，形状为高度抽象的几何结构，被命名为"黄油朱莉普"。根据雷吉博士的行为学分析，凶手将遗体放置在警局门口的行为类似完成一次邮差的"签收"动作，因此在女孩身上留下了这个如同货物印章般的冒烟印迹。'
+            },
+            {
+                id: 'richie_id_card',
+                type: 'image',
+                title: 'Richie Dreyfuss ID Card (1977)',
+                content: 'assets/richie_id_card.jpg',
+                description: '1977年印第安纳沙丘州立公园发现的里奇·德莱弗斯驾驶证。该证件从被野生动物啃食拖散的遗骸衣物中找到，用防水胶带层层包裹。雷吉博士对塑封边缘的质谱分析显示，残留物包含结晶蔗糖、薄荷油提取物、波本威士忌及高浓度乳脂酸——与1969年圣路易斯"河船赌场失踪案"证物上发现的化学指纹完全一致。这种独特的成分组合正是"黄油朱莉普"标记的核心特征。'
             }
         ]
     },
@@ -110,6 +129,13 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 title: 'Record of Accounts',
                 content: 'assets/record_of_accounts.jpg',
                 description: '在特克萨卡纳节点发现的视觉残留。亚瑟·道森（Arthur Dawson）的笔记本，记录了某种高度机密的账户往来与代号。'
+            },
+            {
+                id: 'church_visual_residue',
+                type: 'image',
+                title: '视觉残留：埃尔帕索教堂',
+                content: 'assets/church_visual_residue.png',
+                description: '在对话中提取出的视觉残留。这座废弃的教堂似乎是詹妮弗记忆中的核心坐标，阳光透过破碎的彩绘玻璃洒在积满灰尘的长椅上，透露出一种神圣而荒凉的气氛。'
             }
         ]
     },
@@ -307,87 +333,27 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         word: '碎尸案',
         description: '一起手段极其残忍的案件，是雷吉计划中用于摧毁目标人格稳定性的核心事件。',
         source: 'Archive'
+    },
+    'church': {
+        id: 'church',
+        word: '教堂',
+        description: '在埃尔帕索发现的一个节点。[检测到视觉残留](clue:extract_church_residue)',
+        source: 'Dialogue',
+        attachments: [
+            {
+                id: 'church_visual_residue',
+                type: 'image',
+                title: 'Visual Residue: El Paso Church',
+                content: 'assets/church_visual_residue.png',
+                description: '检测到的视觉残留。一个模糊的身影在教堂角落观察着一切。'
+            }
+        ]
     }
 };
 
-const JENNIFER_DIALOGUE = [
-    `你终于找到这里了。`,
-    `这里是"案卷建档"模块。
-从结构上看，它只是一个调查工具，对卡彭来说不具备情绪或记忆权重。`,
-    `为了避免引起他潜意识层面的警觉，我们之后的所有交流，都会在这个模块内进行。`,
-    `他知道你正在进行调查工作。
-在他的认知模型里，这里只会被理解为"你在整理材料"，不会触发防御反应。`,
-    `任务推进过程中，记得不时回来看看。
-当你取得阶段性进展时，我可能会为你解锁新的信息、提示，或者调整当前目标。`,
-    `如果我没有主动出现，也不代表这里是安全的。
-    只是说明，你还没触及他真正敏感的部分。`
-];
-
-const JENNIFER_RETURN_DIALOGUE = [
-    `你又回来了。`,
-    `目前还没有新的线索可以共享。
-你触及的层级，仍然停留在表层整理阶段。`,
-    `继续推进调查。
-当案卷之间出现无法被合理归档的矛盾时，这里才会再次产生意义。`,
-    `不用刻意停留。
-如果有新的触发点，我会在这个模块内标记出来。`,
-    `现在，回去工作吧。`
-];
-
-// Node 1 Dialogue - Triggered when player completes chapter 1
-const JENNIFER_NODE_1_DIALOGUE = [
-    `我需要你立刻修正判断。`,
-    `罗伯特·卡彭不再可信。\n他已经脱离"自己人"的范畴。`,
-    `他不断提及过往案件，并不是在协助你。\n那是在拖延，在绕开核心。`,
-    `从现在开始，忽略这些案子。`,
-    `你的唯一重点，是"父亲"的下落。`,
-    `盯紧他的路线，拆解他的话。\n找出漏洞，找出变节的迹象。`,
-    `最重要的是——\n确认他把父亲藏在了哪里。`,
-    `我已经根据你目前的调查进展，以及新增的外部信息，\n整理并更新了案卷建档中的部分内容。`,
-    `你现在可以进入该模块，查看这些更新。`,
-    `不要分心。你可以试试问问他关于[训练日](clue:training_day)的事情。`
-];
-
-// Node 2 Dialogue - Triggered when player completes confessions 4-7, archives 5-7 (1985, 1971, 1990), and collects wilmer_ribbon
-const JENNIFER_NODE_2_DIALOGUE = [
-    `我注意到你在索恩的备忘录上停留了太长时间。`,
-    `我必须提醒你，索恩和雷吉一样，都是已经被时代抛弃的人。`,
-    `别忘了，卡彭没有阻止康查尔，他在享受。`,
-    `在他见到“父亲”之前，腐化就已经开始。他已不再可靠。`,
-    `我解密了一份被雷吉封存的原始记录。关于卡彭最后一次“灰水信标”投放。[查看记录](clue:view_iron_horse_record)`,
-    `如果你需要更多细节，去问问他关于[内华达州](clue:nevada)的事情。`
-];
-
-// Node 4 Dialogue - Triggered when player completes confessions 12-15 and archives 11-13
-const JENNIFER_NODE_4_DIALOGUE = [
-    `效率低下。`,
-    `你在刚才那些无用的情感废料上浪费了太多算力。`,
-    `亨德森的道德胜利、房车里的原始仪式……别忘了你是建立证据链的，不是让你写纪实文学。`,
-    `不过，监测显示，你这种毫无章法的乱撞，确实击碎了目标的逻辑防御。`,
-    `我已撤销之前的屏蔽指令。既然你喜欢挖旧账，那就挖得精准点。`,
-    `听好了，别在这些哭鼻子话题上浪费时间，去组合这些新的坐标：`,
-    `[脏弗兰克酒吧](clue:dirty_frank) 是个地点。它对应的案件节点是 [招募](clue:recruitment)。`,
-    `[莫宁](clue:morning) 是个人名。锁定时间轴 [1974](clue:year_1974)。`,
-    `[碎尸案](clue:dismemberment_case) 是核心事件。那个横跨三州的抛尸地是 [特克萨卡纳](clue:texarkana)。`,
-    `[埃尔帕索](clue:el_paso) 是边境中转站。那里发生的事关联着 [牧师](clue:priest)。`,
-    `路径已铺好。别让我后悔把权限交还给你。`
-];
-
-// Node 3 Dialogue - Triggered when player completes confessions 8-11 and archives 8-10
-const JENNIFER_NODE_3_DIALOGUE = [
-    `你越界了，潜航者。`,
-    `把阿尔特曼的绝密批注展示给目标？极其愚蠢。`,
-    `你没有在做记录，你在制造混乱。`,
-    `看看你干的好事。我还得手动清除你造成的数据污染。`,
-    `好了，我已经回收了所有尚未触发供述的关键词，如有进展会再联系你。`,
-    `去问他圣路易斯的事，那个吸血鬼的案子。`,
-    `记清楚你的身份。你只是个摄像头，别再妄想当上帝。`,
-    `下不为例。`
-];
-
 // Utility function to reset visit status (call this when starting a new game)
 export const resetClueLibraryVisit = () => {
-    sessionStorage.removeItem('clueLibrary_visited');
+    localStorage.removeItem('clue_library_visited');
 };
 
 export const ClueLibrary: React.FC<ClueLibraryProps> = ({
@@ -405,7 +371,9 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     collectedPeople = [],
     collectedYears = [],
     onStoryNodeComplete,
-    onClearUnusedKeywords
+    onClearUnusedKeywords,
+    onSetFilingEvidence,
+    initialSelectedClueId = null
 }) => {
     const [selectedClue, setSelectedClue] = useState<Clue | null>(null);
     const [filter, setFilter] = useState('');
@@ -415,12 +383,20 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     // Handle special actions from dialogue links
     const handleDialogueAction = (actionId: string) => {
+        if (!onSetFilingEvidence) return;
         if (actionId === 'view_iron_horse_record') {
-            // Trigger Filing Mode instead of direct view
-            setFilingEvidence({
+            onSetFilingEvidence({
                 id: 'iron_horse_louisville',
                 title: 'Iron Horse Record (Louisville)',
                 content: 'assets/iron_horse_louisville.jpg',
+                type: 'image'
+            });
+        }
+        if (actionId === 'extract_church_residue') {
+            onSetFilingEvidence({
+                id: 'church_visual_residue',
+                title: '视觉残留：埃尔帕索教堂',
+                content: 'assets/church_visual_residue.png',
                 type: 'image'
             });
         }
@@ -436,7 +412,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                 const clueId = match[2].trim();
 
                 // Special handling for action links
-                if (clueId === 'view_iron_horse_record') {
+                if (clueId === 'view_iron_horse_record' || clueId === 'extract_church_residue') {
                     return (
                         <span
                             key={index}
@@ -505,19 +481,42 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const [showHistory, setShowHistory] = useState(false);
     const [simulatedDialogue, setSimulatedDialogue] = useState<string[] | null>(null);
 
-    // Filing State
-    const [filingEvidence, setFilingEvidence] = useState<{ id: string, title: string, content: string, type: 'image' | 'text' } | null>(null);
+    // Filing State removed - now handled by parent via props
 
     // Track newly added items for glow effect
     const [newlyAddedItems, setNewlyAddedItems] = useState<Set<string>>(new Set());
+
+    // Unified effect to set initial selected clue when opening
+    useEffect(() => {
+        if (isOpen && initialSelectedClueId) {
+            const definition = CLUE_DEFINITIONS[initialSelectedClueId];
+            if (definition) {
+                setSelectedClue(definition);
+                setViewMode('folder');
+            }
+        }
+    }, [isOpen, initialSelectedClueId]);
 
     // Vehicle photos viewer state
     const [showVehiclePhotos, setShowVehiclePhotos] = useState(false);
 
     // Track Node 4 dialogue completion for map update timing
     const [hasViewedNode4Dialogue, setHasViewedNode4Dialogue] = useState(false);
+    const [hasViewedNode5Dialogue, setHasViewedNode5Dialogue] = useState(false);
 
     // Check for node completion - prioritize higher nodes first
+    const checkNode5Completion = () => {
+        const requiredConfessions = ['confession_16', 'confession_17', 'confession_18', 'confession_19'];
+        const requiredArchives = ['archive_15', 'archive_16', 'tx_1967']; // Archives 14-16
+        const requiredAttachment = 'church_visual_residue'; // Church image from Easter egg
+
+        const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
+        const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
+        const hasChurchImage = collectedAttachments.includes(requiredAttachment);
+
+        return hasAllConfessions && hasAllArchives && hasChurchImage && currentStoryNode === 4;
+    };
+
     const checkNode4Completion = () => {
         const requiredConfessions = ['confession_12', 'confession_13', 'confession_14', 'confession_15'];
         const requiredArchives = ['kan_1976', 'kc_1965', 'ia_1976'];
@@ -562,6 +561,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     // Derived Node State (Calculated on-the-fly to avoid unmount state loss)
     const detectedNodeId = (() => {
+        if (checkNode5Completion()) return 5;
         if (checkNode4Completion()) return 4;
         if (checkNode3Completion()) return 3;
         if (checkNode2Completion()) return 2;
@@ -609,11 +609,38 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             if (onClearUnusedKeywords) onClearUnusedKeywords();
         } else if (simulatedDialogue === JENNIFER_NODE_4_DIALOGUE || detectedNodeId === 4) {
+            // Node 4 completion: Update story node and collect julip dossier
+            if (onStoryNodeComplete) {
+                onStoryNodeComplete(4);
+            }
+            // Auto-collect julip dossier for Node 4
+            if (onCollectClue) {
+                onCollectClue('julip', '黄油朱莉普');
+            }
+            // Auto-collect julip attachments for Node 4
+            if (onCollectAttachment) {
+                onCollectAttachment('julip_symbol');
+                onCollectAttachment('butter_julep_evidence');
+            }
             // Visual feedback for Node 4
-            setNewlyAddedItems(new Set(['crime_route_map']));
+            setNewlyAddedItems(new Set(['crime_route_map', 'julip']));
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 4 dialogue as viewed to trigger map update
             setHasViewedNode4Dialogue(true);
+        } else if (simulatedDialogue === JENNIFER_NODE_5_DIALOGUE || detectedNodeId === 5) {
+            // Node 5 completion: Update story node and collect reboot_command keyword
+            if (onStoryNodeComplete) {
+                onStoryNodeComplete(5);
+            }
+            // Auto-collect reboot_command keyword for Node 5
+            if (onCollectClue) {
+                onCollectClue('reboot_command', '>> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER]');
+            }
+            // Visual feedback for Node 5
+            setNewlyAddedItems(new Set(['crime_route_map']));
+            setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+            // Mark Node 5 dialogue as viewed to trigger map update
+            setHasViewedNode5Dialogue(true);
         }
 
         setShowJennifer(false);
@@ -621,7 +648,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         setSimulatedDialogue(null);
 
         // SYNC: If the map is currently being viewed, refresh its content to the new version
-        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3 || detectedNodeId === 4)) {
+        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3 || detectedNodeId === 4 || detectedNodeId === 5)) {
             const updatedDefinition = getDynamicClueDefinition('crime_route_map');
             if (updatedDefinition.attachments?.[0]) {
                 setViewingAttachment(updatedDefinition.attachments[0]);
@@ -637,6 +664,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     const getJenniferDialogue = (simulated: string[] | null, detectedId: number | null, visited: boolean) => {
         if (simulated) return simulated;
+        if (detectedId === 5) return JENNIFER_NODE_5_DIALOGUE;
         if (detectedId === 4) return JENNIFER_NODE_4_DIALOGUE;
         if (detectedId === 3) return JENNIFER_NODE_3_DIALOGUE;
         if (detectedId === 2) return JENNIFER_NODE_2_DIALOGUE;
@@ -662,13 +690,26 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
         // Dynamic Rule: Crime Route Map updates based on story node progression
         if (id === 'crime_route_map') {
+            // Node 5: Update AFTER player completes Jennifer's dialogue
+            const isNode5Ready = hasViewedNode5Dialogue && (currentStoryNode >= 5 || detectedNodeId === 5);
             // Node 4: Only update AFTER player completes Jennifer's dialogue
             const isNode4Ready = hasViewedNode4Dialogue && (currentStoryNode >= 4 || detectedNodeId === 4);
             const isNode3Ready = currentStoryNode >= 3 || detectedNodeId === 3;
             const isNode2Ready = currentStoryNode >= 2 || detectedNodeId === 2;
 
+            // Node 5: Add Rockford, Green Bay, Salt Lake City (Route) + Denver, El Paso (Points)
+            if (isNode5Ready) {
+                return {
+                    ...original,
+                    description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔 -> 圣路易斯 -> 堪萨斯城 -> 芝加哥 -> 罗克福德 -> 格林贝 -> 盐湖城（标记点：丹佛[Iris]、埃尔帕索）',
+                    attachments: original.attachments ? [{
+                        ...original.attachments[0],
+                        content: 'assets/crime-route-map-v5.png'
+                    }] : []
+                };
+            }
             // Node 4: Add St. Louis, Kansas City, Chicago - extending westward
-            if (isNode4Ready) {
+            else if (isNode4Ready) {
                 return {
                     ...original,
                     description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔 -> 圣路易斯 -> 堪萨斯城 -> 芝加哥',
@@ -1273,6 +1314,15 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                             </p>
                                                         </div>
                                                     )}
+                                                    {/* Node 5 */}
+                                                    {(currentStoryNode >= 5) && (
+                                                        <div className="space-y-1 pt-2 border-t border-[#334155]/30">
+                                                            <div className="text-[10px] text-[#38bdf8] uppercase tracking-wider font-bold">Checkpoint 5: Reboot Command</div>
+                                                            <p className="text-[#94a3b8] text-xs hover:text-[#e2e8f0] cursor-pointer" onClick={() => { setShowJennifer(true); setJenniferStep(0); setSimulatedDialogue(JENNIFER_NODE_5_DIALOGUE); setShowHistory(false); }}>
+                                                                Replay Sequence: "Three times..."
+                                                            </p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <p className="text-[#e2e8f0] text-lg font-light tracking-wide leading-relaxed font-sans whitespace-pre-line">
@@ -1336,101 +1386,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                         onClose={() => setShowVehiclePhotos(false)}
                     />
 
-                    {/* Filing Evidence Modal */}
-                    <AnimatePresence>
-                        {filingEvidence && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-4"
-                            >
-                                <motion.div
-                                    initial={{ scale: 0.9, y: 20 }}
-                                    animate={{ scale: 1, y: 0 }}
-                                    className="w-full max-w-lg bg-[#1a1515] border border-[#d89853]/30 p-8 rounded shadow-[0_0_50px_rgba(216,152,83,0.1)] relative"
-                                >
-                                    <h2 className="text-[#d89853] font-mono font-bold tracking-[0.2em] text-xl mb-2 text-center">
-                                        EVIDENCE FILING
-                                    </h2>
-                                    <p className="text-[#94a3b8] text-xs font-mono text-center mb-8 uppercase tracking-widest">
-                                        Select destination folder for archival
-                                    </p>
-
-                                    {/* Evidence Preview */}
-                                    <div className="flex items-center gap-4 mb-8 bg-[#1e293b]/50 p-4 rounded border border-[#334155]">
-                                        <div className="w-16 h-16 bg-black border border-[#334155] p-1">
-                                            {filingEvidence.type === 'image' ? (
-                                                <img src={filingEvidence.content} className="w-full h-full object-cover opacity-80" />
-                                            ) : (
-                                                <FileText className="w-full h-full text-gray-500" />
-                                            )}
-                                        </div>
-                                        <div>
-                                            <div className="text-[#e2e8f0] font-bold text-sm">{filingEvidence.title}</div>
-                                            <div className="text-[#94a3b8] text-xs font-mono">Unclassified Item</div>
-                                        </div>
-                                    </div>
-
-                                    {/* Folder Targets */}
-                                    <div className="grid grid-cols-1 gap-3">
-                                        {[
-                                            { id: 'project', label: '青豆牡蛎汤计划', valid: false },
-                                            { id: 'julip', label: '朱利普 (JULIP)', valid: false },
-                                            { id: 'graywater_beacon', label: '灰水信标 (GRAYWATER)', valid: true }
-                                        ].map(folder => (
-                                            <button
-                                                key={folder.id}
-                                                onClick={() => {
-                                                    if (folder.valid) {
-                                                        // Success Logic
-                                                        if (onCollectAttachment) {
-                                                            onCollectAttachment(filingEvidence.id);
-                                                        }
-
-                                                        // Open the proper folder
-                                                        const targetFolder = CLUE_DEFINITIONS[folder.id];
-                                                        if (targetFolder) {
-                                                            setSelectedClue(targetFolder);
-                                                        }
-
-                                                        // Close filing and Jennifer
-                                                        setFilingEvidence(null);
-                                                        setShowJennifer(false);
-
-                                                        // Feedback could be added here, but opening folder is strong feedback
-                                                    } else {
-                                                        // Error/Shake animation could go here
-                                                        // For now just do nothing or small shake
-                                                    }
-                                                }}
-                                                className={`
-                                                    p-4 border border-[#334155] rounded flex items-center justify-between group transition-all
-                                                    hover:border-[#d89853]/50 hover:bg-[#d89853]/5
-                                                `}
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <Folder className="text-[#64748b] group-hover:text-[#d89853]" size={18} />
-                                                    <span className="text-[#94a3b8] font-mono tracking-widest text-sm group-hover:text-[#e2e8f0]">
-                                                        {folder.label}
-                                                    </span>
-                                                </div>
-                                                <ChevronRight className="text-[#334155] group-hover:text-[#d89853]" size={16} />
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    <button
-                                        onClick={() => setFilingEvidence(null)}
-                                        className="mt-8 mx-auto block text-[#64748b] hover:text-[#94a3b8] text-xs font-mono tracking-widest"
-                                    >
-                                        CANCEL OPERATION
-                                    </button>
-
-                                </motion.div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {/* Filing Evidence Modal removed - moved to SimplifiedMainView */}
 
                 </motion.div>
             )}

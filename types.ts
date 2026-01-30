@@ -69,6 +69,8 @@ export interface GameState {
     type: 'search' | 'info' | 'shatter';
     content: string;
     timestamp: number;
+    isReveal?: boolean;
+    revealKeywords?: string[];
   }>;
   consecutiveSearch?: {
     keyword: string;

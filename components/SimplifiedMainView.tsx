@@ -35,6 +35,7 @@ interface SimplifiedMainViewProps {
     onRetrace: () => { success: boolean; reason?: string; keywords?: string[] };
     onClearUnusedKeywords: () => void; // Clear unused keywords after Node 3
     onDebugUnlockAll?: () => void; // DEBUG: Temporary testing function
+    isPersonaGlitching?: boolean; // Trigger for Node 6 awakening glitch
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
@@ -64,7 +65,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     onStoryNodeComplete,
     onRetrace,
     onClearUnusedKeywords,
-    onDebugUnlockAll
+    onDebugUnlockAll,
+    isPersonaGlitching = false
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [showMindMap, setShowMindMap] = useState(false);
@@ -162,7 +164,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     };
 
     return (
-        <div className="h-screen w-screen bg-[#050303] text-[#d89853] overflow-hidden flex flex-col relative font-mono">
+        <div className={`h-screen w-screen bg-[#050303] text-[#d89853] overflow-hidden flex flex-col relative font-mono ${isPersonaGlitching ? 'animate-cinematic-glitch' : ''}`}>
             {/* Background Elements */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/* BRIGHTER: Ambient Light Glow in Center */}
@@ -172,8 +174,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 <div className="absolute inset-0 opacity-40 filter blur-lg scale-110 pointer-events-none mix-blend-screen">
                     <img
                         src="assets/capone-split-personality.jpg"
-                        className="w-full h-full object-cover opacity-60" // Increased opacity
-                        style={{ objectPosition: '0% 20%' }}
+                        className={`w-full h-full object-cover transition-all duration-100 ${isPersonaGlitching ? 'opacity-80 mix-blend-hard-light filter contrast-125' : 'opacity-60'}`}
+                        style={{ objectPosition: isPersonaGlitching ? '100% 20%' : '0% 20%' }}
                     />
                 </div>
 
@@ -236,7 +238,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 group-hover:opacity-100 transition-opacity filter sepia-[0.2] contrast-110 mb-4 md:mb-6">
                             <img
                                 src="assets/capone-split-personality.jpg"
-                                className="w-[200%] h-full max-w-none object-cover object-left"
+                                className={`w-[200%] h-full max-w-none object-cover transition-all duration-75 ${isPersonaGlitching ? 'object-right filter invert hue-rotate-180 contrast-200 saturate-200 scale-110 ml-2' : 'object-left'}`}
                             />
                         </div>
 
@@ -276,9 +278,16 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                     // Find the latest character dialogue in history
                                     // Dialogue items start with "> [" and are not search types
+                                    // Exclude system messages like [SYSTEM]:, [本地协议覆写]:, [归档系统]:, etc.
                                     const reversedHistory = [...history].reverse();
                                     const lastDialogue = reversedHistory.find(item =>
-                                        item.content.startsWith('> [') && item.type !== 'search'
+                                        item.content.startsWith('> [') &&
+                                        item.type !== 'search' &&
+                                        !item.content.includes('[SYSTEM]') &&
+                                        !item.content.includes('[本地协议覆写]') &&
+                                        !item.content.includes('[归档系统]') &&
+                                        !item.content.includes('[STORY CHECKPOINT]') &&
+                                        !item.content.includes('[JENNIFER]')
                                     );
 
                                     const showResponse = !!lastDialogue;
@@ -291,10 +300,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         // Highlight pickable keywords
                                         const isConfession12 = (displayItem as any).id === 'confession_12';
                                         const isReveal = (displayItem as any).isReveal;
+                                        const isNode6Awakening = (displayItem as any).id === 'node_6_awakening';
 
                                         let pickableKeywords: string[] = [];
                                         if (isConfession12) {
                                             pickableKeywords = ['杰西·潘尼', '杰西潘尼'];
+                                        } else if (isNode6Awakening) {
+                                            pickableKeywords = ['80号洲际公路', '守夜人'];
                                         } else if (isReveal) {
                                             pickableKeywords = [
                                                 '堪萨斯城', '流动献血车', '1976', '1976年', '杰西·潘尼', '杰西潘尼', '东12街', '行刑室', '约翰·莫里西', '约翰莫里西',
@@ -376,7 +388,9 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '新计划': { id: 'new_plan', type: 'clue' },
                                             '招募': { id: 'recruitment', type: 'clue' },
                                             '行刑室': { id: 'execution_room', type: 'clue' },
-                                            '流动献血车': { id: 'mobile_blood_truck', type: 'clue' }
+                                            '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
+                                            '80号洲际公路': { id: 'interstate_80', type: 'location' },
+                                            '守夜人': { id: 'watchman', type: 'clue' }
                                         };
 
                                         // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions

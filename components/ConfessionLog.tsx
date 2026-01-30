@@ -185,6 +185,28 @@ const CONFESSION_REGISTRY = [
         people: ['亚瑟·道森 (Arthur Dawson)', '康查尔 (Conchar)', '瓦妮莎 (Vanessa)'],
         summary: '关于1967年特克萨卡纳碎尸案的真相，以及卡彭从房车大梁下意外发现的亚瑟·道森笔记。揭示了亚瑟对“远亲”网络真实性的早期质疑，以及这种质疑如何导致了他的死亡。',
         status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_17',
+        displayId: 'REC-1977-IL',
+        title: '供述 No.17: 脏弗兰克酒吧与招募',
+        eventTime: '1977年前后',
+        location: '伊利诺伊州 罗克福德市 (Rockford)',
+        keywords: ['脏弗兰克酒吧', '招募', '罗克福德市', '里奇·德莱弗斯'],
+        people: ['里奇·德莱弗斯 (Richie Dreyfuss)', '康查尔 (Conchar)', '罗伯特·卡彭 (Robert Capone)'],
+        summary: '关于里奇·德莱弗斯的招募背景及其死因的供述。描述了康查尔在罗克福德市的一间旅馆内设计的“俄罗斯轮盘”心理博弈，最终导致里奇因极度恐惧而自发性心脏衰竭。揭示了康查尔“恐惧才是唯一的子弹”这一极端哲学。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_18',
+        displayId: 'REC-1974-UT',
+        title: '供述 No.18: 警员遇害案与艾莉丝',
+        eventTime: '1974 ∙ 秋',
+        location: '犹他州 盐湖城郊外 (Utah)',
+        keywords: ['丹佛市郊', '警员遇害案', '艾莉丝', '利伯勒尔', '冰锥'],
+        people: ['艾莉丝 (Alice)', '康查尔 (Conchar)', '米勒副警长 (Deputy Miller)'],
+        summary: '关于艾莉丝加入“家族”背景的供述。描述了她在丹佛市郊利伯勒尔镇对米勒副警长的残酷处决过程。揭示了艾莉丝作为该组织中真正“享受”杀戮的成员身份，以及她顺着血腥味横跨半个美国寻找罗伯特的惊人执念。',
+        status: 'DECRYPTED'
     }
 ];
 
