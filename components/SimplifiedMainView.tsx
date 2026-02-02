@@ -171,12 +171,41 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vh] bg-[#d89853]/10 blur-[100px] rounded-full" />
 
                 {/* BRIGHTER: Background Image */}
-                <div className="absolute inset-0 opacity-40 filter blur-lg scale-110 pointer-events-none mix-blend-screen">
-                    <img
-                        src="assets/capone-split-personality.jpg"
-                        className={`w-full h-full object-cover transition-all duration-100 ${isPersonaGlitching ? 'opacity-80 mix-blend-hard-light filter contrast-125' : 'opacity-60'}`}
-                        style={{ objectPosition: isPersonaGlitching ? '100% 20%' : '0% 20%' }}
-                    />
+                {/* STANDARD SPLIT LAYOUT (Both Sides Visible) */}
+                <div className="absolute inset-0 flex pointer-events-none">
+                    {/* LEFT HALF - POLICE (Always Visible + Glitch) */}
+                    <div
+                        className="relative w-1/2 h-full overflow-hidden"
+                        style={{ maskImage: 'linear-gradient(to right, black 85%, transparent)' }}
+                    >
+                        <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
+                            ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
+                            : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
+                            }`}>
+                            <img
+                                src="assets/capone-split-personality.jpg"
+                                className="absolute top-0 left-0 w-[200%] h-full max-w-none object-cover"
+                                style={{ objectPosition: '0% 20%' }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* RIGHT HALF - VILLAIN (Always Visible + Glitch) */}
+                    <div
+                        className="relative w-1/2 h-full overflow-hidden"
+                        style={{ maskImage: 'linear-gradient(to right, transparent, black 15%)' }}
+                    >
+                        <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
+                            ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
+                            : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
+                            }`}>
+                            <img
+                                src="assets/capone-split-personality.jpg"
+                                className="absolute top-0 left-[-100%] w-[200%] h-full max-w-none object-cover"
+                                style={{ objectPosition: '0% 20%' }}
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 {/* BRIGHTER: Reduced overlay darkness */}
@@ -299,23 +328,19 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                         // Highlight pickable keywords
                                         const isConfession12 = (displayItem as any).id === 'confession_12';
+                                        const isConfession20 = (displayItem as any).id === 'confession_20_content' || (displayItem.content && displayItem.content.includes('供述 No.20'));
                                         const isReveal = (displayItem as any).isReveal;
                                         const isNode6Awakening = (displayItem as any).id === 'node_6_awakening';
 
                                         let pickableKeywords: string[] = [];
                                         if (isConfession12) {
                                             pickableKeywords = ['杰西·潘尼', '杰西潘尼'];
+                                        } else if (isConfession20) {
+                                            pickableKeywords = ['波特兰', '软肋'];
                                         } else if (isNode6Awakening) {
                                             pickableKeywords = ['80号洲际公路', '守夜人'];
                                         } else if (isReveal) {
-                                            pickableKeywords = [
-                                                '堪萨斯城', '流动献血车', '1976', '1976年', '杰西·潘尼', '杰西潘尼', '东12街', '行刑室', '约翰·莫里西', '约翰莫里西',
-                                                '尼比', '康查尔', '伦德格兰', '莫宁', '雷吉博士', '罗格·毕比', '小德里克·维恩', '玛莎·迪亚兹', '朱莉', '塞勒斯', '母亲',
-                                                '朱维尔·钱伯斯', '鲍里斯·斯米尔诺夫', '辛西娅·米勒',
-                                                '1971', '1968', '1967', '1985', '1972', '1973', '1982',
-                                                '扭曲关系', '肉体关系', '达文波特', '新计划',
-                                                '脏弗兰克酒吧', '招募', '莫宁', '1974', '碎尸案', '特克萨卡纳', '埃尔帕索', '牧师'
-                                            ];
+                                            pickableKeywords = (displayItem as any).revealKeywords || [];
                                         }
 
                                         const keywordMap: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' }> = {
@@ -390,7 +415,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '行刑室': { id: 'execution_room', type: 'clue' },
                                             '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
                                             '80号洲际公路': { id: 'interstate_80', type: 'location' },
-                                            '守夜人': { id: 'watchman', type: 'clue' }
+                                            '守夜人': { id: 'watchman', type: 'clue' },
+                                            '软肋': { id: 'achilles_heel', type: 'clue' }
                                         };
 
                                         // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions

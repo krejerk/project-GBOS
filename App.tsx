@@ -296,6 +296,10 @@ const App: React.FC = () => {
       'rockford': true, '罗克福德': true, '罗克福德市': true,
       'priest': true, '牧师': true,
       'arthur_dawson': true, 'arthur dawson': true, '亚瑟·道森': true, '亚瑟': true,
+      'interstate_80': true, '80号洲际公路': true, '80号公路': true,
+      'watchman': true, '守夜人': true,
+      'portland': true, '波特兰': true,
+      'achilles_heel': true, '软肋': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -377,7 +381,11 @@ const App: React.FC = () => {
         hasRichie: lowerQuery.includes('richie_dreyfuss') || lowerQuery.includes('richie dreyfuss') || lowerQuery.includes('里奇·德莱弗斯') || lowerQuery.includes('里奇'),
         hasDenverSuburb: lowerQuery.includes('denver_suburb') || lowerQuery.includes('丹佛市郊'),
         hasPoliceKilling: lowerQuery.includes('police_killing') || lowerQuery.includes('警员遇害案'),
-        hasElPaso: lowerQuery.includes('el_paso') || lowerQuery.includes('埃尔帕索')
+        hasElPaso: lowerQuery.includes('el_paso') || lowerQuery.includes('埃尔帕索'),
+        hasInterstate80: lowerQuery.includes('80号洲际公路') || lowerQuery.includes('interstate_80') || lowerQuery.includes('80号公路'),
+        hasWatchman: lowerQuery.includes('守夜人') || lowerQuery.includes('watchman'),
+        hasPortland: lowerQuery.includes('波特兰') || lowerQuery.includes('portland'),
+        hasAchillesHeel: lowerQuery.includes('软肋') || lowerQuery.includes('achilles_heel'),
       };
     };
 
@@ -474,6 +482,45 @@ const App: React.FC = () => {
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 20: Interstate 80 + Watchman
+    if (validation.hasInterstate80 && validation.hasWatchman) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_20');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_20');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+                {
+                  type: 'dialogue',
+                  id: 'confession_20_content',
+                  content: `> [供述 No.20 内容]:\n\n“你一直问我，作为一个受过训练的卧底，作为一个手里有枪的人，为什么我不直接杀了‘父亲’？为什么这几年来，我像条狗一样跟着他在美国兜圈子？\n\n起先不动手的原因很简单，我还没有看到收网的时机。雷吉博士曾经说过，在得到‘收网信号’之前，我什么也不能做。所以起先我一直在等。我在等一个永远不会来的电话。我在等你们告诉我，‘可以了，罗伯特，结束了’。如你所知，没有回应，就在这漫长的等待过程中，情况发生了变化。当然，你也可以说，在看了如此多恶行之后，即便没有指令，我也可以依照本能行事，甚至直接一了百了，但我不能，因为某时某刻，我几乎已经成了家族的一员。\n\n是啊，你已经知道了房车内的家族关系是什么样。被作为肉体容器和把他人当做肉体容器，以及父亲的权威，这两样东西彻底挫伤了我，但并不仅仅是因为肉欲和恐惧感，维持这个系统运转的，还有另外两样东西。\n\n第一样，是驾驶座后面的那个药箱。钥匙挂在父亲的脖子上。那里面装的不是毒品那么简单的东西，那是一种精心调配的化学鸡尾酒。父亲甚至不需要用枪指着我。只要我错过了一次服药时间，或者仅仅是产生了强烈的对抗念头导致的焦虑，我的身体就会崩溃。我会呕吐、痉挛、看到地狱的幻觉。在那之后的每一个清晨，当父亲微笑着把药片递给我时，我不仅不会杀他，我还会感激他。\n\n第二样，是通过远亲所编织的一张看不见的网。不过关于这一点，至今我都仍然无法百分之百确认。可以确认的是，每当夜幕降临，无论我们在哪停车，都有一个守夜机制，当时间来到午夜十二点，车门便会忽然从外面反锁起来。由于车里一片漆黑，起先我以为是康查尔或塞勒斯在守夜，但时间久了，我却渐渐意识到，当车门被锁紧时，似乎所有人都在车上，这意味着另有他人在负责安保，但我从不知道也没见过是谁。后来我小心翼翼问过瓦妮莎，她只告诉我，那是一只‘银喜鹊’。不得不说，这名字起得真贴切，这种鸟最喜欢收集闪闪发光的东西，也喜欢站在高处俯视地上的爬虫。\n\n无论如何，直到车沿着州界一路向北驶出州界，在即将抵达波特兰的时候，我看着一路上倒退的风景，看着西海岸的风吹过瓦妮莎的一头金发，突然想到了破解之法。是的，自始至终瓦妮莎就是父亲乃至整个系统的软肋，而我直到这一刻才注意到。”`,
+                  timestamp: Date.now()
+                }
               ]
             };
           });
@@ -1227,16 +1274,19 @@ const App: React.FC = () => {
     // Clipping 11 Unlock: 1976 + Kansas City
     if (validation.hasYear1976 && validation.hasKansasCity) {
       handleUnlockArchive('kan_1976');
+      return;
     }
 
     // Clipping 12 Unlock: 1965 + John Morrissey
     if (validation.hasYear1965 && validation.hasJohnMorrissey) {
       handleUnlockArchive('kc_1965');
+      return;
     }
 
     // Clipping 13 Unlock: 1976 + Peter Henderson
     if (validation.hasYear1976 && validation.hasPeterHenderson) {
       handleUnlockArchive('ia_1976');
+      return;
     }
 
     // Track consecutive invalid inputs for special easter egg
@@ -1291,45 +1341,13 @@ const App: React.FC = () => {
           keywords: ['vanessa_consecutive_3'],
           response: '> [R. CAPONE]: "……够了。既然你这么执着挖掘我的伤口，那就看清楚了。瓦妮莎确实与别人不同……1976年，堪萨斯城，她哭着求我不要执行那个针对流动献血车的计划。但我没有听。我当时太想看那个城市燃烧了。"',
           priority: 200,
-          isReveal: true
-        },
-        {
-          keywords: ['真相', 'truth', '真实', 'reality', '是什么真相'],
-          response: '> [R. CAPONE]: "真相就在那些灰水里，你得把手伸进去捞，而不是在这里敲打键盘。它闻起来不怎么好。"',
-          priority: 100,
-          fuzzyMatch: true
-        },
-        {
-          keywords: ['圣路易斯', 'st louis', 'st. louis', '吸血鬼', 'vampire'],
-          response: '> [R. CAPONE]: "你想知道圣路易斯发生了什么？去问阿尔特曼啊，让他在办公室里照照镜子就知道吸血鬼在哪了。别来问我。我已经死了，不存在了。"',
-          priority: 110,
-          fuzzyMatch: true
-        },
-        {
-          keywords: ['意义', 'meaning', '目的', 'purpose', '为了什么'],
-          response: '> [R. CAPONE]: "在这儿，意义是按卷宗页数计算的。如果你想找灵魂，去出门左转的教堂，别在我的档案库里晃荡。"',
-          priority: 100,
-          fuzzyMatch: true
+          isReveal: true,
+          revealKeywords: ['1976', '1976年', '堪萨斯城', '流动献血车']
         },
         {
           keywords: ['我是谁', 'who am i', 'who i am', '我到底是谁', '是谁'],
           response: `> [R. CAPONE]: "你是一个潜伏在自己脑子里的幽灵。别急，等显像管的灯火熄灭，你会想起那一包'铁马'烟的。"`,
           priority: 100
-        },
-        {
-          keywords: ['青豆牡蛎汤', 'gbos', 'g.b.o.s', '牡蛎汤', 'green bean oyster soup'],
-          response: '> [R. CAPONE]: "那是犯罪的味道，还是某种邪恶仪式的序曲？我建议你先查查1968年的那份谷仓档案。"',
-          priority: 90
-        },
-        {
-          keywords: ['雷吉博士', '雷吉', 'dr reggie', 'reggie', 'dr. reggie', '博士'],
-          response: '> [R. CAPONE]: "别在背后念叨那个名字。他能听到你的想法，就像他当年坚信自己能听到上帝的声音一样。"',
-          priority: 90
-        },
-        {
-          keywords: ['黄油朱莉普', 'golden julip', 'julip', '朱莉普', '黄油'],
-          response: '> [R. CAPONE]: "这是我在那个维度醒来前，喝的最后一杯酒。现在我舌头上剩下的只有铁锈味和灰水箱里的霉块。别用这杯酒来诱惑一个已经没法吞咽的人。"',
-          priority: 90
         },
         {
           keywords: ['jennifer_consecutive_1'],
@@ -1346,32 +1364,7 @@ const App: React.FC = () => {
           response: '> [R. CAPONE]: "难道说真的是她……那天在埃尔帕索，当我绝望地把烟盒揉烂的时候，她就在教堂的角落里看着，对吗？"',
           priority: 212,
           isReveal: true,
-          revealKeywords: ['教堂']
-        },
-        {
-          keywords: ['铁马', 'iron horse', 'iron-horse', '烟盒', '香烟盒'],
-          response: '> [R. CAPONE]: "亮橙色的盒子，印着那台永远跑不到头的火车头。雷吉博士以为那是他的传声筒，但他不知道，每次我把它丢进灰水管道时，我都在想：如果这封信没被捡走，我是不是就能永远留在房车里了？"',
-          priority: 90
-        },
-        {
-          keywords: ['自助洗衣店', '洗衣店', 'laundromat', '玛莎', 'martha'],
-          response: '> [R. CAPONE]: "惨白的灯光，像是在审判。干衣机转动的声音让我想起雷吉博士的穿孔卡片机。在那里，玛莎·迪亚兹不再是玛莎，她变成了一张白色的床单，等着我们去染色。康查尔说，那是我们共同完成的第一幅画。"',
-          priority: 90
-        },
-        {
-          keywords: ['修道院', 'abbey', '初次会面', '修道院任务'],
-          response: '> [R. CAPONE]: "詹妮弗说是修道院？（发出一声嘶哑的冷笑）……随她怎么说吧。我只记得那是一个没有上帝的地方，到处都是旧书的味道和发霉的阴影。那是\'初次会面\'。我以为我是去执行任务，结果我是参加我自己的葬礼。"',
-          priority: 90
-        },
-        {
-          keywords: ['银喜鹊', 'silver magpie', '喜鹊', '铁链', '她的灯'],
-          response: '> [R. CAPONE]: "我在睡觉时总能听到她在门外走动，铁链在地上拖行的声音。她从不杀人，她只负责确保没人能逃走。如果你见到了她，潜航者，离她的灯远一点。"',
-          priority: 90
-        },
-        {
-          keywords: ['亚利桑那', 'arizona', 'high life', '酒吧', '父亲的酒吧', '劣质啤酒'],
-          response: '> [R. CAPONE]: "这店里全是劣质啤酒和泔水的味道。父亲就站在那儿，他没有发火，只是微笑着帮我点着了烟。他说：信写得不错，罗伯特。下次记得把我的名字写得工整点。"',
-          priority: 90
+          revealKeywords: ['教堂', '埃尔帕索']
         },
 
         // ===== FAMILY MEMBERS (High Priority) =====
@@ -1385,33 +1378,8 @@ const App: React.FC = () => {
           response: '> [R. CAPONE]: "与康查尔不同，塞勒斯身上有种毫无遮掩的恶意，我从未分清他们究竟谁更危险，是一个在暗处观察你的影子，还是一个在你背后磨刀的疯子。"',
           priority: 90
         },
-        {
-          keywords: ['瓦妮莎', 'vanessa', '养女'],
-          response: '> [R. CAPONE]: "她最恶心的那个。一方面她是\"父亲\"的玩物，更多时候，当\"母亲\"、康查尔和赛勒斯开始令人作呕的三人行时，她又会被推出来，充当他们欲望交织时的调剂工具……关于她，我没什么可说的。"',
-          priority: 90
-        },
 
         // ===== ORIGINAL EASTER EGGS (Medium Priority) =====
-        {
-          keywords: ['康查尔', 'conchar'],
-          response: '> [R. CAPONE]: "父亲负责播种，而康查尔负责修剪。他是家族的园丁。他看我们的眼神总是像看一群还没训好的牲口。他相信血缘是这世界上最脆弱的东西，只有共同流过的血，才是永恒的。"',
-          priority: 85
-        },
-        {
-          keywords: ['家族', 'family', 'syndicate', '辛迪加'],
-          response: '> [R. CAPONE]: "在路易斯维尔，康查尔告诉我，\'你现在没有名字了，你只有家。\'"',
-          priority: 80
-        },
-        {
-          keywords: ['父亲', 'father', 'dad'],
-          response: '> [R. CAPONE]: "父亲...那个男人教会了我什么是真正的恶。他说，过度伤害会导致掩护色失效。只有被高度约束的攻击性，才会孕育出真正的仪式。"',
-          priority: 80
-        },
-        {
-          keywords: ['建筑师', 'architect'],
-          response: '> [UNKNOWN SIGNAL]: "建筑师...他是设计师，是操纵者。他的作品不是建筑，是活体实验. 而我，我帮他完成了最后一步。"',
-          priority: 80
-        },
         {
           keywords: ['出去', '离开', 'escape', 'leave', 'get out'],
           response: '> [R. CAPONE]: "我想离开这个鬼地方...但深渊没有回头路。我不是在潜伏，我是在进化。"',
@@ -1439,21 +1407,6 @@ const App: React.FC = () => {
           keywords: ['帮助', 'help', '救', 'save'],
           response: `> [R. CAPONE]: "帮助？如果这也是'治疗'的一部分，那你们的手段真够恶心的。"`,
           priority: 50
-        },
-        {
-          keywords: ['堪萨斯城', 'kansas city', 'kansas_city'],
-          response: '> [R. CAPONE]: "堪萨斯城... 那里本该只有麦浪和宁静。但我带去了火焰，带去了不该属于那个地方的尖叫。那是瓦妮莎最后一次试图阻止我。"',
-          priority: 80
-        },
-        {
-          keywords: ['流动献血车', 'mobile_blood_truck', 'mobile blood donation vehicle'],
-          response: '> [R. CAPONE]: "一辆白色的车，在城市边缘安静地停着。谁会想到那会是恶梦的开始？雷吉博士说那是‘净化的祭坛’。我只记得血的味道。"',
-          priority: 80
-        },
-        {
-          keywords: ['1976', '1976年', 'year_1976'],
-          response: '> [R. CAPONE]: "1976年。那一年堪萨斯城的夏天特别长，蝉鸣声盖过了一切。那天之后，我再也没见过瓦妮莎笑过。"',
-          priority: 80
         },
         {
           keywords: ['痛', 'pain', 'hurt', '头', 'headache'],

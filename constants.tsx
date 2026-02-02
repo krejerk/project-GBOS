@@ -61,6 +61,7 @@ export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
   'confession_17': ['richie_dreyfuss', 'rockford'],
   'confession_18': ['el_paso', 'priest'],
   'confession_19': ['el_paso', 'priest', 'church'],
+  'confession_20': ['interstate_80', 'watchman'],
   'archive_15': ['year_1977', 'richie_dreyfuss'],
   'archive_16': ['dirty_frank', 'recruitment'],
   'tx_1967': ['el_paso', 'year_1977'],
@@ -75,14 +76,14 @@ export const CATEGORY_IDS = {
     'east_12th_st', 'davenport', 'texarkana', 'el_paso', 'dirty_frank',
     'st_louis', 'cincinnati', 'chicago', 'louisville', 'burkesville',
     'quantico', 'kansas_city', 'roanoke', 'nevada', 'ohio', 'maine',
-    'mojave_rest_stop', '1402_old_dominion_rd', 'denver_suburb', 'church', 'interstate_80'
+    'mojave_rest_stop', '1402_old_dominion_rd', 'denver_suburb', 'church', 'interstate_80', 'portland'
   ],
   CASES: [
     'new_plan', 'recruitment', 'dismemberment_case', 'rockford',
     'ritual_case', 'small_bank', 'missing', 'family_massacre',
     'twisted_relationship', 'mint_plan', 'klub75_report',
     'mobile_blood_truck', 'execution_room', 'chaos_aesthetics', 'maggots', 'police_killing',
-    'reboot_command', 'watchman'
+    'reboot_command', 'watchman', 'achilles_heel'
   ],
   PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson', 'richie_dreyfuss'],
   YEARS: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975', 'year_1976', 'year_1974', 'year_1965', 'year_1977']
@@ -118,7 +119,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '约翰莫里西': { id: 'john_morrissey', type: 'person' },
   '皮特·亨德森': { id: 'peter_henderson', type: 'person' },
   '彼特·亨德森': { id: 'peter_henderson', type: 'person' },
-  '牧师': { id: 'priest', type: 'clue' },
+  '牧师': { id: 'priest', type: 'person' },
   '亚瑟·道森': { id: 'arthur_dawson', type: 'person' },
   '亚瑟': { id: 'arthur_dawson', type: 'person' },
   'Arthur Dawson': { id: 'arthur_dawson', type: 'person' },
@@ -203,6 +204,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '丹佛市郊': { id: 'denver_suburb', type: 'location' },
   '警员遇害案': { id: 'police_killing', type: 'clue' },
   '教堂': { id: 'church', type: 'location' },
+  '软肋': { id: 'achilles_heel', type: 'clue' },
   '>> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER]': { id: 'reboot_command', type: 'clue' },
   'interstate_80': { id: 'interstate_80', type: 'clue' },
   'watchman': { id: 'watchman', type: 'clue' },
@@ -1000,6 +1002,32 @@ export const CORE_NODES: MemoryNode[] = [
       },
       [MemoryLayer.CORE]: {
         event: "就在这时，一只冰凉的手抓住了我的手腕。是那个牧师。他还没死透。他的喉咙被艾丽丝扎烂了，血泡在嘴里咕噜咕噜地响。但他那双浑浊的眼睛死死盯着我，然后移向那个塞在缝隙里的烟盒。他看懂了。所以他松开手，用沾满血的手指把那个烟盒勾了出来。他没有撕碎它，只是把它轻轻推回我面前。他张开嘴，那个漏风的喉咙里挤出几个字，但我听得清清楚楚。他说：\"不会有人收到信的。\"\n\n我记得他断气的时候眼睛还睁着，带着怜悯的笑，那笑让我恶心得不行。也是在那个时候，我心里终于有了这个念头。我心想，好吧，是时候了。我把烟盒捡起来，撕碎之后，塞进尸体的嘴里。从那以后灰水断流，我再也没留下过信标。\n\n等等——\n\n那件事发生的时候，只有我和那具尸体。艾丽丝在车上，康查尔在外面望风。那个烟盒被我揉烂了，和尸体一起烂在了埃尔帕索的教堂地下。没有警察发现过，没有档案记录过。这也是我第一次开口说这件事。所以，你是怎么知道的？为什么你总能找对关键词？这些不可能通过推理和调查得知，除非……除非有人当时就在我身后看着这一切。\n\n听着，那个给你提供关键词的人知道得太多了。快告诉我，他叫什么名字？",
+        attitude: "",
+        visual: ""
+      }
+    },
+    connectedTo: ["capone"]
+  },
+  {
+    id: "confession_20",
+    keyword: "confession",
+    title: "供述 No.20",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.55, y: window.innerHeight * 0.45 },
+    revealedKeywords: [],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "你一直问我，作为一个受过训练的卧底，作为一个手里有枪的人，为什么我不直接杀了“父亲”？为什么这几年来，我像条狗一样跟着他在美国兜圈子？\n\n起先不动手的原因很简单，我还没有看到收网的时机。 雷吉博士曾经说过，在得到“收网信号”之前，我什么也不能做。所以起先我一直在等。 我在等一个永远不会来的电话。我在等你们告诉我，“可以了，罗伯特，结束了”。如你所知，没有回应，就在这漫长的等待过程中，情况发生了变化。当然，你也可以说，在看了如此多恶行之后，即便没有指令，我也可以依照本能行事，甚至直接一了百了，但我不能，因为某时某刻，我几乎已经成了家族的一员。\n\n是啊，你已经知道了房车内的家族关系是什么样。被作为肉体容器和把他人当做肉体容器，以及父亲的权威，这两样东西彻底挫伤了我，但并不仅仅是因为肉欲和恐惧感，维持这个系统运转的，还有另外两样东西。",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.DEEP]: {
+        event: "第一样，是驾驶座后面的那个药箱。 钥匙挂在父亲的脖子上。 那里面装的不是毒品那么简单的东西，那是一种精心调配的化学鸡尾酒。父亲甚至不需要用枪指着我。只要我错过了一次服药时间，或者仅仅是产生了强烈的对抗念头导致的焦虑，我的身体就会崩溃。我会呕吐、痉挛、看到地狱的幻觉。 在那之后的每一个清晨，当父亲微笑着把药片递给我时，我不仅不会杀他，我还会感激他。\n\n第二样，是通过远亲所编织的一张看不见的网。不过关于这一点，至今我都仍然无法百分之百确认。可以确认的是，每当夜幕降临，无论我们在哪停车，都有一个守夜机制，当时间来到午夜十二点，车门便会忽然从外面反锁起来。由于车里一片漆黑，起先我以为是康查尔或塞勒斯在守夜，但时间久了，我却渐渐意识到，当车门被锁紧时，似乎所有人都在车上，这意味着另有他人在负责安保，但我从不知道也没见过是谁。后来我小心翼翼问过瓦妮莎，她只告诉我，那是一只“银喜鹊”。不得不说，这名字起得真贴切，这种鸟最喜欢收集闪闪发光的东西，也喜欢站在高处俯视地上的爬虫。",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.CORE]: {
+        event: "无论如何，直到车沿着州界一路向北驶出州界，在即将抵达波特兰的时候，我看着一路上倒退的风景，看着西海岸的风吹过瓦妮莎的一头金发，突然想到了破解之法。是的，自始至终瓦妮莎就是父亲乃至整个系统的软肋，而我直到这一刻才注意到。",
         attitude: "",
         visual: ""
       }
