@@ -62,6 +62,8 @@ export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
   'confession_18': ['el_paso', 'priest'],
   'confession_19': ['el_paso', 'priest', 'church'],
   'confession_20': ['interstate_80', 'watchman'],
+  'confession_21': ['portland', 'achilles_heel'],
+  'confession_22': ['redwood_forest', 'pow_camp'],
   'archive_15': ['year_1977', 'richie_dreyfuss'],
   'archive_16': ['dirty_frank', 'recruitment'],
   'tx_1967': ['el_paso', 'year_1977'],
@@ -76,14 +78,18 @@ export const CATEGORY_IDS = {
     'east_12th_st', 'davenport', 'texarkana', 'el_paso', 'dirty_frank',
     'st_louis', 'cincinnati', 'chicago', 'louisville', 'burkesville',
     'quantico', 'kansas_city', 'roanoke', 'nevada', 'ohio', 'maine',
-    'mojave_rest_stop', '1402_old_dominion_rd', 'denver_suburb', 'church', 'interstate_80', 'portland'
+    'mojave_rest_stop', '1402_old_dominion_rd', 'denver_suburb', 'church',
+    'interstate_80', 'portland', 'redwood_forest', 'pow_camp', 'santa_barbara',
+    'rockford'
   ],
   CASES: [
     'new_plan', 'recruitment', 'dismemberment_case', 'rockford',
     'ritual_case', 'small_bank', 'missing', 'family_massacre',
     'twisted_relationship', 'mint_plan', 'klub75_report',
-    'mobile_blood_truck', 'execution_room', 'chaos_aesthetics', 'maggots', 'police_killing',
-    'reboot_command', 'watchman', 'achilles_heel'
+    'mobile_blood_truck', 'execution_room', 'chaos_aesthetics', 'maggots',
+    'police_killing', 'reboot_command', 'watchman', 'achilles_heel',
+    'amalekite_protocol', 'closing_the_net', 'tithe', 'silver_magpie',
+    'project', 'julip'
   ],
   PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson', 'richie_dreyfuss'],
   YEARS: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975', 'year_1976', 'year_1974', 'year_1965', 'year_1977']
@@ -174,6 +180,8 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '东12街': { id: 'east_12th_st', type: 'location' },
   '莫哈韦休息站': { id: 'mojave_rest_stop', type: 'location' },
   '1402 Old Dominion Rd.': { id: '1402_old_dominion_rd', type: 'location' },
+  '战俘营': { id: 'pow_camp', type: 'location' },
+  '圣芭芭拉': { id: 'santa_barbara', type: 'location' },
 
   // Cases / Details
   '小银行': { id: 'small_bank', type: 'clue' },
@@ -192,8 +200,15 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '招募': { id: 'recruitment', type: 'clue' },
   '行刑室': { id: 'execution_room', type: 'clue' },
   '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
+  '80号洲际公路': { id: 'interstate_80', type: 'location' },
+  '守夜人': { id: 'watchman', type: 'clue' },
+  '软肋': { id: 'achilles_heel', type: 'clue' },
+  '红杉林': { id: 'redwood_forest', type: 'location' },
+  '亚玛力人协议': { id: 'amalekite_protocol', type: 'clue' },
+  '收网': { id: 'closing_the_net', type: 'clue' },
+  '什一税': { id: 'tithe', type: 'clue' },
   '亚裔女性': { id: 'asian_woman', type: 'clue' },
-  '黄油朱莉普': { id: 'julip', type: 'clue' },
+  '黄油朱利普': { id: 'julip', type: 'clue' },
   '青豆牡蛎汤计划': { id: 'project', type: 'clue' },
   '诡异家族': { id: 'family', type: 'clue' },
   '混乱美学': { id: 'chaos_aesthetics', type: 'clue' },
@@ -204,10 +219,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '丹佛市郊': { id: 'denver_suburb', type: 'location' },
   '警员遇害案': { id: 'police_killing', type: 'clue' },
   '教堂': { id: 'church', type: 'location' },
-  '软肋': { id: 'achilles_heel', type: 'clue' },
   '>> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER]': { id: 'reboot_command', type: 'clue' },
-  'interstate_80': { id: 'interstate_80', type: 'clue' },
-  'watchman': { id: 'watchman', type: 'clue' },
 };
 
 export const ARCHIVE_CASE_HIGHLIGHT_MAP: Record<string, string[]> = {
@@ -447,6 +459,9 @@ CLUE_DISPLAY_MAP['quantico'] = '匡提科';
 CLUE_DISPLAY_MAP['reboot_command'] = '>> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER]';
 CLUE_DISPLAY_MAP['interstate_80'] = '80号洲际公路';
 CLUE_DISPLAY_MAP['watchman'] = '守夜人';
+CLUE_DISPLAY_MAP['redwood_forest'] = '红杉林';
+CLUE_DISPLAY_MAP['pow_camp'] = '战俘营';
+CLUE_DISPLAY_MAP['amalekite_protocol'] = '亚玛力人协议';
 
 export const CORE_NODES: MemoryNode[] = [
   {
@@ -1033,7 +1048,59 @@ export const CORE_NODES: MemoryNode[] = [
       }
     },
     connectedTo: ["capone"]
-  }
+  },
+  {
+    id: "confession_21",
+    keyword: "confession",
+    title: "供述 No.21",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.45, y: window.innerHeight * 0.35 },
+    revealedKeywords: [],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "想要搞清楚父亲的软肋，与搞清他究竟是谁、何以成为父亲，其实根本就是同一个问题。\n\n1968年，在我被扔进缅因州的监狱之前，某天上午，雷吉博士把一份侧写扔在我的桌子上。当时外面的世界已经疯了，旧金山的嬉皮士在吸大麻，反战游行在烧征兵卡，雷吉对我说：“在这个失去秩序的年代，权威是一种极度稀缺的商品。谁能提供秩序，谁就是新神。”\n\n在侧写里，雷吉博士说，这个不断在移动中的老家伙和查理·曼森或者是后来那些搞山达基教的神棍不一样。曼森是疯狗，哈伯德是贪婪的商人，但他不一样，他是受过正规训练的牧羊人。\n时至今日我得说，雷吉是对的，家族并非六十年代的产物。父亲也更古老，更坚硬。他是朝鲜战争留下的幽灵。",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.DEEP]: {
+        event: "上到这辆房车之后，我开始有大把的时间观察他。偶尔服药后的兴奋感散去，但痛苦尚未袭来的一小阵子，那是我最冷静的时候，在那个片刻，我可以不再把他当做神，而是把他当做一个标本去看，于是我轻而易举就看到他身上被刻意隐藏的、属于50年代军方的痕迹。\n\n就拿他的生活习惯来说，在这个完全无法洗澡的流浪环境之中，父亲长时间保持着一种病态的整洁。他的指甲永远修剪得整整齐齐，吃饭时也会严格遵守军官食堂的礼仪——切肉时手腕悬空，咀嚼时绝不张嘴。再听听他的音乐，房车的收音机里永远循环播放着格伦·米勒和班尼·古德曼，我猜父亲在怀念那个黑白分明的、绝对服从的艾森豪威尔时代。\n\n至于他是怎么学会控制家族的…… 塞勒斯，那个喝多了劣质波本酒就会管不住嘴的傻大个，曾经跟我吹嘘过父亲的勋章。 他说父亲在1951年的时候，并不在前线冲锋，而是待在巨济岛战俘营，那里是冷战时期最大的意识形态实验室。塞勒斯说，长官们不需要动刑。只需要把那些战俘关在一个特制的房间里，调整灯光，播放特定的频率，然后一遍又一遍地重塑他们的记忆。他能让最坚定的布尔什维克在三天内哭着喊妈妈。",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.CORE]: {
+        event: "所以这辆房车，其实那个战俘营的缩小版。 这里的所谓“祈祷”，其实是心理防线拆解，这里的“圣餐”，也就是药箱里的东西，是化学辅助审讯。 这里的“守夜”，是安全感剥夺。父亲并不是什么先知，只是一个从朝鲜战场回来的心理战专家，他发现这套用来对付敌人的“洗脑技术”，在这个信仰崩塌的年代，可以能用来完美地控制自己人。\n\n当然，塞勒斯的说法只是说法而已，毕竟多数时候他会用先知和弥赛亚来称呼父亲，你不能太把这些信息当真。可直到一件事情发生，我忽然意识到，关于朝鲜的部分或许是真的。那是我们刚抵达俄勒冈州边界的时候，那天傍晚，雨刚停，一辆外观被涂满了色彩斑斓的呕吐物般的旧校车，喧闹着从我们的营地旁开过。 车上的人大笑大叫，把廉价啤酒洒在路面上，甚至有人冲着我们这边暴露私处。艾莉丝那个疯女人坐在篝火旁，竟然微笑着向他们回了一个飞吻。直到车尾灯消失在红杉林深处，她才悠悠地吐出一口烟圈，说：“大概是一群追随‘感恩而死’巡演的嬉皮士，一群快乐的猪。”\n\n如果你去查日后警方的卷宗，你会看到这是一起教科书级别的“仇恨犯罪”。 那辆旧校车最终被发现停在林地深处，车窗全碎，车身上被喷满了“滚回旧金山”、“美国不欢迎垃圾”之类排版工整的标语。 我敢打赌，警方一定会结案说是当地那帮极右翼伐木工或者保守派红脖子干的。\n\n但真相是，几乎在校车离开视线的半小时后，父亲就让康查尔发动房车，宣布即将执行亚玛力人协议计划。这个计划由艾莉丝和康查尔做前哨，他们带着酒和笑脸混进去。一旦被这群毫无戒心的孩子接纳，康查尔会把马匹专用的强效镇静剂混入LSD和啤酒里。\n\n等到第二天，当警察接到匿名报警电话赶到林地时，他们会看到这群嬉皮士，他们被割掉了耳朵，脸颊上被刺上了纳粹的万字符。 但在药物的作用下，他们甚至感觉不到疼，只能对着警察痴笑。\n\n启发就是在那一刻像闪电一样击中我的。\n\n过去我们也杀人，也放火。但从来没有哪次像这次一样，整个家庭看起来像个特种小队一样，太快、太流畅、太训练有素。 仿佛那个所谓的“亚玛力人协议”计划根本不是父亲临时想出来的，而是一份早就写好、甚至演练过无数次的战术手册。就连母亲也是极其熟练地从她的针线盒底层，翻出了早就准备好的刺青针刀和那瓶黑色的工业油墨。",
+        attitude: "",
+        visual: ""
+      }
+    },
+    connectedTo: ["capone"]
+  },
+  {
+    id: "confession_22",
+    keyword: "confession",
+    title: "供述 No.22",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.55, y: window.innerHeight * 0.45 },
+    revealedKeywords: [],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "如果要拆掉这个笼子，我就得摸清每一根栏杆的位置。 这辆GMC房车我住了好几年，我以为我已经了解了它的每一个角落：哪里藏着备用轮胎，哪里藏着现金，哪块地板踩上去会响。但我错了，我一直是个盲人，住在一个我看不清的迷宫里。\n\n那是个周二的晚上，房车停在鲑溪小径旁的红杉林里。 按照父亲制定的那套扭曲的时间表，这天晚上是轮到我“使用”瓦妮莎的时间。不用猜，这可不是什么浪漫的约会。这是父亲的奖励机制，也是一种羞辱仪式。他把瓦妮莎像一块肉一样赏赐给我们，用来发泄多余的精力，或者作为我们在行动中表现良好的奖品——当然，在艾莉丝上车之后，每个人都希望能永远跟她待在一起。\n\n总之我们有一套严格的交配法则。 在这辆车上，性是被允许的，甚至是被鼓励的，因为它能让我们保持动物性服从。但亲密关系是被绝对禁止的。 我们可以像野兽一样撕咬对方，可以在对方的肩膀上留下淤青和牙印——父亲甚至会检查这些痕迹，作为我们“野性”的证明。 但绝对不能亲吻彼此，因为接吻意味着平等，意味着私情，意味着两个奴隶试图在主人的眼皮底下建立某种连接。那天晚上，瓦妮莎违规了，在黑暗的后车厢里，在那张充满霉味和精液味的床垫上，她突然捧住了我的脸。 她没有像往常一样麻木配合着，身体只是剧烈地颤抖。她吻了我，像溺水者在抓住最后一根稻草。她贴着我的嘴唇，用一种带着哭腔的气声乞求：“……带我走，罗伯特。求你了。趁着今晚……我们能逃掉。”",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.DEEP]: {
+        event: "如果是另一个罗伯特，听到这句话大概会心碎，会抱着她一起哭。但当时的我并没有回应那个吻，而是一把推开了她，力道大到她的头撞在了车厢壁上，发出“咚”的一声闷响。我看着她惊恐的眼睛说，试图策反同伴，非法建立情感连接，按规矩这足够被父亲扔进蛇穴了。说着话，我也坐起身，整理好衣服，手搭在门把手上，说我现在就去告诉父亲。\n\n“不！别！求你！” 她扑过来抱住我的腿，指甲深深掐进我的肉里。恐惧让她的脸扭曲了。她知道我是认真的，她也知道“父亲”的惩罚是什么。而我只是居高临下地看着她，反复叙说着试图逃走之于我并无好结果，父亲的爪牙遍布全美，让她给我一个我不去告发并与她私奔的理由。瓦妮莎颤抖着，眼泪流了满脸，最后她指着车尾那个看似普通的衣柜，声音细若蚊蝇，“我知道这辆车的夹层。我有一次看见了……他在那里和外面的人联络。”\n\n第二天趁着父亲和康查尔下车，我按照瓦妮莎的指示，钻进了车尾。 她没有撒谎。 在后储藏柜的最深处，有一块看起来像是为了遮挡轮拱而设计的挡板。但如果你按压特定的角落，它会弹开。 里面藏着一条极其狭窄的、只能容许一只猫或者一个瘦骨嶙峋的人挤进去的铝合金楼梯。它通向哪里？ 这辆GMC房车的车顶经过了特殊的加高改造，从外面看像是空调机组和行李架，但实际上，那是一个只有一米高、仅容人蹲下前行的二层空间。我爬了上去。那里热得像个烤箱，充满了那种电子设备过热散发出的臭氧味。 在这个只有老鼠才能钻进来的夹层里，我看到很多意料之外的东西，首先隔间的正中央是一台Collins KWM-2 收发报机，军用级，角落里有一台小型的油印机，旁边堆满了还没干透的传单和伪造的证件。 那些工整的“神启”，那些用来嫁祸给嬉皮士的标语，都是在这个像棺材一样的夹层里生产出来的。",
+        attitude: "",
+        visual: ""
+      },
+      [MemoryLayer.CORE]: {
+        event: "旁边是一台不停闪烁红光的Regency 警用扫描仪，看着那台上不断闪烁的红色二极管。 嘀、嘀、嘀。 每一次闪烁，都是一条来自警方的调度指令。在这个红光的映照下，过去半年里那些困扰我的谜题，像被推倒的多米诺骨牌一样，哗啦啦地解开了。六个月前，我们在萨克拉门托经历了一次极其罕见的失手。原本行动目标是一家位于郊区的信用社。不是为了钱，是为了信用社保险柜里的一份属于某个参议员的不记名债券，父亲称之为“取回上帝的什一税”。\n\n但塞勒斯却搞砸了。那个笨手笨脚的傻大个触发了无声警报。当我们冲出大门时，整个萨克拉门托警局的巡逻车像疯了一样向我们包围过来。警笛声从四面八方响起，我们在第160号公路上狂奔，前面是封锁线，后面是追兵。艾莉丝在尖叫，塞勒斯咒骂着，唯独父亲坐在副驾驶上，闭着眼睛，手指轻轻敲击着膝盖，嘴里念念有词。 就在我们即将撞上前方警车封锁线的一瞬间，他突然睁开眼，大声命令道： “左转！冲进那片玉米地！上帝为我们分开红海！”\n\n康查尔猛打方向盘，房车像一头失控的犀牛冲进了玉米地，几乎就在我们车尾消失在玉米秆里的十秒钟后，三辆亮着警灯的拦截车呼啸着掠过我们原本所在的公路。 我们在泥泞中颠簸了五英里，最后神奇地绕过了所有的检查站，消失在茫茫夜色中。\n\n那天晚上，父亲在营火旁举行了一场盛大的感恩弥撒，他说他听到了天使的低语，指引他避开了那些世俗的猎犬。也许他真的能预知未来？我忍不住产生了一丝敬畏。\n\n所以呢？去他的神谕，他听到的不是上帝的声音，是萨克拉门托警局调度的10-33代码。我从夹层里爬下来，把挡板重新扣好。 回到车厢里时，瓦妮莎还在角落里发抖。她看着我，眼神里充满了期待和恐惧，以为我会兑现承诺带她走。 我没有理她，我现在有了更明确的计划，也许在抵达圣芭芭拉的海滩之前，我就能够收网。",
+        attitude: "",
+        visual: ""
+      }
+    },
+    connectedTo: ["capone"]
+  },
 ];
 
 export type HierarchyRole = 'BOSS' | 'UNDERBOSS' | 'LIEUTENANT' | 'SOLDIER' | 'ASSOCIATE' | 'HANDLER' | 'AGENT';

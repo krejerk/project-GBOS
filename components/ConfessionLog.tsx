@@ -207,6 +207,50 @@ const CONFESSION_REGISTRY = [
         people: ['艾莉丝 (Alice)', '康查尔 (Conchar)', '米勒副警长 (Deputy Miller)'],
         summary: '关于艾莉丝加入“家族”背景的供述。描述了她在丹佛市郊利伯勒尔镇对米勒副警长的残酷处决过程。揭示了艾莉丝作为该组织中真正“享受”杀戮的成员身份，以及她顺着血腥味横跨半个美国寻找罗伯特的惊人执念。',
         status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_19',
+        displayId: 'REC-1974-TX',
+        title: '供述 No.19: 埃尔帕索教堂屠杀',
+        eventTime: '1974',
+        location: '德克萨斯州 埃尔帕索 (El Paso)',
+        keywords: ['埃尔帕索', '神父', '教堂', '1974', '猎枪'],
+        people: ['神父 (The Priest)', '康查尔 (Conchar)', '塞勒斯 (Silas)'],
+        summary: '关于埃尔帕索教堂惨案的供述。揭示了康查尔如何利用种族仇恨煽动一起针对边境教堂的袭击，以及那名所谓“沉默的神父”在死亡面前展现出的、令康查尔感到不安的平静。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_20',
+        displayId: 'REC-1978-NV',
+        title: '供述 No.20: 80号洲际公路守夜人',
+        eventTime: '1978',
+        location: '内华达州 80号洲际公路 (I-80)',
+        keywords: ['80号洲际公路', '守夜人', '无线电', '卡车司机'],
+        people: ['罗伯特·卡彭 (Robert Capone)', '守夜人 (The Watchman)'],
+        summary: '关于在80号公路上遇到的神秘卡车司机“守夜人”的供述。这实际上是卡彭分裂人格的早期具象化体现，他在无线电中与另一个自己对话，预示着他最终精神崩溃的开端。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_21',
+        displayId: 'REC-1951-KR',
+        title: '供述 No.21: 亚玛力人协议',
+        eventTime: '1951 / 1968',
+        location: '梅诺西诺 (Mendocino) / 巨济岛 (Geoje-do)',
+        keywords: ['波特兰', '软肋', '红杉林', '战俘营', '亚玛力人协议'],
+        people: ['父亲 (Father)', '雷吉博士 (Dr. Reggie)', '塞勒斯 (Silas)', '艾莉丝 (Alice)'],
+        summary: '关于“父亲”权威来源的终极解密。揭示了他在朝鲜战争巨济岛战俘营的经历，以及他如何将美军心理战技术转化为控制“家族”的洗脑工具（亚玛力人协议），并以此策划了针对嬉皮士的假旗行动。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_22',
+        displayId: 'REC-1975-CA',
+        title: '供述 No.22: 圣芭芭拉收网',
+        eventTime: '1975',
+        location: '加利福尼亚州 圣芭芭拉 (Santa Barbara)',
+        keywords: ['红杉林', '战俘营', '圣芭芭拉', '收网', '什一税'],
+        people: ['罗伯特·卡彭 (Robert Capone)', '瓦妮莎 (Vanessa)', '父亲 (Father)', '康查尔 (Conchar)'],
+        summary: '关于卡彭在房车夹层发现真相并决定收网的关键转折点。揭示了瓦妮莎试图策反他的失败尝试，以及他在发现父亲利用房车车顶夹层伪造“神谕”和生产宣传品后，决心将其逮捕的心理决断。',
+        status: 'DECRYPTED'
     }
 ];
 

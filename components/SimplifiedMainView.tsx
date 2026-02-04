@@ -310,13 +310,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     // Exclude system messages like [SYSTEM]:, [本地协议覆写]:, [归档系统]:, etc.
                                     const reversedHistory = [...history].reverse();
                                     const lastDialogue = reversedHistory.find(item =>
-                                        item.content.startsWith('> [') &&
-                                        item.type !== 'search' &&
-                                        !item.content.includes('[SYSTEM]') &&
-                                        !item.content.includes('[本地协议覆写]') &&
-                                        !item.content.includes('[归档系统]') &&
-                                        !item.content.includes('[STORY CHECKPOINT]') &&
-                                        !item.content.includes('[JENNIFER]')
+                                        (item.type === 'dialogue' || item.type === 'archive_content' || item.type === 'info') &&
+                                        (item.content.startsWith('> [') || item.content.startsWith('[ARCHIVE'))
                                     );
 
                                     const showResponse = !!lastDialogue;
@@ -324,19 +319,30 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                     if (showResponse && displayItem) {
                                         // Clean up content for display: remove "> [NAME]: " prefix if present
-                                        const displayContent = displayItem.content.replace(/^> \[.*?\]:\s*"/, '').replace(/"$/, '');
+                                        const displayContent = displayItem.content
+                                            .replace(/^> \[.*?\]:\s*"?/, '')
+                                            .replace(/"$/, '')
+                                            .replace(/^\[ARCHIVE RETRIEVED\]:.*?\n\n?/, '');
 
                                         // Highlight pickable keywords
+                                        // Highlight pickable keywords
+                                        const content = displayItem.content || '';
+
+                                        // NUCLEAR CHECK: Detect Confession 20/21 by multiple signals
+                                        const isConf20 = (displayItem as any).id === 'confession_20_content';
+                                        const isConf21 = (displayItem as any).id === 'confession_21_content';
                                         const isConfession12 = (displayItem as any).id === 'confession_12';
-                                        const isConfession20 = (displayItem as any).id === 'confession_20_content' || (displayItem.content && displayItem.content.includes('供述 No.20'));
                                         const isReveal = (displayItem as any).isReveal;
                                         const isNode6Awakening = (displayItem as any).id === 'node_6_awakening';
 
                                         let pickableKeywords: string[] = [];
-                                        if (isConfession12) {
-                                            pickableKeywords = ['杰西·潘尼', '杰西潘尼'];
-                                        } else if (isConfession20) {
+
+                                        if (isConf20) {
                                             pickableKeywords = ['波特兰', '软肋'];
+                                        } else if (isConf21) {
+                                            pickableKeywords = ['红杉林', '战俘营', '亚玛力人协议'];
+                                        } else if (isConfession12) {
+                                            pickableKeywords = ['杰西·潘尼', '杰西潘尼'];
                                         } else if (isNode6Awakening) {
                                             pickableKeywords = ['80号洲际公路', '守夜人'];
                                         } else if (isReveal) {
@@ -397,6 +403,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '脏弗兰克酒吧': { id: 'dirty_frank', type: 'location' },
                                             '特克萨卡纳': { id: 'texarkana', type: 'location' },
                                             '埃尔帕索': { id: 'el_paso', type: 'location' },
+                                            '红杉林': { id: 'redwood_forest', type: 'location' },
+                                            '战俘营': { id: 'pow_camp', type: 'location' },
 
                                             // Cases / Details
                                             '小银行': { id: 'small_bank', type: 'clue' },
@@ -416,13 +424,18 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
                                             '80号洲际公路': { id: 'interstate_80', type: 'location' },
                                             '守夜人': { id: 'watchman', type: 'clue' },
-                                            '软肋': { id: 'achilles_heel', type: 'clue' }
+                                            '软肋': { id: 'achilles_heel', type: 'clue' },
+                                            '亚玛力人协议': { id: 'amalekite_protocol', type: 'clue' },
+                                            '银喜鹊': { id: 'silver_magpie', type: 'clue' },
+                                            '教堂': { id: 'church', type: 'location' }
                                         };
 
                                         // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions
+                                        // UPDATED: For "Reveal" dialogues or specific Confession content (which explicitly set pickableKeywords),
+                                        // we ALWAYS show them, even if consumed, so the user can see the link/status.
                                         const activePickableKeywords = pickableKeywords.filter(k => {
                                             const config = keywordMap[k];
-                                            return !config || !consumedKeywords.has(config.id);
+                                            return !!config;
                                         });
 
                                         const regex = activePickableKeywords.length > 0
@@ -672,20 +685,33 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         className="w-full max-w-2xl px-4 flex flex-wrap gap-2 justify-center mt-4 absolute top-full left-0 z-20"
                                     >
                                         {/* Combine clues for chips. PEOPLE ARE REMOVED (Syndicate Board handles these). YEARS ARE REMOVED (Archives handle these). */}
-                                        {[...new Set([...(collectedClues || [])].filter(Boolean))]
-                                            .filter(id => {
-                                                const lowerId = id.toLowerCase();
-                                                const isLocation = CATEGORY_IDS.LOCATIONS.includes(id);
-                                                const isCase = CATEGORY_IDS.CASES.includes(id);
+                                        {(() => {
+                                            // Calculate frequency map to detect re-collected items
+                                            const frequencyMap = (collectedClues || []).reduce((acc, val) => {
+                                                acc[val] = (acc[val] || 0) + 1;
+                                                return acc;
+                                            }, {} as Record<string, number>);
 
-                                                if (!isLocation && !isCase) return false;
+                                            return [...new Set([...(collectedClues || [])].filter(Boolean))]
+                                                .filter(id => {
+                                                    const isLocation = CATEGORY_IDS.LOCATIONS.includes(id);
+                                                    const isCase = CATEGORY_IDS.CASES.includes(id);
 
-                                                return (
-                                                    !!CLUE_DISPLAY_MAP[id] && // STRICT: Only show if it has a valid mapping
-                                                    !consumedKeywords.has(id) // HIDE CONSUMED KEYWORDS
-                                                );
-                                            })
-                                            .filter(Boolean)
+                                                    if (!isLocation && !isCase) return false;
+
+                                                    if (!CLUE_DISPLAY_MAP[id]) return false;
+
+                                                    // Normal check: Hide if consumed
+                                                    if (!consumedKeywords.has(id)) return true;
+
+                                                    // Exception: If it's a special reveal keyword AND it has been collected MORE THAN ONCE (meaning re-collected after consumption), show it.
+                                                    if (['kansas_city', 'mobile_blood_truck', 'church', 'el_paso'].includes(id)) {
+                                                        return frequencyMap[id] > 1;
+                                                    }
+
+                                                    return false;
+                                                });
+                                        })()
                                             .map(id => (
                                                 <button
                                                     key={id}
@@ -710,7 +736,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                                 >
                                                     {CLUE_DISPLAY_MAP[id] || id}
                                                 </button>
-                                            ))}
+                                            ))
+                                        }
                                     </motion.div>
                                 )}
                         </AnimatePresence>

@@ -300,6 +300,9 @@ const App: React.FC = () => {
       'watchman': true, '守夜人': true,
       'portland': true, '波特兰': true,
       'achilles_heel': true, '软肋': true,
+      'redwood_forest': true, '红杉林': true,
+      'pow_camp': true, '战俘营': true,
+      'amalekite_protocol': true, '亚玛力人协议': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -386,6 +389,14 @@ const App: React.FC = () => {
         hasWatchman: lowerQuery.includes('守夜人') || lowerQuery.includes('watchman'),
         hasPortland: lowerQuery.includes('波特兰') || lowerQuery.includes('portland'),
         hasAchillesHeel: lowerQuery.includes('软肋') || lowerQuery.includes('achilles_heel'),
+        hasRedwoodForest: lowerQuery.includes('红杉林') || lowerQuery.includes('redwood_forest') || lowerQuery.includes('redwood forest'),
+        hasPOWCamp: lowerQuery.includes('战俘营') || lowerQuery.includes('pow_camp') || lowerQuery.includes('pow camp'),
+        hasAmalekiteProtocol: lowerQuery.includes('亚玛力人协议') || lowerQuery.includes('amalekite_protocol') || lowerQuery.includes('amalekite protocol'),
+        hasSantaBarbara: lowerQuery.includes('圣芭芭拉') || lowerQuery.includes('santa_barbara') || lowerQuery.includes('santa barbara'),
+        hasClosingNet: lowerQuery.includes('收网') || lowerQuery.includes('closing_the_net') || lowerQuery.includes('closing the net'),
+        hasTithe: lowerQuery.includes('什一税') || lowerQuery.includes('tithe'),
+        hasSilverMagpie: lowerQuery.includes('银喜鹊') || lowerQuery.includes('silver_magpie'),
+        hasChurch: lowerQuery.includes('教堂') || lowerQuery.includes('church'),
       };
     };
 
@@ -514,13 +525,76 @@ const App: React.FC = () => {
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
-                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
-                {
-                  type: 'dialogue',
-                  id: 'confession_20_content',
-                  content: `> [供述 No.20 内容]:\n\n“你一直问我，作为一个受过训练的卧底，作为一个手里有枪的人，为什么我不直接杀了‘父亲’？为什么这几年来，我像条狗一样跟着他在美国兜圈子？\n\n起先不动手的原因很简单，我还没有看到收网的时机。雷吉博士曾经说过，在得到‘收网信号’之前，我什么也不能做。所以起先我一直在等。我在等一个永远不会来的电话。我在等你们告诉我，‘可以了，罗伯特，结束了’。如你所知，没有回应，就在这漫长的等待过程中，情况发生了变化。当然，你也可以说，在看了如此多恶行之后，即便没有指令，我也可以依照本能行事，甚至直接一了百了，但我不能，因为某时某刻，我几乎已经成了家族的一员。\n\n是啊，你已经知道了房车内的家族关系是什么样。被作为肉体容器和把他人当做肉体容器，以及父亲的权威，这两样东西彻底挫伤了我，但并不仅仅是因为肉欲和恐惧感，维持这个系统运转的，还有另外两样东西。\n\n第一样，是驾驶座后面的那个药箱。钥匙挂在父亲的脖子上。那里面装的不是毒品那么简单的东西，那是一种精心调配的化学鸡尾酒。父亲甚至不需要用枪指着我。只要我错过了一次服药时间，或者仅仅是产生了强烈的对抗念头导致的焦虑，我的身体就会崩溃。我会呕吐、痉挛、看到地狱的幻觉。在那之后的每一个清晨，当父亲微笑着把药片递给我时，我不仅不会杀他，我还会感激他。\n\n第二样，是通过远亲所编织的一张看不见的网。不过关于这一点，至今我都仍然无法百分之百确认。可以确认的是，每当夜幕降临，无论我们在哪停车，都有一个守夜机制，当时间来到午夜十二点，车门便会忽然从外面反锁起来。由于车里一片漆黑，起先我以为是康查尔或塞勒斯在守夜，但时间久了，我却渐渐意识到，当车门被锁紧时，似乎所有人都在车上，这意味着另有他人在负责安保，但我从不知道也没见过是谁。后来我小心翼翼问过瓦妮莎，她只告诉我，那是一只‘银喜鹊’。不得不说，这名字起得真贴切，这种鸟最喜欢收集闪闪发光的东西，也喜欢站在高处俯视地上的爬虫。\n\n无论如何，直到车沿着州界一路向北驶出州界，在即将抵达波特兰的时候，我看着一路上倒退的风景，看着西海岸的风吹过瓦妮莎的一头金发，突然想到了破解之法。是的，自始至终瓦妮莎就是父亲乃至整个系统的软肋，而我直到这一刻才注意到。”`,
-                  timestamp: Date.now()
-                }
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() }
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+
+
+    // Confession 21: Portland + Achilles Heel
+    if (validation.hasPortland && validation.hasAchillesHeel) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_21');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_21');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() }
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+
+    // Confession 22: Redwood Forest + POW Camp
+    if (validation.hasRedwoodForest && validation.hasPOWCamp) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_22');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_22');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() }
               ]
             };
           });
@@ -542,7 +616,7 @@ const App: React.FC = () => {
             unlockedArchiveIds: [...prev.unlockedArchiveIds, 'archive_15'],
             history: [
               ...prev.history,
-              { type: 'info', content: '[归档系统]: 外部调查记录已导入——E-1981-CR-09', timestamp: Date.now() }
+              { type: 'archive_content', content: '[归档系统]: 外部调查记录已导入——E-1981-CR-09', timestamp: Date.now() }
             ]
           };
         });
@@ -946,7 +1020,7 @@ const App: React.FC = () => {
             unlockedArchiveIds: [...prev.unlockedArchiveIds, 'nv_1971'],
             history: [
               ...prev.history,
-              { type: 'info', content: '[ARCHIVE RETRIEVED]: NV-1971-SEC (The Nevada Chronicle)', timestamp: Date.now() }
+              { type: 'archive_content', content: '[ARCHIVE RETRIEVED]: NV-1971-SEC (The Nevada Chronicle)', timestamp: Date.now() }
             ]
           };
         });
@@ -1306,8 +1380,12 @@ const App: React.FC = () => {
       const newCount = prevCount + 1;
       newConsecutive = { keyword: 'vanessa', count: newCount };
 
-      if (newCount === 3) {
-        finalQuery = 'vanessa_consecutive_3';
+      if (newCount === 1) {
+        finalQuery = 'v_response_1';
+      } else if (newCount === 2) {
+        finalQuery = 'v_response_2';
+      } else if (newCount === 3) {
+        finalQuery = 'v_response_3';
         newConsecutive = undefined; // Reset after trigger
       }
     } else if (isJenniferQuery) {
@@ -1327,6 +1405,9 @@ const App: React.FC = () => {
       newConsecutive = undefined;
     }
 
+
+
+
     // Define preset responses with priority levels and fuzzy keywords
     const PRESET_RESPONSES: Array<{
       keywords: string[];
@@ -1338,11 +1419,21 @@ const App: React.FC = () => {
     }> = [
         // ===== USER-PROVIDED EASTER EGGS (Highest Priority) =====
         {
-          keywords: ['vanessa_consecutive_3'],
+          keywords: ['v_response_1'],
+          response: '> [R. CAPONE]: "瓦妮莎？谁告诉你的这个名字？资料里没有提到她。"',
+          priority: 200
+        },
+        {
+          keywords: ['v_response_2'],
+          response: '> [R. CAPONE]: "闭嘴。我不许你提那个名字。那是……那是我的事。"',
+          priority: 200
+        },
+        {
+          keywords: ['v_response_3'],
           response: '> [R. CAPONE]: "……够了。既然你这么执着挖掘我的伤口，那就看清楚了。瓦妮莎确实与别人不同……1976年，堪萨斯城，她哭着求我不要执行那个针对流动献血车的计划。但我没有听。我当时太想看那个城市燃烧了。"',
           priority: 200,
           isReveal: true,
-          revealKeywords: ['1976', '1976年', '堪萨斯城', '流动献血车']
+          revealKeywords: ['堪萨斯城', '流动献血车']
         },
         {
           keywords: ['我是谁', 'who am i', 'who i am', '我到底是谁', '是谁'],
@@ -1367,7 +1458,54 @@ const App: React.FC = () => {
           revealKeywords: ['教堂', '埃尔帕索']
         },
 
-        // ===== FAMILY MEMBERS (High Priority) =====
+        // ===== RESTORED EASTER EGGS / CONTEXTUAL RESPONSES (High Priority) =====
+        {
+          keywords: ['真相', 'truth', '真实', 'reality', '是什么真相'],
+          response: '> [R. CAPONE]: "真相就在那些灰水里，你得把手伸进去捞，而不是在这里敲打键盘。它闻起来不怎么好。"',
+          priority: 100,
+          fuzzyMatch: true
+        },
+        {
+          keywords: ['意义', 'meaning', '目的', 'purpose', '为了什么'],
+          response: '> [R. CAPONE]: "在这儿，意义是按卷宗页数计算的。如果你想找灵魂，去出门左转的教堂，别在我的档案库里晃荡。"',
+          priority: 100,
+          fuzzyMatch: true
+        },
+        {
+          keywords: ['青豆牡蛎汤', 'gbos', 'g.b.o.s', '牡蛎汤', 'green bean oyster soup'],
+          response: '> [R. CAPONE]: "那是犯罪的味道，还是某种邪恶仪式的序曲？我建议你先查查1968年的那份谷仓档案。"',
+          priority: 95
+        },
+        {
+          keywords: ['铁马', 'iron horse', 'iron-horse', '烟盒', '香烟盒'],
+          response: '> [R. CAPONE]: "亮橙色的盒子，印着那台永远跑不到头的火车头。雷吉博士以为那是他的传声筒，但他不知道，每次我把它丢进灰水管道时，我都在想：如果这封信没被捡走，我是不是就能永远留在房车里了？"',
+          priority: 95
+        },
+        {
+          keywords: ['自助洗衣店', '洗衣店', 'laundromat', '玛莎', 'martha'],
+          response: '> [R. CAPONE]: "惨白的灯光，像是在审判。干衣机转动的声音让我想起雷吉博士的穿孔卡片机。在那里，玛莎·迪亚兹不再是玛莎，她变成了一张白色的床单，等着我们去染色。康查尔说，那是我们共同完成的第一幅画。"',
+          priority: 90
+        },
+        {
+          keywords: ['修道院', 'abbey', '初次会面', '修道院任务'],
+          response: '> [R. CAPONE]: "詹妮弗说是修道院？（发出一声嘶哑的冷笑）……随她怎么说吧。我只记得那是一个没有上帝的地方，到处都是旧书的味道和发霉的阴影。那是\'初次会面\'。我以为我是去执行任务，结果我是参加我自己的葬礼。"',
+          priority: 90
+        },
+        {
+          keywords: ['亚利桑那', 'arizona', 'high life', '酒吧', '父亲的酒吧', '劣质啤酒'],
+          response: '> [R. CAPONE]: "这店里全是劣质啤酒和泔水的味道。父亲就站在那儿，他没有发火，只是微笑着帮我点着了烟。他说：信写得不错，罗伯特。下次记得把我的名字写得工整点。"',
+          priority: 90
+        },
+        {
+          keywords: ['建筑师', 'architect'],
+          response: '> [UNKNOWN SIGNAL]: "建筑师...他是设计师，是操纵者。他的作品不是建筑，是活体实验。而我，我帮他完成了最后一步。"',
+          priority: 85
+        },
+        {
+          keywords: ['出去', '离开', 'escape', 'leave', 'get out'],
+          response: '> [R. CAPONE]: "我想离开这个鬼地方...但深渊没有回头路。我不是在潜伏，我是在进化。"',
+          priority: 70
+        },
         {
           keywords: ['母亲', 'the mother', 'mother', '她的眼睛'],
           response: '> [R. CAPONE]: "你想象不出她能用她那双眼睛做什么。从我上车之后，她的目光就开始拆解我。我的蜕变并非始于\"父亲\"的暴力，而是始于爱。"',
@@ -1378,13 +1516,43 @@ const App: React.FC = () => {
           response: '> [R. CAPONE]: "与康查尔不同，塞勒斯身上有种毫无遮掩的恶意，我从未分清他们究竟谁更危险，是一个在暗处观察你的影子，还是一个在你背后磨刀的疯子。"',
           priority: 90
         },
+        {
+          keywords: ['父亲', 'father', '教父', 'the_father'],
+          response: '> [R. CAPONE]: "他构建了这个笼子。他不是在驾驶那辆车，他就是那辆车本身。我们都在他的消化道里，慢慢被腐蚀成他想要的样子。"',
+          priority: 95
+        },
+        {
+          keywords: ['康查尔', 'conchar', '长子', '园丁'],
+          response: '> [R. CAPONE]: "父亲负责播种，而康查尔负责修剪。他是家族的园丁。他看我们的眼神总是像看一群还没训好的牲口。他相信血缘是这世界上最脆弱的东西，只有共同流过的血，才是永恒的。"',
+          priority: 95
+        },
+        {
+          keywords: ['银喜鹊', 'silver magpie', '喜鹊', '铁链', '她的灯', 'jennifer', '詹妮弗'],
+          response: '> [R. CAPONE]: "我在睡觉时总能听到她在门外走动，铁链在地上拖行的声音。她从不杀人，她只负责确保没人能逃走。如果你见到了她，潜航者，离她的灯远一点。"',
+          priority: 95
+        },
+        {
+          keywords: ['家族', 'family', 'syndicate', '辛迪加'],
+          response: '> [R. CAPONE]: "在路易斯维尔，康查尔告诉我，\'你现在没有名字了，你只有家。\' 这就是从那一刻开始的，不是吗？"',
+          priority: 90
+        },
+        {
+          keywords: ['雷吉', '雷吉博士', 'reggie', 'dr_reggie', '医生'],
+          response: '> [R. CAPONE]: "那个该死的心理学家。他觉得一切都是电信号，痛苦是，爱也是。他试图重写我们，就像重写一段代码。但我还没疯，对吧？"',
+          priority: 90
+        },
+        {
+          keywords: ['尼比', 'nibi', '执行者'],
+          response: '> [R. CAPONE]: "尼比是一把好刀。不管是切牛排还是切手指，他都不会手抖。但他没有灵魂，他只是父亲手中的延伸。"',
+          priority: 85
+        },
+        {
+          keywords: ['伦德格兰', 'lundgren', '牧师'],
+          response: '> [R. CAPONE]: "那个老牧师...他以为凭着信仰就能在狼群里活下来。但在这辆车上，信仰通常是第一道被端上桌的开胃菜。"',
+          priority: 85
+        },
 
         // ===== ORIGINAL EASTER EGGS (Medium Priority) =====
-        {
-          keywords: ['出去', '离开', 'escape', 'leave', 'get out'],
-          response: '> [R. CAPONE]: "我想离开这个鬼地方...但深渊没有回头路。我不是在潜伏，我是在进化。"',
-          priority: 70
-        },
         {
           keywords: ['记得', '记忆', 'remember', 'memory', '想起', 'recall'],
           response: '> [R. CAPONE]: "我不记得了... 只有一些破碎的画面... 银行，雪地，康查尔的微笑...这些碎片在我脑子里盘旋。"',
@@ -1423,20 +1591,10 @@ const App: React.FC = () => {
     const effectiveQuery = finalQuery.toLowerCase().trim();
 
     for (const preset of sortedResponses) {
+      // SIMPLIFIED LOGIC: Strict substring matching only.
+      // This prevents "aggressive" matching where parts of a confession keyword might trigger a fuzzy preset.
       const hasMatch = preset.keywords.some(keyword => {
-        if (preset.fuzzyMatch) {
-          // Fuzzy matching: check if query contains keyword or keyword contains query
-          const keywordTokens = keyword.split(/\s+/);
-          const queryTokens = effectiveQuery.split(/\s+/);
-
-          // Check if any significant token overlaps
-          return keywordTokens.some(kt =>
-            queryTokens.some(qt => qt.length > 1 && (qt.includes(kt) || kt.includes(qt)))
-          ) || effectiveQuery.includes(keyword) || keyword.includes(effectiveQuery);
-        } else {
-          // Strict matching
-          return effectiveQuery.includes(keyword);
-        }
+        return effectiveQuery.includes(keyword);
       });
 
       if (hasMatch) {
@@ -1565,6 +1723,23 @@ const App: React.FC = () => {
   };
 
   const handleCollectClue = (clueId: string, word: string) => {
+    // FORCE RE-COLLECTION for special reveal keywords to support Easter Egg visibility logic
+    // This allows duplicates in collectedClues, increasing frequency > 1, so SimplifiedMainView shows them.
+    if (['kansas_city', 'mobile_blood_truck', 'church', 'el_paso'].includes(clueId)) {
+      setGameState(prev => {
+        const currentCount = prev.collectedClues.filter(c => c === clueId).length;
+        // IF count is 0 (Debug/Lost state + Consumed), add 2 to immediately verify "Freq > 1".
+        // IF count > 0 (Normal state), add 1 to increment freq.
+        const itemsToAdd = currentCount === 0 ? [clueId, clueId] : [clueId];
+
+        return {
+          ...prev,
+          collectedClues: [...prev.collectedClues, ...itemsToAdd],
+          history: [...prev.history, { type: 'info', content: `[KEYWORD RE-ACQUIRED]: ${word} 已重新收录`, timestamp: Date.now() }]
+        };
+      });
+      return;
+    }
     const isDossier = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'].includes(clueId);
     const isPerson = CATEGORY_IDS.PEOPLE.includes(clueId);
     const isYear = CATEGORY_IDS.YEARS.includes(clueId);
@@ -1583,7 +1758,7 @@ const App: React.FC = () => {
       const newHistory: Array<{ type: 'search' | 'info' | 'shatter'; content: string; timestamp: number }> = [];
 
       // REWARDS: These skip consumption checks
-      const REWARD_IDS = ['recruitment', 'priest', 'morning', 'year_1974', 'texarkana', 'el_paso', 'dirty_frank', 'dismemberment_case'];
+      const REWARD_IDS = ['recruitment', 'priest', 'morning', 'year_1974', 'texarkana', 'el_paso', 'dirty_frank', 'dismemberment_case', 'church', 'kansas_city', 'mobile_blood_truck', 'silver_magpie'];
       const isReward = REWARD_IDS.includes(clueId);
 
       if (!isReward && currentConsumed.has(clueId)) return prev;
@@ -1613,14 +1788,15 @@ const App: React.FC = () => {
         updates.collectedYears = [...prev.collectedYears, clueId];
       }
       else if (isLocation || isCase) {
-        if (!prev.collectedClues.includes(clueId)) {
+        if (!prev.collectedClues.includes(clueId) || isReward) {
           updates.collectedClues = [...prev.collectedClues, clueId];
           const label = isLocation ? 'LOCATION' : 'CASE';
           newHistory.push({ type: 'info', content: `[${label} IDENTIFIED]: ${word} 已收录`, timestamp: Date.now() });
         }
       }
       else {
-        if (!prev.collectedClues.includes(clueId)) {
+        // ALLOW DUPLICATES FOR REWARDS (so we can detect re-collection of consumed keys)
+        if (!prev.collectedClues.includes(clueId) || isReward) {
           updates.collectedClues = [...prev.collectedClues, clueId];
           newHistory.push({ type: 'info', content: `[KEYWORD RECORDED]: ${word} 已记下`, timestamp: Date.now() });
         }
@@ -1641,7 +1817,7 @@ const App: React.FC = () => {
           unlockedArchiveIds: [...prev.unlockedArchiveIds, archiveId],
           history: [
             ...prev.history,
-            { type: 'info', content: `[ARCHIVE RETRIEVED]: ${archiveId.toUpperCase()}`, timestamp: Date.now() }
+            { type: 'archive_content', content: `[ARCHIVE RETRIEVED]: ${archiveId.toUpperCase()}`, timestamp: Date.now() }
           ]
         };
       }

@@ -155,8 +155,28 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
 
 
   // Select keyword map based on node ID
+  const CONFESSION_20_KEYWORDS: Record<string, string> = {
+    '波特兰': 'portland',
+    '软肋': 'achilles_heel'
+  };
+
+  const CONFESSION_21_KEYWORDS: Record<string, string> = {
+    '红杉林': 'redwood_forest',
+    '战俘营': 'pow_camp',
+    '亚玛力人协议': 'amalekite_protocol'
+  };
+
+  const CONFESSION_22_KEYWORDS: Record<string, string> = {
+    '圣芭芭拉': 'santa_barbara',
+    '收网': 'closing_the_net',
+    '什一税': 'tithe'
+  };
+
   // Select keyword map based on node ID - Memoized to prevent recreation
   const KEYWORD_MAP = React.useMemo(() => {
+    if (node.id === 'confession_21') return CONFESSION_21_KEYWORDS;
+    if (node.id === 'confession_22') return CONFESSION_22_KEYWORDS;
+    if (node.id === 'confession_20') return CONFESSION_20_KEYWORDS;
     if (node.id === 'confession_17') return CONFESSION_17_KEYWORDS;
     if (node.id === 'confession_16') return CONFESSION_16_KEYWORDS;
     if (node.id === 'confession_15') return CONFESSION_15_KEYWORDS;
