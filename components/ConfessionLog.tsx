@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Lock, AlertCircle, Hash } from 'lucide-react';
 
@@ -251,7 +251,51 @@ const CONFESSION_REGISTRY = [
         people: ['罗伯特·卡彭 (Robert Capone)', '瓦妮莎 (Vanessa)', '父亲 (Father)', '康查尔 (Conchar)'],
         summary: '关于卡彭在房车夹层发现真相并决定收网的关键转折点。揭示了瓦妮莎试图策反他的失败尝试，以及他在发现父亲利用房车车顶夹层伪造“神谕”和生产宣传品后，决心将其逮捕的心理决断。',
         status: 'DECRYPTED'
-    }
+    },
+    {
+        id: 'confession_23',
+        displayId: 'REC-1975-CA-B',
+        title: '供述 No.23: 裸根行动与误判',
+        eventTime: '1975',
+        location: '加利福尼亚州 圣芭芭拉 (Santa Barbara)',
+        keywords: ['拉古那海滩', '裸根', '阿列克谢·罗科维奇', '瓦妮莎'],
+        people: ['罗伯特·卡彭 (Robert Capone)', '艾莉丝 (Alice)', '阿列克谢 (Alexei)', '塞勒斯 (Silas)'],
+        summary: '关于针对苏联情报站负责人阿列克谢·罗科维奇的静默清洗行动。揭示了艾莉丝为了确保行动成功和掩盖行踪，不惜炸死自己的情人兼棋子塞勒斯，并将阿列克谢焚尸灭迹，导致原本的渗透任务升级为"恐怖袭击"，迫使"父亲"不得不更加激进地利用手中的筹码。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_24',
+        displayId: 'REC-1975-LB',
+        title: '供述 No.24: 化学家情人与大法官',
+        eventTime: '1975',
+        location: '加利福尼亚州 拉古那海滩 (Laguna Beach)',
+        keywords: ['莫兰迪', '阿尔伯克基市', '化学家情人'],
+        people: ['父亲 (Father)', '艾莉丝 (Alice)', '瓦妮莎 (Vanessa)', '索恩法官 (Judge Thorne)', '莫兰迪 (Morandi)'],
+        summary: '关于利用"裸根"名单控制联邦大法官肯尼迪·索恩的供述。描述了艾莉丝如何利用她的旧情人"莫兰迪"（阿尔伯克基爆炸案主犯）作为诱饵，以及父亲如何通过残酷的手段（给瓦妮莎注射士的宁）来取悦并控制这位变态法官，从而接管了KGB对司法系统的渗透网络。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_25',
+        displayId: 'REC-1975-NM',
+        title: '供述 No.25: 邦妮和克莱德',
+        eventTime: '1975',
+        location: '新墨西哥州 阿尔伯克基 (Albuquerque)',
+        keywords: ['圣菲', '邦妮和克莱德'],
+        people: ['罗伯特·卡彭 (Robert Capone)', '艾莉丝 (Alice)', '莫兰迪 (Morandi)'],
+        summary: '关于前往新墨西哥州接收高能炸药的途中经历。揭示了卡彭与艾莉丝在逃亡与服从之间的一念之差，以及艾莉丝对卡彭内心"精神病态"特质的精准洞察与诱导。',
+        status: 'DECRYPTED'
+    },
+    {
+        id: 'confession_26',
+        displayId: 'REC-1976-AZ',
+        title: '供述 No.26: 最后的押送',
+        eventTime: '1976',
+        location: '亚利桑那州 (Arizona)',
+        keywords: ['圣菲', '邦妮和克莱德'],
+        people: ['罗伯特·卡彭 (Robert Capone)', '父亲 (Father)', '母亲 (Mother)', '艾莉丝 (Alice)', '瓦妮莎 (Vanessa)'],
+        summary: '卡彭潜伏生涯的终结之战。描述了他如何巧妙利用瓦妮莎和莫兰迪的冲突调开同伙，并在荒漠公路上亲手处决“母亲”并完全控制了“父亲”。这是一次彻底的人格断裂与重组。',
+        status: 'DECRYPTED'
+    },
 ];
 
 export const ConfessionLog: React.FC<ConfessionLogProps> = ({ unlockedNodeIds, onClose, onViewNode }) => {

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Archive, Search, X, ShieldAlert, Stamp, ChevronRight, File, FolderOpen, Folder } from 'lucide-react';
 import { CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS, ARCHIVE_CASE_HIGHLIGHT_MAP, GLOBAL_KEYWORD_MAP } from '../constants';
@@ -985,21 +986,20 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                     </div>
 
                                                     {/* Quick Select Keywords - ARCHIVES ONLY: Years + Archive People */}
-                                                    {(collectedYears.length > 0 || unlockedPeople.length > 0 || (collectedClues && collectedClues.length > 0)) && (
+                                                    {(collectedYears.length > 0 || unlockedPeople.length > 0) && (
                                                         <div className="flex flex-wrap gap-2 justify-center">
                                                             <div className="text-[10px] text-[#c85a3f]/40 uppercase tracking-widest w-full text-center mb-2">快速选择 / Quick Select</div>
 
-                                                            {[...new Set([...collectedYears, ...unlockedPeople, ...(collectedClues || [])].filter(Boolean))]
+                                                            {[...new Set([...collectedYears, ...unlockedPeople].filter(Boolean))]
                                                                 .filter(id => {
                                                                     const lowerId = id.toLowerCase();
                                                                     const isPerson = unlockedPeople.includes(id);
                                                                     const isYear = collectedYears.includes(id);
-                                                                    const isClue = collectedClues?.includes(id);
 
                                                                     // Exclusion list (same as SimplifiedMainView)
                                                                     if (['robert', 'capone', 'robert_capone', 'rubick', 'father', 'dr_reggie'].includes(lowerId)) return false;
 
-                                                                    if (!isPerson && !isYear && !isClue) return false;
+                                                                    if (!isPerson && !isYear) return false;
 
                                                                     if (isPerson) {
                                                                         if (!CATEGORY_IDS.PEOPLE.includes(id)) return false;

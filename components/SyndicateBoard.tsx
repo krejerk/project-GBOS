@@ -1,22 +1,25 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import * as React from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle, Lightbulb } from 'lucide-react';
 import { RELATIONSHIP_TREE } from '../constants';
 
 // Using the locally generated high-fidelity asset
-const REALISTIC_CORK_URL = '/textures/cork_board.png';
+const REALISTIC_CORK_URL = `${import.meta.env.BASE_URL}textures/cork_board.png`;
 
 interface SyndicateBoardProps {
     unlockedPeople: string[];
     onNodeClick?: (id: string) => void;
     onClose: () => void;
     phase?: number; // 1 or 2
+    hasSwitchedPersona?: boolean;
 }
 
 export const SyndicateBoard: React.FC<SyndicateBoardProps> = ({
     unlockedPeople,
     onClose,
-    phase = 1
+    phase = 1,
+    hasSwitchedPersona = false
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isLightsOn, setIsLightsOn] = useState(false);
@@ -255,13 +258,18 @@ export const SyndicateBoard: React.FC<SyndicateBoardProps> = ({
                                     <div className="absolute -top-3 w-4 h-4 rounded-full bg-[#b91c1c] shadow-[2px_4px_6px_rgba(0,0,0,0.5)] border border-[#7f1d1d] z-30" />
 
                                     {/* Photo Container */}
-                                    <div className="w-full aspect-[4/5] bg-[#111] mb-2 relative border-[0.5px] border-gray-400">
+                                    <div className="w-full aspect-[4/5] bg-[#111] mb-2 relative border-[0.5px] border-gray-400 overflow-hidden">
                                         {isUnlocked ? (
                                             <>
                                                 <img
-                                                    src={`https://picsum.photos/seed/${node.id}/300/350`}
+                                                    src={node.id === 'capone' ? "assets/capone-split-personality.jpg" : `https://picsum.photos/seed/${node.id}/300/350`}
                                                     alt={node.name}
-                                                    className="w-full h-full object-cover filter contrast-[1.2] grayscale-[0.5] sepia-[0.3]"
+                                                    className={`h-full object-cover filter contrast-[1.2] grayscale-[0.5] sepia-[0.3] max-w-none transition-all duration-500`}
+                                                    style={node.id === 'capone' ? {
+                                                        width: '200%',
+                                                        transform: hasSwitchedPersona ? 'translateX(-50%)' : 'translateX(0)',
+                                                        objectPosition: 'center 20%'
+                                                    } : { width: '100%' }}
                                                 />
                                                 {/* Coffee Stain Overlay */}
                                                 {index % 3 === 0 && <div className="absolute -top-2 -right-2 w-12 h-12 bg-[#5d4037] rounded-full mix-blend-multiply opacity-30 filter blur-md" />}

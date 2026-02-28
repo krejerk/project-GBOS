@@ -64,6 +64,10 @@ export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
   'confession_20': ['interstate_80', 'watchman'],
   'confession_21': ['portland', 'achilles_heel'],
   'confession_22': ['redwood_forest', 'pow_camp'],
+  'confession_23': ['santa_barbara', 'closing_the_net'],
+  'confession_24': ['laguna_beach', 'naked_root'],
+  'confession_25': ['albuquerque', 'chemist_lover'],
+  'confession_26': ['santa_fe', 'bonny_and_clyde'],
   'archive_15': ['year_1977', 'richie_dreyfuss'],
   'archive_16': ['dirty_frank', 'recruitment'],
   'tx_1967': ['el_paso', 'year_1977'],
@@ -78,9 +82,8 @@ export const CATEGORY_IDS = {
     'east_12th_st', 'davenport', 'texarkana', 'el_paso', 'dirty_frank',
     'st_louis', 'cincinnati', 'chicago', 'louisville', 'burkesville',
     'quantico', 'kansas_city', 'roanoke', 'nevada', 'ohio', 'maine',
-    'mojave_rest_stop', '1402_old_dominion_rd', 'denver_suburb', 'church',
-    'interstate_80', 'portland', 'redwood_forest', 'pow_camp', 'santa_barbara',
-    'rockford'
+    'interstate_80', 'portland', 'redwood_forest', 'pow_camp', 'santa_barbara', 'laguna_beach',
+    'rockford', 'albuquerque', 'santa_fe'
   ],
   CASES: [
     'new_plan', 'recruitment', 'dismemberment_case', 'rockford',
@@ -89,9 +92,9 @@ export const CATEGORY_IDS = {
     'mobile_blood_truck', 'execution_room', 'chaos_aesthetics', 'maggots',
     'police_killing', 'reboot_command', 'watchman', 'achilles_heel',
     'amalekite_protocol', 'closing_the_net', 'tithe', 'silver_magpie',
-    'project', 'julip'
+    'project', 'julip', 'naked_root', 'chemist_lover', 'bonny_and_clyde'
   ],
-  PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson', 'richie_dreyfuss'],
+  PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson', 'richie_dreyfuss', 'alexei', 'morandi'],
   YEARS: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975', 'year_1976', 'year_1974', 'year_1965', 'year_1977']
 };
 
@@ -182,6 +185,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '1402 Old Dominion Rd.': { id: '1402_old_dominion_rd', type: 'location' },
   '战俘营': { id: 'pow_camp', type: 'location' },
   '圣芭芭拉': { id: 'santa_barbara', type: 'location' },
+  '拉古那海滩': { id: 'laguna_beach', type: 'location' },
 
   // Cases / Details
   '小银行': { id: 'small_bank', type: 'clue' },
@@ -220,6 +224,17 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '警员遇害案': { id: 'police_killing', type: 'clue' },
   '教堂': { id: 'church', type: 'location' },
   '>> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER]': { id: 'reboot_command', type: 'clue' },
+  // '收网' is already defined above at line 210, so removing duplicate here:
+
+  '裸根': { id: 'naked_root', type: 'clue' },
+  '阿列克谢': { id: 'alexei', type: 'person' },
+  '阿列克谢·罗科维奇': { id: 'alexei', type: 'person' },
+  'Alexei Rockovich': { id: 'alexei', type: 'person' },
+  '莫兰迪': { id: 'morandi', type: 'person' },
+  '阿尔伯克基市': { id: 'albuquerque', type: 'location' },
+  '化学家情人': { id: 'chemist_lover', type: 'clue' },
+  '圣菲': { id: 'santa_fe', type: 'location' },
+  '邦妮和克莱德': { id: 'bonny_and_clyde', type: 'clue' },
 };
 
 export const ARCHIVE_CASE_HIGHLIGHT_MAP: Record<string, string[]> = {
@@ -417,6 +432,11 @@ CLUE_DISPLAY_MAP['empty_cigarette_pack'] = '空烟盒';
 CLUE_DISPLAY_MAP['graywater_beacon'] = '灰水信标';
 CLUE_DISPLAY_MAP['twisted_relationship'] = '扭曲关系';
 CLUE_DISPLAY_MAP['mint_plan'] = '薄荷计划';
+CLUE_DISPLAY_MAP['albuquerque'] = '阿尔伯克基市';
+CLUE_DISPLAY_MAP['morandi'] = '莫兰迪';
+CLUE_DISPLAY_MAP['chemist_lover'] = '化学家情人';
+CLUE_DISPLAY_MAP['santa_fe'] = '圣菲';
+CLUE_DISPLAY_MAP['bonny_and_clyde'] = '邦妮和克莱德';
 CLUE_DISPLAY_MAP['execution_room'] = '行刑室';
 CLUE_DISPLAY_MAP['mobile_blood_truck'] = '流动献血车';
 CLUE_DISPLAY_MAP['dirty_frank'] = '脏弗兰克酒吧';
@@ -462,6 +482,10 @@ CLUE_DISPLAY_MAP['watchman'] = '守夜人';
 CLUE_DISPLAY_MAP['redwood_forest'] = '红杉林';
 CLUE_DISPLAY_MAP['pow_camp'] = '战俘营';
 CLUE_DISPLAY_MAP['amalekite_protocol'] = '亚玛力人协议';
+CLUE_DISPLAY_MAP['closing_the_net'] = '收网';
+CLUE_DISPLAY_MAP['naked_root'] = '裸根';
+CLUE_DISPLAY_MAP['alexei'] = '阿列克谢·罗科维奇';
+CLUE_DISPLAY_MAP['laguna_beach'] = '拉古那海滩';
 
 export const CORE_NODES: MemoryNode[] = [
   {
@@ -475,7 +499,7 @@ export const CORE_NODES: MemoryNode[] = [
       [MemoryLayer.SURFACE]: {
         event: "罗伯特曾是FBI最受期待的探员，但在十年前的凤凰城扫黑行动后失踪。",
         attitude: "我想回家。不，我没有家。我属于这里，属于这片阴影。",
-        visual: "https://picsum.photos/seed/robert/800/450"
+        visual: "assets/capone-split-personality.jpg"
       },
       [MemoryLayer.DEEP]: {
         event: "他的失踪并非被迫，而是主动选择了静默。他发现辛迪加的根须已经伸到了局里。",
@@ -540,7 +564,7 @@ export const CORE_NODES: MemoryNode[] = [
       [MemoryLayer.SURFACE]: {
         event: "日子过去实在太久了。这些年我喝了这么多劣质波本，脑子早被搞坏了。所以即便我能记得起来的，大概也是我这几十年来为了不发疯，一遍遍讲给自己听的'故事'。\n\n到底是不是真的发生过的事情，我真不敢给你打包票。我只能说，那次潜伏任务（Deep Cover）的启动完全背离了局里的标准作业程序。\n\n如果我没记错的话，你说的缅因州的案子发生在1971年，是雷吉博士标记案件中的最新一起。总之通过一些退伍军人俱乐部的关系，行动组很快就锁定了逮捕一个名叫尼比的阿尔衮琴人，尼比对罪行供认不讳，很快就被审判收监。没过几天，他们也把我也放到监狱里，和他关在一起。",
         attitude: "",
-        visual: "assets/incident-report.jpg"
+        visual: `${import.meta.env.BASE_URL}assets/incident-report.jpg`
       },
       [MemoryLayer.DEEP]: {
         event: "招募我的人叫雷吉博士，我猜你在量化官的档案库里没见到过这个名字。不过'统一场论'就是他搞出来的，那时他手里有好几个看似孤立的冷案，他认为它们之间存在共性，而调查部门推想中的动机其实都是犯事者的障眼法。\n\n总之，缅因州银行案就是博士名单上最后一起案子。通过退伍军人协会的一些关系，行动组很快就揪住了那个叫尼比的阿尔衮琴人。尼比很干脆，很快就认罪了，接着被扔进惩教署的大牢。博士认为时机到了，所以紧接着没过几天，我也被'送'了进去，成了尼比的室友。\n\n在训练阶段，博士曾反复强调：在那个密闭环境里，我必须对'罪恶'本身表现出一种生理性的热诚，所以我隔三差五就找茬揍人，用拳头在里头立威。可跟我同屋的尼比却稳得像块石头，一点反应都没有。直到有一天，一个叫康查尔的年轻犯人开始主动找我搭讪，他告诉我，他十分欣赏我，我也了解到，他因为微不足道一件小事被警察盘问，最终却因袭警入狱。康查尔是一个极其危险的观察者，他不止一次对我说，他能从我身上闻到某种属于'公职人员'的腐朽气味。",
@@ -680,7 +704,7 @@ export const CORE_NODES: MemoryNode[] = [
       [MemoryLayer.CORE]: {
         event: "雷吉博士的构想似乎非常完满：我扔掉信标，他的‘清理小组’伪装成清洁工或流浪汉，在预定路线的加油站进行定点回收。可问题在于，他手里根本没有由专业人士组成的清理小组。据我所知，肯为他干这些苦活的，其实都是KLUB战略研究室里的实习生。你觉得那帮孩子能找到什么？反正他们一定漏掉了我在罗阿诺克市扔掉的第一个信标，否则威廉斯堡公园大道的案子早就该破了。\n\n总之，离开房车后，我就再没碰过那个牌子的烟。当时我极度憎恶它的味道，可现在……却莫名地有些怀念。所以别再提问了，去给我搞一包‘铁马’来。",
         attitude: "",
-        visual: "assets/iron_horse_beacon.jpg"
+        visual: `${import.meta.env.BASE_URL}assets/iron_horse_beacon.jpg`
       }
     },
     connectedTo: ["confession_5", "capone"]
@@ -1100,6 +1124,105 @@ export const CORE_NODES: MemoryNode[] = [
       }
     },
     connectedTo: ["capone"]
+  },
+  {
+    id: "confession_23",
+    keyword: "confession",
+    title: "供述 No.23",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.4, y: window.innerHeight * 0.8 },
+    revealedKeywords: ['拉古那海滩', '裸根', '阿列克谢·罗科维奇', '瓦妮莎'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "我犯了一个致命的错误。我一直盯着“父亲”，却忘了艾莉丝。\n\n我们在圣芭芭拉至少停留了半年。不过，你以为我们横跨大半个美国来到这里，是为了看海吗？大半年前，在西雅图那个阴雨绵绵的下午，康查尔和塞勒斯伪装成风化组警察，袭击了一个正在嫖妓的外国商人。谁知对方竟把他俩当成了FBI探员，为了换取自由，吐出了一个惊天的秘密。\n\n他说，有一份代号为“裸根”的微缩胶卷，正躺在圣芭芭拉一栋海滨别墅的保险柜里。胶卷里记录着三十四名在职法官、参议员和警长的把柄。别墅的主人阿列克谢·罗科维奇，表面上是个经营前卫艺术的画商，实则是KGB在西海岸的情报站负责人。",
+        attitude: "",
+        visual: "https://picsum.photos/seed/santa_barbara_beach/800/450"
+      },
+      [MemoryLayer.DEEP]: {
+        event: "这不仅仅是一份名单，这是一个巨大的资产。“父亲”要的不仅是情报，他要接管这个网络。他想神不知鬼不觉地干掉阿列克谢，拿到名单，然后戴上阿列克谢的面具，以苏联特工的身份继续勒索和操纵那些大人物。那样，他将拥有一支合法的、甚至拥有执法权的私人军队。为了达成这个目的，行动必须是静默的。不能有交火，绝不能让外界知道阿列克谢是苏联间谍。\n\n这个计划被理所当然地交给了艾莉丝。我必须得说，她真的有点犯罪天赋。这半年里，艾莉丝把自己包装成一个被左翼思潮洗脑的年轻情妇，声称要出卖她的参议员“糖爹”以实现政治理想。某个周日，阳光正好，艾莉丝在伪装成司机兼保镖的塞勒斯陪伴下出现在画廊，成功吸引了阿列克谢的注意。那个俄国人喜欢看着高贵的美国女性为了利益出卖灵魂。他原以为这头羊羔不仅能为名单增添新成员，还能扩充他的床伴人选，却不知自己早已陷进了毒蛇的巢穴。\n\n至于塞勒斯……你以为他是为了任务才绑上炸药的吗？不。那是他跟艾莉丝之间的游戏。早在三个月前我就发现了。每当两人交欢时，艾莉丝都会亲手把硝酸甘油炸药绑在他赤裸的胸膛上，那是他们前戏的一部分。她告诉那个傻大个，这是一种“终极信任”。意思是只要她不按开关，他就永远属于她。塞勒斯对此着了魔。那种命悬一线的刺激感让他对艾莉丝言听计从。每次出任务，他都会像穿内衣一样穿上那件炸弹背心，仅仅为了博取艾莉丝的一个媚眼。",
+        attitude: "",
+        visual: "https://picsum.photos/seed/bomb_vest/800/450"
+      },
+      [MemoryLayer.CORE]: {
+        event: "终于，收网的日子到了。一周前，艾莉丝告知阿列克谢，她掌握了那个参议员娈童的铁证，将在下次幽会时奉上原件。原本的计划很周密：艾莉丝提前在阿列克谢的酒里下药，趁他取出胶卷归档时使其昏迷。此时塞勒斯引开门外看守，瓦妮莎混进房间，协助艾莉丝把昏迷的画商运到海边伪造溺亡假象——阿列克谢有晨跑习惯，人们只会认为他死于心脏病突发。\n\n这正是我等待的时刻。父亲觊觎着别人的名单，而我也在觊觎他的名单。我早就确认了车顶阁楼里藏着一本记载着核心远亲联络方式的黄色密码本。如果瓦妮莎驾驶的接应车辆在关键时刻“坏了”，塞勒斯无法继续拖延时间，那父亲为了保住那个价值连城的胶卷，就必须亲自下车处理。那就是我去偷拍密码本的唯一窗口期。所以在任务开始前，我偷偷拔掉了瓦妮莎那辆车的分电器高压线。\n\n行动开始，一切如艾莉丝所愿。阿列克谢沉迷于她的美色和情报，毫无防备地打开了保险柜。趁着画商昏迷，艾莉丝拿到了胶卷，发出灯光信号。塞勒斯在门外用烟酒拖住了保镖，瓦妮莎背着裹尸袋闪身进屋。几分钟后，两人协力搬出昏迷的阿列克谢，来到了路边的接应车旁。\n\n接下来，一切如我所料。透过窗户，我看到瓦妮莎在那辆轿车里拼命拧钥匙，引擎发出绝望的空转声。眼看门外的保镖已经察觉不对劲，就要冲向那辆动不了的车。我在阁楼下紧握撬锁工具，心跳加速，等着父亲下楼。\n\n但父亲没有下楼。因为艾莉丝比我预想的要狠毒一百倍。\n\n眼见无法撤退，她甚至没有犹豫一秒。一声巨响。那是塞勒斯。他身上的两公斤硝酸甘油瞬间炸开了，把那两个刚冲过来的保镖，连同别墅的前厅一起炸成了粉末。我远远看到，艾莉丝迅速从车上跳下来，指挥着瓦妮莎，把还在昏迷中的阿列克谢，直接扔进了燃烧的火海。\n\n眼见静默行动变成了恐怖袭击，康查尔——那个老练的执行者——瞬间做出了反应。他冲向别墅外墙，用早就准备好的红色喷漆在残存的围墙上喷下了巨大的、潦草的标语：“打倒资本主义寄生虫！”“新世界万岁！”随手又撒下了一把伪造的极左翼激进组织传单。\n\n第二天傍晚，房车驶入拉古那海滩的露营区，我在休息区买了一份当地晚报。头条新闻便刊载着圣芭芭拉的爆炸案，但内容并非“苏联间谍网曝光”，而是“激进左翼分子炸毁富商豪宅”。此时地方警方已经将其定性为国内恐怖主义袭击，没有人再去深究那个被烧成焦炭的画商到底是不是KGB。而那些名单上的大人物？他们的噩梦才刚刚开始。\n\n只有瓦妮莎成了代价。因为她导致车“坏了”，才逼得艾莉丝不得不引爆塞勒斯，才逼得原本完美的静默行动变成了惊天大案。那天晚上，父亲把瓦妮莎关进了车底的备胎箱。我躺在床上，听着地板下传来的微弱哭声，手里紧紧攥着那把没用上的撬锁工具。我输了，这意味着下次机会或需要等很久才会到来。",
+        attitude: "",
+        visual: "https://picsum.photos/seed/explosion_beach/800/450"
+      }
+    },
+    connectedTo: ["confession_22", "capone"]
+  },
+  {
+    id: "confession_24",
+    keyword: "confession",
+    title: "供述 No.24",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.75, y: window.innerHeight * 0.35 },
+    revealedKeywords: ['莫兰迪', '阿尔伯克基市', '化学家情人'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "如果你以为这辆车上会有什么针对塞勒斯的追悼会，那你就是个蠢货。 唯一的变化是物理上的——那辆GMC房车的悬挂系统不再像以前那样发出沉重的呻吟，车厢里也少了一股长年累月的汗臭味。更重要的是，空出来了一个位置。就像当年康查尔干掉尼比，仅仅是为了给我腾出一张床铺一样；现在塞勒斯变成了一堆灰烬，意味着有车座正在变凉，而父亲并不喜欢空椅子，他希望家族内人丁兴旺，战力完整。\n\n我记得那个晚上，艾莉丝走到父亲身边，她没有因为炸死塞勒斯而愧疚，相反，她兴奋得像个刚做完恶作剧的孩子。艾莉丝把一本泛黄的剪报簿摊在父亲的膝盖上。 “我们需要他，父亲。”她的手指划过剪报上那些黑白照片——那是几年前新墨西哥州著名的阿尔伯克基市化工厂爆炸案，现场如同艺术品般惨烈。她告诉父亲，这位艺术家的名字叫做莫兰迪，此刻他正被关在圣昆廷监狱的死囚区等待行刑。",
+        attitude: "",
+        visual: "https://picsum.photos/seed/albuquerque_explosion/800/450"
+      },
+      [MemoryLayer.DEEP]: {
+        event: "“他是最好的化学家，也是最好的爆破手。”艾莉丝的眼神迷离，仿佛在谈论初恋情人，“他教会了我怎么用洗洁精和化肥制造炸弹……也就是在那个充满硫磺味的地下室里，我把自己交给了他。他是我的第一个男人，无论是在肉体上，还是在犯罪上。” 父亲翻看着那些剪报，又看了看艾莉丝，很快合上本子，点了点头。\n\n接下来的事情，我也是后来才知道的。父亲当晚就构思好了计划。在裸根的名单里，有一位名叫肯尼迪·索恩的联邦大法官。与名单中的其他人不同，阿列克谢死前已与这位法官有过“密切合作”，这意味着很多事。比如索恩一定会关注到阿列克谢的死，也一定会把这件事当做自己的解脱，如果父亲想要继承苏联方面对法官的制约，那他需要精心准备一场演出。",
+        attitude: "",
+        visual: "https://picsum.photos/seed/judge_thorne/800/450"
+      },
+      [MemoryLayer.CORE]: {
+        event: "瓦妮莎被从放了出来，浑身是伤，精神已经濒临崩溃。 母亲冷冷地看着她，接着打开化妆箱。她像给一具尸体上妆一样，熟练地用厚重的粉底遮盖瓦妮莎脸上的淤青，给她的嘴唇涂上鲜艳得近乎流血的口红。接着母亲又取出药箱，从中取出了一支装着透明液体的注射器。“这是稀释后的士的宁（Strychnine）。”母亲轻弹针管，然后扎进瓦妮莎的身体里，“它会让你的神经末梢变得像裸露的电线一样敏感。哪怕是一根羽毛落在皮肤上，你会觉得像是刀割。你不需要演戏，亲爱的，等药物起效后，你自然就会抽搐抖动，会因为任何一点触碰而尖叫。听说这正是咱们法官大人喜欢的——纯粹的、无法掩饰的痛苦。”\n\n当晚，因为“非法入境”而被逮捕的瓦妮莎在两位“移民局官员“陪同下，来到索恩位于翡翠湾的豪宅门前，早已熟悉流程的门前守卫并不知道阿列克谢已死的事情，他只知道每周二的晚上都会有“贡品”被送来，而他只需要少管闲事就行。书房内，看着被康查尔推在地毯上的瓦妮莎，索恩的眼神里闪烁着野兽般的光芒，他本以为这是阿列克谢生前安排的最后一次“快递”，等不及康查尔离开便扑了上去。瓦妮莎的哀嚎持续了几分钟，父亲这才推开门走进书房，他穿着一件深色大衣，手里拿着那份“裸根”档案的复印件，用冷漠而权威的口吻说道： “晚上好，法官同志。”\n\n索恩法官僵住了，手停在半空。 父亲走到书桌前，没看衣衫不整的法官，只是轻轻拍了拍瓦妮莎的肩膀。 因为士的宁的作用，这一拍让瓦妮莎发出了一声凄厉的惨叫。 父亲很满意这个效果，他看着法官说： “阿列克谢同志虽然牺牲了，但莫斯科的服务不会中断。我们带来了您喜欢的玩具，也带来了新的指令。”\n\n索恩法官颤抖着接过父亲递过来的一份文件——一份将莫兰迪标记为“重要涉密证人”并立即转移出狱的特勤令。父亲给出的理由无懈可击，化名为莫兰迪的罗钦科同志是我方要营救回国的潜伏特工，请索恩法官协助配合。听说法官阁下没有任何犹豫就签了字，他以为自己只是在配合KGB的营救行动，根本不敢多问。\n\n五分钟后，父亲和康查尔带着签好字的文件和浑身颤抖的瓦妮莎离开了豪宅。回到车上，瓦妮莎蜷缩在角落里，药物的副作用让她还在不停地抽搐和干呕。母亲递给她一条毛毯，眼神里没有任何同情，艾莉丝坐在副驾驶上，看着窗外的夜色哼着歌，期待着与她的化学家情人重逢。",
+        attitude: "",
+        visual: "https://picsum.photos/seed/vanessa_trauma/800/450"
+      }
+    },
+    connectedTo: ["confession_23"]
+  },
+  {
+    id: "confession_25",
+    keyword: "confession",
+    title: "供述 No.25",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.15, y: window.innerHeight * 0.8 },
+    revealedKeywords: ['santa_fe', 'bonny_and_clyde'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "当父亲和康查尔前去拜访索恩法官的同一时间，我与艾莉丝已经出发前去新墨西哥州的阿尔伯克基了。艾莉丝告诉父亲，莫兰迪入狱前，曾像松鼠囤积坚果一样，在阿尔伯克基郊区的沙漠里租了一个工业仓库，里面堆满了他制作完成的高能炸药，父亲认为应该清点库存，而艾莉丝坚持要带我去。\n\n在这辆黑色雪佛兰轿车里，我握着方向盘，手心全是汗。 这是我上车三年来，第一次脱离“父亲”的视线单独行动。 我有无数个机会结束这一切。 如果我在下一个路口左转，只要二十分钟就能开到圣菲的州警总局，我可以把车停在门口，把艾莉丝按在引擎盖上，结束这场噩梦。 或者……我可以一直往南开。开过华雷斯，进入墨西哥。车后备箱里有父亲给的五千美元活动经费，身边坐着一个足以让任何男人疯狂的尤物。我们可以像邦妮和克莱德一样，在那片无法无天的土地上消失。",
+        attitude: "我本可以成为英雄，或者成为亡命鸳鸯。但我最后只成为了司机。",
+        visual: "https://picsum.photos/seed/desert_road/800/450"
+      },
+      [MemoryLayer.DEEP]: {
+        event: "但这只是幻想。 因为艾莉丝坐在副驾驶上，像只慵懒的猫一样蜷缩在座位里，脱掉鞋，把脚搭在仪表盘上。她点了支细长的薄荷烟，烟雾弥漫出车窗飘向远处。我看向窗外，窗外是无边的红土和像墓碑一般的平顶山，太阳把万物都烤得扭曲变形。\n\n“你在想什么，罗伯特？” 她侧着头看我，指尖轻轻划过我握着方向盘的手臂，那种冰凉的触感让我在燥热的沙漠里打了个寒战。她看穿了我。不知道为什么，我忽然产生了这个疯狂的想法。\n\n“你知道塞勒斯最大的问题是什么吗？”她吐出一口烟圈，声音低沉而充满诱惑，“他是一把锤子。好用但笨重，但你不一样……”",
+        attitude: "她剥开了我的脑子，像剥开一颗糖。她知道怎么把毒药喂得像蜜糖一样甜。",
+        visual: "https://picsum.photos/seed/alice/800/450"
+      },
+      [MemoryLayer.CORE]: {
+        event: "“父亲老了，”她凑近我，身上的香水味钻进我的鼻孔，“以后我们一定能做点更疯狂的事情，只要你听话，把脑子里的杂念清空，把自己完全交给我……我会用你切开这个世界的喉咙。”她把手伸向我的下腹，我瞬间有种奇异的感受，车明明在沙漠公路上飞驰，我却感到自己正在坠落。我承认，我想象着像塞勒斯那样，把头埋进她的怀里。接着我的手松也开了方向盘，遵照她的指令，慢慢滑向她的大腿。我眼神开始涣散，呼吸像发情的狗一样急促。这时远处出现一片雄伟但衰败的工业区，艾莉丝变得更加兴奋，她说那就是莫兰迪的火药库，满满一仓季戊四醇四硝酸酯（PETN），等拿到它之后，只需要几百克就能把一座装满小孩的幼儿园炸上天。\n\n我不知道是不是她语气的缘故，也不知道是嫉妒心作祟，总之，一瞬间有根针刺破了填满车厢的粉红色气泡，我下意识纠正她，说如果莫兰迪真如她所说是行家，那他绝不会信任PETN在高温环境下的稳定性，我赌他宁愿选择黑索金（RDX）与TNT的混合注塑炸药，那东西较为迟钝，更适合长期储存。我话音刚落，车厢里的空气瞬间凝固住，艾莉丝抽走了她的手，她没有反驳，只是慢慢转过头，看着车窗外，我这才意识到自己说错话了。塞勒斯分不清PETN和RDX的区别，塞勒斯只会流着口水说，是的，女王，炸飞他们。\n\n“你懂很多，是吗，罗伯特？”艾莉丝的声音变得很轻，“别看你平时装得像个脑子被烧坏了的废物似的，其实你很会演戏。”\n\n我没有说话，而是重新握紧方向盘，沙漠的风卷着沙砾打在车窗上，发出沙沙响声。",
+        attitude: "那一刻我不仅暴露了知识，更暴露了清醒。而在这个家族里，清醒是死罪。",
+        visual: "https://picsum.photos/seed/explosion/800/450"
+      }
+    },
+    connectedTo: ["confession_24"]
+  },
+  {
+    id: "confession_26",
+    keyword: "confession",
+    title: "供述 No.26",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.8, y: window.innerHeight * 0.8 },
+    revealedKeywords: [], // No keywords to pick up
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "塞勒斯被炸死的两个月后，他的位置终于被填补上了。\n\n我记得那天早晨海湾的雾气很大，圣昆廷监狱的重型铁门若隐若现，像是从未被开启过。我在车上，远远看到莫兰迪从迷雾中走出来。他比剪报上更瘦，怀抱着一个装有私人物品的透明塑料袋，像个刚下班的会计师一样，跟车上的每一个人握手。 就在这时，艾莉丝不紧不慢地走到他跟前，忽然掏出一支冰锥，扎进了莫兰迪的大臂。 没有尖叫，没有躲闪。艾莉丝抱紧那只手臂，吮吸伤口良久，又将血吐在房车的地毯上，这才拿出一只手帕为莫兰迪细细包裹。\n\n“欢迎回到派对，”艾莉丝说完，把嘴唇上的血抹在莫兰迪的脖颈上。\n\n以前，车里时常弥漫着塞勒斯的汗臭味，自从莫兰迪上车后，房车里的空气就变了。如今这里闻起来像是一个随时会爆炸的化学实验室——苦杏仁、丙酮，还有那种让人舌根发麻的金属味。 \n\n我们返回了加州。从洛杉矶法院门前的汽车炸弹，到圣迭戈海军基地，半年内，我们在西海岸制造的动静远比此前一年加起来都要响。\n\n但我越发感到不安。自从阿尔伯克基那次失言后，艾莉丝看我的眼神越来越不对劲。她像一只闻到了血腥味的鲨鱼，总是游弋在我的周围。 我必须先下手。 当父亲宣布要伪装成“爱尔兰共和军”去袭击凤凰城的联邦储备银行时，我意识到，这是我最后的机会了。\n\n在出发前往亚利桑那的前夜，趁着莫兰迪在调试引爆器、康查尔和父亲在规划路线的间隙，我撬开了那个幽闭的备胎箱。瓦妮莎蜷缩在那里，已经瘦得只剩一副骨头。她惊恐地看向我，眼神中已经没有任何信任。\n\n我把一个防水袋塞进她冰冷的手里。 “听着，”我贴着她的耳朵，声音急促，“这是我们离开的唯一机会。你拿上它，等我引开其他人后，你就往东跑，跑到图森市的州警检查站，把这些东西交给他们。我会想办法逃出来，然后带 you 走。”\n\n“这是什么？”她颤抖着问。 我说这里有父亲的罪证录音，还有那卷她无比憎恶的微缩胶卷。这些东西足以让父亲在绞架上被吊死三次。 瓦妮莎将信将疑地打开纸袋，当她看清其中的东西后，眼泪瞬间涌了出来。\n\n第二天清晨，当父亲发现瓦妮莎踪影全无时，他看起来真的很生气。 “那个贱人，她要把我们全卖给FBI！”我佯装愤怒地大吼。 而此时，莫兰迪的反应如我预期。他凑近父亲的耳朵说了些什么，父亲紧绷的面色马上缓和了。 我知道莫兰迪在说什么——他告诉父亲，他已经提前在那个装有胶卷的防水袋夹层里，缝上了一个RF射频发射器。而他之所以这么做，一定也是因为艾莉丝对他说了些什么。\n\n但他没有猜到，这一切都被我看在了眼里。\n\n果然，父亲派出康查尔、莫兰迪加上艾莉丝三人去追击瓦妮莎，唯独留下了我。 看着那辆轿车卷着尘土消失在沙漠公路上，我转过身，锁上了房车的门。\n\n父亲驾驶着房车，驶入85号公路，周围是无尽的仙人掌和像墓碑一样耸立的红土山。 我走到了副驾驶座后面。母亲手里依然拿着那根针，正在缝补康查尔留下的一件衬衫。 我深吸一口气，拿起了桌上那把用来切冻肉的锯齿钢刀。 “罗伯特？”母亲察觉到了身后的阴影，她转过头，浑浊的眼睛露出了困惑，“你要做什么？”\n\n“帮你剪断线头，妈妈。” 我的手很稳。钢刀从她的左侧颈动脉刺入，横向用力一拉。 母亲没有尖叫，但被切开的气管止不住地发出嘶嘶声，鲜血像高压水枪一样喷溅出来。\n\n在父亲转过头之前，我已经来到了他的身后。 “好好开车，亲爱的父亲，”我贴着他的耳朵，跟我的枪管一样近，“我们要穿越边境。”\n\n父亲瞥了一眼旁边满身是血的尸体，然后通过后视镜盯着我的眼睛。“他们告诉我，说你是警察，你猜我是怎么回答的，亲爱的罗伯特？”他淡淡地说，“我说你杀不了我。”\n\n无论如何，虽然我原本也没打算尝试，但不得不承认，他说的是对的。我很清楚这些年的药物和洗脑训练意味着什么，即便我想要开枪，我的身体也会抗拒我。 但我很早就知道这一点。正因如此，我更清楚，想要完成这些年潜伏的任务，我唯独只有一个办法——利用瓦妮莎无尽的信任，用她做饵调开其他人，然后斩断父亲与家族、与“远亲”的所有联系。\n\n就在这时，固定在驾驶座旁的警用扫描仪突然响了，正是三人追击瓦妮莎的方向。 既然我早已知晓射频发射器的事，自然也提前举报了他们开走的那辆车。我用父亲那台发报机，伪装成电台爱好者，向警方泄露了一伙“持有重武器的劫匪”的行踪。 此时对讲机内传来激烈的交火声，我甚至听到远处传来康查尔的怒吼，紧接着是一阵密集的自动步枪扫射声。 警方通报随即传来：“我们刚刚击毙一名嫌疑人……另外两名嫌犯裹挟人质逃入沙漠腹地……正在请求空中支援……”\n\n我听到了，父亲自然也听到了。 “接下来怎么办呢，罗伯特？”他依然保持着那副令人作呕的笑意，“他们干掉了一个，但还剩两个。”\n\n我深吸了一口气，用尽全力克制住手抖。 “安心开车吧，我们去一个没有人认识你的地方。”我从怀里掏出那本黄色的密码本，在他面前晃了晃，然后塞进自己的口袋，“那里没有远亲，也没有法律，没有任何人知道你在那里。”\n\n“听起来像是天堂。”父亲笑盈盈地说。\n\n“当然，对我来说是，我不会告诉任何人你在哪，没有人知道你还活着或是死了，”我说，“在我学会如何朝你开枪之前，你都会一直待在那里”\n\n“真是个不错的计划。”父亲踩了一脚油门，让车继续在公路上飞驰。我听到母亲的尸体正随着车身的颠簸而晃动，像是重新活了过来。 \n\n我看向手里的枪，枪口指向父亲的太阳穴，子弹已经准备好，但不会再有人流血了。 我知道，父亲也知道，但他没有做出任何反抗。这是一次押送，毫无疑问。 但我忽然有些恍惚，究竟是谁要把谁带到那个被遗忘的地方。\n\n不过这都无所谓了，没有人会知道父亲现在在哪，即便是你，我的朋友。",
+        attitude: "最后的一段供述，也是真相的开端。",
+        visual: "https://picsum.photos/seed/desert_escape/800/450"
+      },
+      [MemoryLayer.DEEP]: {
+        event: "[SHATTER_TRIGGER]",
+        attitude: "真相就在那片阴影里。",
+        visual: "assets/capone-split-personality.jpg"
+      }
+    },
+    connectedTo: ["confession_25"]
   },
 ];
 

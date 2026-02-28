@@ -1,13 +1,14 @@
 
-import React from 'react';
+import * as React from 'react';
 import { X, FileText, User, Calendar } from 'lucide-react';
 import { INITIAL_DOSSIER } from '../constants';
 
 interface DossierProps {
   onClose: () => void;
+  hasSwitchedPersona?: boolean;
 }
 
-export const Dossier: React.FC<DossierProps> = ({ onClose }) => {
+export const Dossier: React.FC<DossierProps> = ({ onClose, hasSwitchedPersona = false }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div className="w-full max-w-4xl max-h-[90vh] bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden flex flex-col shadow-2xl">
@@ -25,7 +26,16 @@ export const Dossier: React.FC<DossierProps> = ({ onClose }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className="md:col-span-1 space-y-4">
               <div className="aspect-square bg-zinc-800 border border-zinc-700 relative flex items-center justify-center overflow-hidden grayscale">
-                <img src="https://picsum.photos/seed/agent/400" alt="Agent Photo" className="opacity-40" />
+                <img
+                  src="assets/capone-split-personality.jpg"
+                  alt="Agent Photo"
+                  className="h-full object-cover opacity-40 shrink-0 max-w-none transition-all duration-300"
+                  style={{
+                    width: '200%',
+                    transform: hasSwitchedPersona ? 'translateX(-50%)' : 'translateX(0)',
+                    objectPosition: 'center 20%'
+                  }}
+                />
                 <div className="absolute inset-0 border-[20px] border-zinc-900/50" />
                 <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-600 text-[10px] font-bold text-white uppercase tracking-tighter">
                   身份已失效 / 重点监控
@@ -71,9 +81,9 @@ export const Dossier: React.FC<DossierProps> = ({ onClose }) => {
         </div>
 
         <div className="p-4 bg-zinc-950 border-t border-zinc-800 flex justify-end gap-4">
-           <div className="text-[10px] text-zinc-600 self-center uppercase tracking-widest">
-             简报结束 // Project GBOS v4.1
-           </div>
+          <div className="text-[10px] text-zinc-600 self-center uppercase tracking-widest">
+            简报结束 // Project GBOS v4.1
+          </div>
         </div>
       </div>
     </div>

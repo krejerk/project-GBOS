@@ -52,7 +52,7 @@ export interface ArchiveRecord {
 }
 
 export interface GameState {
-  phase: 'briefing' | 'briefing-detail' | 'dialogue' | 'immersion';
+  phase: 'title' | 'briefing' | 'briefing-detail' | 'dialogue' | 'immersion';
   unlockedNodeIds: string[];
   activeNodeId: string | null;
   passwordEntered?: boolean;
@@ -66,11 +66,12 @@ export interface GameState {
   currentStoryNode: number; // Current story node reached (0 = none, 1 = chapter 1 complete, etc.)
   activePersona?: 'detective' | 'shadow'; // Controls background visualization
   history: Array<{
-    type: 'search' | 'info' | 'shatter';
+    type: 'search' | 'info' | 'shatter' | 'archive_content' | 'dialogue';
     content: string;
     timestamp: number;
     isReveal?: boolean;
     revealKeywords?: string[];
+    id?: string;
   }>;
   consecutiveSearch?: {
     keyword: string;

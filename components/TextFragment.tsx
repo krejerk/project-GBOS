@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import * as React from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
@@ -64,21 +65,22 @@ export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 30, rotate: visualProps.rotate + 3 }}
+            layout
+            initial={{ opacity: 0, scale: 0.98, y: 10, rotate: visualProps.rotate + 1 }}
             animate={{
-                opacity: isStabilized ? 1 : 0.8,
+                opacity: 1,
                 scale: 1,
                 y: 0,
                 rotate: visualProps.rotate
             }}
             transition={{
-                opacity: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.6, ease: "easeOut" },
-                y: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" },
-                scale: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" },
-                rotate: { delay: 0.05 + (layerIndex * 0.3) + (pIndex * 0.15), duration: 0.8, ease: "easeOut" }
+                opacity: { delay: 0.02 + (layerIndex * 0.1) + (pIndex * 0.05), duration: 0.4, ease: "easeOut" },
+                y: { delay: 0.02 + (layerIndex * 0.1) + (pIndex * 0.05), duration: 0.5, ease: "easeOut" },
+                scale: { delay: 0.02 + (layerIndex * 0.1) + (pIndex * 0.05), duration: 0.5, ease: "easeOut" },
+                rotate: { delay: 0.02 + (layerIndex * 0.1) + (pIndex * 0.05), duration: 0.5, ease: "easeOut" }
             }}
             whileHover={{
-                scale: 1.02,
+                scale: 1.01,
                 zIndex: 100,
                 rotate: 0,
                 transition: { duration: 0.2, ease: "easeOut" }
@@ -109,33 +111,37 @@ export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
 
             {/* Content Rendering */}
             <p className="font-serif leading-relaxed text-lg text-[#d89853]/90 text-justify">
-                {contentParts.map((part, j) => {
-                    const isPickable = part.isKeyword && highlightKeywords.has(part.text);
+                {(() => {
+                    const seenInFragment = new Set<string>();
+                    return contentParts.map((part, j) => {
+                        const isPickable = part.isKeyword && highlightKeywords.has(part.text) && !seenInFragment.has(part.text);
 
-                    if (isPickable) {
-                        const isEffectActive = collectionEffects[part.text];
+                        if (isPickable) {
+                            seenInFragment.add(part.text);
+                            const isEffectActive = collectionEffects[part.text];
 
-                        return (
-                            <span
-                                key={j}
-                                onClick={(e) => onKeywordClick(e, part.text)}
-                                className={`
-                                    cursor-pointer font-bold inline-block mx-1 relative transition-all duration-300
-                                    ${isEffectActive
-                                        ? 'text-white bg-[#c85a3f] px-1 animate-pulse shadow-lg scale-110'
-                                        : 'text-[#c85a3f] border-b border-dashed border-[#c85a3f] hover:text-white hover:bg-[#c85a3f]/10 px-0.5'
-                                    }
-                                `}
-                            >
-                                {part.text}
-                                {!isEffectActive && (
-                                    <span className="absolute -top-1 -right-1 opacity-50"><Sparkles size={8} /></span>
-                                )}
-                            </span>
-                        );
-                    }
-                    return <span key={j} className="opacity-90">{part.text}</span>;
-                })}
+                            return (
+                                <span
+                                    key={j}
+                                    onClick={(e) => onKeywordClick(e, part.text)}
+                                    className={`
+                                        cursor-pointer font-bold inline-block mx-1 relative transition-all duration-300
+                                        ${isEffectActive
+                                            ? 'text-white bg-[#c85a3f] px-1 animate-pulse shadow-lg scale-110'
+                                            : 'text-[#c85a3f] border-b border-dashed border-[#c85a3f] hover:text-white hover:bg-[#c85a3f]/10 px-0.5'
+                                        }
+                                    `}
+                                >
+                                    {part.text}
+                                    {!isEffectActive && (
+                                        <span className="absolute -top-1 -right-1 opacity-50"><Sparkles size={8} /></span>
+                                    )}
+                                </span>
+                            );
+                        }
+                        return <span key={j} className="opacity-90">{part.text}</span>;
+                    });
+                })()}
             </p>
 
             {/* Truncated Footer */}

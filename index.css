@@ -519,18 +519,58 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 /* Cinematic Glitch Animation - High Drama */
 @keyframes cinematic-glitch {
-  0% { transform: scale(1); filter: invert(0) contrast(1) saturate(1) hue-rotate(0deg); }
-  10% { transform: scale(1.05) translate(-2px, 1px); filter: invert(0.8) contrast(2) saturate(2) hue-rotate(90deg); }
-  20% { transform: scale(1); filter: invert(0) contrast(1) saturate(0); }
-  30% { transform: scale(1.02) translate(2px, -2px); filter: invert(0.4) contrast(1.5) hue-rotate(180deg); }
-  45% { transform: scale(1.1) translate(-1px, 2px); filter: invert(1) contrast(3) saturate(0) hue-rotate(270deg); }
-  50% { transform: scale(1); filter: invert(0); }
-  60% { transform: scale(1.03); filter: contrast(2) hue-rotate(45deg); }
-  75% { transform: scale(1.08) translate(1px, -1px); filter: invert(0.9) contrast(2.5) saturate(3); }
-  90% { transform: scale(1); filter: invert(0.2); }
-  100% { transform: scale(1); filter: invert(0); }
+  0% {
+    transform: scale(1);
+    filter: contrast(1) saturate(1);
+  }
+
+  10% {
+    transform: scale(1.05) translate(-2px, 1px);
+    filter: contrast(2) saturate(2);
+  }
+
+  20% {
+    transform: scale(1);
+    filter: contrast(1) saturate(0);
+  }
+
+  30% {
+    transform: scale(1.02) translate(2px, -2px);
+    filter: contrast(1.5);
+  }
+
+  45% {
+    transform: scale(1.1) translate(-1px, 2px);
+    filter: contrast(3) saturate(0);
+  }
+
+  50% {
+    transform: scale(1);
+    filter: contrast(1);
+  }
+
+  60% {
+    transform: scale(1.03);
+    filter: contrast(2);
+  }
+
+  75% {
+    transform: scale(1.08) translate(1px, -1px);
+    filter: contrast(2.5) saturate(2);
+  }
+
+  90% {
+    transform: scale(1);
+    filter: contrast(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: contrast(1);
+  }
 }
 
 .animate-cinematic-glitch {

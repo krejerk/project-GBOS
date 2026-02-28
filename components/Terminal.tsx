@@ -1,5 +1,6 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import * as React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Search, ChevronRight, Terminal as TerminalIcon } from 'lucide-react';
 
 interface TerminalProps {
@@ -32,8 +33,8 @@ export const Terminal: React.FC<TerminalProps> = ({ onSearch, history, isProcess
         <TerminalIcon size={14} />
         认知终端 (Cognitive Terminal) v0.92
       </div>
-      
-      <div 
+
+      <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 space-y-3 text-sm scroll-smooth"
       >

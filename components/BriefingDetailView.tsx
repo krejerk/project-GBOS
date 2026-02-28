@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, FileText, AlertCircle, Plus, Radio, Mic, Activity, Brain } from 'lucide-react';
 
@@ -7,6 +8,7 @@ interface BriefingDetailViewProps {
     onContinue: () => void;
     onCollectClue: (clueId: string, word: string) => void;
     collectedClues: string[];
+    collectedDossierIds: string[];
 }
 
 interface BriefingSection {

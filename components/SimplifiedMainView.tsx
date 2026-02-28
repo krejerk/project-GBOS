@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Map, Terminal as TerminalIcon, FileText, X, ChevronDown, Database, Archive, Network, Construction, Brain, Activity, RotateCcw } from 'lucide-react';
+import { Search, Map, Terminal as TerminalIcon, FileText, X, ChevronDown, Database, Archive, Network, Construction, Brain, Activity, RotateCcw, ShieldAlert } from 'lucide-react';
 import { SyndicateBoard } from './SyndicateBoard';
 import { ConfessionLog } from './ConfessionLog';
 import { NodeDetail } from './NodeDetail';
@@ -36,6 +37,10 @@ interface SimplifiedMainViewProps {
     onClearUnusedKeywords: () => void; // Clear unused keywords after Node 3
     onDebugUnlockAll?: () => void; // DEBUG: Temporary testing function
     isPersonaGlitching?: boolean; // Trigger for Node 6 awakening glitch
+    onPersonaReboot?: () => void;
+    showCountdown?: boolean;
+    countdownValue?: number;
+    hasSwitchedPersona?: boolean;
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
@@ -66,7 +71,11 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     onRetrace,
     onClearUnusedKeywords,
     onDebugUnlockAll,
-    isPersonaGlitching = false
+    isPersonaGlitching = false,
+    onPersonaReboot,
+    showCountdown = false,
+    countdownValue = 5,
+    hasSwitchedPersona = false
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [showMindMap, setShowMindMap] = useState(false);
@@ -264,12 +273,117 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 >
                     {/* Ambient Avatar / Prompt */}
                     <div className="relative mb-4 md:mb-8 group flex flex-col items-center">
-                        <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 group-hover:opacity-100 transition-opacity filter sepia-[0.2] contrast-110 mb-4 md:mb-6">
+                        <div className="w-20 h-32 md:w-28 md:h-48 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 transition-opacity filter sepia-[0.2] contrast-110 mb-4 md:mb-6 relative">
                             <img
                                 src="assets/capone-split-personality.jpg"
-                                className={`w-[200%] h-full max-w-none object-cover transition-all duration-75 ${isPersonaGlitching ? 'object-right filter invert hue-rotate-180 contrast-200 saturate-200 scale-110 ml-2' : 'object-left'}`}
+                                className={`h-full max-w-none transition-all duration-500 ${(isPersonaGlitching || hasSwitchedPersona) ? 'contrast-125 saturate-150 scale-110' : ''}`}
+                                alt={hasSwitchedPersona ? "ROBERTO_PERSONA_B" : "ROBERTO_PERSONA_A"}
+                                style={{
+                                    width: '200%',
+                                    transform: hasSwitchedPersona ? 'translateX(-50%)' : 'translateX(0)',
+                                    objectPosition: 'center 20%',
+                                    objectFit: 'cover'
+                                }}
                             />
                         </div>
+                        {/* Reboot Countdown Overlay */}
+                        <AnimatePresence>
+                            {showCountdown && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{
+                                        opacity: 1,
+                                    }}
+                                    exit={{ opacity: 0 }}
+                                    className="absolute inset-0 z-[100] bg-black/95 backdrop-blur-3xl flex flex-col items-center justify-center border border-red-500/40 overflow-hidden"
+                                >
+                                    <style>{`
+                                        @keyframes shake-vibrate {
+                                            0% { transform: translate(0, 0) rotate(0deg); }
+                                            10% { transform: translate(-2px, -2px) rotate(-1deg); }
+                                            20% { transform: translate(2px, 2px) rotate(1deg); }
+                                            30% { transform: translate(-3px, 2px) rotate(0deg); }
+                                            40% { transform: translate(3px, -2px) rotate(1deg); }
+                                            50% { transform: translate(-2px, -2px) rotate(-1deg); }
+                                            60% { transform: translate(2px, 2px) rotate(0deg); }
+                                            70% { transform: translate(-3px, 2px) rotate(-1deg); }
+                                            80% { transform: translate(3px, -2px) rotate(1deg); }
+                                            90% { transform: translate(-2px, -2px) rotate(0deg); }
+                                            100% { transform: translate(0, 0) rotate(0deg); }
+                                        }
+                                        .vibrate-intense {
+                                            animation: shake-vibrate 0.1s infinite;
+                                        }
+                                        .vibrate-critical {
+                                            animation: shake-vibrate 0.05s infinite;
+                                            filter: invert(1) contrast(2) brightness(1.2);
+                                        }
+                                    `}</style>
+
+                                    {/* Tech Background Streams */}
+                                    <div className="absolute inset-0 opacity-20 pointer-events-none font-mono text-[10px] text-red-500/40 leading-none select-none overflow-hidden">
+                                        {Array.from({ length: 20 }).map((_, i) => (
+                                            <motion.div
+                                                key={i}
+                                                animate={{ x: [-1000, 1000] }}
+                                                transition={{ duration: 15 + Math.random() * 10, repeat: Infinity, linear: true }}
+                                                className="whitespace-nowrap mb-2"
+                                            >
+                                                {Array.from({ length: 10 }).map(() => `0x${Math.random().toString(16).slice(2, 10).toUpperCase()} `).join('')}
+                                            </motion.div>
+                                        ))}
+                                    </div>
+
+                                    <div className={`relative p-12 border-2 border-red-600/50 bg-black/95 flex flex-col items-center gap-10 shadow-[0_0_100px_rgba(220,38,38,0.3)] min-w-[400px] ${countdownValue === 1 ? 'vibrate-critical' : (countdownValue <= 3 ? 'vibrate-intense' : '')}`}>
+                                        {/* Dynamic Scanline Glitch */}
+                                        <div className="absolute inset-0 scanlines opacity-30 pointer-events-none" />
+
+                                        <div className="flex items-center gap-4 text-red-600 font-mono text-sm tracking-[0.5em] animate-pulse font-bold">
+                                            <ShieldAlert size={20} className="animate-bounce" />
+                                            <span>CRITICAL_PERSONA_OVERRIDE</span>
+                                        </div>
+
+                                        <div className="relative">
+                                            <motion.div
+                                                animate={{
+                                                    scale: [1, 1.1, 1],
+                                                    opacity: [1, 0.8, 1]
+                                                }}
+                                                transition={{ repeat: Infinity, duration: 0.5 / Math.max(1, countdownValue) }}
+                                                className="text-9xl font-mono text-white tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]"
+                                            >
+                                                0{countdownValue}
+                                            </motion.div>
+                                            {/* Reflection / Ghosting */}
+                                            <div className="absolute inset-0 text-9xl font-mono text-red-500/20 tabular-nums translate-x-1 translate-y-1 blur-sm">0{countdownValue}</div>
+                                        </div>
+
+                                        <div className="flex flex-col items-center gap-4 w-full">
+                                            <div className="w-80 h-1.5 bg-neutral-900 border border-neutral-800 overflow-hidden">
+                                                <motion.div
+                                                    className="h-full bg-gradient-to-r from-red-800 via-red-500 to-red-800"
+                                                    initial={{ width: "100%" }}
+                                                    animate={{ width: "0%" }}
+                                                    transition={{ duration: 5, ease: "linear" }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span className="text-[10px] text-red-500/80 font-mono uppercase font-bold tracking-[0.2em]">
+                                                    {countdownValue === 0 ? "REBOOT_INITIATED" : "neural protocol rebooting..."}
+                                                </span>
+                                                <span className="text-[8px] text-neutral-600 font-mono uppercase tracking-widest">
+                                                    auth_level: root // security: bypassed
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Border Glitch Fragments */}
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-red-600/20 blur-sm" />
+                                    <div className="absolute bottom-0 left-0 w-full h-1 bg-red-600/20 blur-sm" />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         {/* Dynamic Response Area */}
                         <div className="min-h-[20px] flex items-center justify-center px-4 w-[120%] -ml-[10%] text-center">
@@ -306,12 +420,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     }
 
                                     // Find the latest character dialogue in history
-                                    // Dialogue items start with "> [" and are not search types
-                                    // Exclude system messages like [SYSTEM]:, [本地协议覆写]:, [归档系统]:, etc.
+                                    // Dialogue items MUST start with "> [" and are not system logs
+                                    // We strictly exclude 'archive_content' and system notifications
                                     const reversedHistory = [...history].reverse();
                                     const lastDialogue = reversedHistory.find(item =>
-                                        (item.type === 'dialogue' || item.type === 'archive_content' || item.type === 'info') &&
-                                        (item.content.startsWith('> [') || item.content.startsWith('[ARCHIVE'))
+                                        (item.type === 'dialogue' || item.type === 'info') &&
+                                        item.content.startsWith('> [')
                                     );
 
                                     const showResponse = !!lastDialogue;
@@ -321,8 +435,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         // Clean up content for display: remove "> [NAME]: " prefix if present
                                         const displayContent = displayItem.content
                                             .replace(/^> \[.*?\]:\s*"?/, '')
-                                            .replace(/"$/, '')
-                                            .replace(/^\[ARCHIVE RETRIEVED\]:.*?\n\n?/, '');
+                                            .replace(/"$/, '');
 
                                         // Highlight pickable keywords
                                         // Highlight pickable keywords
@@ -375,6 +488,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '约翰莫里西': { id: 'john_morrissey', type: 'person' },
                                             '皮特·亨德森': { id: 'peter_henderson', type: 'person' },
                                             '牧师': { id: 'priest', type: 'person' },
+                                            '阿列克谢·罗科维奇': { id: 'alexei', type: 'person' },
+                                            '阿列克谢': { id: 'alexei', type: 'person' },
 
                                             // Years
                                             '1971': { id: 'year_1971', type: 'year' },
@@ -405,6 +520,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '埃尔帕索': { id: 'el_paso', type: 'location' },
                                             '红杉林': { id: 'redwood_forest', type: 'location' },
                                             '战俘营': { id: 'pow_camp', type: 'location' },
+                                            '圣芭芭拉': { id: 'santa_barbara', type: 'location' },
+                                            '拉古那海滩': { id: 'laguna_beach', type: 'location' },
 
                                             // Cases / Details
                                             '小银行': { id: 'small_bank', type: 'clue' },
@@ -427,7 +544,9 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             '软肋': { id: 'achilles_heel', type: 'clue' },
                                             '亚玛力人协议': { id: 'amalekite_protocol', type: 'clue' },
                                             '银喜鹊': { id: 'silver_magpie', type: 'clue' },
-                                            '教堂': { id: 'church', type: 'location' }
+                                            '教堂': { id: 'church', type: 'location' },
+                                            '收网': { id: 'closing_the_net', type: 'clue' },
+                                            '裸根': { id: 'naked_root', type: 'clue' }
                                         };
 
                                         // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions
@@ -505,7 +624,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         </div>
                     </div>
 
-                    {/* Search Input */}
                     <form onSubmit={handleSearchSubmit} className="w-full relative group transform transition-all duration-300 focus-within:scale-105">
                         <Search className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-[#d89853]/60 group-hover:text-[#d89853] transition-colors" size={18} />
                         <input
@@ -742,10 +860,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                 )}
                         </AnimatePresence>
                     </form>
-
-
-
-
                 </motion.div>
             </main>
 
@@ -758,6 +872,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             unlockedPeople={unlockedPeople}
                             onClose={() => setShowMindMap(false)}
                             phase={currentStoryNode >= 2 ? 2 : 1}
+                            hasSwitchedPersona={hasSwitchedPersona}
                         />
                     </div>
                 )}
@@ -844,10 +959,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     node={activeNode}
                                     onShatter={onShatter}
                                     onCollectClue={onCollectClue}
+                                    onPersonaReboot={onPersonaReboot}
                                     onCollectAttachment={onCollectAttachment}
                                     collectedDossierIds={collectedDossierIds}
                                     collectedAttachments={collectedAttachments}
                                     clueDisplayMap={CLUE_DISPLAY_MAP}
+                                    hasSwitchedPersona={hasSwitchedPersona}
                                 />
                             </div>
                         </motion.div>
@@ -927,6 +1044,42 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 currentStoryNode={currentStoryNode}
                 unlockedNodeIds={nodes.filter(Boolean).map(n => n.id)}
             />
+            {/* Reboot Countdown Overlay (Root Level) */}
+            <AnimatePresence>
+                {showCountdown && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[500] bg-black/80 backdrop-blur-2xl flex flex-col items-center justify-center border border-red-500/20"
+                    >
+                        <div className="p-12 border border-red-500/40 bg-black/90 flex flex-col items-center gap-8 shadow-[0_0_100px_rgba(239,68,68,0.3)]">
+                            <div className="flex items-center gap-4 text-red-500 font-mono text-sm tracking-[0.5em] animate-pulse">
+                                <ShieldAlert size={20} />
+                                <span>CRITICAL_PERSONA_OVERRIDE_IN_PROGRESS</span>
+                            </div>
+
+                            <div className="text-8xl md:text-9xl font-mono text-white tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]">
+                                0{countdownValue}
+                            </div>
+
+                            <div className="flex flex-col items-center gap-3">
+                                <div className="w-80 h-1.5 bg-neutral-900 overflow-hidden relative">
+                                    <motion.div
+                                        className="h-full bg-red-500 shadow-[0_0_10px_#ef4444]"
+                                        initial={{ width: "100%" }}
+                                        animate={{ width: "0%" }}
+                                        transition={{ duration: 5, ease: "linear" }}
+                                    />
+                                </div>
+                                <span className="text-[10px] text-neutral-500 font-mono uppercase mt-2 tracking-[0.2em]">
+                                    neural protocol rebooting... DO NOT DISCONNECT
+                                </span>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div >
     );
 };

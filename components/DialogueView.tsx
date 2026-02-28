@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import * as React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronRight, Terminal, User, Fingerprint } from 'lucide-react';
 
@@ -7,6 +8,7 @@ interface DialogueViewProps {
     onComplete: () => void;
     collectedClues: string[];
     unlockedPeople: string[];
+    hasSwitchedPersona?: boolean;
 }
 // Helper map for clue display names
 const CLUE_DISPLAY_MAP: Record<string, string> = {
@@ -51,7 +53,12 @@ const DIALOGUE_LINES: DialogueLine[] = [
     { id: 15, speaker: 'capone', text: '好吧，我了解了。你想知道什么？' },
 ];
 
-export const DialogueView: React.FC<DialogueViewProps> = ({ onComplete, collectedClues, unlockedPeople = [] }) => {
+export const DialogueView: React.FC<DialogueViewProps> = ({
+    onComplete,
+    collectedClues,
+    unlockedPeople = [],
+    hasSwitchedPersona = false
+}) => {
     const [currentLine, setCurrentLine] = useState(0); // Start at 0 for Intro
     const [displayedText, setDisplayedText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -213,8 +220,13 @@ export const DialogueView: React.FC<DialogueViewProps> = ({ onComplete, collecte
                         className="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden relative border border-[#d89853]/50 shadow-[0_0_15px_rgba(216,152,83,0.3)] shrink-0 filter sepia-[0.3] contrast-125 mr-2"
                     >
                         <img
-                            src="assets/capone-split-personality.jpg"
-                            className="absolute top-0 left-0 w-[200%] h-full max-w-none object-cover object-left"
+                            src={`${import.meta.env.BASE_URL}assets/capone-split-personality.jpg`}
+                            className="absolute top-0 h-full max-w-none object-cover"
+                            style={{
+                                width: '200%',
+                                transform: hasSwitchedPersona ? 'translateX(-50%)' : 'translateX(0)',
+                                objectPosition: 'center 20%'
+                            }}
                             alt="RC"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

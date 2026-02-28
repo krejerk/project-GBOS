@@ -1,14 +1,16 @@
 
-import React, { useState, useCallback } from 'react';
+import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BriefingView } from './components/BriefingView';
 import { BriefingDetailView } from './components/BriefingDetailView';
+import { AwakeningDialogue } from './components/AwakeningDialogue';
 import { DialogueView } from './components/DialogueView';
 import { SimplifiedMainView } from './components/SimplifiedMainView';
 import { MemoryNode, MemoryLayer, GameState } from './types';
 import {
   INITIAL_DOSSIER, CORE_NODES, RELATIONSHIP_TREE, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS,
-  GLOBAL_KEYWORD_MAP, BRIEFING_SECTIONS,
+  GLOBAL_KEYWORD_MAP, BRIEFING_SECTIONS, CLUE_DISPLAY_MAP,
   JENNIFER_NODE_1_DIALOGUE, JENNIFER_NODE_2_DIALOGUE, JENNIFER_NODE_3_DIALOGUE, JENNIFER_NODE_4_DIALOGUE, JENNIFER_NODE_5_DIALOGUE
 } from './constants';
 import { DebugController } from './components/DebugController';
@@ -31,7 +33,6 @@ const App: React.FC = () => {
     history: [
       { type: 'info', content: '[SYSTEM]: NEURAL LINK ESTABLISHED...', timestamp: Date.now() }
     ],
-    isHacked: false,
     consecutiveSearch: undefined
   });
 
@@ -95,14 +96,20 @@ const App: React.FC = () => {
       }
     });
 
-    // Filter out already collected ones
+    // Filter out already collected ones AND ensure they are valid displayable keywords
     const collectedSet = new Set([
       ...gameState.collectedClues,
       ...gameState.collectedDossierIds,
       ...gameState.collectedYears,
       ...gameState.unlockedPeople
     ]);
-    const missedKeywords = [...new Set(allAvailableKeywords.filter(k => !collectedSet.has(k)))];
+
+    // STRICT VALIDATION: Only allow keywords that exist in CLUE_DISPLAY_MAP.
+    // This prevents "view_iron_horse_record" or other action IDs from appearing.
+    // also prevents garbage matches from history scan.
+    const missedKeywords = [...new Set(allAvailableKeywords.filter(k =>
+      !collectedSet.has(k) && CLUE_DISPLAY_MAP[k]
+    ))];
 
     // 3. Apply Penalty
     setGameState(prev => {
@@ -150,6 +157,50 @@ const App: React.FC = () => {
 
   /* New Animation State for Node 6 Awakening */
   const [isPersonaGlitching, setIsPersonaGlitching] = useState(false);
+  const [isBlackout, setIsBlackout] = useState(false);
+  const [showCountdown, setShowCountdown] = useState(false);
+  const [countdownValue, setCountdownValue] = useState(5);
+  const [showAwakeningDialogue, setShowAwakeningDialogue] = useState(false);
+  const [hasSwitchedPersona, setHasSwitchedPersona] = useState<boolean>(() => {
+    return localStorage.getItem('project_gbos_persona_switched') === 'true';
+  });
+
+  // Persistence for Persona Switch
+  useEffect(() => {
+    localStorage.setItem('project_gbos_persona_switched', hasSwitchedPersona.toString());
+  }, [hasSwitchedPersona]);
+
+  const handlePersonaReboot = useCallback(() => {
+    // 1. Close active node
+    setGameState(prev => ({ ...prev, activeNodeId: null }));
+
+    // 2. Start Countdown
+    setShowCountdown(true);
+    setCountdownValue(5);
+
+    const timer = setInterval(() => {
+      setCountdownValue(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    // 3. Blackout phase after countdown
+    setTimeout(() => {
+      setShowCountdown(false);
+      setIsBlackout(true);
+
+      // 4. Show Awakening Dialogue after 2s blackout
+      setTimeout(() => {
+        setIsBlackout(false);
+        setShowAwakeningDialogue(true);
+      }, 2000);
+
+    }, 5500); // 5s countdown + short grace
+  }, []);
 
   const handleSearch = useCallback(async (query: string) => {
     setIsProcessing(true);
@@ -242,8 +293,13 @@ const App: React.FC = () => {
       '1990': true, 'year_1990': true,
       '1973': true, 'year_1973': true,
       '1986': true, 'year_1986': true,
-      '1965': true, 'year_1965': true, '1965年': true,
-      '1977': true, 'year_1977': true, '1977年': true,
+      '1965': true, 'year_1965': true,
+      '1977': true, 'year_1977': true,
+
+      // New Keywords for Confession 24
+      'albuquerque': true, 'albuquerque city': true, '阿尔伯克基市': true,
+      'morandi': true, '莫兰迪': true,
+      'chemist_lover': true, 'chemist lover': true, '化学家情人': true,
 
       // People
       'little_derek_wayne': true, '小德里克': true, 'derek wayne': true, 'wayne': true,
@@ -303,6 +359,13 @@ const App: React.FC = () => {
       'redwood_forest': true, '红杉林': true,
       'pow_camp': true, '战俘营': true,
       'amalekite_protocol': true, '亚玛力人协议': true,
+      'santa_barbara': true, '圣芭芭拉': true, 'santa barbara': true,
+      'closing_the_net': true, '收网': true, 'closing the net': true,
+      'naked_root': true, '裸根': true, 'naked root': true,
+      'alexei': true, '阿列克谢': true, '阿列克谢·罗科维奇': true, 'alexei rockovich': true,
+      'laguna_beach': true, '拉古那海滩': true, 'laguna beach': true,
+      'santa_fe': true, '圣菲': true, 'santa fe': true,
+      'bonny_and_clyde': true, '邦妮和克莱德': true, 'bonny and clyde': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -397,6 +460,12 @@ const App: React.FC = () => {
         hasTithe: lowerQuery.includes('什一税') || lowerQuery.includes('tithe'),
         hasSilverMagpie: lowerQuery.includes('银喜鹊') || lowerQuery.includes('silver_magpie'),
         hasChurch: lowerQuery.includes('教堂') || lowerQuery.includes('church'),
+        hasLagunaBeach: lowerQuery.includes('拉古那海滩') || lowerQuery.includes('laguna_beach') || lowerQuery.includes('laguna beach'),
+        hasNakedRoot: lowerQuery.includes('裸根') || lowerQuery.includes('naked_root') || lowerQuery.includes('naked root'),
+        hasAlbuquerque: lowerQuery.includes('albuquerque') || lowerQuery.includes('阿尔伯克基') || lowerQuery.includes('阿尔伯克基市'),
+        hasChemistLover: lowerQuery.includes('chemist_lover') || lowerQuery.includes('chemist lover') || lowerQuery.includes('化学家情人'),
+        hasSantaFe: lowerQuery.includes('santa_fe') || lowerQuery.includes('santa fe') || lowerQuery.includes('圣菲'),
+        hasBonnyAndClyde: lowerQuery.includes('bonny_and_clyde') || lowerQuery.includes('bonny and clyde') || lowerQuery.includes('邦妮和克莱德'),
       };
     };
 
@@ -593,6 +662,85 @@ const App: React.FC = () => {
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
               history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() }
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 23: Santa Barbara + Closing the Net
+    if (validation.hasSantaBarbara && validation.hasClosingNet) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_23');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_23');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() }
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 24: Laguna Beach + Naked Root
+    if (validation.hasLagunaBeach && validation.hasNakedRoot) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_24');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_24');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [ // Use provided history logic to avoid loops if needed, though this matches pattern
+                // Logic here: Only add log if NOT already unlocked.
+                // BUT previous fix for Confession 23 forced log even if unlocked?
+                // Wait, check Confession 23 again.
+                // Confession 23 logic:
+                // history: [ ...prev.history, { ... } ]  <-- ALWAYS ADDS
+                // Confession 17-22 logic:
+                // history: isAlreadyUnlocked ? prev.history : [ ... ] <-- ONLY IF NEW
+                // Since 24 is new, I should follow 23's pattern if I want to ensure feedback, OR standard pattern.
+                // User request for C23 was "missing log".
+                // I'll stick to the standard "unlock" pattern for now, unless user asks otherwise.
+                // Wait, for C23 I changed it to ALWAYS add because user complained.
+                // I will follow C23 pattern to be safe and provide feedback.
+                // actually, looking at the code I'm replacing, C23 uses `history: [ ... ]` always.
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() }
               ]
@@ -1343,6 +1491,72 @@ const App: React.FC = () => {
       return;
     }
 
+    // Confession 25: Albuquerque + Chemist Lover
+    if (validation.hasAlbuquerque && validation.hasChemistLover) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_25');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_25');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 26: Santa Fe + Bonny and Clyde
+    if (validation.hasSantaFe && validation.hasBonnyAndClyde) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_26');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_26');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
     const lowerQuery = query.toLowerCase().trim();
 
     // Clipping 11 Unlock: 1976 + Kansas City
@@ -1400,6 +1614,10 @@ const App: React.FC = () => {
       } else if (newCount >= 3) {
         finalQuery = 'jennifer_consecutive_3';
         newConsecutive = undefined; // Reset after trigger
+        // Unlocking Node 5
+        if (gameState.currentStoryNode < 5) {
+          handleStoryNodeComplete(5);
+        }
       }
     } else {
       newConsecutive = undefined;
@@ -1453,9 +1671,7 @@ const App: React.FC = () => {
         {
           keywords: ['jennifer_consecutive_3'],
           response: '> [R. CAPONE]: "难道说真的是她……那天在埃尔帕索，当我绝望地把烟盒揉烂的时候，她就在教堂的角落里看着，对吗？"',
-          priority: 212,
-          isReveal: true,
-          revealKeywords: ['教堂', '埃尔帕索']
+          priority: 999, // Highest priority to override anything else
         },
 
         // ===== RESTORED EASTER EGGS / CONTEXTUAL RESPONSES (High Priority) =====
@@ -1850,6 +2066,8 @@ const App: React.FC = () => {
     }));
   };
 
+  const shouldShowMonster = hasSwitchedPersona && gameState.unlockedNodeIds.filter(id => id.startsWith('confession_')).length === 26;
+
   // Render based on current phase
   return (
     <AnimatePresence mode="wait">
@@ -1881,6 +2099,7 @@ const App: React.FC = () => {
             onComplete={() => setGameState(p => ({ ...p, phase: 'immersion', passwordEntered: true }))}
             collectedClues={gameState.collectedClues}
             unlockedPeople={gameState.unlockedPeople}
+            hasSwitchedPersona={shouldShowMonster}
           />
         </motion.div>
       )}
@@ -1913,9 +2132,27 @@ const App: React.FC = () => {
               currentStoryNode={gameState.currentStoryNode}
               systemStability={gameState.systemStability}
               isPersonaGlitching={isPersonaGlitching}
+              onPersonaReboot={handlePersonaReboot}
+              showCountdown={showCountdown}
+              countdownValue={countdownValue}
+              hasSwitchedPersona={shouldShowMonster}
             />
           </ErrorBoundary>
         </motion.div>
+      )}
+
+      {showAwakeningDialogue && (
+        <AwakeningDialogue
+          onComplete={() => {
+            setShowAwakeningDialogue(false);
+            setHasSwitchedPersona(true);
+            // Returning to main view silently as requested
+          }}
+        />
+      )}
+
+      {isBlackout && (
+        <div className="fixed inset-0 bg-black z-[2000] pointer-events-none" />
       )}
     </AnimatePresence>
   );
