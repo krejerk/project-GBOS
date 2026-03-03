@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Archive, Search, X, ShieldAlert, Stamp, ChevronRight, File, FolderOpen, Folder } from 'lucide-react';
+import { Archive, Search, X, ShieldAlert, Stamp, ChevronRight, File, FolderOpen, Folder, Menu } from 'lucide-react';
 import { CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS, ARCHIVE_CASE_HIGHLIGHT_MAP, GLOBAL_KEYWORD_MAP } from '../constants';
 
 interface ArchivesProps {
@@ -616,6 +616,52 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 建议： 移交经济犯罪科，调查亨德森的银行账户。`,
             template: 'BAKER'
         }
+    },
+    {
+        id: 'sf_1976',
+        title: '“炸弹狂人”的秘密消失',
+        triggers: {
+            year: '1976',
+            person: ['morandi', '莫兰迪', 'Morandi']
+        },
+        newspaper: {
+            source: '《海湾观察家》',
+            date: '1976年X月X日',
+            headline: '【头条】幽灵重返街头？“炸弹狂人”的秘密消失',
+            content: [
+                '圣昆廷监狱的浓雾里，或许刚刚溜走了一个让整个西海岸睡不安稳的幽灵。',
+                '据刚假释的线人“赫克托”（化名）向本报透露，大约两个月前的一个星期二凌晨两点半，被称为“炸弹亨利”的死囚莫兰迪·伊斯坎德尔的牢房门被打开，三名未佩戴胸牌的西装男将其带走，透过门缝，赫克托看到莫兰迪离开时并没有手铐，而是提着一个透明塑料袋，像个准备去度假的银行家一样离开了监狱。从那天之后，放风时间表上就再也没有出现过伊斯坎德尔的名字，他的牢房第二天就被彻底清空，墙上的涂鸦也被刮干净。',
+                '此后，本报记者连续三次致电圣昆廷监狱长办公室。前两次，对方以“不讨论死囚的具体看押状态”为由挂断了电话；第三次，接线员的声音里透着明显的警告意味，并直接将我们引荐给了州惩教署（DOC）的公共事务部。州惩教署的发言人给出了一套官僚辞令，他们声称莫兰迪目前已不在圣昆廷设施内。基于一项高级别的联邦特勤转移令，该犯人已被移交至相关机构。此案目前处于封存状态。'
+            ]
+        },
+        annotation: {
+            fileId: '#1976-FBI-SF-BAU',
+            date: '1976年X月X日',
+            level: '机密 // 仅供内部传阅',
+            author: '霍华德·贝克 (Howard Baker)',
+            content: `联邦调查局 洛杉矶分局 (FBI Los Angeles Field Office) 文件传递与行动备忘录 (Form FD-5)
+日期： 1976年X月X日
+致： 洛杉矶分局主管 (SAC) / 行为分析科 (BAU)
+发件人： 霍华德·贝克 (Howard Baker)
+主题： 莫兰迪·伊斯坎德尔非法移交事件及近期连环袭击案的关联性评估
+
+批示与行动建议：
+查阅附卷的剪报。这绝不是巧合，媒体比我们更早拼凑出了时间线。
+
+时间线吻合： 根据描述，目标人物莫兰迪从圣昆廷监狱被带走的时间为 60 天前。而洛杉矶法院汽车炸弹袭击案发生在 35 天前，圣迭戈海军基地化学泄漏恐慌发生在 21 天前。
+
+取证匹配： 实验室（FBI Lab）刚刚传回了洛杉矶案的残骸分析报告。现场提取的 RDX （黑索金）注塑混合物残留，以及引爆器的定制走线图（Signature），与目标人物在 1968 年伯克利事件中使用的装置具有 100% 的同一性。
+
+安全漏洞与灭口： 签发该“最高级别特勤转移令”的联邦大法官肯尼迪·索恩（Kennedy Thorne），昨晚在马里布的宅邸内被发现死亡（死因为“上吊自杀”）。LAPD 现场报告指出，现场被清理得如同手术室般干净，未发现任何挣扎痕迹或遗书。
+
+结论： 这根本不是情报部门的跨机构移交行动，有一个未知的极端组织成功渗透了我们的司法系统，正在利用官僚漏洞为其武装行动招募高价值的技术资产。
+
+紧急指令（DIRECTIVE）：
+立刻拦截： 申请法庭搜查令，监听记者加里·韦伯斯特家中及其位于米尔谷的办公室通讯线路，必须在 24 小时内挖出那个叫“赫克托”的假释犯源头。
+
+信息封锁： 向上级申请向州惩教署（DOC）及地方警局下达封口令。我们不能让公众意识到联邦政府弄丢了一颗定时炸弹。控制住叙事，直到我们抓到这群幽灵。`,
+            template: 'BAKER'
+        }
     }
 ];
 
@@ -635,7 +681,7 @@ export const Archives: React.FC<ArchivesProps> = ({
     currentStoryNode = 0,
     unlockedNodeIds = []
 }) => {
-    // Calculate currently consumed keywords based on unlocked nodes
+    // Calculate currently consumed keywords based on unlocked nodes and frequency
     const consumedKeywords = React.useMemo(() => {
         const consumed = new Set<string>();
         // Add consumed from unlocked nodes (Confessions)
@@ -643,13 +689,39 @@ export const Archives: React.FC<ArchivesProps> = ({
             const keywords = KEYWORD_CONSUMPTION_MAP[nodeId];
             if (keywords) keywords.forEach(k => consumed.add(k));
         });
-        // Add consumed from unlocked archives
+
+        // For archives, we use a frequency-based consumption so years can be reused
+        // Count how many times each year was collected across different confessions
+        const yearCollectedCount = (collectedYears || []).reduce((acc, y) => {
+            acc[y] = (acc[y] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const yearConsumedCount: Record<string, number> = {};
+
+        // Track consumption
         unlockedArchiveIds.filter(Boolean).forEach(archiveId => {
             const keywords = KEYWORD_CONSUMPTION_MAP[archiveId];
-            if (keywords) keywords.forEach(k => consumed.add(k));
+            if (keywords) {
+                keywords.forEach(k => {
+                    if (CATEGORY_IDS.YEARS.includes(k)) {
+                        yearConsumedCount[k] = (yearConsumedCount[k] || 0) + 1;
+                    } else {
+                        consumed.add(k); // People and other keywords are consumed centrally
+                    }
+                });
+            }
         });
+
+        // If a year's consumed count >= collected count, IT IS FULLY CONSUMED and should hide
+        Object.keys(yearConsumedCount).forEach(y => {
+            if (yearConsumedCount[y] >= (yearCollectedCount[y] || 0)) {
+                consumed.add(y);
+            }
+        });
+
         return consumed;
-    }, [unlockedNodeIds, unlockedArchiveIds]);
+    }, [unlockedNodeIds, unlockedArchiveIds, collectedYears]);
 
     const [yearInput, setYearInput] = useState('');
     const [personInput, setPersonInput] = useState('');
@@ -663,9 +735,12 @@ export const Archives: React.FC<ArchivesProps> = ({
 
     // Attachment Image Modal State
     const [attachmentImage, setAttachmentImage] = useState<string | null>(null);
+    const [notification, setNotification] = useState<{ message: string; type: 'info' | 'success' } | null>(null);
+    const [collectionEffects, setCollectionEffects] = useState<Record<string, boolean>>({});
 
     // Attachment Collection State
     const [isSelectingFolder, setIsSelectingFolder] = useState(false);
+    const [showMobileDirectory, setShowMobileDirectory] = useState(false);
     const [collectionFeedback, setCollectionFeedback] = useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
 
     // Keyword mapping for archives - for annotation highlighting
@@ -756,6 +831,16 @@ export const Archives: React.FC<ArchivesProps> = ({
                 onCollectClue(clueId, keyword);
             }
 
+            // Show local feedback
+            setNotification({ message: `[SYSTEM]: ${keyword} 已收录`, type: 'success' });
+            setTimeout(() => setNotification(null), 2000);
+
+            // Trigger flash effect
+            setCollectionEffects(prev => ({ ...prev, [keyword]: true }));
+            setTimeout(() => {
+                setCollectionEffects(prev => ({ ...prev, [keyword]: false }));
+            }, 800);
+
             // Use GLOBAL_KEYWORD_MAP to determine the input field
             const info = GLOBAL_KEYWORD_MAP[keyword];
             if (info && info.type === 'year') {
@@ -819,6 +904,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (['julie', '朱莉'].includes(personLower)) usedPersonIds.push('julie');
                 if (['juvell_chambers', '朱维尔·钱伯斯', '钱伯斯'].includes(personLower)) usedPersonIds.push('juvell_chambers');
                 if (['john_morrissey', '约翰·莫里西'].includes(personLower)) usedPersonIds.push('john_morrissey');
+                if (['morandi', '莫兰迪'].includes(personLower)) usedPersonIds.push('morandi');
 
 
                 // STRATEGIC CHANGE: Successful investigation unlocks the relevant Case Files (Dossier)
@@ -848,7 +934,11 @@ export const Archives: React.FC<ArchivesProps> = ({
 
     const handleOpenCase = (caseId: string) => {
         const found = ARCHIVE_DATABASE.find(c => c.id === caseId);
-        if (found) setActiveCase(found);
+        if (found) {
+            setActiveCase(found);
+            setFocusedPane('newspaper');
+            setShowMobileDirectory(false);
+        }
     }
 
     const resetView = () => {
@@ -869,9 +959,34 @@ export const Archives: React.FC<ArchivesProps> = ({
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
                 >
                     <div className="w-full max-w-7xl h-[85vh] flex relative border border-[#c85a3f]/20 bg-[#0a0505] rounded-lg overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)]">
+                        {/* Local Notification Overlay */}
+                        <AnimatePresence>
+                            {notification && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20, x: '-50%' }}
+                                    animate={{ opacity: 1, y: 0, x: '-50%' }}
+                                    exit={{ opacity: 0, y: -20, x: '-50%' }}
+                                    className="fixed bottom-12 left-1/2 z-[500] bg-[#c85a3f] text-white px-6 py-2 rounded-full font-mono text-xs tracking-widest shadow-[0_0_30px_rgba(200,90,63,0.4)] border border-white/20 whitespace-nowrap"
+                                >
+                                    {notification.message}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         {/* Sidebar: Archive Directory */}
-                        <div className="w-64 border-r border-[#c85a3f]/20 bg-[#0f0a0a] flex flex-col hidden md:flex">
+                        <div className={`
+                            w-64 border-r border-[#c85a3f]/20 bg-[#0f0a0a] flex flex-col 
+                            ${showMobileDirectory ? 'fixed inset-0 z-[150] w-full md:relative md:w-64 md:flex' : 'hidden md:flex'}
+                        `}>
+                            {/* Mobile Close Directory Button */}
+                            <div className="md:hidden absolute top-6 right-6 z-50">
+                                <button
+                                    onClick={() => setShowMobileDirectory(false)}
+                                    className="p-2 bg-black/40 border border-[#c85a3f]/20 rounded-full text-[#c85a3f]"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
                             {/* Title - At top */}
                             <div className="p-6 border-b border-[#c85a3f]/20">
                                 <div className="flex items-center gap-2 text-[#d89853] mb-1">
@@ -929,9 +1044,18 @@ export const Archives: React.FC<ArchivesProps> = ({
                         {/* Main Content Area */}
                         <div className="flex-1 flex flex-col relative w-full">
                             {/* Header */}
-                            <div className="h-16 border-b border-[#c85a3f]/20 flex justify-between items-center px-6 bg-[#0f0a0a]/50 absolute top-0 left-0 w-full z-20 pointer-events-none">
-                                <div className="flex flex-col">
-                                    <span className="font-mono text-lg tracking-[0.2em] font-bold text-[#d89853] text-shadow-sm">局内档案室 // ARCHIVES</span>
+                            <div className="h-auto py-4 md:h-16 pt-[max(2.5rem,env(safe-area-inset-top))] md:pt-4 border-b border-[#c85a3f]/20 flex justify-between items-center px-6 bg-[#0f0a0a]/50 absolute top-0 left-0 w-full z-20 pointer-events-none">
+                                <div className="flex items-center gap-4 pointer-events-auto">
+                                    <button
+                                        onClick={() => setShowMobileDirectory(true)}
+                                        className="md:hidden p-2 bg-[#c85a3f]/10 border border-[#c85a3f]/30 rounded text-[#d89853] hover:bg-[#c85a3f]/20"
+                                        title="打开目录"
+                                    >
+                                        <Menu size={20} />
+                                    </button>
+                                    <div className="flex flex-col">
+                                        <span className="font-mono text-base md:text-lg tracking-[0.1em] md:tracking-[0.2em] font-bold text-[#d89853] text-shadow-sm">局内档案室 // ARCHIVES</span>
+                                    </div>
                                 </div>
                                 <button
                                     onClick={onClose}
@@ -941,7 +1065,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                 </button>
                             </div>
 
-                            <div className="flex-1 overflow-hidden relative pt-16">
+                            <div className="flex-1 overflow-y-auto custom-scrollbar relative pt-[max(5rem,calc(env(safe-area-inset-top)+3rem))] pb-8">
                                 <AnimatePresence mode='wait'>
                                     {!activeCase ? (
                                         /* SEARCH VIEW */
@@ -950,7 +1074,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                             initial={{ opacity: 0, scale: 0.95 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             exit={{ opacity: 0, scale: 0.95 }}
-                                            className="w-full h-full flex flex-col items-center justify-center p-8 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"
+                                            className="w-full h-full flex flex-col items-center justify-start md:justify-center p-8 pt-[max(25%,5rem)] md:pt-8 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] overflow-y-auto custom-scrollbar"
                                         >
                                             <div className="max-w-md w-full space-y-8 relative">
                                                 <div className="absolute -inset-10 bg-[#c85a3f]/5 blur-3xl rounded-full pointer-events-none" />
@@ -990,28 +1114,35 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                         <div className="flex flex-wrap gap-2 justify-center">
                                                             <div className="text-[10px] text-[#c85a3f]/40 uppercase tracking-widest w-full text-center mb-2">快速选择 / Quick Select</div>
 
-                                                            {[...new Set([...collectedYears, ...unlockedPeople].filter(Boolean))]
-                                                                .filter(id => {
-                                                                    const lowerId = id.toLowerCase();
-                                                                    const isPerson = unlockedPeople.includes(id);
-                                                                    const isYear = collectedYears.includes(id);
+                                                            {(() => {
+                                                                const frequencyMap = [...(collectedClues || []), ...(collectedYears || [])].reduce((acc, val) => {
+                                                                    acc[val] = (acc[val] || 0) + 1;
+                                                                    return acc;
+                                                                }, {} as Record<string, number>);
 
-                                                                    // Exclusion list (same as SimplifiedMainView)
-                                                                    if (['robert', 'capone', 'robert_capone', 'rubick', 'father', 'dr_reggie'].includes(lowerId)) return false;
+                                                                return [...new Set([...collectedYears, ...unlockedPeople].filter(Boolean))]
+                                                                    .filter(id => {
+                                                                        const lowerId = id.toLowerCase();
+                                                                        const isPerson = unlockedPeople.includes(id);
+                                                                        const isYear = collectedYears.includes(id);
 
-                                                                    if (!isPerson && !isYear) return false;
+                                                                        // Exclusion list (same as SimplifiedMainView)
+                                                                        if (['robert', 'capone', 'robert_capone', 'rubick', 'father', 'dr_reggie'].includes(lowerId)) return false;
 
-                                                                    if (isPerson) {
-                                                                        if (!CATEGORY_IDS.PEOPLE.includes(id)) return false;
-                                                                    }
+                                                                        if (!isPerson && !isYear) return false;
 
-                                                                    if (isYear) {
-                                                                        if (!CATEGORY_IDS.YEARS.includes(id)) return false;
-                                                                    }
+                                                                        if (isPerson) {
+                                                                            if (!CATEGORY_IDS.PEOPLE.includes(id)) return false;
+                                                                        }
 
-                                                                    // Hide consumed keywords (including years that have been used)
-                                                                    return !!CLUE_DISPLAY_MAP[id] && !consumedKeywords.has(id);
-                                                                })
+                                                                        if (isYear) {
+                                                                            if (!CATEGORY_IDS.YEARS.includes(id)) return false;
+                                                                        }
+
+                                                                        // Normal check: Hide if consumed
+                                                                        return !consumedKeywords.has(id);
+                                                                    });
+                                                            })()
                                                                 .map(id => {
                                                                     const isPerson = unlockedPeople.includes(id);
                                                                     const isYear = collectedYears.includes(id);
@@ -1060,472 +1191,509 @@ export const Archives: React.FC<ArchivesProps> = ({
                                         </motion.div>
                                     ) : (
                                         /* RESULT VIEW (Interactive Split Pane) */
-                                        <motion.div
-                                            key="result"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="w-full h-full flex flex-col md:flex-row bg-black relative"
-                                        >
-                                            {/* Top Overlay Controls (Mobile) */}
-                                            <div className="md:hidden absolute top-4 right-4 z-50">
-                                                <button onClick={resetView} className="p-2 bg-black/50 text-white rounded-full"><X size={20} /></button>
+                                        <div className="w-full h-full flex flex-col relative bg-black overflow-hidden">
+                                            {/* Mobile Tab Switcher */}
+                                            <div className="md:hidden flex border-b border-[#c85a3f]/20 bg-[#0f0a0a] z-30">
+                                                <button
+                                                    onClick={() => setFocusedPane('newspaper')}
+                                                    className={`flex-1 py-3 text-[10px] tracking-[0.2em] font-bold transition-all ${focusedPane === 'newspaper' ? 'text-[#d89853] bg-[#c85a3f]/20 border-b-2 border-[#d89853]' : 'text-[#c85a3f]/40 uppercase'}`}
+                                                >
+                                                    新闻剪报 / CLIPPING
+                                                </button>
+                                                <button
+                                                    onClick={() => setFocusedPane('annotation')}
+                                                    className={`flex-1 py-3 text-[10px] tracking-[0.2em] font-bold transition-all ${focusedPane === 'annotation' ? 'text-[#d89853] bg-[#c85a3f]/20 border-b-2 border-[#d89853]' : 'text-[#c85a3f]/40 uppercase'}`}
+                                                >
+                                                    局内批注 / NOTES
+                                                </button>
                                             </div>
 
-                                            {/* Newspaper Pane */}
-                                            <div
-                                                className={`
-                                                    relative transition-all duration-500 ease-in-out overflow-hidden cursor-pointer
-                                                    ${focusedPane === 'newspaper' ? 'flex-[2.5]' : focusedPane === 'annotation' ? 'flex-[0.8] opacity-60 hover:opacity-100 hover:flex-[1]' : 'flex-1'}
-                                                    border-r border-[#c85a3f]/20
-                                                `}
-                                                onMouseEnter={() => setFocusedPane('newspaper')}
-                                                onClick={() => setFocusedPane('newspaper')}
+                                            <motion.div
+                                                key="result"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="flex-1 flex flex-col md:flex-row bg-black relative overflow-hidden"
                                             >
-                                                {/* Vintage Newspaper Container with Striking Effects */}
-                                                <div className="h-full overflow-y-auto relative group scrollbar-thin scrollbar-thumb-neutral-400"
-                                                    style={{
-                                                        backgroundColor: '#b88d5c', // Slightly warmer amber
-                                                        backgroundImage: `
+                                                {/* Top Overlay Controls (Mobile) */}
+                                                <div className="md:hidden absolute top-4 right-4 z-50">
+                                                    <button onClick={resetView} className="p-2 bg-black/50 text-white rounded-full"><X size={20} /></button>
+                                                </div>
+
+                                                {/* Newspaper Pane */}
+                                                <div
+                                                    className={`
+                                                    relative transition-all duration-500 ease-in-out cursor-pointer
+                                                    h-full md:h-full
+                                                    ${focusedPane === 'newspaper' ? 'flex-[1] md:flex-[2.5]' : 'hidden md:flex md:flex-[0.8] md:opacity-60 md:hover:opacity-100 md:hover:flex-[1]'}
+                                                    border-b md:border-b-0 md:border-r border-[#c85a3f]/20
+                                                `}
+                                                    onClick={() => setFocusedPane('newspaper')}
+                                                >
+                                                    {/* Vintage Newspaper Container with Striking Effects */}
+                                                    <div className="h-full overflow-y-auto relative group scrollbar-thin scrollbar-thumb-neutral-400"
+                                                        style={{
+                                                            backgroundColor: '#b88d5c', // Slightly warmer amber
+                                                            backgroundImage: `
                                                                 radial-gradient(circle at 50% 30%, #f2d2a9 0%, #b88d5c 60%, #7d5a36 100%),
                                                                 url('https://www.transparenttextures.com/patterns/old-map.png')
                                                             `,
-                                                        backgroundBlendMode: 'soft-light',
-                                                        filter: 'sepia(0.25) saturate(1.1) contrast(1.02)' // Global unification
-                                                    }}
-                                                >
-                                                    {/* Heavy Texture Layers */}
-                                                    <div className="absolute inset-0 opacity-60 pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/pulp.png')]"></div>
-                                                    <div className="absolute inset-0 opacity-30 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cardboard.png')]"></div>
+                                                            backgroundBlendMode: 'soft-light',
+                                                            filter: 'sepia(0.25) saturate(1.1) contrast(1.02)' // Global unification
+                                                        }}
+                                                    >
+                                                        {/* Heavy Texture Layers */}
+                                                        <div className="absolute inset-0 opacity-60 pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/pulp.png')]"></div>
+                                                        <div className="absolute inset-0 opacity-30 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cardboard.png')]"></div>
 
-                                                    {/* Analog Projector Effect: Layered Spotlight & Vignette */}
-                                                    <div className="absolute inset-0 pointer-events-none"
-                                                        style={{
-                                                            background: `
+                                                        {/* Analog Projector Effect: Layered Spotlight & Vignette */}
+                                                        <div className="absolute inset-0 pointer-events-none"
+                                                            style={{
+                                                                background: `
                                                                 radial-gradient(circle at 50% 40%, rgba(255, 253, 230, 0.45) 0%, transparent 55%),
                                                                 radial-gradient(circle at 50% 40%, rgba(255, 252, 245, 0.4) 0%, transparent 75%),
                                                                 radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.5) 100%)
                                                             `,
-                                                        }}
-                                                    ></div>
+                                                            }}
+                                                        ></div>
 
-                                                    {/* Dust & Micro-Scratches Layer */}
-                                                    <div className="absolute inset-0 opacity-[0.15] pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/dust.png')]"></div>
-                                                    <div className="absolute inset-0 opacity-[0.08] pointer-events-none mix-blend-screen bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+                                                        {/* Dust & Micro-Scratches Layer */}
+                                                        <div className="absolute inset-0 opacity-[0.15] pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/dust.png')]"></div>
+                                                        <div className="absolute inset-0 opacity-[0.08] pointer-events-none mix-blend-screen bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
 
 
-                                                    {/* Static Noise / Grain Overlay */}
-                                                    <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
+                                                        {/* Static Noise / Grain Overlay */}
+                                                        <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
 
-                                                    {/* Irregular Aged Edges */}
-                                                    <div className="absolute top-0 left-0 right-0 h-8 opacity-40 pointer-events-none"
-                                                        style={{
-                                                            background: 'linear-gradient(180deg, rgba(60, 40, 20, 0.8), transparent)',
-                                                        }}
-                                                    ></div>
-                                                    <div className="absolute bottom-0 left-0 right-0 h-16 opacity-50 pointer-events-none"
-                                                        style={{
-                                                            background: 'linear-gradient(0deg, rgba(50, 30, 10, 0.9), transparent)',
-                                                        }}
-                                                    ></div>
+                                                        {/* Irregular Aged Edges */}
+                                                        <div className="absolute top-0 left-0 right-0 h-8 opacity-40 pointer-events-none"
+                                                            style={{
+                                                                background: 'linear-gradient(180deg, rgba(60, 40, 20, 0.8), transparent)',
+                                                            }}
+                                                        ></div>
+                                                        <div className="absolute bottom-0 left-0 right-0 h-16 opacity-50 pointer-events-none"
+                                                            style={{
+                                                                background: 'linear-gradient(0deg, rgba(50, 30, 10, 0.9), transparent)',
+                                                            }}
+                                                        ></div>
 
-                                                    {/* Physical Stains (more pronounced) */}
-                                                    <div className="absolute top-[15%] left-[10%] w-64 h-48 opacity-20 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/brushed-alum.png')]"
-                                                        style={{
-                                                            filter: 'invert(1) opacity(0.5) blur(2px)',
-                                                            transform: 'rotate(15deg) scale(2)',
-                                                            mixBlendMode: 'multiply'
-                                                        }}
-                                                    ></div>
+                                                        {/* Physical Stains (more pronounced) */}
+                                                        <div className="absolute top-[15%] left-[10%] w-64 h-48 opacity-20 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/brushed-alum.png')]"
+                                                            style={{
+                                                                filter: 'invert(1) opacity(0.5) blur(2px)',
+                                                                transform: 'rotate(15deg) scale(2)',
+                                                                mixBlendMode: 'multiply'
+                                                            }}
+                                                        ></div>
 
-                                                    {/* Main Content with Ink-Bleed & High-Contrast Look */}
-                                                    <div className="p-8 md:p-14 relative"
-                                                        style={{
-                                                            filter: 'contrast(1.1) brightness(0.98)',
-                                                        }}
-                                                    >
-                                                        <div className="max-w-2xl mx-auto relative z-10 font-serif origin-top transition-transform duration-500">
-                                                            {/* Newspaper Header - Bold Vintage */}
-                                                            <div className="border-b-[4px] border-black/80 mb-10 pb-6 text-center relative">
-                                                                <div className="absolute -top-3 left-0 right-0 h-[2px] bg-black/60"></div>
+                                                        {/* Main Content with Ink-Bleed & High-Contrast Look */}
+                                                        <div className="p-8 md:p-14 relative"
+                                                            style={{
+                                                                filter: 'contrast(1.1) brightness(0.98)',
+                                                            }}
+                                                        >
+                                                            <div className="max-w-2xl mx-auto relative z-10 font-serif origin-top transition-transform duration-500">
+                                                                {/* Newspaper Header - Bold Vintage */}
+                                                                <div className="border-b-[4px] border-black/80 mb-10 pb-6 text-center relative">
+                                                                    <div className="absolute -top-3 left-0 right-0 h-[2px] bg-black/60"></div>
 
-                                                                <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter mb-2 relative italic"
+                                                                    <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter mb-2 relative italic"
+                                                                        style={{
+                                                                            filter: 'blur(0.35px) contrast(1.2) opacity(0.95)',
+                                                                            color: 'rgba(5, 5, 5, 0.94)',
+                                                                            letterSpacing: '-0.02em',
+                                                                            mixBlendMode: 'multiply'
+                                                                        }}
+                                                                    >
+                                                                        {activeCase.newspaper.source}
+                                                                    </h2>
+
+                                                                    <div className="flex justify-between items-center border-t-[2px] border-black/80 pt-3 text-xs md:text-sm font-black uppercase tracking-widest">
+                                                                        <span className="text-black/90 drop-shadow-sm">{activeCase.newspaper.date}</span>
+                                                                        <div className="flex flex-col items-center">
+                                                                            <span className="bg-black/90 text-[#e6bc8a] px-4 py-0.5 text-[10px] mb-1">LATE CITY FINAL</span>
+                                                                            <span className="text-[9px] text-black/80 font-bold">Vol. LXXVIII... No. 124</span>
+                                                                        </div>
+                                                                        <span className="text-black/90 drop-shadow-sm">PRICE 15 CENTS</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Headline - "Sunken Ink" Effect */}
+                                                                <h1 className="text-4xl md:text-5xl font-black leading-[1.05] mb-8 font-serif italic"
                                                                     style={{
-                                                                        filter: 'blur(0.35px) contrast(1.2) opacity(0.95)',
-                                                                        color: 'rgba(5, 5, 5, 0.94)',
-                                                                        letterSpacing: '-0.02em',
-                                                                        mixBlendMode: 'multiply'
+                                                                        color: 'rgba(15, 15, 15, 0.92)',
+                                                                        filter: 'blur(0.28px) contrast(1.3) grayscale(0.2)',
+                                                                        letterSpacing: '-0.015em',
+                                                                        mixBlendMode: 'multiply',
+                                                                        textShadow: '0.5px 0.5px 1px rgba(0,0,0,0.1)'
                                                                     }}
                                                                 >
-                                                                    {activeCase.newspaper.source}
-                                                                </h2>
+                                                                    {activeCase.newspaper.headline}
+                                                                </h1>
 
-                                                                <div className="flex justify-between items-center border-t-[2px] border-black/80 pt-3 text-xs md:text-sm font-black uppercase tracking-widest">
-                                                                    <span className="text-black/90 drop-shadow-sm">{activeCase.newspaper.date}</span>
-                                                                    <div className="flex flex-col items-center">
-                                                                        <span className="bg-black/90 text-[#e6bc8a] px-4 py-0.5 text-[10px] mb-1">LATE CITY FINAL</span>
-                                                                        <span className="text-[9px] text-black/80 font-bold">Vol. LXXVIII... No. 124</span>
-                                                                    </div>
-                                                                    <span className="text-black/90 drop-shadow-sm">PRICE 15 CENTS</span>
-                                                                </div>
-                                                            </div>
+                                                                {/* Article Text - Deep fibre Integration */}
+                                                                <div className="columns-1 md:columns-2 gap-10 text-sm md:text-base leading-relaxed text-justify space-y-5 font-serif"
+                                                                    style={{
+                                                                        color: 'rgba(30, 30, 30, 0.9)',
+                                                                        filter: 'blur(0.25px) contrast(1.15)',
+                                                                        mixBlendMode: 'multiply',
+                                                                        opacity: 0.92
+                                                                    }}
+                                                                >
+                                                                    {activeCase.newspaper.content.map((para, i) => {
+                                                                        const activeKeywords = ARCHIVE_CASE_HIGHLIGHT_MAP[activeCase.id] || [];
 
-                                                            {/* Headline - "Sunken Ink" Effect */}
-                                                            <h1 className="text-4xl md:text-5xl font-black leading-[1.05] mb-8 font-serif italic"
-                                                                style={{
-                                                                    color: 'rgba(15, 15, 15, 0.92)',
-                                                                    filter: 'blur(0.28px) contrast(1.3) grayscale(0.2)',
-                                                                    letterSpacing: '-0.015em',
-                                                                    mixBlendMode: 'multiply',
-                                                                    textShadow: '0.5px 0.5px 1px rgba(0,0,0,0.1)'
-                                                                }}
-                                                            >
-                                                                {activeCase.newspaper.headline}
-                                                            </h1>
+                                                                        if (activeKeywords.length > 0) {
+                                                                            const pattern = `(${activeKeywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`;
+                                                                            const regex = new RegExp(pattern, 'g');
+                                                                            const highlightedIds = new Set<string>();
+                                                                            return (
+                                                                                <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
+                                                                                    {para.split(regex).map((part, j) => {
+                                                                                        if (activeKeywords.includes(part)) {
+                                                                                            const clueId = ARCHIVE_KEYWORD_MAP[part];
+                                                                                            if (clueId && !highlightedIds.has(clueId)) {
+                                                                                                highlightedIds.add(clueId);
+                                                                                                const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId);
+                                                                                                return (
+                                                                                                    <span
+                                                                                                        key={j}
+                                                                                                        onClick={() => handleKeywordClick(part)}
+                                                                                                        className={`cursor-pointer font-bold inline-block transform hover:scale-105 transition-all duration-200 ${isCollected ? 'text-white bg-[#c85a3f] px-1 shadow-lg' : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20 animate-pulse'}`}
+                                                                                                        title={isCollected ? "已收录" : "点击收集线索"}
+                                                                                                    >
+                                                                                                        {part}
+                                                                                                    </span>
+                                                                                                );
+                                                                                            }
+                                                                                        }
+                                                                                        return <span key={j}>{part}</span>;
+                                                                                    })}
+                                                                                </p>
+                                                                            );
+                                                                        }
 
-                                                            {/* Article Text - Deep fibre Integration */}
-                                                            <div className="columns-1 md:columns-2 gap-10 text-sm md:text-base leading-relaxed text-justify space-y-5 font-serif"
-                                                                style={{
-                                                                    color: 'rgba(30, 30, 30, 0.9)',
-                                                                    filter: 'blur(0.25px) contrast(1.15)',
-                                                                    mixBlendMode: 'multiply',
-                                                                    opacity: 0.92
-                                                                }}
-                                                            >
-                                                                {activeCase.newspaper.content.map((para, i) => {
-                                                                    const activeKeywords = activeCase.id === 'kan_1976'
-                                                                        ? ['东12街', '行刑室']
-                                                                        : activeCase.id === 'kc_1965'
-                                                                            ? ['圣路易斯']
-                                                                            : [];
-
-                                                                    if (activeKeywords.length > 0) {
-                                                                        const pattern = `(${activeKeywords.join('|')})`;
-                                                                        const regex = new RegExp(pattern, 'g');
-                                                                        const highlightedIds = new Set<string>();
                                                                         return (
                                                                             <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
-                                                                                {para.split(regex).map((part, j) => {
-                                                                                    if (activeKeywords.includes(part)) {
-                                                                                        const clueId = ARCHIVE_KEYWORD_MAP[part];
-                                                                                        if (clueId && !highlightedIds.has(clueId)) {
-                                                                                            highlightedIds.add(clueId);
-                                                                                            return (
-                                                                                                <span
-                                                                                                    key={j}
-                                                                                                    onClick={() => handleKeywordClick(part)}
-                                                                                                    className="cursor-pointer font-bold text-[#c85a3f] border-b border-[#c85a3f] hover:bg-[#c85a3f]/10"
-                                                                                                >
-                                                                                                    {part}
-                                                                                                </span>
-                                                                                            );
-                                                                                        }
-                                                                                    }
-                                                                                    return <span key={j}>{part}</span>;
-                                                                                })}
+                                                                                {para}
                                                                             </p>
                                                                         );
-                                                                    }
-
-                                                                    return (
-                                                                        <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
-                                                                            {para}
-                                                                        </p>
-                                                                    );
-                                                                })}
+                                                                    })}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    {/* UI Label - Compact tag in the corner */}
-                                                    <div className="absolute top-4 right-4 bg-black/60 text-[#d4a261] text-[9px] px-2 py-0.5 uppercase tracking-[0.2em] pointer-events-none backdrop-blur-[4px] border border-white/10 w-fit whitespace-nowrap z-20">
-                                                        EVIDENCE TYPE: PRESS CLIPPING
+                                                        {/* UI Label - Compact tag in the corner */}
+                                                        <div className="absolute top-4 right-4 bg-black/60 text-[#d4a261] text-[9px] px-2 py-0.5 uppercase tracking-[0.2em] pointer-events-none backdrop-blur-[4px] border border-white/10 w-fit whitespace-nowrap z-20">
+                                                            EVIDENCE TYPE: PRESS CLIPPING
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            {/* FBI Annotation Pane */}
-                                            <div
-                                                className={`
-                                                    relative transition-all duration-500 ease-in-out overflow-hidden cursor-pointer bg-[#1a1515]
-                                                    ${focusedPane === 'annotation' ? 'flex-[2]' : focusedPane === 'newspaper' ? 'flex-[0.5] opacity-60 hover:opacity-100 hover:flex-[0.8]' : 'flex-1'}
+                                                {/* FBI Annotation Pane */}
+                                                <div
+                                                    className={`
+                                                    relative transition-all duration-500 ease-in-out cursor-pointer bg-[#1a1515]
+                                                    h-full md:h-full
+                                                    ${focusedPane === 'annotation' ? 'flex-[1] md:flex-[2]' : 'hidden md:flex md:flex-[0.5] md:opacity-60 md:hover:opacity-100 md:hover:flex-[0.8]'}
                                                 `}
-                                                onMouseEnter={() => setFocusedPane('annotation')}
-                                                onClick={() => setFocusedPane('annotation')}
-                                            >
-                                                <div className="h-full overflow-y-auto p-8 md:p-12 relative scrollbar-thin scrollbar-thumb-[#c85a3f]/30">
-                                                    <div className="absolute top-10 right-10 p-4 opacity-10 pointer-events-none transform rotate-12">
-                                                        <Stamp size={180} className="text-red-600" />
-                                                    </div>
-
-                                                    <div className="max-w-xl mx-auto space-y-8 relative z-10">
-                                                        <div className="border border-[#c85a3f]/30 p-6 rounded bg-[#c85a3f]/5 backdrop-blur-sm relative overflow-hidden">
-                                                            <div className="absolute top-0 left-0 w-1 h-full bg-[#c85a3f]" />
-                                                            <div className="flex justify-between items-start mb-6 border-b border-[#c85a3f]/20 pb-4">
-                                                                <div>
-                                                                    <div className="text-[10px] text-[#c85a3f]/60 uppercase tracking-[0.2em] mb-1">Bureau Investigation File</div>
-                                                                    <div className="text-xl md:text-2xl font-mono font-bold text-[#d89853]">{activeCase.annotation.fileId}</div>
-                                                                </div>
-                                                                <div className="text-right">
-                                                                    <div className="text-[10px] text-[#c85a3f]/60 uppercase tracking-[0.2em] mb-1">Classification</div>
-                                                                    <div className="text-red-500 font-bold border border-red-500/50 px-2 py-0.5 text-xs bg-red-500/10 tracking-widest">{activeCase.annotation.level}</div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="grid grid-cols-2 gap-6 text-xs text-[#d89853]/80 font-mono">
-                                                                <div>
-                                                                    <span className="block text-[#c85a3f]/40 text-[10px] uppercase">Marked Date</span>
-                                                                    {activeCase.annotation.date}
-                                                                </div>
-                                                                <div>
-                                                                    <span className="block text-[#c85a3f]/40 text-[10px] uppercase">
-                                                                        {activeCase.annotation.template === 'ALTERMAN' ? 'Authorized By' : activeCase.annotation.template === 'THORNE' ? 'Validated By' : activeCase.annotation.template === 'CRANE' ? 'Reviewed By' : activeCase.annotation.template === 'BAKER' ? 'Noted By' : 'Verified By'}
-                                                                    </span>
-                                                                    {activeCase.annotation.author}
-                                                                </div>
-                                                            </div>
+                                                    onMouseEnter={() => setFocusedPane('annotation')}
+                                                    onClick={() => setFocusedPane('annotation')}
+                                                >
+                                                    <div className="h-full overflow-y-auto p-8 md:p-12 relative scrollbar-thin scrollbar-thumb-[#c85a3f]/30">
+                                                        <div className="absolute top-10 right-10 p-4 opacity-10 pointer-events-none transform rotate-12">
+                                                            <Stamp size={180} className="text-red-600" />
                                                         </div>
 
-                                                        <div className="font-mono text-sm md:text-base leading-7 space-y-6 text-neutral-300 font-light border-l border-[#c85a3f]/10 pl-6">
-                                                            {activeCase.annotation.content.split('\n').map((line, i) => {
-                                                                const activeKeywords = ARCHIVE_CASE_HIGHLIGHT_MAP[activeCase.id] || [];
+                                                        <div className="max-w-xl mx-auto space-y-8 relative z-10">
+                                                            <div className="border border-[#c85a3f]/30 p-6 rounded bg-[#c85a3f]/5 backdrop-blur-sm relative overflow-hidden">
+                                                                <div className="absolute top-0 left-0 w-1 h-full bg-[#c85a3f]" />
+                                                                <div className="flex justify-between items-start mb-6 border-b border-[#c85a3f]/20 pb-4">
+                                                                    <div>
+                                                                        <div className="text-[10px] text-[#c85a3f]/60 uppercase tracking-[0.2em] mb-1">Bureau Investigation File</div>
+                                                                        <div className="text-xl md:text-2xl font-mono font-bold text-[#d89853]">{activeCase.annotation.fileId}</div>
+                                                                    </div>
+                                                                    <div className="text-right">
+                                                                        <div className="text-[10px] text-[#c85a3f]/60 uppercase tracking-[0.2em] mb-1">Classification</div>
+                                                                        <div className="text-red-500 font-bold border border-red-500/50 px-2 py-0.5 text-xs bg-red-500/10 tracking-widest">{activeCase.annotation.level}</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="grid grid-cols-2 gap-6 text-xs text-[#d89853]/80 font-mono">
+                                                                    <div>
+                                                                        <span className="block text-[#c85a3f]/40 text-[10px] uppercase">Marked Date</span>
+                                                                        {activeCase.annotation.date}
+                                                                    </div>
+                                                                    <div>
+                                                                        <span className="block text-[#c85a3f]/40 text-[10px] uppercase">
+                                                                            {activeCase.annotation.template === 'ALTERMAN' ? 'Authorized By' : activeCase.annotation.template === 'THORNE' ? 'Validated By' : activeCase.annotation.template === 'CRANE' ? 'Reviewed By' : activeCase.annotation.template === 'BAKER' ? 'Noted By' : 'Verified By'}
+                                                                        </span>
+                                                                        {activeCase.annotation.author}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                                                const attachmentTrigger = '「图片见附录」';
-                                                                const wilmerTrigger = '「附注」';
-                                                                const attachmentTrigger2 = '「见附录」'; // For archive_15
-                                                                // Create a combined regex for keywords and the specific attachment text
-                                                                const pattern = `(${[...activeKeywords, attachmentTrigger, wilmerTrigger, attachmentTrigger2].join('|')})`;
-                                                                const regex = new RegExp(pattern, 'g');
+                                                            <div className="font-mono text-sm md:text-base leading-7 space-y-6 text-neutral-300 font-light border-l border-[#c85a3f]/10 pl-6">
+                                                                {activeCase.annotation.content.split('\n').map((line, i) => {
+                                                                    const activeKeywords = ARCHIVE_CASE_HIGHLIGHT_MAP[activeCase.id] || [];
 
-                                                                const highlightedIds = new Set<string>();
-                                                                return (
-                                                                    <p key={i} className={`mb-4 ${line.includes('后人手写批注') ? 'font-handwriting text-[#c85a3f]/90 text-lg rotate-1 py-4 px-2 bg-[#c85a3f]/5 border-y border-[#c85a3f]/10 my-6' : ''}`}>
-                                                                        {line.split(regex).map((part, j) => {
+                                                                    const attachmentTrigger = '「图片见附录」';
+                                                                    const wilmerTrigger = '「附注」';
+                                                                    const attachmentTrigger2 = '「见附录」'; // For archive_15
+                                                                    // Create a combined regex for keywords and the specific attachment text
+                                                                    const pattern = `(${[...activeKeywords, attachmentTrigger, wilmerTrigger, attachmentTrigger2].join('|')})`;
+                                                                    const regex = new RegExp(pattern, 'g');
 
-                                                                            if (part === attachmentTrigger || part === wilmerTrigger || part === attachmentTrigger2) {
-                                                                                // ... keep existing attachment trigger logic
-                                                                                const isVisible = part === attachmentTrigger ? attachmentImage === 'assets/butter_julep_evidence.jpg' || attachmentImage === 'assets/richie_id_card.jpg'
-                                                                                    : part === wilmerTrigger ? attachmentImage === 'assets/wilmer_ribbon.jpg'
-                                                                                        : attachmentImage === 'assets/fbi-symbol.png' && activeCase.id === 'archive_15';
+                                                                    const highlightedIds = new Set<string>();
+                                                                    return (
+                                                                        <p key={i} className={`mb-4 ${line.includes('后人手写批注') ? 'font-handwriting text-[#c85a3f]/90 text-lg rotate-1 py-4 px-2 bg-[#c85a3f]/5 border-y border-[#c85a3f]/10 my-6' : ''}`}>
+                                                                            {line.split(regex).map((part, j) => {
 
-                                                                                return (
-                                                                                    <span
-                                                                                        key={j}
-                                                                                        className={`mx-1 cursor-pointer font-bold border-b border-dashed transition-all duration-300 ${isVisible ? 'text-green-500 border-green-500 hover:bg-green-500/10' : 'text-blue-500 border-blue-500 hover:bg-blue-500/10'}`}
-                                                                                        onClick={() => {
-                                                                                            if (part === attachmentTrigger) setAttachmentImage('assets/butter_julep_evidence.jpg');
-                                                                                            else if (part === wilmerTrigger) setAttachmentImage('assets/wilmer_ribbon.jpg');
-                                                                                            else setAttachmentImage('assets/fbi-symbol.png');
-                                                                                        }}
-                                                                                    >
-                                                                                        {part}
-                                                                                    </span>
-                                                                                );
-                                                                            }
-
-                                                                            if (activeKeywords.includes(part)) {
-                                                                                const clueId = ARCHIVE_KEYWORD_MAP[part];
-                                                                                if (clueId && !highlightedIds.has(clueId)) {
-                                                                                    highlightedIds.add(clueId);
-
-                                                                                    const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId);
+                                                                                if (part === attachmentTrigger || part === wilmerTrigger || part === attachmentTrigger2) {
+                                                                                    // ... keep existing attachment trigger logic
+                                                                                    const isVisible = part === attachmentTrigger ? attachmentImage === 'assets/butter_julep_evidence.jpg' || attachmentImage === 'assets/richie_id_card.jpg'
+                                                                                        : part === wilmerTrigger ? attachmentImage === 'assets/wilmer_ribbon.jpg'
+                                                                                            : attachmentImage === 'assets/fbi-symbol.png' && activeCase.id === 'archive_15';
 
                                                                                     return (
                                                                                         <span
                                                                                             key={j}
-                                                                                            onClick={() => handleKeywordClick(part)}
-                                                                                            className={`
-                                                                                                cursor-pointer font-bold inline-block transform hover:scale-105 transition-all duration-200
-                                                                                                ${isCollected
-                                                                                                    ? 'text-white bg-[#c85a3f] px-1 shadow-lg'
-                                                                                                    : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20 animate-pulse'
-                                                                                                }
-                                                                                            `}
-                                                                                            title={isCollected ? "已收录" : "点击收集线索"}
+                                                                                            className={`mx-1 cursor-pointer font-bold border-b border-dashed transition-all duration-300 ${isVisible ? 'text-green-500 border-green-500 hover:bg-green-500/10' : 'text-blue-500 border-blue-500 hover:bg-blue-500/10'}`}
+                                                                                            onClick={() => {
+                                                                                                if (part === attachmentTrigger) setAttachmentImage('assets/butter_julep_evidence.jpg');
+                                                                                                else if (part === wilmerTrigger) setAttachmentImage('assets/wilmer_ribbon.jpg');
+                                                                                                else setAttachmentImage('assets/fbi-symbol.png');
+                                                                                            }}
                                                                                         >
                                                                                             {part}
                                                                                         </span>
                                                                                     );
                                                                                 }
-                                                                            }
 
-                                                                            return <span key={j}>{part}</span>;
-                                                                        })}
-                                                                    </p>
-                                                                );
-                                                            })}
-                                                        </div>
+                                                                                if (activeKeywords.includes(part)) {
+                                                                                    const clueId = ARCHIVE_KEYWORD_MAP[part];
+                                                                                    if (clueId && !highlightedIds.has(clueId)) {
+                                                                                        highlightedIds.add(clueId);
 
-                                                        {/* Handwritten Signature */}
-                                                        <div className="mt-8 flex justify-end pr-12">
-                                                            {activeCase.annotation.template === 'ALTERMAN' ? (
-                                                                // Alterman's Signature - More angular and bureaucratic
-                                                                <div className="relative text-blue-900/70 transform -rotate-6 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
-                                                                    <svg width="140" height="70" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        {/* "I" - vertical stroke */}
-                                                                        <path
-                                                                            d="M20 25 L 20 50"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2.5"
-                                                                            strokeLinecap="round"
-                                                                        />
-                                                                        {/* "A" - angular */}
-                                                                        <path
-                                                                            d="M30 50 L 40 25 L 50 50 M35 40 L 45 40"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2.5"
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                        />
-                                                                        {/* Underline */}
-                                                                        <path
-                                                                            d="M 15 55 L 125 48"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="1.5"
-                                                                            strokeLinecap="round"
-                                                                            opacity="0.5"
-                                                                        />
-                                                                        <text x="75" y="60" fontFamily="serif" fontSize="11" fill="currentColor" opacity="0.7" className="tracking-wider">Alterman</text>
-                                                                    </svg>
-                                                                    <div className="text-[10px] text-[#475569]/70 font-mono text-center mt-1 tracking-widest uppercase">Authorized</div>
-                                                                </div>
-                                                            ) : activeCase.annotation.template === 'THORNE' ? (
-                                                                // Marcus Thorne's Signature - Technical, Lab Chief style
-                                                                <div className="relative text-emerald-900/70 transform rotate-1 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
-                                                                    <svg width="150" height="70" viewBox="0 0 150 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        {/* "M" - sharp, technical */}
-                                                                        <path
-                                                                            d="M25 50 L 25 25 L 40 40 L 55 25 L 55 50"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2"
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                        />
-                                                                        {/* "T" - precise */}
-                                                                        <path
-                                                                            d="M65 25 L 95 25 M 80 25 L 80 50"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2"
-                                                                            strokeLinecap="round"
-                                                                        />
-                                                                        {/* Lab Seal Symbol (Simple Hexagon) */}
-                                                                        <path
-                                                                            d="M110 30 L 125 22 L 140 30 L 140 45 L 125 53 L 110 45 Z"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="1"
-                                                                            opacity="0.4"
-                                                                        />
-                                                                        <text x="112" y="41" fontFamily="serif" fontSize="6" fill="currentColor" opacity="0.6">LAB-TECH</text>
-                                                                        {/* Divider line */}
-                                                                        <path
-                                                                            d="M 20 55 L 145 55"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="1"
-                                                                            opacity="0.3"
-                                                                        />
-                                                                        <text x="35" y="62" fontFamily="serif" fontSize="10" fill="currentColor" opacity="0.8" className="tracking-[0.2em]">M. THORNE</text>
-                                                                    </svg>
-                                                                    <div className="text-[10px] text-emerald-800/60 font-mono text-center mt-1 tracking-widest uppercase border-t border-emerald-800/20 pt-1">Forensic Chief</div>
-                                                                </div>
-                                                            ) : activeCase.annotation.template === 'CRANE' ? (
-                                                                // Thomas Crane's Signature - Bold, authoritative, heavy ink
-                                                                <div className="relative text-red-950/80 transform rotate-2 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
-                                                                    <svg width="160" height="80" viewBox="0 0 160 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        {/* Thick "T" */}
-                                                                        <path
-                                                                            d="M30 25 L 70 25 M 50 25 L 50 55"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="4"
-                                                                            strokeLinecap="square"
-                                                                        />
-                                                                        {/* Heavy "C" */}
-                                                                        <path
-                                                                            d="M100 25 C 80 25, 75 40, 80 55 C 85 65, 110 65, 115 50"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="4"
-                                                                            strokeLinecap="round"
-                                                                        />
-                                                                        {/* Brutalist underline */}
-                                                                        <path
-                                                                            d="M 20 62 L 140 62"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="1.5"
-                                                                            strokeDasharray="4 2"
-                                                                            opacity="0.6"
-                                                                        />
-                                                                        <text x="50" y="75" fontFamily="serif" fontSize="12" fontWeight="bold" fill="currentColor" opacity="0.9" className="tracking-tighter italic">T. Crane</text>
-                                                                        {/* "APPROVED" Stamp effect */}
-                                                                        <rect x="110" y="15" width="40" height="15" rx="1" stroke="currentColor" strokeWidth="1" opacity="0.5" />
-                                                                        <text x="114" y="26" fontFamily="sans-serif" fontSize="7" fontWeight="black" fill="currentColor" opacity="0.6">REVIEWER</text>
-                                                                    </svg>
-                                                                    <div className="text-[9px] text-red-950/60 font-mono text-right mr-4 tracking-tighter uppercase font-bold italic">Senior Agent Analyst</div>
-                                                                </div>
-                                                            ) : activeCase.annotation.template === 'BAKER' ? (
-                                                                // Howard Baker's Signature - Old school bureaucracy, formal and stiff
-                                                                <div className="relative text-amber-800/85 transform -rotate-2 opacity-90 group-hover:opacity-100 transition-opacity">
-                                                                    <svg width="160" height="70" viewBox="0 0 160 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        {/* Formal "H" */}
-                                                                        <path
-                                                                            d="M25 25 L 25 55 M 40 25 L 40 55 M 25 40 L 40 40"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2.2"
-                                                                            strokeLinecap="round"
-                                                                        />
-                                                                        {/* Formal "B" */}
-                                                                        <path
-                                                                            d="M55 25 L 55 55 M 55 25 C 75 25, 75 40, 55 40 L 80 55"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2.2"
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                        />
-                                                                        {/* Underline - straight but slightly shaky */}
-                                                                        <path
-                                                                            d="M 20 60 L 140 58"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="1.2"
-                                                                            opacity="0.6"
-                                                                        />
-                                                                        <text x="85" y="48" fontFamily="serif" fontSize="14" fill="currentColor" opacity="1" className="tracking-tight italic">H. Baker</text>
-                                                                        {/* Official Stamp */}
-                                                                        <circle cx="130" cy="35" r="18" stroke="currentColor" strokeWidth="1.2" opacity="0.35" />
-                                                                        <text x="118" y="38" fontFamily="sans-serif" fontSize="5" fontWeight="black" fill="currentColor" opacity="0.5">FIELD AGENT</text>
-                                                                    </svg>
-                                                                    <div className="text-[10px] text-amber-700/70 font-mono text-center mt-1 tracking-widest uppercase border-t border-amber-700/20 pt-1">Federal Investigation Bureau</div>
-                                                                </div>
-                                                            ) : (
-                                                                // Reggie's Signature - Original flowing style
-                                                                <div className="relative text-red-900/80 transform -rotate-12 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
-                                                                    <svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M30 60 C 30 60, 25 20, 45 15 C 60 10, 70 25, 55 40 C 40 55, 30 40, 50 35 C 70 30, 90 60, 100 55"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="3"
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            className="path-draw"
-                                                                        />
-                                                                        <path
-                                                                            d="M 25 65 L 105 50"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="2"
-                                                                            strokeLinecap="round"
-                                                                            opacity="0.6"
-                                                                        />
-                                                                        <text x="70" y="70" fontFamily="serif" fontSize="12" fill="currentColor" opacity="0.8" className="tracking-widest rotate-6">Reggie</text>
-                                                                    </svg>
-                                                                    <div className="text-[10px] text-[#c85a3f]/60 font-mono text-center mt-1 tracking-widest uppercase">Verified</div>
-                                                                </div>
-                                                            )}
+                                                                                        const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId);
+
+                                                                                        const isEffectActive = collectionEffects[part];
+
+                                                                                        return (
+                                                                                            <span
+                                                                                                key={j}
+                                                                                                onClick={() => handleKeywordClick(part)}
+                                                                                                className={`
+                                                                                                relative cursor-pointer font-bold inline-block transform transition-all duration-300
+                                                                                                ${isEffectActive
+                                                                                                        ? 'text-black bg-[#d89853] px-1 animate-pulse shadow-[0_0_20px_#d89853] scale-110 z-30'
+                                                                                                        : isCollected
+                                                                                                            ? 'text-white bg-[#c85a3f] px-1 shadow-[0_0_15px_rgba(200,90,63,0.6)] z-10 scale-105'
+                                                                                                            : 'text-[#c85a3f] border-b-2 border-[#c85a3f] hover:bg-[#c85a3f]/20 animate-pulse'
+                                                                                                    }
+                                                                                            `}
+                                                                                                title={isCollected ? "已收录" : "点击收集线索"}
+                                                                                            >
+                                                                                                {part}
+                                                                                            </span>
+                                                                                        );
+                                                                                    }
+                                                                                }
+
+                                                                                return <span key={j}>{part}</span>;
+                                                                            })}
+                                                                        </p>
+                                                                    );
+                                                                })}
+                                                            </div>
+
+                                                            {/* Handwritten Signature */}
+                                                            <div className="mt-8 flex justify-end pr-12">
+                                                                {activeCase.annotation.template === 'ALTERMAN' ? (
+                                                                    // Alterman's Signature - More angular and bureaucratic
+                                                                    <div className="relative text-blue-900/70 transform -rotate-6 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                        <svg width="140" height="70" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            {/* "I" - vertical stroke */}
+                                                                            <path
+                                                                                d="M20 25 L 20 50"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2.5"
+                                                                                strokeLinecap="round"
+                                                                            />
+                                                                            {/* "A" - angular */}
+                                                                            <path
+                                                                                d="M30 50 L 40 25 L 50 50 M35 40 L 45 40"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2.5"
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                            />
+                                                                            {/* Underline */}
+                                                                            <path
+                                                                                d="M 15 55 L 125 48"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="1.5"
+                                                                                strokeLinecap="round"
+                                                                                opacity="0.5"
+                                                                            />
+                                                                            <text x="75" y="60" fontFamily="serif" fontSize="11" fill="currentColor" opacity="0.7" className="tracking-wider">Alterman</text>
+                                                                        </svg>
+                                                                        <div className="text-[10px] text-[#475569]/70 font-mono text-center mt-1 tracking-widest uppercase">Authorized</div>
+                                                                    </div>
+                                                                ) : activeCase.annotation.template === 'THORNE' ? (
+                                                                    // Marcus Thorne's Signature - Technical, Lab Chief style
+                                                                    <div className="relative text-emerald-900/70 transform rotate-1 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                        <svg width="150" height="70" viewBox="0 0 150 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            {/* "M" - sharp, technical */}
+                                                                            <path
+                                                                                d="M25 50 L 25 25 L 40 40 L 55 25 L 55 50"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2"
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                            />
+                                                                            {/* "T" - precise */}
+                                                                            <path
+                                                                                d="M65 25 L 95 25 M 80 25 L 80 50"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2"
+                                                                                strokeLinecap="round"
+                                                                            />
+                                                                            {/* Lab Seal Symbol (Simple Hexagon) */}
+                                                                            <path
+                                                                                d="M110 30 L 125 22 L 140 30 L 140 45 L 125 53 L 110 45 Z"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="1"
+                                                                                opacity="0.4"
+                                                                            />
+                                                                            <text x="112" y="41" fontFamily="serif" fontSize="6" fill="currentColor" opacity="0.6">LAB-TECH</text>
+                                                                            {/* Divider line */}
+                                                                            <path
+                                                                                d="M 20 55 L 145 55"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="1"
+                                                                                opacity="0.3"
+                                                                            />
+                                                                            <text x="35" y="62" fontFamily="serif" fontSize="10" fill="currentColor" opacity="0.8" className="tracking-[0.2em]">M. THORNE</text>
+                                                                        </svg>
+                                                                        <div className="text-[10px] text-emerald-800/60 font-mono text-center mt-1 tracking-widest uppercase border-t border-emerald-800/20 pt-1">Forensic Chief</div>
+                                                                    </div>
+                                                                ) : activeCase.annotation.template === 'CRANE' ? (
+                                                                    // Thomas Crane's Signature - Bold, authoritative, heavy ink
+                                                                    <div className="relative text-red-950/80 transform rotate-2 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                        <svg width="160" height="80" viewBox="0 0 160 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            {/* Thick "T" */}
+                                                                            <path
+                                                                                d="M30 25 L 70 25 M 50 25 L 50 55"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="4"
+                                                                                strokeLinecap="square"
+                                                                            />
+                                                                            {/* Heavy "C" */}
+                                                                            <path
+                                                                                d="M100 25 C 80 25, 75 40, 80 55 C 85 65, 110 65, 115 50"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="4"
+                                                                                strokeLinecap="round"
+                                                                            />
+                                                                            {/* Brutalist underline */}
+                                                                            <path
+                                                                                d="M 20 62 L 140 62"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="1.5"
+                                                                                strokeDasharray="4 2"
+                                                                                opacity="0.6"
+                                                                            />
+                                                                            <text x="50" y="75" fontFamily="serif" fontSize="12" fontWeight="bold" fill="currentColor" opacity="0.9" className="tracking-tighter italic">T. Crane</text>
+                                                                            {/* "APPROVED" Stamp effect */}
+                                                                            <rect x="110" y="15" width="40" height="15" rx="1" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                                                                            <text x="114" y="26" fontFamily="sans-serif" fontSize="7" fontWeight="black" fill="currentColor" opacity="0.6">REVIEWER</text>
+                                                                        </svg>
+                                                                        <div className="text-[9px] text-red-950/60 font-mono text-right mr-4 tracking-tighter uppercase font-bold italic">Senior Agent Analyst</div>
+                                                                    </div>
+                                                                ) : activeCase.annotation.template === 'BAKER' ? (
+                                                                    // Howard Baker's Signature - Old school bureaucracy, formal and stiff
+                                                                    <div className="relative text-amber-800/85 transform -rotate-2 opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                        <svg width="160" height="70" viewBox="0 0 160 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            {/* Formal "H" */}
+                                                                            <path
+                                                                                d="M25 25 L 25 55 M 40 25 L 40 55 M 25 40 L 40 40"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2.2"
+                                                                                strokeLinecap="round"
+                                                                            />
+                                                                            {/* Formal "B" */}
+                                                                            <path
+                                                                                d="M55 25 L 55 55 M 55 25 C 75 25, 75 40, 55 40 L 80 55"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2.2"
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                            />
+                                                                            {/* Underline - straight but slightly shaky */}
+                                                                            <path
+                                                                                d="M 20 60 L 140 58"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="1.2"
+                                                                                opacity="0.6"
+                                                                            />
+                                                                            <text x="85" y="48" fontFamily="serif" fontSize="14" fill="currentColor" opacity="1" className="tracking-tight italic">H. Baker</text>
+                                                                            {/* Official Stamp */}
+                                                                            <circle cx="130" cy="35" r="18" stroke="currentColor" strokeWidth="1.2" opacity="0.35" />
+                                                                            <text x="118" y="38" fontFamily="sans-serif" fontSize="5" fontWeight="black" fill="currentColor" opacity="0.5">FIELD AGENT</text>
+                                                                        </svg>
+                                                                        <div className="text-[10px] text-amber-700/70 font-mono text-center mt-1 tracking-widest uppercase border-t border-amber-700/20 pt-1">Federal Investigation Bureau</div>
+                                                                    </div>
+                                                                ) : (
+                                                                    // Reggie's Signature - Original flowing style
+                                                                    <div className="relative text-red-900/80 transform -rotate-12 mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity">
+                                                                        <svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <path
+                                                                                d="M30 60 C 30 60, 25 20, 45 15 C 60 10, 70 25, 55 40 C 40 55, 30 40, 50 35 C 70 30, 90 60, 100 55"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="3"
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                className="path-draw"
+                                                                            />
+                                                                            <path
+                                                                                d="M 25 65 L 105 50"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2"
+                                                                                strokeLinecap="round"
+                                                                                opacity="0.6"
+                                                                            />
+                                                                            <text x="70" y="70" fontFamily="serif" fontSize="12" fill="currentColor" opacity="0.8" className="tracking-widest rotate-6">Reggie</text>
+                                                                        </svg>
+                                                                        <div className="text-[10px] text-[#c85a3f]/60 font-mono text-center mt-1 tracking-widest uppercase">Verified</div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                         </div>
+                                                    </div>
+
+                                                    {/* Label */}
+                                                    <div className="absolute bottom-4 right-4 bg-[#c85a3f]/20 text-[#c85a3f] text-[10px] px-2 py-1 uppercase tracking-widest pointer-events-none border border-[#c85a3f]/30">
+                                                        INTERNAL MEMO // DO NOT DISTRIBUTE
                                                     </div>
                                                 </div>
 
-                                                {/* Label */}
-                                                <div className="absolute bottom-4 right-4 bg-[#c85a3f]/20 text-[#c85a3f] text-[10px] px-2 py-1 uppercase tracking-widest pointer-events-none border border-[#c85a3f]/30">
-                                                    INTERNAL MEMO // DO NOT DISTRIBUTE
+                                                {/* Mobile Tab Switcher */}
+                                                <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex bg-black/80 backdrop-blur-xl border border-[#c85a3f]/40 rounded-full p-1 z-[100] shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); setFocusedPane('newspaper'); }}
+                                                        className={`px-6 py-2 rounded-full text-xs font-mono tracking-widest transition-all ${focusedPane === 'newspaper' ? 'bg-[#c85a3f] text-white shadow-[0_0_15px_rgba(200,90,63,0.5)]' : 'text-[#c85a3f]/60'}`}
+                                                    >
+                                                        纽型报纸
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); setFocusedPane('annotation'); }}
+                                                        className={`px-6 py-2 rounded-full text-xs font-mono tracking-widest transition-all ${focusedPane === 'annotation' ? 'bg-[#c85a3f] text-white shadow-[0_0_15px_rgba(200,90,63,0.5)]' : 'text-[#c85a3f]/60'}`}
+                                                    >
+                                                        内部批注
+                                                    </button>
                                                 </div>
-                                            </div>
-                                        </motion.div>
+                                            </motion.div>
+                                        </div>
                                     )}
                                 </AnimatePresence>
                             </div>

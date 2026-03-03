@@ -8,75 +8,78 @@ import { ConfessionLog } from './ConfessionLog';
 import { NodeDetail } from './NodeDetail';
 import { ClueLibrary } from './ClueLibrary';
 import { Archives } from './Archives';
-import { MemoryNode } from '../types';
+import { MemoryNode, BoardNote } from '../types';
 import { RELATIONSHIP_TREE, CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS } from '../constants';
 
 interface SimplifiedMainViewProps {
+    gameState: any; // Using any for now to avoid deep type issues, or import GameState
     nodes: MemoryNode[];
     onNodeClick: (id: string) => void;
     activeNodeId: string | null;
     onSearch: (query: string) => void;
     history: Array<{ type: string; content: string; timestamp: number }>;
-    isProcessing: boolean;
-    activeNode?: MemoryNode;
-    onShatter: (id: string) => void;
     collectedClues: string[];
     collectedYears: string[];
     unlockedPeople: string[];
     onCollectClue: (id: string, word: string) => void;
-    unlockedArchiveIds: string[];
     onUnlockArchive: (id: string) => void;
-    onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
-    collectedAttachments: string[];
     onCollectAttachment: (id: string) => void;
-    collectedDossierIds: string[]; // Strict lane for Dossier
-    systemStability: number;
-    currentStoryNode: number;
-    onStoryNodeComplete: (nodeId: number) => void;
-    onRetrace: () => { success: boolean; reason?: string; keywords?: string[] };
-    onClearUnusedKeywords: () => void; // Clear unused keywords after Node 3
-    onDebugUnlockAll?: () => void; // DEBUG: Temporary testing function
-    isPersonaGlitching?: boolean; // Trigger for Node 6 awakening glitch
+    onShatter: (id: string) => void;
     onPersonaReboot?: () => void;
+    onRetrace: () => { success: boolean; reason?: string; keywords?: string[] };
+    onStoryNodeComplete: (nodeId: number) => void;
+    onClearUnusedKeywords: () => void;
+    onConsumeKeywords: (yearIds: string[], personIds: string[]) => void;
+    isProcessing: boolean;
+    isPersonaGlitching?: boolean;
     showCountdown?: boolean;
     countdownValue?: number;
-    hasSwitchedPersona?: boolean;
+    playerHypotheses: Record<string, string>;
+    onUpdateHypothesis: (nodeId: string, name: string) => void;
+    isChapterSolved: (chapter: number) => boolean;
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
 
 export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
+    gameState,
     nodes,
     onNodeClick,
     activeNodeId,
     onSearch,
     history,
-    isProcessing,
-    activeNode,
     onShatter,
     collectedClues = [],
     collectedYears = [],
     unlockedPeople = [],
     onCollectClue,
-    unlockedArchiveIds = [],
     onUnlockArchive,
-
-    onConsumeKeywords,
-    collectedAttachments,
     onCollectAttachment,
-    collectedDossierIds = [],
-    systemStability,
-    currentStoryNode,
-    onStoryNodeComplete,
-    onRetrace,
-    onClearUnusedKeywords,
-    onDebugUnlockAll,
-    isPersonaGlitching = false,
     onPersonaReboot,
+    onRetrace,
+    onStoryNodeComplete,
+    onClearUnusedKeywords,
+    onConsumeKeywords,
+    isProcessing,
+    isPersonaGlitching = false,
     showCountdown = false,
     countdownValue = 5,
-    hasSwitchedPersona = false
+    playerHypotheses,
+    onUpdateHypothesis,
+    isChapterSolved
 }) => {
+    // Derived from gameState for brevity
+    const {
+        systemStability,
+        currentStoryNode,
+        hasSwitchedPersona,
+        unlockedArchiveIds = [],
+        collectedDossierIds = [],
+        collectedAttachments = []
+    } = gameState;
+
+    const activeNode = nodes.find(n => n.id === activeNodeId);
+
     const [searchQuery, setSearchQuery] = useState('');
     const [showMindMap, setShowMindMap] = useState(false);
     const [showClueLibrary, setShowClueLibrary] = useState(false);
@@ -173,7 +176,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     };
 
     return (
-        <div className={`h-screen w-screen bg-[#050303] text-[#d89853] overflow-hidden flex flex-col relative font-mono ${isPersonaGlitching ? 'animate-cinematic-glitch' : ''}`}>
+        <div className={`h-screen w-screen bg-[#050303] text-[#d89853] overflow-hidden flex flex-col relative font-mono pb-[env(safe-area-inset-bottom)] ${isPersonaGlitching ? 'animate-cinematic-glitch' : ''}`}>
             {/* Background Elements */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/* BRIGHTER: Ambient Light Glow in Center */}
@@ -181,11 +184,14 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                 {/* BRIGHTER: Background Image */}
                 {/* STANDARD SPLIT LAYOUT (Both Sides Visible) */}
-                <div className="absolute inset-0 flex pointer-events-none">
-                    {/* LEFT HALF - POLICE (Always Visible + Glitch) */}
+                <div className="absolute inset-0 flex flex-col md:flex-row pointer-events-none">
+                    {/* LEFT/TOP HALF - POLICE (Always Visible + Glitch) */}
                     <div
-                        className="relative w-1/2 h-full overflow-hidden"
-                        style={{ maskImage: 'linear-gradient(to right, black 85%, transparent)' }}
+                        className="relative w-full h-1/2 md:w-1/2 md:h-full overflow-hidden"
+                        style={{
+                            maskImage: 'linear-gradient(to bottom, black 85%, transparent)',
+                            WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent)'
+                        }}
                     >
                         <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
                             ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
@@ -193,16 +199,25 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             }`}>
                             <img
                                 src="assets/capone-split-personality.jpg"
-                                className="absolute top-0 left-0 w-[200%] h-full max-w-none object-cover"
+                                className="absolute top-0 left-0 w-[200%] h-full max-w-none object-cover hidden md:block"
                                 style={{ objectPosition: '0% 20%' }}
+                            />
+                            {/* Mobile Portrait Image Adjustment */}
+                            <img
+                                src="assets/capone-split-personality.jpg"
+                                className="absolute top-0 left-0 w-full h-[200%] max-w-none object-cover block md:hidden"
+                                style={{ objectPosition: 'center 0%' }}
                             />
                         </div>
                     </div>
 
-                    {/* RIGHT HALF - VILLAIN (Always Visible + Glitch) */}
+                    {/* RIGHT/BOTTOM HALF - VILLAIN (Always Visible + Glitch) */}
                     <div
-                        className="relative w-1/2 h-full overflow-hidden"
-                        style={{ maskImage: 'linear-gradient(to right, transparent, black 15%)' }}
+                        className="relative w-full h-1/2 md:w-1/2 md:h-full overflow-hidden"
+                        style={{
+                            maskImage: 'linear-gradient(to top, black 85%, transparent)',
+                            WebkitMaskImage: 'linear-gradient(to top, black 85%, transparent)'
+                        }}
                     >
                         <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
                             ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
@@ -210,8 +225,14 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             }`}>
                             <img
                                 src="assets/capone-split-personality.jpg"
-                                className="absolute top-0 left-[-100%] w-[200%] h-full max-w-none object-cover"
+                                className="absolute top-0 left-[-100%] w-[200%] h-full max-w-none object-cover hidden md:block"
                                 style={{ objectPosition: '0% 20%' }}
+                            />
+                            {/* Mobile Portrait Image Adjustment */}
+                            <img
+                                src="assets/capone-split-personality.jpg"
+                                className="absolute top-[-100%] left-0 w-full h-[200%] max-w-none object-cover block md:hidden"
+                                style={{ objectPosition: 'center 0%' }}
                             />
                         </div>
                     </div>
@@ -225,7 +246,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             </div>
 
             {/* Header / Nav */}
-            <header className="h-12 md:h-16 border-b border-[#d89853]/20 flex items-center justify-between px-3 md:px-8 bg-black/20 backdrop-blur-md z-20">
+            <header className="h-auto pt-[max(2.5rem,env(safe-area-inset-top))] pb-3 md:pt-0 md:h-16 border-b border-[#d89853]/20 flex items-center justify-between px-3 md:px-8 bg-black/20 backdrop-blur-md z-20">
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-[#c85a3f] rounded-full animate-pulse shadow-[0_0_8px_#c85a3f]" />
                     <h1 className="text-sm md:text-xl tracking-[0.15em] md:tracking-[0.2em] font-bold text-[#d89853] opacity-90 text-shadow-sm">G.B.O.S. LINK</h1>
@@ -263,13 +284,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             </header>
 
             {/* Main Content Area - Centered Search */}
-            <main className="flex-1 relative z-10 flex flex-col items-center justify-center p-4">
+            <main className="flex-1 relative z-10 flex flex-col items-center justify-start md:justify-center p-4 overflow-y-auto custom-scrollbar">
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="w-full max-w-2xl flex flex-col items-center gap-8"
+                    className="w-full max-w-2xl flex flex-col items-center gap-6 md:gap-8 py-8 md:py-0"
                 >
                     {/* Ambient Avatar / Prompt */}
                     <div className="relative mb-4 md:mb-8 group flex flex-col items-center">
@@ -384,499 +405,501 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                 </motion.div>
                             )}
                         </AnimatePresence>
+                    </div>
 
-                        {/* Dynamic Response Area */}
-                        <div className="min-h-[20px] flex items-center justify-center px-4 w-[120%] -ml-[10%] text-center">
-                            <AnimatePresence mode="wait">
-                                {(() => {
-                                    // 0. Check for Processing State
-                                    if (isProcessing) {
-                                        return (
-                                            <motion.div
-                                                key="processing"
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="text-[#d89853] text-sm tracking-[0.2em] font-light animate-pulse"
-                                            >
-                                                ......
-                                            </motion.div>
-                                        );
-                                    }
-
-                                    // 1. Check for transient system message
-                                    if (tempSystemMessage) {
-                                        return (
-                                            <motion.div
-                                                key="temp-sys"
-                                                initial={{ opacity: 0, scale: 0.95 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.95 }}
-                                                className="text-xs font-mono tracking-widest text-[#d89853]/50 animate-pulse"
-                                            >
-                                                {tempSystemMessage}
-                                            </motion.div>
-                                        );
-                                    }
-
-                                    // Find the latest character dialogue in history
-                                    // Dialogue items MUST start with "> [" and are not system logs
-                                    // We strictly exclude 'archive_content' and system notifications
-                                    const reversedHistory = [...history].reverse();
-                                    const lastDialogue = reversedHistory.find(item =>
-                                        (item.type === 'dialogue' || item.type === 'info') &&
-                                        item.content.startsWith('> [')
-                                    );
-
-                                    const showResponse = !!lastDialogue;
-                                    const displayItem = lastDialogue;
-
-                                    if (showResponse && displayItem) {
-                                        // Clean up content for display: remove "> [NAME]: " prefix if present
-                                        const displayContent = displayItem.content
-                                            .replace(/^> \[.*?\]:\s*"?/, '')
-                                            .replace(/"$/, '');
-
-                                        // Highlight pickable keywords
-                                        // Highlight pickable keywords
-                                        const content = displayItem.content || '';
-
-                                        // NUCLEAR CHECK: Detect Confession 20/21 by multiple signals
-                                        const isConf20 = (displayItem as any).id === 'confession_20_content';
-                                        const isConf21 = (displayItem as any).id === 'confession_21_content';
-                                        const isConfession12 = (displayItem as any).id === 'confession_12';
-                                        const isReveal = (displayItem as any).isReveal;
-                                        const isNode6Awakening = (displayItem as any).id === 'node_6_awakening';
-
-                                        let pickableKeywords: string[] = [];
-
-                                        if (isConf20) {
-                                            pickableKeywords = ['波特兰', '软肋'];
-                                        } else if (isConf21) {
-                                            pickableKeywords = ['红杉林', '战俘营', '亚玛力人协议'];
-                                        } else if (isConfession12) {
-                                            pickableKeywords = ['杰西·潘尼', '杰西潘尼'];
-                                        } else if (isNode6Awakening) {
-                                            pickableKeywords = ['80号洲际公路', '守夜人'];
-                                        } else if (isReveal) {
-                                            pickableKeywords = (displayItem as any).revealKeywords || [];
-                                        }
-
-                                        const keywordMap: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' }> = {
-                                            // People
-                                            '罗伯特·卡彭': { id: 'capone', type: 'person' },
-                                            '父亲': { id: 'father', type: 'person' },
-                                            '尼比': { id: 'nibi', type: 'person' },
-                                            '康查尔': { id: 'conchar', type: 'person' },
-                                            '伦德格兰': { id: 'lundgren', type: 'person' },
-                                            '莫宁': { id: 'morning', type: 'person' },
-                                            '雷吉博士': { id: 'dr_reggie', type: 'person' },
-                                            '罗格·毕比': { id: 'roger_beebe', type: 'person' },
-                                            '小德里克·维恩': { id: 'little_derek_wayne', type: 'person' },
-                                            '玛莎·迪亚兹': { id: 'martha_diaz', type: 'person' },
-                                            '朱莉': { id: 'julie', type: 'person' },
-                                            '塞勒斯': { id: 'silas', type: 'person' },
-                                            '赛勒斯': { id: 'silas', type: 'person' },
-                                            '瓦妮莎': { id: 'vanessa', type: 'person' },
-                                            '母亲': { id: 'the_mother', type: 'person' },
-                                            '朱维尔·钱伯斯': { id: 'juvell_chambers', type: 'person' },
-                                            '鲍里斯·斯米尔诺夫': { id: 'boris_smirnov', type: 'person' },
-                                            '辛西娅·米勒': { id: 'cynthia_miller', type: 'person' },
-                                            '杰西·潘尼': { id: 'jc_penney', type: 'person' },
-                                            '杰西潘尼': { id: 'jc_penney', type: 'person' },
-                                            '约翰·莫里西': { id: 'john_morrissey', type: 'person' },
-                                            '约翰莫里西': { id: 'john_morrissey', type: 'person' },
-                                            '皮特·亨德森': { id: 'peter_henderson', type: 'person' },
-                                            '牧师': { id: 'priest', type: 'person' },
-                                            '阿列克谢·罗科维奇': { id: 'alexei', type: 'person' },
-                                            '阿列克谢': { id: 'alexei', type: 'person' },
-
-                                            // Years
-                                            '1971': { id: 'year_1971', type: 'year' },
-                                            '1968': { id: 'year_1968', type: 'year' },
-                                            '1967': { id: 'year_1967', type: 'year' },
-                                            '1985': { id: 'year_1985', type: 'year' },
-                                            '1972': { id: 'year_1972', type: 'year' },
-                                            '1973': { id: 'year_1973', type: 'year' },
-                                            '1982': { id: 'year_1982', type: 'year' },
-                                            '1974': { id: 'year_1974', type: 'year' },
-                                            '1965': { id: 'year_1965', type: 'year' },
-                                            '1976': { id: 'year_1976', type: 'year' },
-                                            '1976年': { id: 'year_1976', type: 'year' },
-
-                                            // Locations
-                                            '缅因州': { id: 'maine', type: 'location' },
-                                            '俄亥俄州': { id: 'ohio', type: 'location' },
-                                            '芝加哥': { id: 'chicago', type: 'location' },
-                                            '内华达州': { id: 'nevada', type: 'location' },
-                                            '弗吉尼亚州': { id: 'virginia', type: 'location' },
-                                            '罗阿诺克': { id: 'roanoke', type: 'location' },
-                                            '波特兰': { id: 'portland', type: 'location' },
-                                            '堪萨斯城': { id: 'kansas_city', type: 'location' },
-                                            '东12街': { id: 'east_12th_st', type: 'location' },
-                                            '达文波特': { id: 'davenport', type: 'location' },
-                                            '脏弗兰克酒吧': { id: 'dirty_frank', type: 'location' },
-                                            '特克萨卡纳': { id: 'texarkana', type: 'location' },
-                                            '埃尔帕索': { id: 'el_paso', type: 'location' },
-                                            '红杉林': { id: 'redwood_forest', type: 'location' },
-                                            '战俘营': { id: 'pow_camp', type: 'location' },
-                                            '圣芭芭拉': { id: 'santa_barbara', type: 'location' },
-                                            '拉古那海滩': { id: 'laguna_beach', type: 'location' },
-
-                                            // Cases / Details
-                                            '小银行': { id: 'small_bank', type: 'clue' },
-                                            '仪式案': { id: 'ritual_case', type: 'clue' },
-                                            '失踪': { id: 'missing', type: 'clue' },
-                                            '训练日': { id: 'training_day', type: 'clue' },
-                                            '灭门案': { id: 'family_massacre', type: 'clue' },
-                                            '空烟盒': { id: 'empty_cigarette_pack', type: 'clue' },
-                                            '灰水信标': { id: 'graywater_beacon', type: 'clue' },
-                                            '碎尸案': { id: 'dismemberment_case', type: 'clue' },
-                                            '扭曲关系': { id: 'twisted_relationship', type: 'clue' },
-                                            '肉体关系': { id: 'twisted_relationship', type: 'clue' },
-                                            '薄荷计划': { id: 'mint_plan', type: 'clue' },
-                                            '新计划': { id: 'new_plan', type: 'clue' },
-                                            '招募': { id: 'recruitment', type: 'clue' },
-                                            '行刑室': { id: 'execution_room', type: 'clue' },
-                                            '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
-                                            '80号洲际公路': { id: 'interstate_80', type: 'location' },
-                                            '守夜人': { id: 'watchman', type: 'clue' },
-                                            '软肋': { id: 'achilles_heel', type: 'clue' },
-                                            '亚玛力人协议': { id: 'amalekite_protocol', type: 'clue' },
-                                            '银喜鹊': { id: 'silver_magpie', type: 'clue' },
-                                            '教堂': { id: 'church', type: 'location' },
-                                            '收网': { id: 'closing_the_net', type: 'clue' },
-                                            '裸根': { id: 'naked_root', type: 'clue' }
-                                        };
-
-                                        // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions
-                                        // UPDATED: For "Reveal" dialogues or specific Confession content (which explicitly set pickableKeywords),
-                                        // we ALWAYS show them, even if consumed, so the user can see the link/status.
-                                        const activePickableKeywords = pickableKeywords.filter(k => {
-                                            const config = keywordMap[k];
-                                            return !!config;
-                                        });
-
-                                        const regex = activePickableKeywords.length > 0
-                                            ? new RegExp(`(${activePickableKeywords.join('|')})`, 'g')
-                                            : null;
-                                        const parts = regex ? displayContent.split(regex) : [displayContent];
-
-                                        return (
-                                            <motion.div
-                                                key={displayItem.timestamp}
-                                                initial={{ opacity: 0, y: 5 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: -5 }}
-                                                className="text-sm tracking-[0.15em] font-light leading-relaxed text-[#d89853]"
-                                                style={{ textShadow: '0 0 10px rgba(216,152,83,0.3)' }}
-                                            >
-                                                "
-                                                {parts.map((part, j) => {
-                                                    const keywordConfig = keywordMap[part];
-                                                    if (keywordConfig) {
-                                                        // Check collection status based on type
-                                                        const isCollected =
-                                                            keywordConfig.type === 'year' ? collectedYears.includes(keywordConfig.id) :
-                                                                keywordConfig.type === 'person' ? unlockedPeople.includes(keywordConfig.id) :
-                                                                    collectedClues.includes(keywordConfig.id);
-
-                                                        return (
-                                                            <span
-                                                                key={j}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    onCollectClue(keywordConfig.id, part); // Pass display text, not type
-                                                                }}
-                                                                className={`
-                                                                    cursor-pointer font-bold transition-all duration-300
-                                                                    ${isCollected
-                                                                        ? 'text-white bg-[#d89853] px-1 shadow-[0_0_10px_rgba(216,152,83,0.5)]'
-                                                                        : 'text-[#d89853] border-b border-[#d89853] hover:bg-[#d89853]/20 animate-pulse'
-                                                                    }
-                                                                `}
-                                                                title={isCollected ? "已收录" : "点击记下关键词"}
-                                                            >
-                                                                {part}
-                                                            </span>
-                                                        );
-                                                    }
-                                                    return part;
-                                                })}
-                                                "
-                                            </motion.div>
-                                        );
-                                    }
-
+                    {/* Dynamic Response Area */}
+                    <div className="min-h-[20px] flex items-center justify-center px-4 w-full md:w-[120%] md:-ml-[10%] text-center">
+                        <AnimatePresence mode="wait">
+                            {(() => {
+                                // 0. Check for Processing State
+                                if (isProcessing) {
                                     return (
                                         <motion.div
-                                            key="default"
+                                            key="processing"
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
                                             exit={{ opacity: 0 }}
-                                            className="text-[#d89853]/60 text-sm tracking-[0.2em] font-light text-shadow-sm"
+                                            className="text-[#d89853] text-sm tracking-[0.2em] font-light animate-pulse"
                                         >
-                                            “你想聊些什么？”
+                                            ......
                                         </motion.div>
                                     );
-                                })()}
-                            </AnimatePresence>
-                        </div>
-                    </div>
+                                }
 
-                    <form onSubmit={handleSearchSubmit} className="w-full relative group transform transition-all duration-300 focus-within:scale-105">
-                        <Search className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-[#d89853]/60 group-hover:text-[#d89853] transition-colors" size={18} />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="输入关键词检索记忆碎片..."
-                            autoFocus
-                            onFocus={() => setIsSearchFocused(true)}
-                            onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)} // Delay to allow click on chips
-                            className="w-full pl-12 md:pl-16 pr-6 md:pr-8 py-3 md:py-5 bg-black/40 backdrop-blur-md border border-[#d89853]/30 text-[#d89853] placeholder-[#d89853]/40 rounded-full text-base md:text-lg font-light tracking-wide focus:outline-none focus:border-[#d89853]/60 focus:bg-black/60 transition-all shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:border-[#d89853]/50"
-                            style={{ textShadow: '0 0 10px rgba(216,152,83,0.2)' }}
-                        />
-                        <button
-                            type="submit"
-                            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full overflow-hidden group/btn hover:bg-[#d89853]/10 transition-all cursor-pointer"
-                        >
-                            <span className="text-[10px] tracking-widest text-[#d89853] group-hover/btn:text-white transition-colors">检索</span>
-                            <TerminalIcon size={12} className="text-[#d89853]" />
-                        </button>
-
-
-                        {/* Subconscious Retrace Button - Top Left of Search Box */}
-                        <div
-                            className="absolute -top-8 left-0 flex items-center gap-2 text-[10px] tracking-widest text-[#d89853]/60 hover:text-[#d89853] cursor-pointer transition-colors uppercase font-bold group/retrace"
-                            onClick={handleRetraceClick}
-                        >
-                            <Brain size={12} className="group-hover/retrace:animate-pulse" />
-                            <span>潜意识回溯 // RETRACE</span>
-                        </div>
-
-                        {/* View Log Button - Top Right of Search Box */}
-                        <div
-                            className="absolute -top-8 right-0 flex items-center gap-2 text-[10px] tracking-widest text-[#d89853]/60 hover:text-[#d89853] cursor-pointer transition-colors uppercase font-bold"
-                            onClick={() => setShowTerminal(true)}
-                        >
-                            <TerminalIcon size={12} />
-                            <span>查看日志 // LOGS</span>
-                        </div>
-
-                        {/* Retrace Error Toast */}
-                        <AnimatePresence>
-                            {retraceError && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0 }}
-                                    className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[#020617]/90 border border-[#1e293b] text-[#94a3b8] text-xs px-6 py-3 rounded shadow-[0_0_20px_rgba(15,23,42,0.5)] backdrop-blur-md tracking-widest flex items-center gap-3 whitespace-nowrap font-mono"
-                                >
-                                    <Activity size={14} className="text-[#64748b]" />
-                                    {retraceError}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        {/* Retrace Results Modal - IMMERSIVE OVERHAUL */}
-                        <AnimatePresence>
-                            {showRetraceModal && retraceResult && (
-                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm" onClick={closeRetraceModal}>
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                                        transition={{ duration: 0.8, ease: "easeOut" }}
-                                        className="w-full max-w-lg bg-[#020205] border border-[#1e293b] p-8 relative overflow-hidden group shadow-[0_0_100px_rgba(15,23,42,0.4)]"
-                                        onClick={e => e.stopPropagation()}
-                                    >
-                                        {/* Deep Atmosphere Overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/20 to-transparent pointer-events-none" />
-                                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
-                                        <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
-
-                                        <button
-                                            className="absolute top-4 right-4 text-[#475569] hover:text-[#94a3b8] transition-colors duration-500"
-                                            onClick={closeRetraceModal}
+                                // 1. Check for transient system message
+                                if (tempSystemMessage) {
+                                    return (
+                                        <motion.div
+                                            key="temp-sys"
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.95 }}
+                                            className="text-xs font-mono tracking-widest text-[#d89853]/50 animate-pulse"
                                         >
-                                            <X size={20} />
-                                        </button>
+                                            {tempSystemMessage}
+                                        </motion.div>
+                                    );
+                                }
 
-                                        <div className="flex items-center gap-5 mb-10 text-[#64748b]">
-                                            <div className="relative">
-                                                <Brain size={28} className="opacity-60" />
-                                                <motion.div
-                                                    animate={{ opacity: [0.2, 0.5, 0.2] }}
-                                                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                                                    className="absolute inset-0"
-                                                >
-                                                    <Brain size={28} className="blur-sm text-[#94a3b8]" />
-                                                </motion.div>
-                                            </div>
-                                            <div className="flex flex-col gap-1">
-                                                <h2 className="text-lg font-light tracking-[0.3em] text-[#94a3b8]">
-                                                    潜意识深层回溯
-                                                </h2>
-                                                <span className="text-[10px] tracking-[0.2em] text-[#475569] font-mono">
-                                                    正在接入深层记忆扇区...
-                                                </span>
-                                            </div>
-                                        </div>
+                                // Find the latest character dialogue in history
+                                // Dialogue items MUST start with "> [" and are not system logs
+                                // We strictly exclude 'archive_content' and system notifications
+                                const reversedHistory = [...history].reverse();
+                                const lastDialogue = reversedHistory.find(item =>
+                                    (item.type === 'dialogue' || item.type === 'info') &&
+                                    item.content.startsWith('> [')
+                                );
 
-                                        <div className="text-xs text-[#475569] mb-8 font-mono border-l border-[#334155] pl-4 py-2 space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="w-1 h-1 bg-[#475569] rounded-full animate-pulse" />
-                                                提示：精神锚点正在松动，意识边界模糊 (-20%)
-                                            </div>
-                                            <div className="flex items-center gap-2 opacity-70">
-                                                <span className="w-1 h-1 bg-[#334155] rounded-full" />
-                                                正在打捞沉没在黑暗中的记忆碎片...
-                                            </div>
-                                        </div>
+                                const showResponse = !!lastDialogue;
+                                const displayItem = lastDialogue;
 
-                                        {retraceResult.length > 0 ? (
-                                            <div className="space-y-6 relative z-10">
-                                                <p className="text-[#94a3b8] text-sm font-light leading-relaxed tracking-wide opacity-90 italic">
-                                                    “你提到的这些往事似乎在发挥作用，不知为何，这些词汇在我脑海中变得挥之不去……”
-                                                </p>
-                                                <div className="flex flex-wrap gap-3">
-                                                    {retraceResult.map(keyword => {
-                                                        const isCollected = collectedClues.includes(keyword) ||
-                                                            unlockedPeople.includes(keyword) ||
-                                                            collectedDossierIds.includes(keyword);
+                                if (showResponse && displayItem) {
+                                    // Clean up content for display: remove "> [NAME]: " prefix if present
+                                    const displayContent = displayItem.content
+                                        .replace(/^> \[.*?\]:\s*"?/, '')
+                                        .replace(/"$/, '');
 
-                                                        return (
-                                                            <button
-                                                                key={keyword}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    if (!isCollected) {
-                                                                        onCollectClue(keyword, CLUE_DISPLAY_MAP[keyword] || keyword);
-                                                                    }
-                                                                }}
-                                                                disabled={isCollected}
-                                                                className={`px-4 py-1.5 border text-sm font-medium tracking-widest transition-all duration-300 relative overflow-hidden group/item uppercase flex items-center gap-2
+                                    // Highlight pickable keywords
+                                    // Highlight pickable keywords
+                                    const content = displayItem.content || '';
+
+                                    // NUCLEAR CHECK: Detect Confession 20/21 by multiple signals
+                                    const isConf20 = (displayItem as any).id === 'confession_20_content';
+                                    const isConf21 = (displayItem as any).id === 'confession_21_content';
+                                    const isConfession12 = (displayItem as any).id === 'confession_12';
+                                    const isReveal = (displayItem as any).isReveal;
+                                    const isNode6Awakening = (displayItem as any).id === 'node_6_awakening';
+
+                                    let pickableKeywords: string[] = [];
+
+                                    if (isConf20) {
+                                        pickableKeywords = ['波特兰', '软肋'];
+                                    } else if (isConf21) {
+                                        pickableKeywords = ['红杉林', '战俘营', '亚玛力人协议'];
+                                    } else if (isConfession12) {
+                                        pickableKeywords = ['杰西·潘尼', '杰西潘尼'];
+                                    } else if (isNode6Awakening) {
+                                        pickableKeywords = ['1976'];
+                                    } else if (isReveal) {
+                                        pickableKeywords = (displayItem as any).revealKeywords || [];
+                                    }
+
+                                    const keywordMap: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' }> = {
+                                        // People
+                                        '罗伯特·卡彭': { id: 'capone', type: 'person' },
+                                        '父亲': { id: 'father', type: 'person' },
+                                        '尼比': { id: 'nibi', type: 'person' },
+                                        '康查尔': { id: 'conchar', type: 'person' },
+                                        '伦德格兰': { id: 'lundgren', type: 'person' },
+                                        '莫宁': { id: 'morning', type: 'person' },
+                                        '雷吉博士': { id: 'dr_reggie', type: 'person' },
+                                        '罗格·毕比': { id: 'roger_beebe', type: 'person' },
+                                        '小德里克·维恩': { id: 'little_derek_wayne', type: 'person' },
+                                        '玛莎·迪亚兹': { id: 'martha_diaz', type: 'person' },
+                                        '朱莉': { id: 'julie', type: 'person' },
+                                        '塞勒斯': { id: 'silas', type: 'person' },
+                                        '赛勒斯': { id: 'silas', type: 'person' },
+                                        '瓦妮莎': { id: 'vanessa', type: 'person' },
+                                        '母亲': { id: 'the_mother', type: 'person' },
+                                        '朱维尔·钱伯斯': { id: 'juvell_chambers', type: 'person' },
+                                        '鲍里斯·斯米尔诺夫': { id: 'boris_smirnov', type: 'person' },
+                                        '辛西娅·米勒': { id: 'cynthia_miller', type: 'person' },
+                                        '杰西·潘尼': { id: 'jc_penney', type: 'person' },
+                                        '杰西潘尼': { id: 'jc_penney', type: 'person' },
+                                        '约翰·莫里西': { id: 'john_morrissey', type: 'person' },
+                                        '约翰莫里西': { id: 'john_morrissey', type: 'person' },
+                                        '皮特·亨德森': { id: 'peter_henderson', type: 'person' },
+                                        '牧师': { id: 'priest', type: 'person' },
+                                        '阿列克谢·罗科维奇': { id: 'alexei', type: 'person' },
+                                        '阿列克谢': { id: 'alexei', type: 'person' },
+
+                                        // Years
+                                        '1971': { id: 'year_1971', type: 'year' },
+                                        '1968': { id: 'year_1968', type: 'year' },
+                                        '1967': { id: 'year_1967', type: 'year' },
+                                        '1985': { id: 'year_1985', type: 'year' },
+                                        '1972': { id: 'year_1972', type: 'year' },
+                                        '1973': { id: 'year_1973', type: 'year' },
+                                        '1982': { id: 'year_1982', type: 'year' },
+                                        '1974': { id: 'year_1974', type: 'year' },
+                                        '1965': { id: 'year_1965', type: 'year' },
+                                        '1976': { id: 'year_1976', type: 'year' },
+                                        '1976年': { id: 'year_1976', type: 'year' },
+
+                                        // Locations
+                                        '缅因州': { id: 'maine', type: 'location' },
+                                        '俄亥俄州': { id: 'ohio', type: 'location' },
+                                        '芝加哥': { id: 'chicago', type: 'location' },
+                                        '内华达州': { id: 'nevada', type: 'location' },
+                                        '弗吉尼亚州': { id: 'virginia', type: 'location' },
+                                        '罗阿诺克': { id: 'roanoke', type: 'location' },
+                                        '波特兰': { id: 'portland', type: 'location' },
+                                        '堪萨斯城': { id: 'kansas_city', type: 'location' },
+                                        '东12街': { id: 'east_12th_st', type: 'location' },
+                                        '达文波特': { id: 'davenport', type: 'location' },
+                                        '脏弗兰克酒吧': { id: 'dirty_frank', type: 'location' },
+                                        '特克萨卡纳': { id: 'texarkana', type: 'location' },
+                                        '埃尔帕索': { id: 'el_paso', type: 'location' },
+                                        '红杉林': { id: 'redwood_forest', type: 'location' },
+                                        '战俘营': { id: 'pow_camp', type: 'location' },
+                                        '圣芭芭拉': { id: 'santa_barbara', type: 'location' },
+                                        '拉古那海滩': { id: 'laguna_beach', type: 'location' },
+
+                                        // Cases / Details
+                                        '小银行': { id: 'small_bank', type: 'clue' },
+                                        '仪式案': { id: 'ritual_case', type: 'clue' },
+                                        '失踪': { id: 'missing', type: 'clue' },
+                                        '训练日': { id: 'training_day', type: 'clue' },
+                                        '灭门案': { id: 'family_massacre', type: 'clue' },
+                                        '空烟盒': { id: 'empty_cigarette_pack', type: 'clue' },
+                                        '灰水信标': { id: 'graywater_beacon', type: 'clue' },
+                                        '碎尸案': { id: 'dismemberment_case', type: 'clue' },
+                                        '扭曲关系': { id: 'twisted_relationship', type: 'clue' },
+                                        '肉体关系': { id: 'twisted_relationship', type: 'clue' },
+                                        '薄荷计划': { id: 'mint_plan', type: 'clue' },
+                                        '新计划': { id: 'new_plan', type: 'clue' },
+                                        '招募': { id: 'recruitment', type: 'clue' },
+                                        '行刑室': { id: 'execution_room', type: 'clue' },
+                                        '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
+                                        '80号洲际公路': { id: 'interstate_80', type: 'location' },
+                                        '守夜人': { id: 'watchman', type: 'clue' },
+                                        '软肋': { id: 'achilles_heel', type: 'clue' },
+                                        '亚玛力人协议': { id: 'amalekite_protocol', type: 'clue' },
+                                        '银喜鹊': { id: 'silver_magpie', type: 'clue' },
+                                        '教堂': { id: 'church', type: 'location' },
+                                        '收网': { id: 'closing_the_net', type: 'clue' },
+                                        '裸根': { id: 'naked_root', type: 'clue' }
+                                    };
+
+                                    // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions
+                                    // UPDATED: For "Reveal" dialogues or specific Confession content (which explicitly set pickableKeywords),
+                                    // we ALWAYS show them, even if consumed, so the user can see the link/status.
+                                    const activePickableKeywords = pickableKeywords.filter(k => {
+                                        const config = keywordMap[k];
+                                        return !!config;
+                                    });
+
+                                    const regex = activePickableKeywords.length > 0
+                                        ? new RegExp(`(${activePickableKeywords.join('|')})`, 'g')
+                                        : null;
+                                    const parts = regex ? displayContent.split(regex) : [displayContent];
+
+                                    return (
+                                        <motion.div
+                                            key={displayItem.timestamp}
+                                            initial={{ opacity: 0, y: 5 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -5 }}
+                                            className="text-sm tracking-[0.15em] font-light leading-relaxed text-[#d89853]"
+                                            style={{ textShadow: '0 0 10px rgba(216,152,83,0.3)' }}
+                                        >
+                                            "
+                                            {parts.map((part, j) => {
+                                                const keywordConfig = keywordMap[part];
+                                                if (keywordConfig) {
+                                                    // Check collection status based on type
+                                                    const isCollected =
+                                                        keywordConfig.type === 'year' ? collectedYears.includes(keywordConfig.id) :
+                                                            keywordConfig.type === 'person' ? unlockedPeople.includes(keywordConfig.id) :
+                                                                collectedClues.includes(keywordConfig.id);
+
+                                                    return (
+                                                        <span
+                                                            key={j}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                onCollectClue(keywordConfig.id, part); // Pass display text, not type
+                                                            }}
+                                                            className={`
+                                                                    cursor-pointer font-bold transition-all duration-300
                                                                     ${isCollected
-                                                                        ? 'bg-[#d89853]/10 border-[#d89853]/30 text-[#d89853] cursor-default'
-                                                                        : 'bg-[#1e293b]/40 border-[#334155] text-[#94a3b8] hover:bg-[#1e293b] hover:border-[#64748b] hover:text-[#e2e8f0] cursor-pointer'
-                                                                    }
+                                                                    ? 'text-white bg-[#d89853] px-1 shadow-[0_0_10px_rgba(216,152,83,0.5)]'
+                                                                    : 'text-[#d89853] border-b border-[#d89853] hover:bg-[#d89853]/20 animate-pulse'
+                                                                }
                                                                 `}
-                                                            >
-                                                                <span className={`absolute inset-0 bg-[#334155] translate-x-full transition-transform duration-300 pointer-events-none ${!isCollected ? 'group-hover/item:translate-x-0' : ''}`} />
-                                                                <span className="relative z-10">{CLUE_DISPLAY_MAP[keyword] || keyword}</span>
-                                                                {isCollected && (
-                                                                    <span className="relative z-10 text-[10px] bg-[#d89853]/20 text-[#d89853] px-1.5 py-0.5 rounded font-mono">
-                                                                        已收录
-                                                                    </span>
-                                                                )}
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="text-[#64748b] text-base italic font-serif leading-relaxed px-6 py-12 text-center border border-[#1e293b] bg-[#0f172a]/30 relative">
-                                                <span className="absolute text-4xl text-[#334155] top-2 left-2 font-serif">“</span>
-                                                不管你是谁，你并不知道我遭遇了什么，所以请离开吧，父亲和南希，他们都不在这里。
-                                                <span className="absolute text-4xl text-[#334155] bottom-2 right-2 font-serif">”</span>
-                                            </div>
-                                        )}
+                                                            title={isCollected ? "已收录" : "点击记下关键词"}
+                                                        >
+                                                            {part}
+                                                        </span>
+                                                    );
+                                                }
+                                                return part;
+                                            })}
+                                            "
+                                        </motion.div>
+                                    );
+                                }
 
-                                        <div className="mt-8 pt-4 border-t border-[#1e293b] flex justify-between items-end text-[9px] text-[#475569] font-mono">
-                                            <span>SECTOR: 7G-A9</span>
-                                            <span className="animate-pulse">TERMINAL: ACTIVE</span>
-                                        </div>
-                                    </motion.div>
-                                </div>
-                            )}
-                        </AnimatePresence>
-
-                        {/* Quick Input Clues - Show when focused or when there are clues */}
-                        <AnimatePresence>
-                            {(isSearchFocused || collectedClues.length > 0 || unlockedPeople.length > 0) &&
-                                (collectedClues.length > 0 || unlockedPeople.length > 0) && (
+                                return (
                                     <motion.div
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        className="w-full max-w-2xl px-4 flex flex-wrap gap-2 justify-center mt-4 absolute top-full left-0 z-20"
+                                        key="default"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="text-[#d89853]/60 text-sm tracking-[0.2em] font-light text-shadow-sm"
                                     >
-                                        {/* Combine clues for chips. PEOPLE ARE REMOVED (Syndicate Board handles these). YEARS ARE REMOVED (Archives handle these). */}
-                                        {(() => {
-                                            // Calculate frequency map to detect re-collected items
-                                            const frequencyMap = (collectedClues || []).reduce((acc, val) => {
-                                                acc[val] = (acc[val] || 0) + 1;
-                                                return acc;
-                                            }, {} as Record<string, number>);
+                                        {hasSwitchedPersona ? "“说吧，你还要挖什么烂账？”" : "“你想聊些什么？”"}
+                                    </motion.div>
+                                );
+                            })()}
+                        </AnimatePresence>
+                    </div>
+                    <div className="w-full flex flex-col items-center gap-4">
+                        {/* Mobile Button Row - Stacked/Responsive */}
+                        <div className="w-full flex flex-col md:flex-row items-center gap-3 mb-1 md:mb-4 lg:mb-8">
+                            <div
+                                className="flex items-center gap-2 text-[10px] tracking-widest text-[#d89853]/60 hover:text-[#d89853] cursor-pointer transition-all uppercase font-bold bg-black/40 px-4 py-2 rounded-full border border-[#d89853]/10 md:bg-transparent md:border-none md:p-0"
+                                onClick={handleRetraceClick}
+                            >
+                                <Brain size={12} className="group-hover/retrace:animate-pulse" />
+                                <span>潜意识回溯 // RETRACE</span>
+                            </div>
 
-                                            return [...new Set([...(collectedClues || [])].filter(Boolean))]
-                                                .filter(id => {
-                                                    const isLocation = CATEGORY_IDS.LOCATIONS.includes(id);
-                                                    const isCase = CATEGORY_IDS.CASES.includes(id);
+                            <div
+                                className="flex items-center gap-2 text-[10px] tracking-widest text-[#d89853]/60 hover:text-[#d89853] cursor-pointer transition-all uppercase font-bold bg-black/40 px-4 py-2 rounded-full border border-[#d89853]/10 md:bg-transparent md:border-none md:p-0 md:ml-auto"
+                                onClick={() => setShowTerminal(true)}
+                            >
+                                <TerminalIcon size={12} />
+                                <span>查看日志 // LOGS</span>
+                            </div>
+                        </div>
 
-                                                    if (!isLocation && !isCase) return false;
+                        <form onSubmit={handleSearchSubmit} className="w-full relative group transform transition-all duration-300 focus-within:scale-105">
+                            <Search className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-[#d89853]/60 group-hover:text-[#d89853] transition-colors" size={18} />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="输入关键词..."
+                                autoFocus
+                                onFocus={() => setIsSearchFocused(true)}
+                                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)} // Delay to allow click on chips
+                                className="w-full pl-10 md:pl-16 pr-20 md:pr-24 py-3 md:py-5 bg-black/40 backdrop-blur-md border border-[#d89853]/30 text-[#d89853] placeholder-[#d89853]/40 rounded-full text-sm md:text-lg font-light tracking-wide focus:outline-none focus:border-[#d89853]/60 focus:bg-black/60 transition-all shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:border-[#d89853]/50"
+                                style={{ textShadow: '0 0 10px rgba(216,152,83,0.2)' }}
+                            />
+                            <button
+                                type="submit"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full overflow-hidden group/btn hover:bg-[#d89853]/10 transition-all cursor-pointer"
+                            >
+                                <span className="text-[9px] md:text-[10px] tracking-widest text-[#d89853] group-hover/btn:text-white transition-colors">检索</span>
+                                <TerminalIcon size={12} className="text-[#d89853]" />
+                            </button>
 
-                                                    if (!CLUE_DISPLAY_MAP[id]) return false;
 
-                                                    // Normal check: Hide if consumed
-                                                    if (!consumedKeywords.has(id)) return true;
 
-                                                    // Exception: If it's a special reveal keyword AND it has been collected MORE THAN ONCE (meaning re-collected after consumption), show it.
-                                                    if (['kansas_city', 'mobile_blood_truck', 'church', 'el_paso'].includes(id)) {
-                                                        return frequencyMap[id] > 1;
-                                                    }
-
-                                                    return false;
-                                                });
-                                        })()
-                                            .map(id => (
-                                                <button
-                                                    key={id}
-                                                    type="button"
-                                                    onMouseDown={(e) => {
-                                                        e.preventDefault(); // Prevent blur
-                                                        const clueText = CLUE_DISPLAY_MAP[id] || id;
-                                                        setSearchQuery(prev => {
-                                                            if (!prev) {
-                                                                return clueText;
-                                                            }
-                                                            // Avoid duplicates if simple check passes (optional, but good UX)
-                                                            if (prev.includes(clueText)) {
-                                                                return prev;
-                                                            }
-                                                            // Append with a space, ensuring no double spaces if prev already ends with one
-                                                            const separator = prev.endsWith(' ') ? '' : ' ';
-                                                            return `${prev}${separator}${clueText}`;
-                                                        });
-                                                    }}
-                                                    className="px-2.5 md:px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-[11px] md:text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
-                                                >
-                                                    {CLUE_DISPLAY_MAP[id] || id}
-                                                </button>
-                                            ))
-                                        }
+                            {/* Retrace Error Toast */}
+                            <AnimatePresence>
+                                {retraceError && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0 }}
+                                        className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[#020617]/90 border border-[#1e293b] text-[#94a3b8] text-xs px-6 py-3 rounded shadow-[0_0_20px_rgba(15,23,42,0.5)] backdrop-blur-md tracking-widest flex items-center gap-3 whitespace-nowrap font-mono"
+                                    >
+                                        <Activity size={14} className="text-[#64748b]" />
+                                        {retraceError}
                                     </motion.div>
                                 )}
-                        </AnimatePresence>
-                    </form>
+                            </AnimatePresence>
+
+                            {/* Retrace Results Modal - IMMERSIVE OVERHAUL */}
+                            <AnimatePresence>
+                                {showRetraceModal && retraceResult && (
+                                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm" onClick={closeRetraceModal}>
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                                            transition={{ duration: 0.8, ease: "easeOut" }}
+                                            className="w-full max-w-lg bg-[#020205] border border-[#1e293b] p-8 relative overflow-hidden group shadow-[0_0_100px_rgba(15,23,42,0.4)]"
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            {/* Deep Atmosphere Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/20 to-transparent pointer-events-none" />
+                                            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
+                                            <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
+
+                                            <button
+                                                className="absolute top-4 right-4 text-[#475569] hover:text-[#94a3b8] transition-colors duration-500"
+                                                onClick={closeRetraceModal}
+                                            >
+                                                <X size={20} />
+                                            </button>
+
+                                            <div className="flex items-center gap-5 mb-10 text-[#64748b]">
+                                                <div className="relative">
+                                                    <Brain size={28} className="opacity-60" />
+                                                    <motion.div
+                                                        animate={{ opacity: [0.2, 0.5, 0.2] }}
+                                                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                                        className="absolute inset-0"
+                                                    >
+                                                        <Brain size={28} className="blur-sm text-[#94a3b8]" />
+                                                    </motion.div>
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <h2 className="text-lg font-light tracking-[0.3em] text-[#94a3b8]">
+                                                        潜意识深层回溯
+                                                    </h2>
+                                                    <span className="text-[10px] tracking-[0.2em] text-[#475569] font-mono">
+                                                        正在接入深层记忆扇区...
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="text-xs text-[#475569] mb-8 font-mono border-l border-[#334155] pl-4 py-2 space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-1 h-1 bg-[#475569] rounded-full animate-pulse" />
+                                                    提示：精神锚点正在松动，意识边界模糊 (-20%)
+                                                </div>
+                                                <div className="flex items-center gap-2 opacity-70">
+                                                    <span className="w-1 h-1 bg-[#334155] rounded-full" />
+                                                    正在打捞沉没在黑暗中的记忆碎片...
+                                                </div>
+                                            </div>
+
+                                            {retraceResult.length > 0 ? (
+                                                <div className="space-y-6 relative z-10">
+                                                    <p className="text-[#94a3b8] text-sm font-light leading-relaxed tracking-wide opacity-90 italic">
+                                                        “你提到的这些往事似乎在发挥作用，不知为何，这些词汇在我脑海中变得挥之不去……”
+                                                    </p>
+                                                    <div className="flex flex-wrap gap-3">
+                                                        {retraceResult.map(keyword => {
+                                                            const isCollected = collectedClues.includes(keyword) ||
+                                                                unlockedPeople.includes(keyword) ||
+                                                                collectedDossierIds.includes(keyword);
+
+                                                            return (
+                                                                <button
+                                                                    key={keyword}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        if (!isCollected) {
+                                                                            onCollectClue(keyword, CLUE_DISPLAY_MAP[keyword] || keyword);
+                                                                        }
+                                                                    }}
+                                                                    disabled={isCollected}
+                                                                    className={`px-4 py-1.5 border text-sm font-medium tracking-widest transition-all duration-300 relative overflow-hidden group/item uppercase flex items-center gap-2
+                                                                    ${isCollected
+                                                                            ? 'bg-[#d89853]/10 border-[#d89853]/30 text-[#d89853] cursor-default'
+                                                                            : 'bg-[#1e293b]/40 border-[#334155] text-[#94a3b8] hover:bg-[#1e293b] hover:border-[#64748b] hover:text-[#e2e8f0] cursor-pointer'
+                                                                        }
+                                                                `}
+                                                                >
+                                                                    <span className={`absolute inset-0 bg-[#334155] translate-x-full transition-transform duration-300 pointer-events-none ${!isCollected ? 'group-hover/item:translate-x-0' : ''}`} />
+                                                                    <span className="relative z-10">{CLUE_DISPLAY_MAP[keyword] || keyword}</span>
+                                                                    {isCollected && (
+                                                                        <span className="relative z-10 text-[10px] bg-[#d89853]/20 text-[#d89853] px-1.5 py-0.5 rounded font-mono">
+                                                                            已收录
+                                                                        </span>
+                                                                    )}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="text-[#64748b] text-base italic font-serif leading-relaxed px-6 py-12 text-center border border-[#1e293b] bg-[#0f172a]/30 relative">
+                                                    <span className="absolute text-4xl text-[#334155] top-2 left-2 font-serif">“</span>
+                                                    不管你是谁，你并不知道我遭遇了什么，所以请离开吧，父亲和南希，他们都不在这里。
+                                                    <span className="absolute text-4xl text-[#334155] bottom-2 right-2 font-serif">”</span>
+                                                </div>
+                                            )}
+
+                                            <div className="mt-8 pt-4 border-t border-[#1e293b] flex justify-between items-end text-[9px] text-[#475569] font-mono">
+                                                <span>SECTOR: 7G-A9</span>
+                                                <span className="animate-pulse">TERMINAL: ACTIVE</span>
+                                            </div>
+                                        </motion.div>
+                                    </div>
+                                )}
+                            </AnimatePresence>
+
+                            {/* Quick Input Clues - Show when focused or when there are clues */}
+                            <AnimatePresence>
+                                {(isSearchFocused || collectedClues.length > 0 || unlockedPeople.length > 0) &&
+                                    (collectedClues.length > 0 || unlockedPeople.length > 0) && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            className="w-full max-w-2xl px-2 md:px-4 flex flex-wrap gap-1.5 md:gap-2 justify-center mt-4 md:absolute md:top-full left-0 z-20 md:mb-0 mb-8"
+                                        >
+                                            {/* Combine clues for chips. PEOPLE ARE REMOVED (Syndicate Board handles these). YEARS ARE REMOVED (Archives handle these). */}
+                                            {(() => {
+                                                // Calculate frequency map to detect re-collected items
+                                                const frequencyMap = (collectedClues || []).reduce((acc, val) => {
+                                                    acc[val] = (acc[val] || 0) + 1;
+                                                    return acc;
+                                                }, {} as Record<string, number>);
+
+                                                return [...new Set([...(collectedClues || [])].filter(Boolean))]
+                                                    .filter(id => {
+                                                        const isLocation = CATEGORY_IDS.LOCATIONS.includes(id);
+                                                        const isCase = CATEGORY_IDS.CASES.includes(id);
+
+                                                        if (!isLocation && !isCase) return false;
+
+                                                        if (!CLUE_DISPLAY_MAP[id]) return false;
+
+                                                        // Normal check: Hide if consumed
+                                                        if (!consumedKeywords.has(id)) return true;
+
+                                                        // Exception: If it has been collected MORE THAN ONCE (meaning re-collected after consumption), show it.
+                                                        // This is typical for archive-sourced keywords that were already used in confessions.
+                                                        return frequencyMap[id] > 1;
+                                                    });
+                                            })()
+                                                .map(id => (
+                                                    <button
+                                                        key={id}
+                                                        type="button"
+                                                        onMouseDown={(e) => {
+                                                            e.preventDefault(); // Prevent blur
+                                                            const clueText = CLUE_DISPLAY_MAP[id] || id;
+                                                            setSearchQuery(prev => {
+                                                                if (!prev) {
+                                                                    return clueText;
+                                                                }
+                                                                // Avoid duplicates if simple check passes (optional, but good UX)
+                                                                if (prev.includes(clueText)) {
+                                                                    return prev;
+                                                                }
+                                                                // Append with a space, ensuring no double spaces if prev already ends with one
+                                                                const separator = prev.endsWith(' ') ? '' : ' ';
+                                                                return `${prev}${separator}${clueText}`;
+                                                            });
+                                                        }}
+                                                        className="px-2.5 md:px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-[11px] md:text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
+                                                    >
+                                                        {CLUE_DISPLAY_MAP[id] || id}
+                                                    </button>
+                                                ))
+                                            }
+                                        </motion.div>
+                                    )}
+                            </AnimatePresence>
+                        </form>
+                    </div>
                 </motion.div>
             </main>
 
             {/* Feature Modals (Moved out of <main> to escape z-index constraints) */}
             {/* Syndicate Board Modal */}
-            <AnimatePresence>
-                {showMindMap && (
+            {
+                showMindMap && (
                     <div className="fixed inset-0 z-[200]">
                         <SyndicateBoard
                             unlockedPeople={unlockedPeople}
                             onClose={() => setShowMindMap(false)}
-                            phase={currentStoryNode >= 2 ? 2 : 1}
-                            hasSwitchedPersona={hasSwitchedPersona}
+                            phase={gameState.currentStoryNode >= 3 ? 2 : 1}
+                            hasSwitchedPersona={gameState.hasSwitchedPersona}
+                            playerHypotheses={playerHypotheses}
+                            onUpdateHypothesis={onUpdateHypothesis}
                         />
                     </div>
-                )}
-            </AnimatePresence>
+                )
+            }
 
             {/* Terminal / Log View */}
             <AnimatePresence>
@@ -956,7 +979,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                             <div className="flex-1 overflow-hidden pointer-events-auto">
                                 <NodeDetail
-                                    node={activeNode}
+                                    node={nodes.find(n => n.id === activeNodeId)!}
                                     onShatter={onShatter}
                                     onCollectClue={onCollectClue}
                                     onPersonaReboot={onPersonaReboot}
@@ -1027,6 +1050,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 currentStoryNode={currentStoryNode}
                 onStoryNodeComplete={onStoryNodeComplete}
                 onClearUnusedKeywords={onClearUnusedKeywords}
+                hasSwitchedPersona={hasSwitchedPersona}
+                isChapterSolved={isChapterSolved}
             />
             <Archives
                 isOpen={showArchives}
@@ -1080,6 +1105,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div >
+        </div>
     );
 };

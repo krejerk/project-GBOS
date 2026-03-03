@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HelpCircle, Lightbulb } from 'lucide-react';
+import { HelpCircle, Lightbulb, Plus, StickyNote, Trash2, Edit3, X } from 'lucide-react';
 import { RELATIONSHIP_TREE } from '../constants';
+import { BoardNote } from '../types';
 
 // Using the locally generated high-fidelity asset
 const REALISTIC_CORK_URL = `${import.meta.env.BASE_URL}textures/cork_board.png`;
@@ -13,78 +14,132 @@ interface SyndicateBoardProps {
     onClose: () => void;
     phase?: number; // 1 or 2
     hasSwitchedPersona?: boolean;
+    playerHypotheses?: Record<string, string>;
+    onUpdateHypothesis?: (nodeId: string, name: string) => void;
 }
+
+// --- PREMIUM LIGHT BULB COMPONENT ---
+const PremiumBulb = ({ isOn, className = "" }: { isOn: boolean, className?: string }) => {
+    return (
+        <div className={`relative ${className}`}>
+            <svg viewBox="0 0 100 150" className="w-full h-full overflow-visible">
+                <defs>
+                    <filter id="bulb-glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="5" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                    <radialGradient id="filament-grad" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="#fff" />
+                        <stop offset="100%" stopColor="#fde047" />
+                    </radialGradient>
+                </defs>
+
+                {/* 1. Bulb Glass Outline */}
+                <path
+                    d="M50 10 C30 10 15 25 15 50 C15 75 35 90 35 110 L65 110 C65 90 85 75 85 50 C85 25 70 10 50 10Z"
+                    fill={isOn ? 'rgba(253, 224, 71, 0.2)' : 'rgba(20, 20, 20, 0.8)'}
+                    stroke={isOn ? '#fde047' : '#333'}
+                    strokeWidth="1.5"
+                    className="transition-colors duration-500"
+                />
+
+                {/* 2. Metal Base (Cap) */}
+                <rect x="35" y="110" width="30" height="8" rx="1" fill="#444" stroke="#222" />
+                <rect x="35" y="120" width="30" height="8" rx="1" fill="#333" stroke="#111" />
+                <rect x="35" y="130" width="30" height="6" rx="1" fill="#222" stroke="#000" />
+                <path d="M40 136 L60 136 L50 145 Z" fill="#111" />
+
+                {/* 3. The Filament (GLOWING PATH) */}
+                <AnimatePresence>
+                    {isOn && (
+                        <motion.g
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: [1, 0.9, 1, 0.85, 1] }}
+                            transition={{
+                                opacity: { duration: 0.15, repeat: Infinity, repeatDelay: Math.random() * 2 },
+                            }}
+                        >
+                            {/* Filament Wire */}
+                            <path
+                                d="M42 110 L45 80 L50 90 L55 80 L58 110"
+                                fill="none"
+                                stroke="url(#filament-grad)"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                filter="url(#bulb-glow)"
+                            />
+                            {/* Core Glow */}
+                            <circle cx="50" cy="85" r="15" fill="rgba(253, 224, 71, 0.4)" filter="blur(12px)" />
+                        </motion.g>
+                    )}
+                </AnimatePresence>
+
+                {/* 4. Glass Reflection */}
+                <path
+                    d="M30 30 C25 40 25 50 30 60"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.15)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                />
+            </svg>
+
+            {/* Outer Aura (Global Environmental Glow) */}
+            {isOn && (
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300%] h-[300%] bg-yellow-400/20 blur-[100px] rounded-full pointer-events-none -z-10" />
+            )}
+        </div>
+    );
+};
 
 export const SyndicateBoard: React.FC<SyndicateBoardProps> = ({
     unlockedPeople,
     onClose,
     phase = 1,
-    hasSwitchedPersona = false
+    hasSwitchedPersona = false,
+    playerHypotheses = {},
+    onUpdateHypothesis
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isLightsOn, setIsLightsOn] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
+    const [activeId, setActiveId] = useState<string | null>(null);
 
-    // Local state for dragging nodes
-    const [nodePositions, setNodePositions] = useState<Record<string, { x: number, y: number }>>({});
-
-    // Filter nodes based on Phase and Unlock status
+    // Filter nodes based on Phase and Chapter
     const visibleNodes = useMemo(() => {
         return RELATIONSHIP_TREE.filter(node => node.phase <= phase);
     }, [phase]);
 
-    // Initialize positions once
-    useEffect(() => {
-        const initialPositions: Record<string, { x: number, y: number }> = {};
-        visibleNodes.forEach(node => {
-            initialPositions[node.id] = node.position;
-        });
-        setNodePositions(initialPositions);
-    }, [visibleNodes]);
+    // Role-based vertical ranking
+    const ROLE_Y_MAP: Record<string, number> = {
+        'BOSS': 15,
+        'UNDERBOSS': 25,
+        'LIEUTENANT': 40,
+        'SOLDIER': 60,
+        'ASSOCIATE': 75,
+        'AGENT': 90,
+        'HANDLER': 90
+    };
+
+    const getXForChapter = (chapter: number) => {
+        if (!chapter) return 5;
+        return (chapter - 1) * 16 + 8; // 6 chapters spread across 100%
+    };
+
+    const chapterHeaders = ["Ch.1 始发站", "Ch.2 见证者", "Ch.3 教派与流通", "Ch.4 陷落者", "Ch.5 阴影中人", "Ch.6 源头"];
 
     // LIGHT SWITCH LOGIC
     const handleLightInteraction = () => {
         if (!isLightsOn) {
-            // Turn ON
             setIsLightsOn(true);
         } else {
-            // Turn OFF and EXIT
             setIsLightsOn(false);
             setIsExiting(true);
             setTimeout(() => {
                 onClose();
-            }, 1000); // Wait for fade out
+            }, 1000);
         }
     };
-
-    const updatePosition = (id: string, xPercent: number, yPercent: number) => {
-        setNodePositions(prev => ({
-            ...prev,
-            [id]: { x: xPercent, y: yPercent }
-        }));
-    };
-
-    // Derived connections based on CURRENT nodePositions
-    const connections = useMemo(() => {
-        return visibleNodes
-            .filter(node => node.parentId)
-            .map(node => {
-                const parentId = node.parentId!;
-                // Safe check: Ensure parent exists in visibleNodes OR has a position in map
-                const parentNode = visibleNodes.find(n => n.id === parentId);
-                const parentPos = nodePositions[parentId] || parentNode?.position;
-
-                const nodePos = nodePositions[node.id] || node.position;
-
-                if (!parentPos || !nodePos) return null;
-                return {
-                    from: parentPos,
-                    to: nodePos,
-                    id: `${parentId}-${node.id}`
-                };
-            })
-            .filter(Boolean) as { from: { x: number, y: number }, to: { x: number, y: number }, id: string }[];
-    }, [visibleNodes, nodePositions]);
 
     return (
         <div className="fixed inset-0 z-[60] bg-black flex flex-col overflow-y-auto overflow-x-hidden custom-scrollbar">
@@ -103,30 +158,28 @@ export const SyndicateBoard: React.FC<SyndicateBoardProps> = ({
                             {/* Hanging Bulb in Void */}
                             <motion.div
                                 animate={{
-                                    opacity: [0.4, 0.5, 0.4],
-                                    y: [0, 5, 0],
-                                    rotate: [0, 1, 0, -1, 0]
+                                    y: [0, 8, 0],
+                                    rotate: [0, 2, 0, -2, 0]
                                 }}
                                 transition={{
-                                    opacity: { duration: 0.1, repeat: Infinity, repeatType: "reverse" }, // Flicker
-                                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" }, // Sway
-                                    rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" } // Rotate
+                                    y: { duration: 5, repeat: Infinity, ease: "easeInOut" }, // Sway
+                                    rotate: { duration: 7, repeat: Infinity, ease: "easeInOut" } // Rotate
                                 }}
                                 className="relative group cursor-pointer"
                             >
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-[100vh] bg-[#222] -mt-[100vh]" />
-                                <Lightbulb size={100} className="text-neutral-800 fill-neutral-900 drop-shadow-xl group-hover:text-neutral-700 transition-colors" />
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-[100vh] bg-neutral-800 -mt-[100vh]" />
+                                <PremiumBulb isOn={false} className="w-24 h-36 opacity-60 group-hover:opacity-100 transition-opacity" />
 
                                 {/* Subtle Glow in dark */}
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-yellow-900/10 blur-xl rounded-full pointer-events-none" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-yellow-900/5 blur-3xl rounded-full pointer-events-none" />
                             </motion.div>
 
                             <motion.span
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 0.5 }}
-                                className="font-mono text-neutral-600 text-xs tracking-[0.5em] mt-8"
+                                className="font-mono text-neutral-600 text-[10px] tracking-[0.8em] mt-8 uppercase"
                             >
-                                {isExiting ? "" : "PULL THE CORD"}
+                                {isExiting ? "" : "Pull the Cord"}
                             </motion.span>
                         </div>
                     </motion.div>
@@ -136,177 +189,174 @@ export const SyndicateBoard: React.FC<SyndicateBoardProps> = ({
             {/* Room Environment Container */}
             <div className={`relative min-h-[1600px] w-full flex flex-col items-center pt-32 pb-32 transition-all duration-1000 ${isLightsOn ? 'opacity-100 scale-100 grayscale-0' : 'opacity-0 scale-95 grayscale'}`}>
 
-                {/* 1. Concrete Wall Background */}
+                {/* 1. Concrete Wall Background with Environmental Spill */}
                 <div
                     className="absolute inset-0 z-0 bg-[#0F0F0F]"
                     style={{
                         backgroundImage: `
-                            linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.4), rgba(0,0,0,0.9)),
+                            radial-gradient(circle at 50% 120px, rgba(253, 224, 71, 0.15) 0%, transparent 70%),
+                            linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.4), rgba(0,0,0,1)),
                             url('https://www.transparenttextures.com/patterns/concrete-wall-2.png')
                         `,
-                        backgroundSize: 'cover, 400px'
+                        backgroundSize: '100% 100%, cover, 400px'
                     }}
                 />
 
                 {/* 2. Graffiti */}
                 <div className="absolute top-[80px] left-0 w-full z-0 pointer-events-none opacity-40 select-none mix-blend-overlay">
                     <div className="flex justify-around items-center px-10 md:px-32">
-                        <div className="font-creepster text-7xl md:text-[14rem] text-[#854d0e]/30 rotate-[-1deg] tracking-widest blur-[2px]">YELLOW KING</div>
+                        <motion.div
+                            animate={{ opacity: isLightsOn ? [0.3, 0.4, 0.35, 0.4] : 0.1 }}
+                            transition={{ duration: 0.1, repeat: Infinity }}
+                            className="font-creepster text-7xl md:text-[14rem] text-[#854d0e]/30 rotate-[-1deg] tracking-widest blur-[2px]"
+                        >
+                            YELLOW KING
+                        </motion.div>
                     </div>
                 </div>
 
                 {/* 3. The Lightbulb (ON STATE) - Doubles as Exit Switch */}
-                <div
-                    className="absolute top-[-50px] left-1/2 -translate-x-1/2 z-[80] cursor-pointer group"
+                <motion.div
+                    className="absolute top-[-30px] left-1/2 -translate-x-1/2 z-[80] cursor-pointer group"
                     onClick={handleLightInteraction}
+                    whileTap={{ y: 15 }} // Pull down effect
                     title="Turn Off & Leave"
                 >
-                    <div className="w-[2px] h-[180px] bg-black mx-auto" />
-                    <div className="relative">
-                        <Lightbulb size={64} className="text-[#fef08a] fill-[#fef08a] drop-shadow-[0_0_60px_rgba(253,224,71,0.9)] filter brightness-110 group-hover:brightness-150 transition-all" />
-                        {/* Light Cone */}
-                        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[1800px] h-[1800px] bg-[radial-gradient(circle_at_top,rgba(253,224,71,0.12)_0%,transparent_60%)] pointer-events-none mix-blend-screen opacity-80" />
+                    {/* Cord with braided look */}
+                    <div className="relative mx-auto w-[4px] h-[160px] flex justify-center">
+                        <div className="w-[1px] h-full bg-neutral-800" />
+                        <div className="absolute inset-0 w-full h-full opacity-20" style={{ backgroundImage: 'linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent 100%)', backgroundSize: '4px 4px' }} />
                     </div>
-                </div>
 
-                {/* 4. The Board - REALISTIC TEXTURE (V6) */}
+                    <PremiumBulb isOn={isLightsOn && !isExiting} className="w-20 h-32 -mt-4" />
+
+                    {/* Pull Cord Handle (Teardrop shape) */}
+                    <div className="absolute top-[165px] left-1/2 -translate-x-1/2 flex flex-col items-center">
+                        <div className="w-[2px] h-4 bg-neutral-800" />
+                        <div className="w-4 h-6 bg-gradient-to-b from-neutral-800 to-black border border-neutral-700/30 rounded-full shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-1 left-1 w-1 h-2 bg-white/10 rounded-full" />
+                        </div>
+                    </div>
+
+                    {/* Interaction Glow */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-yellow-400/0 group-hover:bg-yellow-400/5 blur-3xl rounded-full transition-colors duration-500 pointer-events-none" />
+                </motion.div>
+
+                {/* 4. The Board - Minimalist Roadmap Grid */}
                 <div
                     ref={containerRef}
-                    className="relative w-[95%] md:w-[1300px] min-h-[1100px] bg-[#221510] z-10 shadow-[0_50px_120px_rgba(0,0,0,1)] border-[16px] border-[#0c0806] rounded-sm"
+                    className="relative w-full md:w-[1300px] min-h-[2500px] md:min-h-[1000px] bg-[#050505] z-10 shadow-[0_50px_120px_rgba(0,0,0,1)] border-[4px] border-[#222] rounded-sm overflow-y-auto md:overflow-hidden scrollbar-hide"
                     style={{
-                        // Using a high-quality external texture to match the user's "Real Texture" request
-                        backgroundImage: `url('${REALISTIC_CORK_URL}')`,
-                        backgroundSize: 'cover',
-                        boxShadow: 'inset 0 0 250px rgba(0,0,0,0.9), 0 30px 60px black'
+                        backgroundImage: `
+                            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)
+                        `,
+                        backgroundSize: '100% 300px, 16.66% 100px', // Adjusted for mobile roadmap
                     }}
                 >
-                    {/* Metal Label */}
-                    <div className="absolute -top-5 left-10 bg-[#1c1917] px-6 py-2 border border-[#444] shadow-lg z-20 rounded-sm transform -rotate-1">
-                        <span className="font-mono text-xs text-gray-400 font-bold tracking-[0.2em] uppercase">EVIDENCE BOARD #04</span>
+                    {/* Chapter Headers - Desktop only or rethink for mobile */}
+                    <div className="absolute top-0 left-0 w-full h-12 flex z-30 border-b border-white/5 bg-black/50 backdrop-blur-md hidden md:flex">
+                        {chapterHeaders.map((header, i) => (
+                            <div key={i} className="flex-1 flex items-center justify-center border-r border-white/5 last:border-none">
+                                <span className="font-mono text-[10px] text-gray-400 font-bold tracking-[0.2em] uppercase">{header}</span>
+                            </div>
+                        ))}
                     </div>
 
-                    {/* Red Strings Layer */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible">
-                        <defs>
-                            <filter id="string-shadow">
-                                <feDropShadow dx="2" dy="4" stdDeviation="2" floodColor="#000" floodOpacity="0.7" />
-                            </filter>
-                        </defs>
-                        {connections.map(conn => (
-                            <line
-                                key={conn.id}
-                                x1={`${conn.from.x}%`}
-                                y1={`${conn.from.y}%`}
-                                x2={`${conn.to.x}%`}
-                                y2={`${conn.to.y}%`}
-                                stroke="#7f1d1d"
-                                strokeWidth="3"
-                                strokeLinecap="round"
-                                filter="url(#string-shadow)"
-                                className="opacity-80"
-                            />
-                        ))}
-                        {connections.map(conn => (
-                            <React.Fragment key={`pins-${conn.id}`}>
-                                <circle cx={`${conn.from.x}%`} cy={`${conn.from.y}%`} r="5" fill="#991b1b" stroke="#450a0a" strokeWidth="2" />
-                            </React.Fragment>
-                        ))}
-                    </svg>
-
-                    {/* Nodes */}
+                    {/* Nodes Grid */}
                     {visibleNodes.map((node, index) => {
-                        const isUnlocked = unlockedPeople.includes(node.id) || (node.id === 'father' && unlockedPeople.includes('father'));
-                        const pos = nodePositions[node.id] || node.position;
+                        const isUnlocked = unlockedPeople.includes(node.id);
+                        const isActive = activeId === node.id;
+                        const x = getXForChapter(node.chapter || 1);
+
+                        // Vertical stacking within the column
+                        const columnMembers = visibleNodes.filter(m => m.chapter === (node.chapter || 1));
+                        const memberIndex = columnMembers.findIndex(m => m.id === node.id);
+                        const totalInColumn = columnMembers.length;
+                        const y = 80 / (totalInColumn + 1) * (memberIndex + 1) + 10;
 
                         return (
                             <motion.div
                                 key={node.id}
-                                className="absolute z-20 flex flex-col items-center cursor-move"
+                                className={`absolute flex flex-col items-center z-20 w-fit md:w-auto`}
                                 style={{
-                                    left: `${pos.x}%`,
-                                    top: `${pos.y}%`
+                                    left: `var(--node-left, ${x}%)`,
+                                    top: `var(--node-top, ${y}%)`,
+                                    transform: 'translateX(-50%)',
+                                    // Custom properties for CSS media query usage if needed, or just handle in TS
                                 }}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: index * 0.05 }}
-                                drag
-                                dragMomentum={false}
-                                dragConstraints={containerRef}
-                                onDrag={(_, info) => {
-                                    const rect = containerRef.current?.getBoundingClientRect();
-                                    if (rect) {
-                                        const deltaXPercent = (info.delta.x / rect.width) * 100;
-                                        const deltaYPercent = (info.delta.y / rect.height) * 100;
-                                        updatePosition(node.id,
-                                            (nodePositions[node.id]?.x || node.position.x) + deltaXPercent,
-                                            (nodePositions[node.id]?.y || node.position.y) + deltaYPercent
-                                        );
-                                    }
-                                }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.03 }}
                             >
+                                <style>{`
+                                    @media (max-width: 768px) {
+                                        #node-${node.id} {
+                                            left: 50% !important;
+                                            top: ${(node.chapter || 1) * 250 + memberIndex * 150}px !important;
+                                            transform: translateX(-50%) !important;
+                                        }
+                                    }
+                                `}</style>
                                 <div
+                                    id={`node-${node.id}`}
                                     className={`
-                                        w-36 bg-white p-2 pb-10 shadow-[2px_8px_15px_rgba(0,0,0,0.5)]
-                                        transform transition-shadow duration-300 flex flex-col items-center
-                                        ${isUnlocked ? 'hover:scale-105 hover:z-50 hover:shadow-2xl' : 'opacity-90 grayscale sepia brightness-75'}
+                                        relative shadow-2xl transform transition-all duration-300 flex flex-col items-center p-3 border
+                                        ${isActive ? 'z-50 scale-105' : 'z-20'}
+                                        ${isUnlocked ? 'border-green-500/30 bg-black' : 'border-gray-800 bg-[#0a0a0a] opacity-40 grayscale'}
                                     `}
                                     style={{
-                                        transform: `rotate(${(index * 19) % 8 - 4}deg)`,
+                                        width: '180px',
+                                        minHeight: '120px',
+                                        boxShadow: isActive ? '0 0 30px rgba(0, 255, 0, 0.1)' : 'none',
                                     }}
+                                    onMouseEnter={() => setActiveId(node.id)}
+                                    onMouseLeave={() => setActiveId(null)}
                                 >
-                                    {/* Push Pin */}
-                                    <div className="absolute -top-3 w-4 h-4 rounded-full bg-[#b91c1c] shadow-[2px_4px_6px_rgba(0,0,0,0.5)] border border-[#7f1d1d] z-30" />
-
-                                    {/* Photo Container */}
-                                    <div className="w-full aspect-[4/5] bg-[#111] mb-2 relative border-[0.5px] border-gray-400 overflow-hidden">
-                                        {isUnlocked ? (
-                                            <>
-                                                <img
-                                                    src={node.id === 'capone' ? "assets/capone-split-personality.jpg" : `https://picsum.photos/seed/${node.id}/300/350`}
-                                                    alt={node.name}
-                                                    className={`h-full object-cover filter contrast-[1.2] grayscale-[0.5] sepia-[0.3] max-w-none transition-all duration-500`}
-                                                    style={node.id === 'capone' ? {
-                                                        width: '200%',
-                                                        transform: hasSwitchedPersona ? 'translateX(-50%)' : 'translateX(0)',
-                                                        objectPosition: 'center 20%'
-                                                    } : { width: '100%' }}
-                                                />
-                                                {/* Coffee Stain Overlay */}
-                                                {index % 3 === 0 && <div className="absolute -top-2 -right-2 w-12 h-12 bg-[#5d4037] rounded-full mix-blend-multiply opacity-30 filter blur-md" />}
-                                            </>
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a]">
-                                                <span className="font-serif text-4xl text-white/10">?</span>
-                                            </div>
-                                        )}
+                                    {/* Matrix Label */}
+                                    <div className="absolute top-0 left-0 bg-gray-900 px-1.5 py-0.5 text-[7px] font-mono text-gray-500 uppercase tracking-tighter">
+                                        ID_{node.id.toUpperCase()}
                                     </div>
 
-                                    {/* Label */}
-                                    <div className="text-center w-full mt-1">
-                                        <span className="font-mono font-bold text-black/80 text-[12px] uppercase tracking-tighter" style={{ fontFamily: 'Courier New, monospace' }}>
-                                            {isUnlocked ? node.name : 'UNKNOWN'}
-                                        </span>
+                                    {/* Role Header */}
+                                    <div className="w-full border-b border-white/5 pb-1.5 mb-3 text-center">
+                                        <span className="text-xs font-bold text-white tracking-[0.1em]">{node.role}</span>
                                     </div>
 
-                                    {/* Redaction Marker */}
-                                    {!isUnlocked && (
-                                        <div className="absolute top-1/2 left-2 right-2 h-4 bg-black/90 transform -rotate-2 flex items-center justify-center">
-                                            <span className="text-[6px] text-white/50 tracking-[0.4em]">REDACTED</span>
+                                    {/* Input Field for Hypothesis */}
+                                    <div className="w-full flex flex-col gap-1 items-center">
+                                        <input
+                                            type="text"
+                                            className="w-full bg-black/80 border border-gray-800 px-2 py-1 text-xs font-mono text-green-400 outline-none focus:border-green-500 transition-colors uppercase text-center"
+                                            placeholder="[WHO IS THIS?]"
+                                            value={playerHypotheses[node.id] || ''}
+                                            onChange={(e) => onUpdateHypothesis?.(node.id, e.target.value)}
+                                            readOnly={!isUnlocked}
+                                        />
+                                    </div>
+
+                                    {/* Verification Stamp */}
+                                    {playerHypotheses[node.id]?.trim().toUpperCase() === node.name.toUpperCase() && (
+                                        <div className="absolute -bottom-1 -right-1 transform rotate-[-10deg] border border-green-500 px-1.5 py-0.5 bg-black z-50">
+                                            <span className="text-[9px] font-bold text-green-500 tracking-wider">VERIFIED</span>
                                         </div>
                                     )}
-                                </div>
 
-                                {/* Chalk Role Indicator on Board */}
-                                <div className="absolute top-[102%] left-1/2 -translate-x-1/2 w-max pointer-events-none z-0">
-                                    <span className="font-handwriting text-white/70 text-sm tracking-widest -rotate-2 block filter drop-shadow-md">
-                                        {node.role}
-                                    </span>
+                                    {/* Description (Tooltips on hover?) */}
+                                    {isActive && isUnlocked && (
+                                        <div className="absolute top-full left-0 mt-2 w-full bg-black border border-white/10 p-2 z-[100] shadow-2xl">
+                                            <p className="text-[9px] font-mono text-gray-400 leading-tight italic">
+                                                "{node.description}"
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </motion.div>
                         );
                     })}
                 </div>
+
             </div>
-        </div>
+        </div >
     );
 };

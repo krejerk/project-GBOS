@@ -15,6 +15,7 @@ import {
 } from './constants';
 import { DebugController } from './components/DebugController';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { MusicControl } from './components/MusicControl';
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -30,6 +31,7 @@ const App: React.FC = () => {
     unlockedArchiveIds: [],
     systemStability: 84, // Initial Stability
     currentStoryNode: 0, // No story nodes reached yet
+    playerHypotheses: {},
     history: [
       { type: 'info', content: '[SYSTEM]: NEURAL LINK ESTABLISHED...', timestamp: Date.now() }
     ],
@@ -38,6 +40,49 @@ const App: React.FC = () => {
 
   const [nodes, setNodes] = useState(CORE_NODES);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // --- AUDIO LOGIC ---
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [hasMusicStarted, setHasMusicStarted] = useState(false);
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Initialize audio only on client side
+    const audio = new Audio(`${import.meta.env.BASE_URL}audio/bgm.m4a`);
+    audio.loop = true;
+    audioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audioRef.current = null;
+    };
+  }, []);
+
+  const startMusic = useCallback(() => {
+    if (audioRef.current && !hasMusicStarted) {
+      audioRef.current.play().then(() => {
+        setIsMusicPlaying(true);
+        setHasMusicStarted(true);
+      }).catch(err => {
+        console.warn("Audio playback failed:", err);
+      });
+    }
+  }, [hasMusicStarted]);
+
+  const toggleMusic = useCallback(() => {
+    if (audioRef.current) {
+      if (isMusicPlaying) {
+        audioRef.current.pause();
+        setIsMusicPlaying(false);
+      } else {
+        audioRef.current.play().then(() => {
+          setIsMusicPlaying(true);
+        }).catch(err => {
+          console.warn("Audio playback failed:", err);
+        });
+      }
+    }
+  }, [isMusicPlaying]);
 
   // --- SUBCONSCIOUS RETRACE LOGIC ---
   const handleRetrace = useCallback(() => {
@@ -125,25 +170,38 @@ const App: React.FC = () => {
 
   // Handle story node completion
   const handleStoryNodeComplete = useCallback((nodeId: number) => {
-    setGameState(prev => ({
-      ...prev,
-      currentStoryNode: nodeId,
-      history: [
-        ...prev.history,
-        { type: 'info', content: `[STORY CHECKPOINT]: 第${nodeId}章节已完成`, timestamp: Date.now() }
-      ]
-    }));
+    setGameState(prev => {
+      let updatedUnlockedNodeIds = prev.unlockedNodeIds;
+
+      // When entering Node 6 (Awakening), unlock all previous and current confessions up to 26
+      if (nodeId === 6) {
+        const node6Confessions = Array.from({ length: 26 }, (_, i) => `confession_${i + 1}`);
+        updatedUnlockedNodeIds = Array.from(new Set([...prev.unlockedNodeIds, ...node6Confessions]));
+      }
+
+      return {
+        ...prev,
+        currentStoryNode: nodeId,
+        unlockedNodeIds: updatedUnlockedNodeIds,
+        history: [
+          ...prev.history,
+          { type: 'info', content: `[STORY CHECKPOINT]: 第${nodeId}章节已完成`, timestamp: Date.now() }
+        ]
+      };
+    });
   }, []);
 
   // Handle clearing unused keywords (Jennifer回收未使用的关键词) after Node 3
   const handleClearUnusedKeywords = useCallback(() => {
     // PERSISTENCE REFINED: We clear "searchable" items to clean the UI as Jennifer "sweeps" data.
     // Core people are kept for Mind Map stability; others are swept for re-collection.
-    const CORE_KEEPS = ['capone', 'father', 'dr_reggie', 'robert', 'robert_capone'];
+    // NODE 6 ADDITION: Preserve critical keywords for the final phase.
+    const CORE_KEEPS = ['capone', 'father', 'dr_reggie', 'robert', 'robert_capone', 'alexei', 'morandi'];
+    const NODE_6_CLUES = ['amalekite_protocol', 'tithe'];
 
     setGameState(prev => ({
       ...prev,
-      collectedClues: [],
+      collectedClues: prev.collectedClues.filter(id => NODE_6_CLUES.includes(id)),
       collectedYears: [],
       unlockedPeople: prev.unlockedPeople.filter(id => CORE_KEEPS.includes(id.toLowerCase())),
       history: [
@@ -161,14 +219,11 @@ const App: React.FC = () => {
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdownValue, setCountdownValue] = useState(5);
   const [showAwakeningDialogue, setShowAwakeningDialogue] = useState(false);
-  const [hasSwitchedPersona, setHasSwitchedPersona] = useState<boolean>(() => {
-    return localStorage.getItem('project_gbos_persona_switched') === 'true';
-  });
 
   // Persistence for Persona Switch
   useEffect(() => {
-    localStorage.setItem('project_gbos_persona_switched', hasSwitchedPersona.toString());
-  }, [hasSwitchedPersona]);
+    localStorage.setItem('project_gbos_persona_switched', (gameState.hasSwitchedPersona || false).toString());
+  }, [gameState.hasSwitchedPersona]);
 
   const handlePersonaReboot = useCallback(() => {
     // 1. Close active node
@@ -366,6 +421,8 @@ const App: React.FC = () => {
       'laguna_beach': true, '拉古那海滩': true, 'laguna beach': true,
       'santa_fe': true, '圣菲': true, 'santa fe': true,
       'bonny_and_clyde': true, '邦妮和克莱德': true, 'bonny and clyde': true,
+      'reporter': true, '记者': true,
+      'mill_valley': true, '米尔谷': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -1673,6 +1730,12 @@ const App: React.FC = () => {
           response: '> [R. CAPONE]: "难道说真的是她……那天在埃尔帕索，当我绝望地把烟盒揉烂的时候，她就在教堂的角落里看着，对吗？"',
           priority: 999, // Highest priority to override anything else
         },
+        {
+          keywords: ['vampire', '吸血鬼'],
+          response: '> [R. CAPONE]: "你想知道圣路易斯发生了什么？去问阿尔特曼啊，让他在办公室里，照照镜子就知道吸血鬼在哪了。别来问我。我已经死了，不存在了。"',
+          priority: 200,
+          fuzzyMatch: true
+        },
 
         // ===== RESTORED EASTER EGGS / CONTEXTUAL RESPONSES (High Priority) =====
         {
@@ -1690,6 +1753,11 @@ const App: React.FC = () => {
         {
           keywords: ['青豆牡蛎汤', 'gbos', 'g.b.o.s', '牡蛎汤', 'green bean oyster soup'],
           response: '> [R. CAPONE]: "那是犯罪的味道，还是某种邪恶仪式的序曲？我建议你先查查1968年的那份谷仓档案。"',
+          priority: 95
+        },
+        {
+          keywords: ['黄油朱莉普', 'golden julip', 'julip', '朱莉普', '黄油'],
+          response: '> [R. CAPONE]: "这是我在那个维度醒来前，喝的最后一杯酒。现在我舌头上剩下的只有铁锈味和灰水箱里的霉块。别用这杯酒来诱惑一个已经没法吞咽的人。"',
           priority: 95
         },
         {
@@ -1974,7 +2042,28 @@ const App: React.FC = () => {
       const newHistory: Array<{ type: 'search' | 'info' | 'shatter'; content: string; timestamp: number }> = [];
 
       // REWARDS: These skip consumption checks
-      const REWARD_IDS = ['recruitment', 'priest', 'morning', 'year_1974', 'texarkana', 'el_paso', 'dirty_frank', 'dismemberment_case', 'church', 'kansas_city', 'mobile_blood_truck', 'silver_magpie'];
+      // Also includes all archive article-sourced keywords, so clicking them in archive text
+      // always collects them regardless of whether they were previously consumed by a confession.
+      const REWARD_IDS = [
+        // Original reward IDs
+        'recruitment', 'priest', 'morning', 'year_1974', 'texarkana', 'el_paso',
+        'dirty_frank', 'dismemberment_case', 'church', 'kansas_city', 'mobile_blood_truck', 'silver_magpie',
+        // Critical Years with multiple archive cases
+        'year_1971', 'year_1973', 'year_1976',
+        // Archive-sourced keywords (from ARCHIVE_CASE_HIGHLIGHT_MAP) — bypass consumption guard
+        // me_1971, oh_1968, nas_1973, oh_1968 newspapers/annotations
+        'ohio', 'ritual_case', 'year_1968', 'year_1967',
+        // archive_15, archive_16
+        'st_louis', 'denver_suburb', 'police_killing',
+        // il_1985, nv_1971
+        'family_massacre', 'training_day', '1402_old_dominion_rd', 'mojave_rest_stop', 'empty_cigarette_pack',
+        // cin_1973, nas_1973, ky_1973
+        'mint_plan', 'year_1986', 'burkesville', 'year_1975', 'klub75_report', 'quantico',
+        // kan_1976, kc_1965
+        'east_12th_st', 'execution_room', 'maggots',
+        // ia_1976, sf_1976, tx_1967, va_1990, dc_1967
+        'davenport', 'roanoke', 'mill_valley', 'reporter',
+      ];
       const isReward = REWARD_IDS.includes(clueId);
 
       if (!isReward && currentConsumed.has(clueId)) return prev;
@@ -2002,6 +2091,7 @@ const App: React.FC = () => {
         // Years can be re-collected for different archive triggers
         // Always add to array (even if duplicate) to support multiple uses
         updates.collectedYears = [...prev.collectedYears, clueId];
+        newHistory.push({ type: 'info', content: `[YEAR RECORDED]: ${word} 已收录到时间线`, timestamp: Date.now() });
       }
       else if (isLocation || isCase) {
         if (!prev.collectedClues.includes(clueId) || isReward) {
@@ -2064,97 +2154,180 @@ const App: React.FC = () => {
       ...prev,
       ...newState
     }));
+    // If using debug, ensure music module is visible and starts playing
+    startMusic();
   };
 
-  const shouldShowMonster = hasSwitchedPersona && gameState.unlockedNodeIds.filter(id => id.startsWith('confession_')).length === 26;
+  // --- BOARD PERSISTENCE HANDLERS ---
+  const handleUpdateHypothesis = (nodeId: string, name: string) => {
+    setGameState(prev => ({
+      ...prev,
+      playerHypotheses: { ...prev.playerHypotheses, [nodeId]: name }
+    }));
+  };
+
+  const isChapterSolved = (chapter: number) => {
+    // Assuming RELATIONSHIP_TREE is imported or defined elsewhere in the file
+    // For example: import { RELATIONSHIP_TREE } from './constants';
+    // Or defined as a const in this file.
+    const chapterMembers = RELATIONSHIP_TREE.filter(m => m.chapter === chapter && gameState.unlockedPeople.includes(m.id));
+    if (chapterMembers.length === 0) return true; // No unlocked people to solve yet
+    return chapterMembers.every(m => {
+      const hypothesis = gameState.playerHypotheses[m.id]?.trim().toUpperCase();
+      return hypothesis === m.name.toUpperCase();
+    });
+  };
+
+  const handleNodeClick = (id: string) => {
+    const node = nodes.find(n => n.id === id);
+    if (!node) return;
+
+    // GATING LOGIC: Jennifer nodes (awakening)
+    if (id.startsWith('jennifer_node')) {
+      // Identity Matrix gating removed per user request
+    }
+
+    setGameState(prev => ({ ...prev, activeNodeId: id }));
+  };
+
+  const shouldShowMonster = !!gameState.hasSwitchedPersona;
 
   // Render based on current phase
   return (
-    <AnimatePresence mode="wait">
-      {gameState.phase === 'briefing' && (
-        <motion.div key="briefing" className="w-full h-full" exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }} transition={{ duration: 0.5 }}>
-          <BriefingView onComplete={() => setGameState(p => ({ ...p, phase: 'briefing-detail' }))} />
-        </motion.div>
-      )}
+    <div className="w-full h-full relative overflow-hidden">
+      {/* Global Music Control - only visible after first interaction */}
+      <MusicControl
+        isPlaying={isMusicPlaying}
+        onToggle={toggleMusic}
+        isVisible={hasMusicStarted}
+      />
 
-      {/* Global Debug Controller - Always available except in TitleScreen */}
-      {gameState.phase !== 'title' && (
-        <DebugController onSetState={handleDebugStateChange} />
-      )}
+      <AnimatePresence mode="wait">
+        {gameState.phase === 'briefing' && (
+          <motion.div
+            key="briefing"
+            className="w-full h-full"
+            exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+            transition={{ duration: 0.5 }}
+          >
+            <BriefingView
+              onComplete={() => setGameState(p => ({ ...p, phase: 'briefing-detail' }))}
+              onFirstInteraction={startMusic}
+            />
+          </motion.div>
+        )}
 
-      {gameState.phase === 'briefing-detail' && (
-        <motion.div key="briefing-detail" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20, filter: "blur(5px)" }} transition={{ duration: 0.8 }}>
-          <BriefingDetailView
-            onContinue={() => setGameState(p => ({ ...p, phase: 'dialogue' }))}
-            onCollectClue={handleCollectClue}
-            collectedClues={gameState.collectedClues}
-            collectedDossierIds={gameState.collectedDossierIds || []}
-          />
-        </motion.div>
-      )}
-
-      {gameState.phase === 'dialogue' && (
-        <motion.div key="dialogue" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}>
-          <DialogueView
-            onComplete={() => setGameState(p => ({ ...p, phase: 'immersion', passwordEntered: true }))}
-            collectedClues={gameState.collectedClues}
-            unlockedPeople={gameState.unlockedPeople}
-            hasSwitchedPersona={shouldShowMonster}
-          />
-        </motion.div>
-      )}
-
-      {gameState.phase === 'immersion' && (
-        <motion.div key="immersion" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-          <ErrorBoundary>
-            <SimplifiedMainView
-              nodes={visibleNodes}
-              onNodeClick={(id) => setGameState(p => ({ ...p, activeNodeId: id }))}
-              activeNodeId={gameState.activeNodeId}
-              onSearch={handleSearch}
-              history={gameState.history}
-              isProcessing={isProcessing}
-              activeNode={activeNode}
-              onShatter={handleShatter}
-              collectedClues={gameState.collectedClues}
-              collectedYears={gameState.collectedYears}
-              unlockedPeople={gameState.unlockedPeople}
+        {gameState.phase === 'briefing-detail' && (
+          <motion.div
+            key="briefing-detail"
+            className="w-full h-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -20, filter: "blur(5px)" }}
+            transition={{ duration: 0.8 }}
+          >
+            <BriefingDetailView
+              onContinue={() => setGameState(p => ({ ...p, phase: 'dialogue' }))}
               onCollectClue={handleCollectClue}
-              unlockedArchiveIds={gameState.unlockedArchiveIds}
-              onUnlockArchive={handleUnlockArchive}
-              onConsumeKeywords={handleConsumeKeywords}
-              onCollectAttachment={handleCollectAttachment}
+              collectedClues={gameState.collectedClues}
               collectedDossierIds={gameState.collectedDossierIds || []}
-              collectedAttachments={gameState.collectedAttachments || []}
-              onStoryNodeComplete={handleStoryNodeComplete}
-              onRetrace={handleRetrace}
-              onClearUnusedKeywords={handleClearUnusedKeywords}
-              currentStoryNode={gameState.currentStoryNode}
-              systemStability={gameState.systemStability}
-              isPersonaGlitching={isPersonaGlitching}
-              onPersonaReboot={handlePersonaReboot}
-              showCountdown={showCountdown}
-              countdownValue={countdownValue}
+            />
+          </motion.div>
+        )}
+
+        {gameState.phase === 'dialogue' && (
+          <motion.div
+            key="dialogue"
+            className="w-full h-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <DialogueView
+              onComplete={() => setGameState(p => ({ ...p, phase: 'immersion', passwordEntered: true }))}
+              collectedClues={gameState.collectedClues}
+              unlockedPeople={gameState.unlockedPeople}
               hasSwitchedPersona={shouldShowMonster}
             />
-          </ErrorBoundary>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
 
-      {showAwakeningDialogue && (
-        <AwakeningDialogue
-          onComplete={() => {
-            setShowAwakeningDialogue(false);
-            setHasSwitchedPersona(true);
-            // Returning to main view silently as requested
-          }}
-        />
-      )}
+        {gameState.phase === 'immersion' && (
+          <motion.div
+            key="immersion"
+            className="w-full h-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
+            <ErrorBoundary>
+              <SimplifiedMainView
+                gameState={gameState}
+                nodes={nodes}
+                onNodeClick={handleNodeClick}
+                activeNodeId={gameState.activeNodeId || ''}
+                onSearch={handleSearch}
+                history={gameState.history}
+                collectedClues={gameState.collectedClues}
+                collectedYears={gameState.collectedYears}
+                unlockedPeople={gameState.unlockedPeople}
+                onCollectClue={handleCollectClue}
+                onCollectAttachment={handleCollectAttachment}
+                onUnlockArchive={handleUnlockArchive}
+                onShatter={handleShatter}
+                onPersonaReboot={handlePersonaReboot}
+                onUpdateHypothesis={handleUpdateHypothesis}
+                isChapterSolved={isChapterSolved}
+                isProcessing={isProcessing}
+                onRetrace={handleRetrace}
+                onStoryNodeComplete={handleStoryNodeComplete}
+                onClearUnusedKeywords={handleClearUnusedKeywords}
+                onConsumeKeywords={handleConsumeKeywords}
+                isPersonaGlitching={isPersonaGlitching}
+                showCountdown={showCountdown}
+                countdownValue={countdownValue}
+                playerHypotheses={gameState.playerHypotheses}
+              />
+            </ErrorBoundary>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {isBlackout && (
-        <div className="fixed inset-0 bg-black z-[2000] pointer-events-none" />
-      )}
-    </AnimatePresence>
+      {/* Overlays */}
+      <AnimatePresence>
+        {showAwakeningDialogue && (
+          <AwakeningDialogue
+            onComplete={() => {
+              setShowAwakeningDialogue(false);
+              setGameState(prev => ({
+                ...prev,
+                hasSwitchedPersona: true,
+                history: [
+                  ...prev.history,
+                  {
+                    type: 'dialogue',
+                    content: '> [ROBERT_CAPONE]: "说吧，你还要挖什么烂账？"',
+                    timestamp: Date.now()
+                  }
+                ]
+              }));
+            }}
+          />
+        )}
+        {isBlackout && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black z-[2000] pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Global Debug Controller */}
+      <DebugController onSetState={handleDebugStateChange} />
+    </div>
   );
 };
 

@@ -35,12 +35,12 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   const VisualShatter = () => {
     const shards = Array.from({ length: 16 });
     return (
-      <div className="relative py-24 my-12 border-y border-[#d89853]/10 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-transparent via-red-950/5 to-transparent">
+      <div className={`relative py-24 my-12 border-y flex flex-col items-center justify-center overflow-hidden ${node.id.includes('confession') ? 'border-[var(--confess-border)] bg-gradient-to-b from-transparent via-[var(--confess-highlight)]/5 to-transparent' : 'border-[#d89853]/10 bg-gradient-to-b from-transparent via-red-950/5 to-transparent'}`}>
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: [0, 0.2, 0.1, 0], scale: [0.8, 1.1, 1.2, 1.5] }}
           transition={{ duration: 2, times: [0, 0.2, 0.8, 1] }}
-          className="text-[#d89853] font-mono text-[120px] font-black tracking-tighter mix-blend-overlay absolute select-none blur-sm"
+          className={`${node.id.includes('confession') ? 'text-[var(--confess-highlight)]' : 'text-[#d89853]'} font-mono text-[120px] font-black tracking-tighter mix-blend-overlay absolute select-none blur-sm`}
         >
           AGENT
         </motion.div>
@@ -57,7 +57,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
               scale: Math.random() * 3 + 0.5
             }}
             transition={{ duration: 1.8, delay: 0.3 + (Math.random() * 0.4), ease: "easeOut" }}
-            className="absolute w-16 h-16 bg-[#d89853]/20 border border-[#d89853]/40 backdrop-blur-sm"
+            className={`absolute w-16 h-16 backdrop-blur-sm ${node.id.includes('confession') ? 'bg-[var(--confess-highlight)]/10 border border-[var(--confess-highlight)]/30' : 'bg-[#d89853]/20 border border-[#d89853]/40'}`}
             style={{
               clipPath: `polygon(${Math.random() * 100}% ${Math.random() * 100}%, ${Math.random() * 100}% ${Math.random() * 100}%, ${Math.random() * 100}% ${Math.random() * 100}%)`,
               zIndex: 10
@@ -69,11 +69,11 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 1 }}
-          className="relative z-20 text-[#c85a3f] font-mono text-sm tracking-[0.4em] text-center px-4"
+          className={`relative z-20 font-mono text-sm tracking-[0.4em] text-center px-4 ${node.id.includes('confession') ? 'text-[var(--confess-highlight)]' : 'text-[#c85a3f]'}`}
         >
-          <div className="p-4 border border-[#c85a3f]/30 bg-[#c85a3f]/5">
+          <div className={`p-4 border ${node.id.includes('confession') ? 'border-[var(--confess-border)] bg-[var(--confess-highlight)]/5' : 'border-[#c85a3f]/30 bg-[#c85a3f]/5'}`}>
             [ 核心身份文件已损毁 // INTERNAL_AGENT_PERSONA_PURGED ]
-            <div className="mt-3 h-[1px] w-full bg-gradient-to-r from-transparent via-[#c85a3f]/50 to-transparent" />
+            <div className={`mt-3 h-[1px] w-full bg-gradient-to-r from-transparent ${node.id.includes('confession') ? 'via-[var(--confess-highlight)]/50' : 'via-[#c85a3f]/50'} to-transparent`} />
             <div className="mt-3 text-[10px] text-white/40 tracking-[0.2em] font-light">
               REMAINING MEMORY FRAGMENTS DECAYING...
             </div>
@@ -354,14 +354,14 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
         <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cardboard.png')] mix-blend-overlay" />
       )}
 
-      <div className={`p-4 border-b ${node.id.includes('confession') ? 'border-[#d89853]/20 bg-[#d89853]/5' : 'border-[#d89853]/20'}`}>
+      <div className={`p-4 border-b ${node.id.includes('confession') ? 'border-[var(--confess-border)] bg-[var(--confess-surface)]' : 'border-[#d89853]/20'}`}>
         <div className="flex items-center justify-between mb-1.5">
           {node.id.includes('confession') ? (
             <div className="flex items-center gap-3">
-              <div className="border border-[#c85a3f] text-[#c85a3f] px-2 py-0.5 text-[9px] font-bold tracking-[0.2em] uppercase rotate-[-2deg]">
-                TOP SECRET
+              <div className="border border-[var(--confess-highlight)] text-[var(--confess-highlight)] px-2 py-0.5 text-[9px] font-bold tracking-[0.2em] uppercase">
+                DEEP SUBCONSCIOUS
               </div>
-              <span className="text-[9px] font-mono text-[#d89853]/60 uppercase tracking-widest">口供档案 #RC-7742</span>
+              <span className="text-[9px] font-mono text-[var(--confess-text)]/60 uppercase tracking-widest">神经区块 #RC-7742</span>
             </div>
           ) : (
             <span className="text-[10px] font-mono text-[#d89853]/60 uppercase tracking-widest">神经片段解析</span>
@@ -375,7 +375,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
             </div>
           )}
         </div>
-        <h2 className={`text-xl font-bold tracking-tight uppercase ${node.id.includes('confession') ? 'text-[#d89853] font-mono' : 'text-[#d89853] italic'}`}>
+        <h2 className={`text-xl font-bold tracking-tight uppercase ${node.id.includes('confession') ? 'text-[var(--confess-text)] font-mono' : 'text-[#d89853] italic'}`}>
           {node.title}
         </h2>
         {!node.id.includes('confession') && <div className="text-xs text-[#d89853]/50 font-mono">STATUS: {node.currentLayer} VIEW</div>}
@@ -383,7 +383,10 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
 
       <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar relative z-10">
         {node.id.includes('confession') ? (
-          <div className="relative h-full flex flex-col bg-black overflow-hidden group/confession">
+          <div className="relative h-full flex flex-col bg-[var(--confess-bg)] overflow-hidden group/confession rounded-sm border border-[var(--confess-border)]">
+            {/* Global CRT overlay applied over the entire confession reader */}
+            <div className="crt-overlay" />
+
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
               {/* Subtle Global Glow/Stabilization Phase */}
               <motion.div
@@ -396,10 +399,9 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
               {/* Scanning Line Effect */}
               <motion.div
                 animate={{ y: ["-100%", "200%"] }}
-                transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
-                className="absolute inset-x-0 h-[20%] bg-gradient-to-b from-transparent via-[#d89853]/5 to-transparent z-[4] opacity-30"
+                transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+                className="absolute inset-x-0 h-[30%] bg-gradient-to-b from-transparent via-[var(--confess-highlight)]/10 to-transparent z-[4] opacity-30 mix-blend-screen"
               />
-              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.1] mix-blend-overlay z-[3]" />
             </div>
 
             {/* Stabilization Progress Overlay */}
@@ -411,13 +413,13 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                   exit={{ opacity: 0 }}
                   className="absolute top-0 right-0 p-4 z-20 pointer-events-none"
                 >
-                  <div className="flex items-center gap-2 text-[8px] font-mono text-[#c85a3f] tracking-widest uppercase">
+                  <div className="flex items-center gap-2 text-[8px] font-mono text-[var(--confess-highlight)] tracking-widest uppercase opacity-80">
                     <motion.div
                       animate={{ opacity: [1, 0, 1] }}
                       transition={{ repeat: Infinity, duration: 0.8 }}
-                      className="w-1 h-1 bg-[#c85a3f] rounded-full"
+                      className="w-1 h-1 bg-[var(--confess-highlight)] rounded-full shadow-[0_0_5px_var(--confess-highlight)]"
                     />
-                    Stabilizing Neural Stream...
+                    Scanning deep memory...
                   </div>
                 </motion.div>
               )}
@@ -455,20 +457,20 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 2 }}
-                    className="mt-16 p-8 bg-[#c85a3f]/5 border border-[#c85a3f]/20 rounded-sm relative overflow-hidden group/visual"
+                    className="mt-16 p-8 bg-[var(--confess-highlight)]/5 border border-[var(--confess-border)] rounded-sm relative overflow-hidden group/visual"
                   >
                     {!isVisualRevealed ? (
-                      <div className="cursor-pointer hover:bg-[#c85a3f]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
-                        <p className="text-xs text-[#c85a3f] font-mono tracking-[0.3em] mb-3 uppercase">[SYSTEM]: 侦测到残留视觉信号</p>
-                        <div className="border border-[#d89853]/40 px-6 py-2 text-sm text-[#d89853] font-bold">解析视觉记忆块 {" >> "}</div>
+                      <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
+                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号</p>
+                        <div className="border border-[var(--confess-border)] px-6 py-2 text-sm text-[var(--confess-highlight)] font-bold">解析视觉记忆块 {" >> "}</div>
                       </div>
                     ) : (
                       <div
                         className="relative cursor-pointer"
                         onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
                       >
-                        <img src="assets/iron_horse_beacon.jpg" className={`w-full h-auto grayscale brightness-50 ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
-                        {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[#d89853] opacity-80 rotate-[-15deg]">ARCHIVED</div>}
+                        <img src="assets/iron_horse_beacon.jpg" className={`w-full h-auto grayscale brightness-50 mix-blend-screen ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
+                        {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-80 rotate-[-15deg]">ARCHIVED</div>}
                       </div>
                     )}
                   </motion.div>
@@ -479,20 +481,20 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 2 }}
-                    className="mt-16 p-8 bg-[#c85a3f]/5 border border-[#c85a3f]/20 rounded-sm relative overflow-hidden group/visual"
+                    className="mt-16 p-8 bg-[var(--confess-highlight)]/5 border border-[var(--confess-border)] rounded-sm relative overflow-hidden group/visual"
                   >
                     {!isVisualRevealed ? (
-                      <div className="cursor-pointer hover:bg-[#c85a3f]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
-                        <p className="text-xs text-[#c85a3f] font-mono tracking-[0.3em] mb-3 uppercase">[SYSTEM]: 侦测到残留视觉信号</p>
-                        <div className="border border-[#d89853]/40 px-6 py-2 text-sm text-[#d89853] font-bold">解析视觉记忆块 {" >> "}</div>
+                      <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
+                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号</p>
+                        <div className="border border-[var(--confess-border)] px-6 py-2 text-sm text-[var(--confess-highlight)] font-bold">解析视觉记忆块 {" >> "}</div>
                       </div>
                     ) : (
                       <div
                         className="relative cursor-pointer"
                         onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
                       >
-                        <img src="assets/record_of_accounts.jpg" className={`w-full h-auto grayscale brightness-50 ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
-                        {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[#d89853] opacity-80 rotate-[-15deg]">ARCHIVED</div>}
+                        <img src="assets/record_of_accounts.jpg" className={`w-full h-auto grayscale brightness-50 mix-blend-screen ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
+                        {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-80 rotate-[-15deg]">ARCHIVED</div>}
                       </div>
                     )}
                   </motion.div>
@@ -566,19 +568,19 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
             className="absolute inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-6"
           >
             <div className="w-full max-w-sm space-y-8">
-              <div className="flex justify-between items-center border-b border-[#d89853]/20 pb-4">
-                <h3 className="text-[#d89853] font-mono text-sm tracking-widest">SELECT ARCHIVE FOLDER</h3>
-                <button onClick={() => setIsSelectingFolder(false)} className="text-[#d89853]/40 hover:text-[#d89853]"><X size={16} /></button>
+              <div className={`flex justify-between items-center border-b pb-4 ${node.id.includes('confession') ? 'border-[var(--confess-border)]' : 'border-[#d89853]/20'}`}>
+                <h3 className={`font-mono text-sm tracking-widest ${node.id.includes('confession') ? 'text-[var(--confess-highlight)]' : 'text-[#d89853]'}`}>SELECT ARCHIVE FOLDER</h3>
+                <button onClick={() => setIsSelectingFolder(false)} className={`${node.id.includes('confession') ? 'text-[var(--confess-highlight)]/40 hover:text-[var(--confess-highlight)]' : 'text-[#d89853]/40 hover:text-[#d89853]'}`}><X size={16} /></button>
               </div>
               <div className="grid gap-3">
                 {collectedDossierIds.map(clueId => (
                   <button
                     key={clueId}
                     onClick={() => handleAttemptCollect(clueId)}
-                    className="flex items-center gap-4 bg-[#d89853]/5 border border-[#d89853]/20 p-4 hover:bg-[#d89853]/10 transition-all text-left group"
+                    className={`flex items-center gap-4 border p-4 transition-all text-left group ${node.id.includes('confession') ? 'bg-[var(--confess-highlight)]/5 border-[var(--confess-border)] hover:bg-[var(--confess-highlight)]/10 text-[var(--confess-highlight)]' : 'bg-[#d89853]/5 border-[#d89853]/20 hover:bg-[#d89853]/10 text-[#d89853]'}`}
                   >
-                    <Folder className="text-[#d89853] group-hover:scale-110 transition-transform" />
-                    <span className="text-[#d89853] font-mono text-xs truncate">{clueDisplayMap[clueId]}</span>
+                    <Folder className={`${node.id.includes('confession') ? 'text-[var(--confess-highlight)]' : 'text-[#d89853]'} group-hover:scale-110 transition-transform`} />
+                    <span className={`font-mono text-xs truncate ${node.id.includes('confession') ? 'text-[var(--confess-highlight)]' : 'text-[#d89853]'}`}>{clueDisplayMap[clueId]}</span>
                   </button>
                 ))}
               </div>

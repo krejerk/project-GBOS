@@ -6,6 +6,7 @@ import { ChevronRight, AlertCircle } from 'lucide-react';
 
 interface BriefingViewProps {
   onComplete: () => void;
+  onFirstInteraction?: () => void;
 }
 
 interface BriefingStep {
@@ -81,10 +82,11 @@ const BRIEFING_STEPS: BriefingStep[] = [
   },
 ];
 
-export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete }) => {
+export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete, onFirstInteraction }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const step = BRIEFING_STEPS[currentStep];
 
@@ -118,6 +120,11 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete }) => {
   }, [currentStep]);
 
   const handleNext = () => {
+    if (!hasInteracted) {
+      setHasInteracted(true);
+      onFirstInteraction?.();
+    }
+
     if (isTyping) {
       setDisplayedText(step.content);
       setIsTyping(false);

@@ -11,7 +11,8 @@ import {
     JENNIFER_NODE_2_DIALOGUE,
     JENNIFER_NODE_3_DIALOGUE,
     JENNIFER_NODE_4_DIALOGUE,
-    JENNIFER_NODE_5_DIALOGUE
+    JENNIFER_NODE_5_DIALOGUE,
+    JENNIFER_NODE_6_DIALOGUE
 } from '../constants';
 import { VehiclePhotosViewer } from './VehiclePhotosViewer';
 
@@ -33,6 +34,8 @@ interface ClueLibraryProps {
     onClearUnusedKeywords?: () => void; // Callback to clear unused keywords (for Jennifer node 3)
     onSetFilingEvidence?: (evidence: { id: string, title: string, content: string, type: 'image' | 'text' } | null) => void;
     initialSelectedClueId?: string | null;
+    hasSwitchedPersona?: boolean;
+    isChapterSolved?: (chapter: number) => boolean;
 }
 
 const CLUE_DEFINITIONS: Record<string, Clue> = {
@@ -299,6 +302,12 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         description: '康查尔在圣路易斯行动后制定的秘密方案，具体内容仍然模糊。',
         source: 'Confession'
     },
+    'reporter': {
+        id: 'reporter',
+        word: '记者',
+        description: '加里·韦伯斯特。一位调查报道记者，他的通讯线路曾因接触过神秘线人“赫克托”而被联邦调查局下令窃听。',
+        source: 'Archive'
+    },
     'recruitment': {
         id: 'recruitment',
         word: '招募',
@@ -374,7 +383,9 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     onStoryNodeComplete,
     onClearUnusedKeywords,
     onSetFilingEvidence,
-    initialSelectedClueId = null
+    initialSelectedClueId = null,
+    hasSwitchedPersona = false,
+    isChapterSolved = () => true
 }) => {
     const [selectedClue, setSelectedClue] = useState<Clue | null>(null);
     const [filter, setFilter] = useState('');
@@ -435,7 +446,9 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                 const forcedUncollected = FORCE_UNCOLLECTED.includes(clueId);
 
                 // Check if collected in ANY category (but override for forced keywords)
-                const isCollected = forcedUncollected ? false : (
+                // YEAR keywords are allowed to be collected multiple times
+                const isYearClue = (CATEGORY_IDS.YEARS || []).includes(clueId);
+                const isCollected = (forcedUncollected || isYearClue) ? false : (
                     (collectedKeywords || []).includes(clueId) ||
                     (collectedDossierIds || []).includes(clueId) ||
                     (collectedPeople || []).includes(clueId) ||
@@ -504,6 +517,11 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     // Track Node 4 dialogue completion for map update timing
     const [hasViewedNode4Dialogue, setHasViewedNode4Dialogue] = useState(false);
     const [hasViewedNode5Dialogue, setHasViewedNode5Dialogue] = useState(false);
+    const [hasViewedNode6Dialogue, setHasViewedNode6Dialogue] = useState(false);
+
+    const checkNode6Completion = () => {
+        return hasSwitchedPersona && currentStoryNode === 5;
+    };
 
     // Check for node completion - prioritize higher nodes first
     const checkNode5Completion = () => {
@@ -562,6 +580,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     // Derived Node State (Calculated on-the-fly to avoid unmount state loss)
     const detectedNodeId = (() => {
+        if (checkNode6Completion()) return 6;
         if (checkNode5Completion()) return 5;
         if (checkNode4Completion()) return 4;
         if (checkNode3Completion()) return 3;
@@ -642,6 +661,31 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 5 dialogue as viewed to trigger map update
             setHasViewedNode5Dialogue(true);
+        } else if (simulatedDialogue === JENNIFER_NODE_6_DIALOGUE || detectedNodeId === 6) {
+            // Node 6 completion: Update story node to 6
+            if (onStoryNodeComplete) {
+                onStoryNodeComplete(6);
+            }
+            // Auto-collect final route locations for Node 6 map update
+            if (onCollectClue) {
+                onCollectClue('portland', '波特兰');
+                onCollectClue('santa_barbara', '圣芭芭拉');
+                onCollectClue('laguna_beach', '拉古那海滩');
+                onCollectClue('albuquerque', '阿尔伯克基市');
+                onCollectClue('santa_fe', '圣菲');
+            }
+            // Visual feedback for Node 6
+            setNewlyAddedItems(new Set([
+                'crime_route_map',
+                'portland',
+                'santa_barbara',
+                'laguna_beach',
+                'albuquerque',
+                'santa_fe'
+            ]));
+            setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+            // Mark Node 6 dialogue as viewed to trigger map update
+            setHasViewedNode6Dialogue(true);
         }
 
         setShowJennifer(false);
@@ -649,7 +693,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         setSimulatedDialogue(null);
 
         // SYNC: If the map is currently being viewed, refresh its content to the new version
-        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3 || detectedNodeId === 4 || detectedNodeId === 5)) {
+        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3 || detectedNodeId === 4 || detectedNodeId === 5 || detectedNodeId === 6)) {
             const updatedDefinition = getDynamicClueDefinition('crime_route_map');
             if (updatedDefinition.attachments?.[0]) {
                 setViewingAttachment(updatedDefinition.attachments[0]);
@@ -665,6 +709,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     const getJenniferDialogue = (simulated: string[] | null, detectedId: number | null, visited: boolean) => {
         if (simulated) return simulated;
+        if (detectedId === 6) return JENNIFER_NODE_6_DIALOGUE;
         if (detectedId === 5) return JENNIFER_NODE_5_DIALOGUE;
         if (detectedId === 4) return JENNIFER_NODE_4_DIALOGUE;
         if (detectedId === 3) return JENNIFER_NODE_3_DIALOGUE;
@@ -691,15 +736,28 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
         // Dynamic Rule: Crime Route Map updates based on story node progression
         if (id === 'crime_route_map') {
-            // Node 5: Update AFTER player completes Jennifer's dialogue
-            const isNode5Ready = hasViewedNode5Dialogue && (currentStoryNode >= 5 || detectedNodeId === 5);
-            // Node 4: Only update AFTER player completes Jennifer's dialogue
-            const isNode4Ready = hasViewedNode4Dialogue && (currentStoryNode >= 4 || detectedNodeId === 4);
-            const isNode3Ready = currentStoryNode >= 3 || detectedNodeId === 3;
-            const isNode2Ready = currentStoryNode >= 2 || detectedNodeId === 2;
+            // Node 6: Complete route with West Coast locations
+            const isNode6Ready = currentStoryNode >= 6;
+            // Node 5: Update AFTER player completes Node 5 (currentStoryNode becomes 5)
+            const isNode5Ready = currentStoryNode >= 5;
+            // Node 4: Only update AFTER player completes Node 4
+            const isNode4Ready = currentStoryNode >= 4;
+            const isNode3Ready = currentStoryNode >= 3;
+            const isNode2Ready = currentStoryNode >= 2;
 
+            // Node 6: Add West Coast (Portland, Santa Barbara, Laguna Beach, Albuquerque, Santa Fe)
+            if (isNode6Ready) {
+                return {
+                    ...original,
+                    description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔 -> 圣路易斯 -> 堪萨斯城 -> 芝加哥 -> 罗克福德 -> 格林贝 -> 盐湖城 -> 丹佛 -> 埃尔帕索 -> 圣菲 -> 阿尔伯克基市 -> 圣芭芭拉 -> 拉古那海滩 -> 波特兰',
+                    attachments: original.attachments ? [{
+                        ...original.attachments[0],
+                        content: 'assets/crime-route-map-v6.png'
+                    }] : []
+                };
+            }
             // Node 5: Add Rockford, Green Bay, Salt Lake City (Route) + Denver, El Paso (Points)
-            if (isNode5Ready) {
+            else if (isNode5Ready) {
                 return {
                     ...original,
                     description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔 -> 圣路易斯 -> 堪萨斯城 -> 芝加哥 -> 罗克福德 -> 格林贝 -> 盐湖城（标记点：丹佛[Iris]、埃尔帕索）',
@@ -1321,6 +1379,15 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                             <div className="text-[10px] text-[#38bdf8] uppercase tracking-wider font-bold">Checkpoint 5: Reboot Command</div>
                                                             <p className="text-[#94a3b8] text-xs hover:text-[#e2e8f0] cursor-pointer" onClick={() => { setShowJennifer(true); setJenniferStep(0); setSimulatedDialogue(JENNIFER_NODE_5_DIALOGUE); setShowHistory(false); }}>
                                                                 Replay Sequence: "Three times..."
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    {/* Node 6 */}
+                                                    {(currentStoryNode >= 6 || hasSwitchedPersona) && (
+                                                        <div className="space-y-1 pt-2 border-t border-[#334155]/30">
+                                                            <div className="text-[10px] text-[#38bdf8] uppercase tracking-wider font-bold">Checkpoint 6: The Awakening</div>
+                                                            <p className="text-[#94a3b8] text-xs hover:text-[#e2e8f0] cursor-pointer" onClick={() => { setShowJennifer(true); setJenniferStep(0); setSimulatedDialogue(JENNIFER_NODE_6_DIALOGUE); setShowHistory(false); }}>
+                                                                Replay Sequence: "Self-projection image changed..."
                                                             </p>
                                                         </div>
                                                     )}

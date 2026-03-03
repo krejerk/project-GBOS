@@ -359,15 +359,15 @@ export const DialogueView: React.FC<DialogueViewProps> = ({
                                     {/* Message Bubble/Text */}
                                     <div className={`relative max-w-[90%] md:max-w-[80%] ${isSystem ? 'w-full text-center py-4' :
                                         dialogueLine.speaker === 'player'
-                                            ? 'bg-[#a0d8ef]/5 border-r-2 border-[#a0d8ef]/30 pr-6 pl-4 py-2 rounded-l-lg'
-                                            : 'bg-[#d89853]/5 border-l-2 border-[#d89853]/30 pl-6 pr-4 py-2 rounded-r-lg'
+                                            ? 'bg-[#a0d8ef]/10 backdrop-blur-md border-r-2 border-[#a0d8ef]/60 pr-6 pl-4 py-3 rounded-l-lg shadow-[0_0_20px_rgba(160,216,239,0.05)]'
+                                            : 'bg-[#d89853]/10 backdrop-blur-md border-l-2 border-[#d89853]/60 pl-6 pr-4 py-3 rounded-r-lg shadow-[0_0_20px_rgba(216,152,83,0.05)]'
                                         }`}>
-                                        <p className={`text-lg md:text-xl leading-relaxed ${isSystem ? 'text-[#c85a3f] text-sm italic tracking-widest' :
-                                            dialogueLine.speaker === 'player' ? 'text-[#a0d8ef]/90 text-right' : 'text-[#d89853]/90 text-left'
-                                            } ${!isLatest && !isSystem ? 'opacity-50' : ''}`}>
+                                        <p className={`text-xl md:text-2xl leading-relaxed ${isSystem ? 'text-[#c85a3f] text-sm italic tracking-widest' :
+                                            dialogueLine.speaker === 'player' ? 'text-[#a0d8ef] text-right' : 'text-[#d89853] text-left'
+                                            } ${!isLatest && !isSystem ? 'opacity-40' : ''}`}>
                                             {isLatest ? displayedText : dialogueLine.text}
                                             {isLatest && isTyping && (
-                                                <span className="inline-block w-2 h-5 ml-1 bg-current animate-pulse" />
+                                                <span className="inline-block w-1.5 h-6 ml-1 bg-current animate-pulse align-middle" />
                                             )}
                                         </p>
                                     </div>

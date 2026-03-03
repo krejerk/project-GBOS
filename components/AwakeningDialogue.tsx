@@ -289,9 +289,9 @@ export const AwakeningDialogue: React.FC<AwakeningDialogueProps> = ({ onComplete
                                                 <span className="uppercase">{isSystem ? 'SYSTEM MESSAGE' : (lineItem.speaker === '卡彭' ? 'UNKNOWN SUBJECT (RC)' : 'OPERATOR')}</span>
                                             </div>
                                             {/* Bubble */}
-                                            <div className={`px-6 py-4 rounded-sm will-change-transform ${isSystem ? 'border border-[#c85a3f]/20 bg-[#c85a3f]/5 min-w-[50%]' : (isPlayer
-                                                ? 'bg-[#a0d8ef]/5 border-r border-[#a0d8ef]/20 max-w-[85%]'
-                                                : 'bg-[#d89853]/5 border-l border-[#d89853]/20 max-w-[85%]'
+                                            <div className={`px-6 py-4 rounded-sm will-change-transform backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.2)] ${isSystem ? 'border border-[#c85a3f]/20 bg-[#c85a3f]/5 min-w-[50%]' : (isPlayer
+                                                ? 'bg-[#a0d8ef]/10 border-r-2 border-[#a0d8ef]/60 max-w-[85%]'
+                                                : 'bg-[#d89853]/10 border-l-2 border-[#d89853]/60 max-w-[85%]'
                                             )}`}>
                                                 <p className={`text-lg opacity-40 leading-relaxed ${isPlayer ? 'text-right' : (isSystem ? 'text-center text-[#c85a3f]' : '')}`}>
                                                     {lineItem.text}
@@ -336,11 +336,11 @@ export const AwakeningDialogue: React.FC<AwakeningDialogueProps> = ({ onComplete
                                         </div>
 
                                         {/* Active Bubble */}
-                                        <div className={`will-change-transform ${line.speaker === 'SYSTEM' ? 'min-w-[70%] text-center px-10 py-6 border border-[#c85a3f]/40 bg-[#c85a3f]/10 shadow-[0_0_30px_rgba(200,90,63,0.1)]' : (line.speaker === '玩家'
-                                            ? 'bg-[#a0d8ef]/10 border-r-2 border-[#a0d8ef]/60 px-6 py-4 max-w-[85%]'
-                                            : 'bg-[#d89853]/10 border-l-2 border-[#d89853]/60 px-6 py-4 max-w-[85%]'
+                                        <div className={`will-change-transform ${line.speaker === 'SYSTEM' ? 'min-w-[70%] text-center px-4 md:px-10 py-4 md:py-6 border border-[#c85a3f]/40 bg-[#c85a3f]/10 shadow-[0_0_30px_rgba(200,90,63,0.1)]' : (line.speaker === '玩家'
+                                            ? 'bg-[#a0d8ef]/10 border-r-2 border-[#a0d8ef]/60 px-4 md:px-6 py-3 md:py-4 max-w-[90%] md:max-w-[85%]'
+                                            : 'bg-[#d89853]/10 border-l-2 border-[#d89853]/60 px-4 md:px-6 py-3 md:py-4 max-w-[90%] md:max-w-[85%]'
                                         )}`}>
-                                            <p className={`text-xl md:text-2xl leading-relaxed ${line.speaker === '玩家' ? 'text-[#a0d8ef] text-right' : (line.speaker === 'SYSTEM' ? 'text-[#c85a3f]' : 'text-[#d89853]')}`}>
+                                            <p className={`text-lg md:text-2xl leading-relaxed ${line.speaker === '玩家' ? 'text-[#a0d8ef] text-right' : (line.speaker === 'SYSTEM' ? 'text-[#c85a3f]' : 'text-[#d89853]')}`}>
                                                 {displayedText}
                                                 {isTyping && <span className="inline-block w-1.5 h-6 ml-1 bg-current animate-pulse align-middle" />}
                                             </p>
@@ -371,8 +371,8 @@ export const AwakeningDialogue: React.FC<AwakeningDialogueProps> = ({ onComplete
                                                 type="text"
                                                 value={challengeInput}
                                                 onChange={(e) => setChallengeInput(e.target.value)}
-                                                placeholder="WAITING_FOR_INPUT..."
-                                                className="flex-1 bg-transparent py-4 text-center text-3xl text-[#d89853] placeholder-[#d89853]/10 focus:outline-none uppercase tracking-[0.2em]"
+                                                placeholder="WAITING..."
+                                                className="flex-1 bg-transparent py-4 text-center text-xl md:text-3xl text-[#d89853] placeholder-[#d89853]/10 focus:outline-none uppercase tracking-[0.2em]"
                                             />
                                             <button type="submit" className="p-2 text-[#d89853] hover:scale-110 transition-transform">
                                                 <ChevronRight size={32} />

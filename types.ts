@@ -51,6 +51,28 @@ export interface ArchiveRecord {
   keywords: string[];
 }
 
+export interface BoardNote {
+  id: string;
+  x: number;
+  y: number;
+  content: string;
+  color?: string; // e.g., 'yellow', 'blue', 'pink'
+  rotation?: number;
+}
+
+export interface SyndicateMember {
+  id: string;
+  name: string;
+  role: string;
+  parentId?: string;
+  position: { x: number, y: number };
+  status: 'ACTIVE' | 'DECEASED' | 'ARRESTED' | 'MISSING';
+  phase: 1 | 2;
+  chapter: number; // 1, 2, 3...
+  description: string;
+  materialType?: 'polaroid' | 'clipping' | 'document' | 'sketch';
+}
+
 export interface GameState {
   phase: 'title' | 'briefing' | 'briefing-detail' | 'dialogue' | 'immersion';
   unlockedNodeIds: string[];
@@ -64,7 +86,9 @@ export interface GameState {
   unlockedArchiveIds: string[]; // Store IDs of unlocked archive cases
   systemStability: number; // 0-100% (Starts at 84%)
   currentStoryNode: number; // Current story node reached (0 = none, 1 = chapter 1 complete, etc.)
+  hasSwitchedPersona?: boolean; // Whether the persona switch event has occurred
   activePersona?: 'detective' | 'shadow'; // Controls background visualization
+  playerHypotheses: Record<string, string>; // Map of node ID to player-entered name
   history: Array<{
     type: 'search' | 'info' | 'shatter' | 'archive_content' | 'dialogue';
     content: string;

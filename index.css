@@ -38,6 +38,17 @@
   /* Warnings and highlights */
   --warning-red: #d4574e;
   --highlight-rust: #c85a3f;
+
+  /* Confession UI - Deep Subconscious */
+  --confess-bg: #05080b;
+  /* Abyssal dark */
+  --confess-surface: #0a0e14;
+  /* Slightly raised dark */
+  --confess-text: #b0c4de;
+  /* Ghostly silver/blue */
+  --confess-highlight: #4fd1c5;
+  /* Phosphor teal/cyan */
+  --confess-border: rgba(79, 209, 197, 0.2);
 }
 
 body {
@@ -297,6 +308,77 @@ body {
   pointer-events: none;
   z-index: 9998;
   opacity: 0.3;
+}
+
+/* CRT reading UI overlay */
+.crt-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  /* subtle interlaced scanlines that overlay text */
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0.1) 1px,
+      transparent 1px,
+      transparent 3px);
+  animation: crt-flicker 5s infinite;
+}
+
+@keyframes crt-flicker {
+
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+
+  5% {
+    opacity: 0.95;
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  20% {
+    opacity: 0.85;
+  }
+
+  25% {
+    opacity: 0.9;
+  }
+
+  35% {
+    opacity: 0.95;
+  }
+
+  40% {
+    opacity: 0.85;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0.85;
+  }
+
+  80% {
+    opacity: 0.95;
+  }
+
+  90% {
+    opacity: 0.9;
+  }
 }
 
 /* Neon Bar Glow - Dirty Red/Orange */
