@@ -296,6 +296,17 @@ const CONFESSION_REGISTRY = [
         summary: '卡彭潜伏生涯的终结之战。描述了他如何巧妙利用瓦妮莎和莫兰迪的冲突调开同伙，并在荒漠公路上亲手处决“母亲”并完全控制了“父亲”。这是一次彻底的人格断裂与重组。',
         status: 'DECRYPTED'
     },
+    {
+        id: 'confession_27',
+        displayId: 'REC-1976-MV',
+        title: '供述 No.27: 米尔谷的礼物',
+        eventTime: '1976 ∙ 晚秋',
+        location: '加利福尼亚州 米尔谷 (Mill Valley)',
+        keywords: ['莫兰迪', '米尔谷', '礼物', '1976', '迟摘特酿'],
+        people: ['莫兰迪 (Morandi)', '艾莉丝 (Alice)', '父亲 (Father)', '罗伯特·卡彭 (Robert Capone)'],
+        summary: '关于1976年米尔谷针对某位记者的长期爆炸计划供述。莫兰迪利用“重力是不朽的”这一冷酷哲学，在地基中安置了通过沥青缓慢下滴触发的炸药。这不仅是一次犯罪，更是一场关于时间、恶意与“迟摘特酿”美学的病态展示。',
+        status: 'DECRYPTED'
+    },
 ];
 
 export const ConfessionLog: React.FC<ConfessionLogProps> = ({ unlockedNodeIds, onClose, onViewNode }) => {

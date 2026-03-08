@@ -18,6 +18,9 @@
   --bar-surface: #1a0f0b;
   --bar-glow: rgba(212, 87, 78, 0.12);
 
+  /* Persona Switch Animations */
+  --glitch-intensity: 0.5px;
+
   /* Primary - Dirty neon red and rust */
   --neon-red: #d4574e;
   --rust-red: #c85a3f;
@@ -49,6 +52,91 @@
   --confess-highlight: #4fd1c5;
   /* Phosphor teal/cyan */
   --confess-border: rgba(79, 209, 197, 0.2);
+
+  /* Evil Persona UI - High Contrast Corrupted State */
+  --evil-bg: #000000;
+  --evil-surface: #0a0000;
+  --evil-text: #ff3333;
+  --evil-accent: #ff0000;
+  --evil-highlight: #ff1111;
+  --evil-glow: rgba(255, 0, 0, 0.4);
+
+  /* Reporter / Drunk Persona UI */
+  --reporter-bg: #1a0f0b;
+  --reporter-surface: #241812;
+  --reporter-highlight: #d89853;
+  --reporter-border: rgba(216, 152, 83, 0.4);
+  --reporter-text: #e2d1c3;
+  --alcohol-stain: rgba(184, 130, 61, 0.15);
+}
+
+.reporter-paper {
+  --confess-bg: var(--reporter-bg);
+  --confess-surface: var(--reporter-surface);
+  --confess-text: var(--reporter-text);
+  --confess-highlight: var(--reporter-highlight);
+  --confess-border: var(--reporter-border);
+
+  background-color: var(--reporter-bg);
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(184, 130, 61, 0.2) 0%, transparent 35%),
+    radial-gradient(circle at 85% 75%, rgba(184, 130, 61, 0.15) 0%, transparent 30%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.6) 100%),
+    url('https://www.transparenttextures.com/patterns/cardboard.png');
+  border: none;
+  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.95), 0 40px 80px rgba(0, 0, 0, 0.8);
+  position: relative;
+  /* Simplified polygon to reduce GPU computation */
+  clip-path: polygon(0% 2%, 10% 0%, 20% 4%, 30% 1%, 40% 6%, 50% 2%, 60% 5%, 70% 1%, 80% 4%, 90% 0%, 100% 2%,
+      100% 98%, 90% 100%, 80% 96%, 70% 99%, 60% 96%, 50% 100%, 40% 96%, 30% 99%, 20% 96%, 10% 100%, 0% 98%);
+  will-change: transform, clip-path;
+  animation: drunk-sway 15s ease-in-out infinite;
+}
+
+.reporter-paper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 20px solid transparent;
+  border-image: radial-gradient(circle, var(--alcohol-stain) 0%, transparent 100%) 30;
+  opacity: 0.5;
+}
+
+.font-decayed {
+  font-family: 'Georgia', serif;
+  letter-spacing: -0.015em;
+  line-height: 1.85;
+  color: var(--reporter-text);
+  filter: sepia(0.2) contrast(1.1);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  /* Animation moved to container for better rendering performance */
+}
+
+@keyframes drunk-sway {
+
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate3d(1px, 0.5px, 0) rotate(0.1deg);
+  }
+
+  50% {
+    transform: translate3d(-0.5px, -0.2px, 0) rotate(-0.05deg);
+  }
+
+  75% {
+    transform: translate3d(0.3px, 0.4px, 0) rotate(0.05deg);
+  }
+}
+
+.border-messy {
+  border-style: solid;
+  border-width: 1px;
+  border-image: linear-gradient(to right, transparent, var(--reporter-border), transparent) 1;
 }
 
 body {
@@ -657,4 +745,76 @@ body {
 
 .animate-cinematic-glitch {
   animation: cinematic-glitch 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+}
+
+/* Responsive Background Masks for Mobile Split View */
+@media (max-width: 767px) {
+  .mask-split-top {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 95%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 95%);
+  }
+
+  .mask-split-bottom {
+    mask-image: linear-gradient(to top, black 60%, transparent 95%);
+    -webkit-mask-image: linear-gradient(to top, black 60%, transparent 95%);
+  }
+}
+
+/* Ensure no masks on desktop to prevent split lines */
+@media (min-width: 768px) {
+
+  .mask-split-top,
+  .mask-split-bottom {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+}
+
+/* Cinematic Vignette Overlay */
+.bg-vignette {
+  background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 0.4) 70%, rgba(0, 0, 0, 0.8) 100%);
+  pointer-events: none;
+}
+
+/* Background Grain Flicker */
+@keyframes noise-flicker {
+  0% {
+    transform: translate(0, 0)
+  }
+
+  10% {
+    transform: translate(-1%, -1%)
+  }
+
+  20% {
+    transform: translate(1%, 1%)
+  }
+
+  33% {
+    transform: translate(-1%, 1%)
+  }
+
+  45% {
+    transform: translate(1%, -1%)
+  }
+
+  60% {
+    transform: translate(-1%, -1%)
+  }
+
+  75% {
+    transform: translate(1%, 1%)
+  }
+
+  90% {
+    transform: translate(-1%, 1%)
+  }
+
+  100% {
+    transform: translate(1%, -1%)
+  }
+}
+
+.animate-noise {
+  animation: noise-flicker 0.2s steps(2) infinite;
 }

@@ -17,7 +17,7 @@ export const MusicControl: React.FC<MusicControlProps> = ({ isPlaying, onToggle,
                     initial={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
                     animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                     exit={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
-                    className="fixed bottom-4 right-4 z-[100]"
+                    className="fixed bottom-20 right-4 z-[100]"
                 >
                     <div className="relative group">
                         {/* Visualizer bars (Container) */}

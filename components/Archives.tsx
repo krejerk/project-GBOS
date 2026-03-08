@@ -280,7 +280,7 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
         title: '1971年内华达枯骨案',
         triggers: {
             year: '1971',
-            person: ['little_derek_wayne', '小德里克·维恩', 'Derek Wayne Jr.']
+            person: ['little_derek_wayne', '小德里克·维恩', 'Derek Wayne Jr.', 'nevada', '内华达', '内华达州']
         },
         newspaper: {
             source: '《内华达州纪事报》(The Nevada Chronicle)',
@@ -307,7 +307,7 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
         title: '1972年罗阿诺克洗衣店谋杀案',
         triggers: {
             year: '1972',
-            person: ['martha_diaz', '玛莎·迪亚兹', 'Martha Diaz']
+            person: ['martha_diaz', '玛莎·迪亚兹', 'Martha Diaz', 'roanoke', '罗阿诺克']
         },
         newspaper: {
             source: '《罗阿诺克时报》(Roanoke Times)',
@@ -975,9 +975,21 @@ export const Archives: React.FC<ArchivesProps> = ({
 
                         {/* Sidebar: Archive Directory */}
                         <div className={`
-                            w-64 border-r border-[#c85a3f]/20 bg-[#0f0a0a] flex flex-col 
-                            ${showMobileDirectory ? 'fixed inset-0 z-[150] w-full md:relative md:w-64 md:flex' : 'hidden md:flex'}
+                            w-64 border-r border-[#c85a3f]/20 bg-[#120c0c] flex flex-col 
+                            ${showMobileDirectory ? 'fixed inset-y-0 left-0 z-[150] w-[80%] max-w-[320px] md:relative md:w-64 md:flex shadow-[0_0_80px_rgba(0,0,0,0.8)]' : 'hidden md:flex'} transition-all duration-300
                         `}>
+                            {/* Backdrop for mobile directory - Lightened for legibility */}
+                            <AnimatePresence>
+                                {showMobileDirectory && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        onClick={() => setShowMobileDirectory(false)}
+                                        className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[140]"
+                                    />
+                                )}
+                            </AnimatePresence>
                             {/* Mobile Close Directory Button */}
                             <div className="md:hidden absolute top-6 right-6 z-50">
                                 <button
@@ -997,7 +1009,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                             </div>
 
                             {/* Archive List */}
-                            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                            <div className="flex-1 overflow-y-auto p-4 space-y-3">
                                 {unlockedArchiveIds.length === 0 && (
                                     <div className="text-center mt-10 text-[#c85a3f]/30 text-xs font-mono px-4">
                                         NO ARCHIVES UNLOCKED
@@ -1014,16 +1026,16 @@ export const Archives: React.FC<ArchivesProps> = ({
                                         <button
                                             key={id}
                                             onClick={() => handleOpenCase(id)}
-                                            className={`w-full text-left p-3 rounded border transition-all text-xs font-mono group relative overflow-hidden ${isActive
+                                            className={`w-full text-left p-5 md:p-3 rounded border transition-all text-sm md:text-xs font-mono group relative overflow-hidden active:bg-[#c85a3f]/30 ${isActive
                                                 ? 'bg-[#c85a3f]/20 border-[#c85a3f] text-[#d89853]'
                                                 : 'bg-black/40 border-[#c85a3f]/10 text-[#c85a3f]/60 hover:border-[#c85a3f]/40 hover:text-[#d89853]/80'
                                                 }`}
                                         >
-                                            <div className="flex items-center justify-between mb-1">
+                                            <div className="flex items-center justify-between mb-1.5 md:mb-1">
                                                 <span className="font-bold">{record.triggers.year} CASE</span>
                                                 {isActive && <div className="w-1.5 h-1.5 rounded-full bg-[#d89853] animate-pulse" />}
                                             </div>
-                                            <div className="truncate opacity-80">{record.title}</div>
+                                            <div className="line-clamp-2 md:truncate opacity-80 leading-relaxed md:leading-normal">{record.title}</div>
                                         </button>
                                     );
                                 })}
@@ -1044,68 +1056,102 @@ export const Archives: React.FC<ArchivesProps> = ({
                         {/* Main Content Area */}
                         <div className="flex-1 flex flex-col relative w-full">
                             {/* Header */}
-                            <div className="h-auto py-4 md:h-16 pt-[max(2.5rem,env(safe-area-inset-top))] md:pt-4 border-b border-[#c85a3f]/20 flex justify-between items-center px-6 bg-[#0f0a0a]/50 absolute top-0 left-0 w-full z-20 pointer-events-none">
-                                <div className="flex items-center gap-4 pointer-events-auto">
+                            <div className="h-16 md:h-20 pt-[max(1rem,env(safe-area-inset-top))] md:pt-4 border-b border-[#c85a3f]/20 flex justify-between items-center px-4 md:px-6 bg-[#0f0a0a]/90 backdrop-blur-xl absolute top-0 left-0 w-full z-[40]">
+                                <div className="flex items-center gap-2 md:gap-4">
                                     <button
-                                        onClick={() => setShowMobileDirectory(true)}
-                                        className="md:hidden p-2 bg-[#c85a3f]/10 border border-[#c85a3f]/30 rounded text-[#d89853] hover:bg-[#c85a3f]/20"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShowMobileDirectory(true);
+                                        }}
+                                        className="md:hidden flex items-center gap-2 px-4 py-2.5 bg-[#c85a3f]/20 border border-[#c85a3f]/50 rounded text-[#d89853] hover:bg-[#c85a3f]/30 transition-all active:scale-90 whitespace-nowrap z-[100] shadow-[0_0_20px_rgba(200,90,63,0.3)]"
                                         title="打开目录"
                                     >
-                                        <Menu size={20} />
+                                        <FolderOpen size={20} />
+                                        <span className="text-[12px] font-mono font-bold">DIRECTORY</span>
                                     </button>
                                     <div className="flex flex-col">
-                                        <span className="font-mono text-base md:text-lg tracking-[0.1em] md:tracking-[0.2em] font-bold text-[#d89853] text-shadow-sm">局内档案室 // ARCHIVES</span>
+                                        <h2 className="font-mono text-sm md:text-xl tracking-[0.1em] md:tracking-[0.2em] font-bold text-[#d89853] text-shadow-sm flex items-center gap-1.5 md:gap-2">
+                                            <Archive size={16} className="text-[#c85a3f] md:w-[18px]" />
+                                            <span className="hidden sm:inline">局内档案室 // </span>ARCHIVES
+                                        </h2>
                                     </div>
                                 </div>
                                 <button
                                     onClick={onClose}
-                                    className="p-2 hover:bg-[#c85a3f]/10 rounded-full text-[#c85a3f] transition-colors pointer-events-auto"
+                                    className="p-3 hover:bg-white/10 rounded-full text-[#c85a3f] transition-all hover:rotate-90 duration-300 ring-1 ring-white/5 bg-white/5 active:scale-90"
+                                    title="关闭协议 (ESC)"
                                 >
                                     <X size={24} />
                                 </button>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto custom-scrollbar relative pt-[max(5rem,calc(env(safe-area-inset-top)+3rem))] pb-8">
+                            <div className="flex-1 overflow-y-auto custom-scrollbar relative pt-20 md:pt-24 pb-8">
                                 <AnimatePresence mode='wait'>
                                     {!activeCase ? (
                                         /* SEARCH VIEW */
                                         <motion.div
                                             key="search"
-                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            initial={{ opacity: 0, scale: 0.98 }}
                                             animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.95 }}
-                                            className="w-full h-full flex flex-col items-center justify-start md:justify-center p-8 pt-[max(25%,5rem)] md:pt-8 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] overflow-y-auto custom-scrollbar"
+                                            exit={{ opacity: 0, scale: 0.98 }}
+                                            className="w-full flex-1 flex flex-col items-center justify-start md:pt-16 p-8 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"
                                         >
-                                            <div className="max-w-md w-full space-y-8 relative">
-                                                <div className="absolute -inset-10 bg-[#c85a3f]/5 blur-3xl rounded-full pointer-events-none" />
+                                            <div className="max-w-md w-full space-y-12 relative py-8 mb-20">
+                                                <div className="absolute -inset-20 bg-[#c85a3f]/5 blur-3xl rounded-full pointer-events-none" />
 
-                                                <div className="text-center space-y-2 relative">
-                                                    <ShieldAlert size={48} className="mx-auto text-[#c85a3f]/60 mb-4 animate-pulse" />
-                                                    <h3 className="text-[#d89853] font-mono tracking-widest text-xl font-bold">双重索引验证系统</h3>
-                                                    <p className="text-[#c85a3f]/60 text-xs font-mono tracking-[0.2em]">DUAL-INDEX VERIFICATION PROTOCOL</p>
+                                                <div className="text-center space-y-3 relative">
+                                                    <div className="relative inline-block">
+                                                        <ShieldAlert size={56} className="text-[#c85a3f]/40 mb-2" />
+                                                        <motion.div
+                                                            animate={{ opacity: [0.3, 0.6, 0.3] }}
+                                                            transition={{ duration: 2, repeat: Infinity }}
+                                                            className="absolute inset-0 flex items-center justify-center"
+                                                        >
+                                                            <ShieldAlert size={56} className="text-[#c85a3f] blur-md" />
+                                                        </motion.div>
+                                                    </div>
+                                                    <h3 className="text-[#d89853] font-mono tracking-[0.3em] text-2xl font-bold">验证协议</h3>
+                                                    <p className="text-[#c85a3f]/50 text-[10px] font-mono tracking-[0.3em] uppercase">Security Verification Required</p>
                                                 </div>
 
-                                                <form onSubmit={handleSearch} className="space-y-6 relative z-10">
-                                                    <div className="space-y-4">
-                                                        <div className="group">
-                                                            <label className="text-[10px] text-[#d89853]/40 font-mono tracking-widest uppercase mb-1 block group-focus-within:text-[#d89853]">时间索引 (Year)</label>
-                                                            <input
-                                                                type="text"
-                                                                value={yearInput}
-                                                                onChange={(e) => setYearInput(e.target.value)}
-                                                                placeholder="YYYY"
-                                                                className="w-full bg-black/60 border-b border-[#c85a3f]/30 text-[#d89853] py-2 px-4 font-mono focus:border-[#d89853] focus:outline-none text-center tracking-[0.5em] text-2xl transition-all placeholder-[#d89853]/10 hover:border-[#c85a3f]/60"
-                                                            />
+                                                <form onSubmit={handleSearch} className="space-y-8 relative z-10">
+                                                    <div className="space-y-6">
+                                                        {/* Styled Input Group: Year */}
+                                                        <div className="relative group">
+                                                            <div className="absolute -left-3 top-0 bottom-0 w-1 bg-[#c85a3f]/20 group-focus-within:bg-[#c85a3f] transition-colors" />
+                                                            <label className="text-[9px] text-[#d89853]/40 font-mono tracking-[0.3em] uppercase mb-2 block group-focus-within:text-[#c85a3f] transition-colors">
+                                                                索引代码: 时间 (TIME_INDEX)
+                                                            </label>
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="text"
+                                                                    value={yearInput}
+                                                                    onChange={(e) => setYearInput(e.target.value)}
+                                                                    placeholder="YYYY"
+                                                                    className="w-full bg-black/40 border-b border-[#c85a3f]/20 text-[#d89853] py-4 px-4 font-mono focus:border-[#d89853] focus:bg-black/60 focus:outline-none text-center tracking-[0.8em] text-3xl transition-all placeholder-[#d89853]/5 hover:border-[#c85a3f]/40"
+                                                                />
+                                                                <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[#c85a3f]/40" />
+                                                                <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#c85a3f]/40" />
+                                                            </div>
                                                         </div>
-                                                        <div className="group">
-                                                            <label className="text-[10px] text-[#d89853]/40 font-mono tracking-widest uppercase mb-1 block group-focus-within:text-[#d89853]">关联人物 (Person)</label>
-                                                            <input
-                                                                type="text"
-                                                                value={personInput}
-                                                                onChange={(e) => setPersonInput(e.target.value)}
-                                                                placeholder="NAME CODE"
-                                                                className="w-full bg-black/60 border-b border-[#c85a3f]/30 text-[#d89853] py-2 px-4 font-mono focus:border-[#d89853] focus:outline-none text-center tracking-[0.2em] text-xl transition-all placeholder-[#d89853]/10 hover:border-[#c85a3f]/60"
-                                                            />
+
+                                                        {/* Styled Input Group: Person */}
+                                                        <div className="relative group">
+                                                            <div className="absolute -left-3 top-0 bottom-0 w-1 bg-[#c85a3f]/20 group-focus-within:bg-[#c85a3f] transition-colors" />
+                                                            <label className="text-[9px] text-[#d89853]/40 font-mono tracking-[0.3em] uppercase mb-2 block group-focus-within:text-[#c85a3f] transition-colors">
+                                                                索引代码: 对象 (SUBJECT_CODE)
+                                                            </label>
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="text"
+                                                                    value={personInput}
+                                                                    onChange={(e) => setPersonInput(e.target.value)}
+                                                                    placeholder="NAME / CODE"
+                                                                    className="w-full bg-black/40 border-b border-[#c85a3f]/20 text-[#d89853] py-4 px-4 font-mono focus:border-[#d89853] focus:bg-black/60 focus:outline-none text-center tracking-[0.3em] text-xl transition-all placeholder-[#d89853]/5 hover:border-[#c85a3f]/40"
+                                                                />
+                                                                <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[#c85a3f]/40" />
+                                                                <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#c85a3f]/40" />
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -1140,7 +1186,16 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                         }
 
                                                                         // Normal check: Hide if consumed
-                                                                        return !consumedKeywords.has(id);
+                                                                        // Check if there are any remaining targets requiring this keyword
+                                                                        const remainingTargets = Object.entries(KEYWORD_CONSUMPTION_MAP).filter(([targetId, keywords]) => {
+                                                                            const isUnlocked = unlockedArchiveIds.includes(targetId) || (unlockedNodeIds || []).includes(targetId);
+                                                                            return !isUnlocked && keywords.includes(id);
+                                                                        });
+
+                                                                        // Node 6 Exception: Keep Alexei and Morandi available for testing/mindmap
+                                                                        if (['alexei', 'morandi'].includes(lowerId)) return true;
+
+                                                                        return remainingTargets.length > 0;
                                                                     });
                                                             })()
                                                                 .map(id => {
@@ -1178,14 +1233,22 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                         </motion.div>
                                                     )}
 
-                                                    <button
-                                                        type="submit"
-                                                        disabled={isSearching}
-                                                        className="w-full bg-gradient-to-r from-[#c85a3f]/80 to-[#a04632]/80 hover:from-[#c85a3f] hover:to-[#a04632] text-white py-4 rounded font-mono tracking-[0.2em] uppercase font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(200,90,63,0.3)] hover:shadow-[0_0_30px_rgba(200,90,63,0.5)] active:scale-[0.98]"
-                                                    >
-                                                        {isSearching ? <span className="animate-pulse">VERIFYING...</span> : '调取档案 / RETRIEVE'}
-                                                        {!isSearching && <Search size={16} />}
-                                                    </button>
+                                                    <div className="relative group">
+                                                        <div className="absolute -inset-1 bg-gradient-to-r from-[#c85a3f]/0 via-[#c85a3f]/20 to-[#c85a3f]/0 rounded blur opacity-0 group-hover:opacity-100 transition duration-500" />
+                                                        <button
+                                                            type="submit"
+                                                            disabled={isSearching}
+                                                            className="w-full relative bg-gradient-to-r from-[#c85a3f]/80 to-[#a04632]/80 hover:from-[#c85a3f] hover:to-[#a04632] text-white py-4 rounded font-mono tracking-[0.3em] uppercase font-extrabold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.4)] border border-white/5 active:scale-[0.98]"
+                                                        >
+                                                            {isSearching ? <span className="animate-pulse">VERIFYING...</span> : (
+                                                                <>
+                                                                    <span>调取档案 / RETRIEVE</span>
+                                                                    <div className="w-8 h-[1px] bg-white/30 hidden md:block" />
+                                                                    <Search size={18} className="text-white/70" />
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </motion.div>
@@ -1215,9 +1278,15 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                 exit={{ opacity: 0 }}
                                                 className="flex-1 flex flex-col md:flex-row bg-black relative overflow-hidden"
                                             >
-                                                {/* Top Overlay Controls (Mobile) */}
-                                                <div className="md:hidden absolute top-4 right-4 z-50">
-                                                    <button onClick={resetView} className="p-2 bg-black/50 text-white rounded-full"><X size={20} /></button>
+                                                {/* Top Overlay Controls (Mobile) - Enhanced for accessibility */}
+                                                <div className="md:hidden absolute top-4 right-4 z-[100] mt-[env(safe-area-inset-top)]">
+                                                    <button
+                                                        onClick={resetView}
+                                                        className="flex items-center gap-2 px-4 py-2 bg-black/80 backdrop-blur-md text-[#d89853] border border-[#d89853]/40 rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.5)] active:scale-95 transition-all font-mono text-[10px] font-bold"
+                                                    >
+                                                        <X size={16} />
+                                                        <span>CLOSE ARTICLE</span>
+                                                    </button>
                                                 </div>
 
                                                 {/* Newspaper Pane */}
@@ -1332,23 +1401,23 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 </h1>
 
                                                                 {/* Article Text - Deep fibre Integration */}
-                                                                <div className="columns-1 md:columns-2 gap-10 text-sm md:text-base leading-relaxed text-justify space-y-5 font-serif"
+                                                                <div className="columns-1 md:columns-2 gap-10 text-sm md:text-base leading-[1.8] text-justify space-y-6 font-serif"
                                                                     style={{
-                                                                        color: 'rgba(30, 30, 30, 0.9)',
-                                                                        filter: 'blur(0.25px) contrast(1.15)',
+                                                                        color: 'rgba(30, 30, 30, 0.95)',
+                                                                        filter: 'blur(0.2px) contrast(1.1)',
                                                                         mixBlendMode: 'multiply',
-                                                                        opacity: 0.92
+                                                                        opacity: 0.95
                                                                     }}
                                                                 >
                                                                     {activeCase.newspaper.content.map((para, i) => {
                                                                         const activeKeywords = ARCHIVE_CASE_HIGHLIGHT_MAP[activeCase.id] || [];
+                                                                        const pattern = `(${activeKeywords.join('|')})`;
+                                                                        const regex = new RegExp(pattern, 'g');
+                                                                        const highlightedIds = new Set<string>();
 
                                                                         if (activeKeywords.length > 0) {
-                                                                            const pattern = `(${activeKeywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`;
-                                                                            const regex = new RegExp(pattern, 'g');
-                                                                            const highlightedIds = new Set<string>();
                                                                             return (
-                                                                                <p key={i} className={`first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
+                                                                                <p key={i} className={`mb-6 break-words first-letter:text-5xl first-letter:font-bold first-letter:float-left first-letter:mr-3 first-letter:mt-1 ${i === 0 ? 'first-letter:text-black' : 'first-letter:hidden'}`}>
                                                                                     {para.split(regex).map((part, j) => {
                                                                                         if (activeKeywords.includes(part)) {
                                                                                             const clueId = ARCHIVE_KEYWORD_MAP[part];
@@ -1432,8 +1501,8 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 </div>
                                                             </div>
 
-                                                            <div className="font-mono text-sm md:text-base leading-7 space-y-6 text-neutral-300 font-light border-l border-[#c85a3f]/10 pl-6">
-                                                                {activeCase.annotation.content.split('\n').map((line, i) => {
+                                                            <div className="font-mono text-sm md:text-base leading-relaxed space-y-8 text-neutral-300 font-light border-l border-[#c85a3f]/10 pl-6">
+                                                                {activeCase.annotation.content.split('\n').filter(line => line.trim()).map((line, i) => {
                                                                     const activeKeywords = ARCHIVE_CASE_HIGHLIGHT_MAP[activeCase.id] || [];
 
                                                                     const attachmentTrigger = '「图片见附录」';
@@ -1445,7 +1514,8 @@ export const Archives: React.FC<ArchivesProps> = ({
 
                                                                     const highlightedIds = new Set<string>();
                                                                     return (
-                                                                        <p key={i} className={`mb-4 ${line.includes('后人手写批注') ? 'font-handwriting text-[#c85a3f]/90 text-lg rotate-1 py-4 px-2 bg-[#c85a3f]/5 border-y border-[#c85a3f]/10 my-6' : ''}`}>
+                                                                        <p key={i} className={`mb-4 relative ${line.includes('后人手写批注') ? 'font-handwriting text-[#c85a3f]/90 text-xl rotate-[-1deg] py-6 px-4 bg-[#c85a3f]/10 border-l-4 border-[#c85a3f] shadow-lg my-10' : ''}`}>
+                                                                            {line.includes('后人手写批注') && <span className="absolute -top-4 left-2 text-[10px] uppercase tracking-tighter opacity-40">Addendum Observed</span>}
                                                                             {line.split(regex).map((part, j) => {
 
                                                                                 if (part === attachmentTrigger || part === wilmerTrigger || part === attachmentTrigger2) {

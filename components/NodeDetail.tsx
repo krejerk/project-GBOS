@@ -255,7 +255,13 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
 
   const CONFESSION_26_KEYWORDS: Record<string, string> = {};
 
+  const CONFESSION_27_KEYWORDS: Record<string, string> = {
+    '米尔谷': 'mill_valley',
+    '记者': 'reporter'
+  };
+
   const KEYWORD_MAP = React.useMemo(() => {
+    if (node.id === 'confession_27') return CONFESSION_27_KEYWORDS;
     if (node.id === 'confession_26') return CONFESSION_26_KEYWORDS;
     if (node.id === 'confession_25') return CONFESSION_25_KEYWORDS;
     if (node.id === 'confession_24') return CONFESSION_24_KEYWORDS;
@@ -340,13 +346,19 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     }, 1000);
   };
 
+  // Logic to determine if we use the "Reporter/Decayed" style or the "Police" style
+  // Old confessions (1-26) keep the police style. Confession 27+ uses reporter style if switched.
+  const isConfession = node.id.includes('confession');
+  const confessionIdNum = parseInt(node.id.split('_')[1] || '0');
+  const useReporterStyle = isConfession && hasSwitchedPersona && (confessionIdNum >= 27 || node.id === 'confession_27');
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className={`h-full flex flex-col backdrop-blur-md overflow-hidden ${node.id.includes('confession')
-        ? 'bg-[#1a1410] border border-[#d89853]/30 shadow-2xl relative'
+      className={`h-full flex flex-col backdrop-blur-md overflow-hidden ${isConfession
+        ? (useReporterStyle ? 'reporter-paper font-decayed shadow-2xl relative' : 'bg-[#1a1410] border border-[#d89853]/30 shadow-2xl relative')
         : 'bg-neutral-900/90 border-l border-[#d89853]/30'
         }`}
     >
@@ -356,12 +368,14 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
 
       <div className={`p-4 border-b ${node.id.includes('confession') ? 'border-[var(--confess-border)] bg-[var(--confess-surface)]' : 'border-[#d89853]/20'}`}>
         <div className="flex items-center justify-between mb-1.5">
-          {node.id.includes('confession') ? (
+          {isConfession ? (
             <div className="flex items-center gap-3">
-              <div className="border border-[var(--confess-highlight)] text-[var(--confess-highlight)] px-2 py-0.5 text-[9px] font-bold tracking-[0.2em] uppercase">
-                DEEP SUBCONSCIOUS
+              <div className={`border px-2 py-0.5 text-[9px] font-bold tracking-[0.2em] uppercase ${useReporterStyle ? 'border-reporter-highlight text-reporter-highlight opacity-80' : 'border-[var(--confess-highlight)] text-[var(--confess-highlight)]'}`}>
+                {useReporterStyle ? 'CORRUPTED MEMORY / RE-ARCHIVED' : 'DEEP SUBCONSCIOUS'}
               </div>
-              <span className="text-[9px] font-mono text-[var(--confess-text)]/60 uppercase tracking-widest">神经区块 #RC-7742</span>
+              <span className={`text-[9px] font-mono uppercase tracking-widest ${useReporterStyle ? 'text-[#d89853]/40' : 'text-[var(--confess-text)]/60'}`}>
+                {useReporterStyle ? '神经区块 #ERR-REPORTER-27' : '神经区块 #RC-7742'}
+              </span>
             </div>
           ) : (
             <span className="text-[10px] font-mono text-[#d89853]/60 uppercase tracking-widest">神经片段解析</span>
@@ -375,15 +389,15 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
             </div>
           )}
         </div>
-        <h2 className={`text-xl font-bold tracking-tight uppercase ${node.id.includes('confession') ? 'text-[var(--confess-text)] font-mono' : 'text-[#d89853] italic'}`}>
+        <h2 className={`text-xl font-bold tracking-tight uppercase font-mono ${isConfession ? (useReporterStyle ? 'text-[#d89853] shadow-[0_2px_4px_rgba(0,0,0,0.5)] italic' : 'text-[var(--confess-text)]') : 'text-[#d89853] italic'}`}>
           {node.title}
         </h2>
         {!node.id.includes('confession') && <div className="text-xs text-[#d89853]/50 font-mono">STATUS: {node.currentLayer} VIEW</div>}
       </div>
 
       <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar relative z-10">
-        {node.id.includes('confession') ? (
-          <div className="relative h-full flex flex-col bg-[var(--confess-bg)] overflow-hidden group/confession rounded-sm border border-[var(--confess-border)]">
+        {isConfession ? (
+          <div className={`relative h-full flex flex-col overflow-hidden group/confession rounded-sm border ${useReporterStyle ? 'bg-transparent border-transparent shadow-[inset_0_0_80px_rgba(0,0,0,0.4)]' : 'bg-[var(--confess-bg)] border-[var(--confess-border)]'}`}>
             {/* Global CRT overlay applied over the entire confession reader */}
             <div className="crt-overlay" />
 
@@ -425,7 +439,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
               )}
             </AnimatePresence>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar relative z-10 px-4 md:px-12 py-16 will-change-transform">
+            <div className="flex-1 overflow-y-auto custom-scrollbar relative z-10 px-4 md:px-12 py-10 md:py-16 will-change-transform">
               <div className="relative max-w-2xl mx-auto pb-32">
                 {[
                   node.layers[MemoryLayer.SURFACE].event,
@@ -446,6 +460,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                         keywordMap={KEYWORD_MAP}
                         highlightKeywords={fragmentHighlightMap[`${layerIndex}-${pIndex}`] || new Set()}
                         collectionEffects={collectionEffects}
+                        useReporterStyle={useReporterStyle}
                         onKeywordClick={handleKeywordClick}
                       />
                     )
@@ -507,7 +522,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                   className="mt-20 pt-12 border-t border-dashed border-[#d89853]/20 flex flex-col items-center gap-6"
                 >
                   <div className="text-[10px] text-[#c85a3f]/60 font-mono tracking-[0.6em]">END_OF_TRANSCRIPT</div>
-                  <div className="h-16 w-64 bg-[url('assets/signature.png')] bg-contain bg-no-repeat bg-center opacity-70 mix-blend-lighten" />
+                  <div className={`h-16 w-64 bg-[url('assets/signature.png')] bg-contain bg-no-repeat bg-center opacity-70 ${useReporterStyle ? 'grayscale contrast-125 brightness-50 sepia-[.8] hue-rotate-[15deg] blur-[0.3px]' : 'mix-blend-lighten'}`} />
                 </motion.div>
 
               </div>

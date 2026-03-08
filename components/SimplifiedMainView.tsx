@@ -127,32 +127,65 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         return set;
     }, []);
 
+    // Helper to determine the story chapter of a node or archive
+    const getNodeChapter = (id: string): number => {
+        if (id.includes('confession_')) {
+            const num = parseInt(id.split('_')[1]);
+            if (num <= 3) return 1;
+            if (num <= 7) return 2;
+            if (num <= 11) return 3;
+            if (num <= 15) return 4;
+            if (num <= 19) return 5;
+            if (num <= 26) return 6;
+            return 7;
+        }
+        // Archive chapters mapping
+        if (id.startsWith('me_') || id.startsWith('oh_') || id.startsWith('dc_') || id.startsWith('il_')) return 1;
+        if (id.startsWith('va_') || id.startsWith('nv_')) return 2;
+        if (id.startsWith('cin_') || id.startsWith('nas_') || id.startsWith('ky_')) return 3;
+        if (id.startsWith('kan_') || id.startsWith('kc_') || id.startsWith('ia_')) return 4;
+        if (id.startsWith('archive_') || id.startsWith('tx_')) return 5;
+        if (id.startsWith('sf_')) return 7; // SF 1976 is Chapter 7 (post-Node 6)
+        return 0; // Base nodes like 'capone'
+    };
+
     // Calculate currently consumed keywords based on unlocked nodes from props
-    // We use the `nodes` prop which contains only unlocked nodes (per App.tsx logic)
     const consumedKeywords = React.useMemo(() => {
         const consumed = new Set<string>();
-        // Add consumed from unlocked nodes (Confessions)
-        nodes.filter(Boolean).forEach(node => {
-            const keywords = KEYWORD_CONSUMPTION_MAP[node.id];
-            if (keywords) {
-                keywords.forEach(k => consumed.add(k));
-            }
-        });
-        // Add consumed from unlocked archives
-        unlockedArchiveIds.forEach(archiveId => {
-            const keywords = KEYWORD_CONSUMPTION_MAP[archiveId];
-            if (keywords) {
-                keywords.forEach(k => consumed.add(k));
-            }
+        const unlockedNodeIds = gameState.unlockedNodeIds || [];
+        const currentChapter = (gameState.currentStoryNode || 0);
+
+        // Map clue IDs to frequencies
+        const freqMap: Record<string, number> = {};
+        collectedClues.forEach(id => {
+            freqMap[id] = (freqMap[id] || 0) + 1;
         });
 
-        // NOTE: Node 4 keywords from Jennifer's dialogue (retrieval_node_4) 
-        // should NOT be consumed. They are intended to stay in the player's 
-        // inventory as chips for use in Floor 5/Node 4 investigation.
-        // (Removed previous auto-consumption logic here)
+        // Unified consumption logic for both nodes and archives
+        Object.keys(KEYWORD_CONSUMPTION_MAP).forEach(id => {
+            const keywords = KEYWORD_CONSUMPTION_MAP[id];
+            if (!keywords) return;
+
+            const nodeChapter = getNodeChapter(id);
+            const isUnlocked = id.includes('confession_')
+                ? unlockedNodeIds.includes(id)
+                : unlockedArchiveIds.includes(id);
+
+            // App.tsx handles global transition erasure for consumed keywords.
+            // As long as a keyword exists in the state arrays, it means it survived the chapter transition.
+            // We only need to "virtually consume" (hide) it if it belongs to a currently active unlocked node or archive.
+            if (isUnlocked) {
+                keywords.forEach(k => {
+                    // Re-collection exception: frequency > 1 ignores consumption
+                    if ((freqMap[k] || 0) <= 1) {
+                        consumed.add(k);
+                    }
+                });
+            }
+        });
 
         return consumed;
-    }, [nodes, unlockedArchiveIds]);
+    }, [nodes, unlockedArchiveIds, gameState.unlockedNodeIds, gameState.currentStoryNode, collectedClues]);
 
 
     // Transient System Message Handling
@@ -182,58 +215,50 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 {/* BRIGHTER: Ambient Light Glow in Center */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vh] bg-[#d89853]/10 blur-[100px] rounded-full" />
 
-                {/* BRIGHTER: Background Image */}
-                {/* STANDARD SPLIT LAYOUT (Both Sides Visible) */}
-                <div className="absolute inset-0 flex flex-col md:flex-row pointer-events-none">
-                    {/* LEFT/TOP HALF - POLICE (Always Visible + Glitch) */}
-                    <div
-                        className="relative w-full h-1/2 md:w-1/2 md:h-full overflow-hidden"
-                        style={{
-                            maskImage: 'linear-gradient(to bottom, black 85%, transparent)',
-                            WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent)'
-                        }}
-                    >
+                {/* BACKGROUND IMAGE - RESPONSIVE LAYOUT */}
+                <div className="absolute inset-0 flex flex-col md:block pointer-events-none">
+                    {/* DESKTOP VIEW (Seamless Single Image) */}
+                    <div className="hidden md:block absolute inset-0 overflow-hidden">
                         <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
                             ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
                             : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
                             }`}>
                             <img
                                 src="assets/capone-split-personality.jpg"
-                                className="absolute top-0 left-0 w-[200%] h-full max-w-none object-cover hidden md:block"
-                                style={{ objectPosition: '0% 20%' }}
-                            />
-                            {/* Mobile Portrait Image Adjustment */}
-                            <img
-                                src="assets/capone-split-personality.jpg"
-                                className="absolute top-0 left-0 w-full h-[200%] max-w-none object-cover block md:hidden"
-                                style={{ objectPosition: 'center 0%' }}
+                                className="absolute top-0 left-0 w-full h-full object-cover"
+                                style={{ objectPosition: 'center 20%' }}
                             />
                         </div>
                     </div>
 
-                    {/* RIGHT/BOTTOM HALF - VILLAIN (Always Visible + Glitch) */}
-                    <div
-                        className="relative w-full h-1/2 md:w-1/2 md:h-full overflow-hidden"
-                        style={{
-                            maskImage: 'linear-gradient(to top, black 85%, transparent)',
-                            WebkitMaskImage: 'linear-gradient(to top, black 85%, transparent)'
-                        }}
-                    >
-                        <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
-                            ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
-                            : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
-                            }`}>
-                            <img
-                                src="assets/capone-split-personality.jpg"
-                                className="absolute top-0 left-[-100%] w-[200%] h-full max-w-none object-cover hidden md:block"
-                                style={{ objectPosition: '0% 20%' }}
-                            />
-                            {/* Mobile Portrait Image Adjustment */}
-                            <img
-                                src="assets/capone-split-personality.jpg"
-                                className="absolute top-[-100%] left-0 w-full h-[200%] max-w-none object-cover block md:hidden"
-                                style={{ objectPosition: 'center 0%' }}
-                            />
+                    {/* MOBILE VIEW (Split with Blending) */}
+                    <div className="flex-1 flex flex-col md:hidden">
+                        {/* TOP HALF */}
+                        <div className="relative w-full h-1/2 overflow-hidden mask-split-top">
+                            <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
+                                ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
+                                : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
+                                }`}>
+                                <img
+                                    src="assets/capone-split-personality.jpg"
+                                    className="absolute top-0 left-0 w-full h-[200%] max-w-none object-cover"
+                                    style={{ objectPosition: 'center 0%' }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* BOTTOM HALF */}
+                        <div className="relative w-full h-1/2 overflow-hidden mask-split-bottom">
+                            <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
+                                ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
+                                : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
+                                }`}>
+                                <img
+                                    src="assets/capone-split-personality.jpg"
+                                    className="absolute top-[-100%] left-0 w-full h-[200%] max-w-none object-cover"
+                                    style={{ objectPosition: 'center 0%' }}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -241,8 +266,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 {/* BRIGHTER: Reduced overlay darkness */}
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/60 via-transparent to-black/80" />
 
+                <div className="absolute inset-0 bg-vignette z-0 opacity-60" />
+                <div className="absolute inset-0 animate-noise opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay z-0" />
+
                 <div className="scanlines opacity-5" /> {/* Reduced scanline interference */}
-                <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
             </div>
 
             {/* Header / Nav */}
@@ -290,10 +317,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="w-full max-w-2xl flex flex-col items-center gap-6 md:gap-8 py-8 md:py-0"
+                    className="w-full max-w-2xl flex flex-col items-center gap-4 md:gap-6 py-4 md:py-0"
                 >
                     {/* Ambient Avatar / Prompt */}
-                    <div className="relative mb-4 md:mb-8 group flex flex-col items-center">
+                    <div className="relative mb-2 md:mb-4 group flex flex-col items-center">
                         <div className="w-20 h-32 md:w-28 md:h-48 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 transition-opacity filter sepia-[0.2] contrast-110 mb-4 md:mb-6 relative">
                             <img
                                 src="assets/capone-split-personality.jpg"
@@ -408,7 +435,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     </div>
 
                     {/* Dynamic Response Area */}
-                    <div className="min-h-[20px] flex items-center justify-center px-4 w-full md:w-[120%] md:-ml-[10%] text-center">
+                    <div className="min-h-[20px] flex items-center justify-center px-4 w-full max-w-2xl mx-auto text-center">
                         <AnimatePresence mode="wait">
                             {(() => {
                                 // 0. Check for Processing State
@@ -419,7 +446,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
                                             exit={{ opacity: 0 }}
-                                            className="text-[#d89853] text-sm tracking-[0.2em] font-light animate-pulse"
+                                            className="w-full text-center text-[#d89853] text-sm tracking-[0.2em] font-light animate-pulse"
                                         >
                                             ......
                                         </motion.div>
@@ -434,7 +461,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             initial={{ opacity: 0, scale: 0.95 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             exit={{ opacity: 0, scale: 0.95 }}
-                                            className="text-xs font-mono tracking-widest text-[#d89853]/50 animate-pulse"
+                                            className="w-full text-center text-xs font-mono tracking-widest text-[#d89853]/50 animate-pulse"
                                         >
                                             {tempSystemMessage}
                                         </motion.div>
@@ -590,7 +617,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             initial={{ opacity: 0, y: 5 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -5 }}
-                                            className="text-sm tracking-[0.15em] font-light leading-relaxed text-[#d89853]"
+                                            className="w-full text-center text-sm tracking-[0.15em] font-light leading-relaxed text-[#d89853]"
                                             style={{ textShadow: '0 0 10px rgba(216,152,83,0.3)' }}
                                         >
                                             "
@@ -636,7 +663,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="text-[#d89853]/60 text-sm tracking-[0.2em] font-light text-shadow-sm"
+                                        className="w-full text-center text-[#d89853]/60 text-sm tracking-[0.2em] font-light text-shadow-sm"
                                     >
                                         {hasSwitchedPersona ? "“说吧，你还要挖什么烂账？”" : "“你想聊些什么？”"}
                                     </motion.div>
@@ -644,28 +671,33 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             })()}
                         </AnimatePresence>
                     </div>
-                    <div className="w-full flex flex-col items-center gap-4">
-                        {/* Mobile Button Row - Stacked/Responsive */}
-                        <div className="w-full flex flex-col md:flex-row items-center gap-3 mb-1 md:mb-4 lg:mb-8">
-                            <div
-                                className="flex items-center gap-2 text-[10px] tracking-widest text-[#d89853]/60 hover:text-[#d89853] cursor-pointer transition-all uppercase font-bold bg-black/40 px-4 py-2 rounded-full border border-[#d89853]/10 md:bg-transparent md:border-none md:p-0"
+
+                    <div className="w-full flex flex-col items-center gap-1">
+                        {/* Memory Action Row - Tightened */}
+                        <div className="w-full flex flex-row items-center justify-between px-6 mb-0">
+                            <button
                                 onClick={handleRetraceClick}
+                                disabled={isProcessing}
+                                className="flex-1 flex items-center justify-center gap-2 text-[10px] tracking-[0.2em] text-[#d89853]/60 hover:text-[#d89853] transition-all uppercase font-bold py-1 group/retrace relative disabled:opacity-30"
                             >
-                                <Brain size={12} className="group-hover/retrace:animate-pulse" />
-                                <span>潜意识回溯 // RETRACE</span>
-                            </div>
-
-                            <div
-                                className="flex items-center gap-2 text-[10px] tracking-widest text-[#d89853]/60 hover:text-[#d89853] cursor-pointer transition-all uppercase font-bold bg-black/40 px-4 py-2 rounded-full border border-[#d89853]/10 md:bg-transparent md:border-none md:p-0 md:ml-auto"
+                                <RotateCcw size={14} className="group-hover:rotate-[-45deg] transition-transform" />
+                                <span className="opacity-80">RETRACE</span>
+                            </button>
+                            <div className="w-[1px] h-3 bg-[#d89853]/10 md:hidden" />
+                            <button
                                 onClick={() => setShowTerminal(true)}
+                                className="flex-1 flex items-center justify-center gap-2 text-[10px] tracking-[0.2em] text-[#d89853]/60 hover:text-[#d89853] transition-all uppercase font-bold py-1 group/logs relative"
                             >
-                                <TerminalIcon size={12} />
-                                <span>查看日志 // LOGS</span>
-                            </div>
+                                <TerminalIcon size={14} className="group-hover:scale-110 transition-transform" />
+                                <span className="opacity-80">LOGS</span>
+                            </button>
                         </div>
+                    </div>
+                    <div className="w-full relative group">
+                        {/* Decorative Frame Elements */}
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-[#d89853]/0 via-[#d89853]/20 to-[#d89853]/0 rounded-full blur opacity-30 group-focus-within:opacity-100 transition duration-1000"></div>
 
-                        <form onSubmit={handleSearchSubmit} className="w-full relative group transform transition-all duration-300 focus-within:scale-105">
-                            <Search className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-[#d89853]/60 group-hover:text-[#d89853] transition-colors" size={18} />
+                        <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-black/60 backdrop-blur-xl border border-[#d89853]/30 rounded-full overflow-hidden transition-all duration-500 focus-within:border-[#d89853]/60 focus-within:shadow-[0_0_30px_rgba(216,152,83,0.2)]">
                             <input
                                 type="text"
                                 value={searchQuery}
@@ -673,214 +705,217 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                 placeholder="输入关键词..."
                                 autoFocus
                                 onFocus={() => setIsSearchFocused(true)}
-                                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)} // Delay to allow click on chips
-                                className="w-full pl-10 md:pl-16 pr-20 md:pr-24 py-3 md:py-5 bg-black/40 backdrop-blur-md border border-[#d89853]/30 text-[#d89853] placeholder-[#d89853]/40 rounded-full text-sm md:text-lg font-light tracking-wide focus:outline-none focus:border-[#d89853]/60 focus:bg-black/60 transition-all shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:border-[#d89853]/50"
-                                style={{ textShadow: '0 0 10px rgba(216,152,83,0.2)' }}
+                                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                                className="flex-1 bg-transparent py-4 md:py-5 pl-8 pr-4 text-[#d89853] placeholder-[#d89853]/20 text-base md:text-lg font-light tracking-widest focus:outline-none"
+                                style={{ textShadow: '0 0 10px rgba(216,152,83,0.1)' }}
                             />
+                            {/* Consolidated Search Icon Button */}
                             <button
                                 type="submit"
-                                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full overflow-hidden group/btn hover:bg-[#d89853]/10 transition-all cursor-pointer"
+                                className="pr-8 pl-4 h-full flex items-center justify-center transition-all group/btn"
+                                title="执行检索"
                             >
-                                <span className="text-[9px] md:text-[10px] tracking-widest text-[#d89853] group-hover/btn:text-white transition-colors">检索</span>
-                                <TerminalIcon size={12} className="text-[#d89853]" />
+                                <div className="p-2 rounded-full bg-[#d89853]/5 group-hover/btn:bg-[#d89853]/20 transition-all duration-300">
+                                    <Search className="text-[#d89853]/40 group-hover/btn:text-[#d89853] group-hover/btn:scale-110 transition-all" size={24} />
+                                </div>
                             </button>
-
-
-
-                            {/* Retrace Error Toast */}
-                            <AnimatePresence>
-                                {retraceError && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0 }}
-                                        className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[#020617]/90 border border-[#1e293b] text-[#94a3b8] text-xs px-6 py-3 rounded shadow-[0_0_20px_rgba(15,23,42,0.5)] backdrop-blur-md tracking-widest flex items-center gap-3 whitespace-nowrap font-mono"
-                                    >
-                                        <Activity size={14} className="text-[#64748b]" />
-                                        {retraceError}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            {/* Retrace Results Modal - IMMERSIVE OVERHAUL */}
-                            <AnimatePresence>
-                                {showRetraceModal && retraceResult && (
-                                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm" onClick={closeRetraceModal}>
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                                            transition={{ duration: 0.8, ease: "easeOut" }}
-                                            className="w-full max-w-lg bg-[#020205] border border-[#1e293b] p-8 relative overflow-hidden group shadow-[0_0_100px_rgba(15,23,42,0.4)]"
-                                            onClick={e => e.stopPropagation()}
-                                        >
-                                            {/* Deep Atmosphere Overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/20 to-transparent pointer-events-none" />
-                                            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
-                                            <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
-
-                                            <button
-                                                className="absolute top-4 right-4 text-[#475569] hover:text-[#94a3b8] transition-colors duration-500"
-                                                onClick={closeRetraceModal}
-                                            >
-                                                <X size={20} />
-                                            </button>
-
-                                            <div className="flex items-center gap-5 mb-10 text-[#64748b]">
-                                                <div className="relative">
-                                                    <Brain size={28} className="opacity-60" />
-                                                    <motion.div
-                                                        animate={{ opacity: [0.2, 0.5, 0.2] }}
-                                                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                                                        className="absolute inset-0"
-                                                    >
-                                                        <Brain size={28} className="blur-sm text-[#94a3b8]" />
-                                                    </motion.div>
-                                                </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <h2 className="text-lg font-light tracking-[0.3em] text-[#94a3b8]">
-                                                        潜意识深层回溯
-                                                    </h2>
-                                                    <span className="text-[10px] tracking-[0.2em] text-[#475569] font-mono">
-                                                        正在接入深层记忆扇区...
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div className="text-xs text-[#475569] mb-8 font-mono border-l border-[#334155] pl-4 py-2 space-y-2">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="w-1 h-1 bg-[#475569] rounded-full animate-pulse" />
-                                                    提示：精神锚点正在松动，意识边界模糊 (-20%)
-                                                </div>
-                                                <div className="flex items-center gap-2 opacity-70">
-                                                    <span className="w-1 h-1 bg-[#334155] rounded-full" />
-                                                    正在打捞沉没在黑暗中的记忆碎片...
-                                                </div>
-                                            </div>
-
-                                            {retraceResult.length > 0 ? (
-                                                <div className="space-y-6 relative z-10">
-                                                    <p className="text-[#94a3b8] text-sm font-light leading-relaxed tracking-wide opacity-90 italic">
-                                                        “你提到的这些往事似乎在发挥作用，不知为何，这些词汇在我脑海中变得挥之不去……”
-                                                    </p>
-                                                    <div className="flex flex-wrap gap-3">
-                                                        {retraceResult.map(keyword => {
-                                                            const isCollected = collectedClues.includes(keyword) ||
-                                                                unlockedPeople.includes(keyword) ||
-                                                                collectedDossierIds.includes(keyword);
-
-                                                            return (
-                                                                <button
-                                                                    key={keyword}
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        if (!isCollected) {
-                                                                            onCollectClue(keyword, CLUE_DISPLAY_MAP[keyword] || keyword);
-                                                                        }
-                                                                    }}
-                                                                    disabled={isCollected}
-                                                                    className={`px-4 py-1.5 border text-sm font-medium tracking-widest transition-all duration-300 relative overflow-hidden group/item uppercase flex items-center gap-2
-                                                                    ${isCollected
-                                                                            ? 'bg-[#d89853]/10 border-[#d89853]/30 text-[#d89853] cursor-default'
-                                                                            : 'bg-[#1e293b]/40 border-[#334155] text-[#94a3b8] hover:bg-[#1e293b] hover:border-[#64748b] hover:text-[#e2e8f0] cursor-pointer'
-                                                                        }
-                                                                `}
-                                                                >
-                                                                    <span className={`absolute inset-0 bg-[#334155] translate-x-full transition-transform duration-300 pointer-events-none ${!isCollected ? 'group-hover/item:translate-x-0' : ''}`} />
-                                                                    <span className="relative z-10">{CLUE_DISPLAY_MAP[keyword] || keyword}</span>
-                                                                    {isCollected && (
-                                                                        <span className="relative z-10 text-[10px] bg-[#d89853]/20 text-[#d89853] px-1.5 py-0.5 rounded font-mono">
-                                                                            已收录
-                                                                        </span>
-                                                                    )}
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="text-[#64748b] text-base italic font-serif leading-relaxed px-6 py-12 text-center border border-[#1e293b] bg-[#0f172a]/30 relative">
-                                                    <span className="absolute text-4xl text-[#334155] top-2 left-2 font-serif">“</span>
-                                                    不管你是谁，你并不知道我遭遇了什么，所以请离开吧，父亲和南希，他们都不在这里。
-                                                    <span className="absolute text-4xl text-[#334155] bottom-2 right-2 font-serif">”</span>
-                                                </div>
-                                            )}
-
-                                            <div className="mt-8 pt-4 border-t border-[#1e293b] flex justify-between items-end text-[9px] text-[#475569] font-mono">
-                                                <span>SECTOR: 7G-A9</span>
-                                                <span className="animate-pulse">TERMINAL: ACTIVE</span>
-                                            </div>
-                                        </motion.div>
-                                    </div>
-                                )}
-                            </AnimatePresence>
-
-                            {/* Quick Input Clues - Show when focused or when there are clues */}
-                            <AnimatePresence>
-                                {(isSearchFocused || collectedClues.length > 0 || unlockedPeople.length > 0) &&
-                                    (collectedClues.length > 0 || unlockedPeople.length > 0) && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            className="w-full max-w-2xl px-2 md:px-4 flex flex-wrap gap-1.5 md:gap-2 justify-center mt-4 md:absolute md:top-full left-0 z-20 md:mb-0 mb-8"
-                                        >
-                                            {/* Combine clues for chips. PEOPLE ARE REMOVED (Syndicate Board handles these). YEARS ARE REMOVED (Archives handle these). */}
-                                            {(() => {
-                                                // Calculate frequency map to detect re-collected items
-                                                const frequencyMap = (collectedClues || []).reduce((acc, val) => {
-                                                    acc[val] = (acc[val] || 0) + 1;
-                                                    return acc;
-                                                }, {} as Record<string, number>);
-
-                                                return [...new Set([...(collectedClues || [])].filter(Boolean))]
-                                                    .filter(id => {
-                                                        const isLocation = CATEGORY_IDS.LOCATIONS.includes(id);
-                                                        const isCase = CATEGORY_IDS.CASES.includes(id);
-
-                                                        if (!isLocation && !isCase) return false;
-
-                                                        if (!CLUE_DISPLAY_MAP[id]) return false;
-
-                                                        // Normal check: Hide if consumed
-                                                        if (!consumedKeywords.has(id)) return true;
-
-                                                        // Exception: If it has been collected MORE THAN ONCE (meaning re-collected after consumption), show it.
-                                                        // This is typical for archive-sourced keywords that were already used in confessions.
-                                                        return frequencyMap[id] > 1;
-                                                    });
-                                            })()
-                                                .map(id => (
-                                                    <button
-                                                        key={id}
-                                                        type="button"
-                                                        onMouseDown={(e) => {
-                                                            e.preventDefault(); // Prevent blur
-                                                            const clueText = CLUE_DISPLAY_MAP[id] || id;
-                                                            setSearchQuery(prev => {
-                                                                if (!prev) {
-                                                                    return clueText;
-                                                                }
-                                                                // Avoid duplicates if simple check passes (optional, but good UX)
-                                                                if (prev.includes(clueText)) {
-                                                                    return prev;
-                                                                }
-                                                                // Append with a space, ensuring no double spaces if prev already ends with one
-                                                                const separator = prev.endsWith(' ') ? '' : ' ';
-                                                                return `${prev}${separator}${clueText}`;
-                                                            });
-                                                        }}
-                                                        className="px-2.5 md:px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-[11px] md:text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
-                                                    >
-                                                        {CLUE_DISPLAY_MAP[id] || id}
-                                                    </button>
-                                                ))
-                                            }
-                                        </motion.div>
-                                    )}
-                            </AnimatePresence>
                         </form>
                     </div>
+                    {/* Retrace Error Toast */}
+                    <AnimatePresence>
+                        {retraceError && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[#020617]/90 border border-[#1e293b] text-[#94a3b8] text-xs px-6 py-3 rounded shadow-[0_0_20px_rgba(15,23,42,0.5)] backdrop-blur-md tracking-widest flex items-center gap-3 whitespace-nowrap font-mono"
+                            >
+                                <Activity size={14} className="text-[#64748b]" />
+                                {retraceError}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Retrace Results Modal - IMMERSIVE OVERHAUL */}
+                    <AnimatePresence>
+                        {showRetraceModal && retraceResult && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm" onClick={closeRetraceModal}>
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                    className="w-full max-w-lg bg-[#020205] border border-[#1e293b] p-8 relative overflow-hidden group shadow-[0_0_100px_rgba(15,23,42,0.4)]"
+                                    onClick={e => e.stopPropagation()}
+                                >
+                                    {/* Deep Atmosphere Overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/20 to-transparent pointer-events-none" />
+                                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
+                                    <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#334155] to-transparent opacity-50" />
+
+                                    <button
+                                        className="absolute top-4 right-4 text-[#475569] hover:text-[#94a3b8] transition-colors duration-500"
+                                        onClick={closeRetraceModal}
+                                    >
+                                        <X size={20} />
+                                    </button>
+
+                                    <div className="flex items-center gap-5 mb-10 text-[#64748b]">
+                                        <div className="relative">
+                                            <Brain size={28} className="opacity-60" />
+                                            <motion.div
+                                                animate={{ opacity: [0.2, 0.5, 0.2] }}
+                                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                                className="absolute inset-0"
+                                            >
+                                                <Brain size={28} className="blur-sm text-[#94a3b8]" />
+                                            </motion.div>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <h2 className="text-lg font-light tracking-[0.3em] text-[#94a3b8]">
+                                                潜意识深层回溯
+                                            </h2>
+                                            <span className="text-[10px] tracking-[0.2em] text-[#475569] font-mono">
+                                                正在接入深层记忆扇区...
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-xs text-[#475569] mb-8 font-mono border-l border-[#334155] pl-4 py-2 space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-1 h-1 bg-[#475569] rounded-full animate-pulse" />
+                                            提示：精神锚点正在松动，意识边界模糊 (-20%)
+                                        </div>
+                                        <div className="flex items-center gap-2 opacity-70">
+                                            <span className="w-1 h-1 bg-[#334155] rounded-full" />
+                                            正在打捞沉没在黑暗中的记忆碎片...
+                                        </div>
+                                    </div>
+
+                                    {retraceResult.length > 0 ? (
+                                        <div className="space-y-6 relative z-10">
+                                            <p className="text-[#94a3b8] text-sm font-light leading-relaxed tracking-wide opacity-90 italic">
+                                                “你提到的这些往事似乎在发挥作用，不知为何，这些词汇在我脑海中变得挥之不去……”
+                                            </p>
+                                            <div className="flex flex-wrap gap-3">
+                                                {retraceResult.map(keyword => {
+                                                    const isCollected = collectedClues.includes(keyword) ||
+                                                        unlockedPeople.includes(keyword) ||
+                                                        collectedDossierIds.includes(keyword);
+
+                                                    return (
+                                                        <button
+                                                            key={keyword}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                if (!isCollected) {
+                                                                    onCollectClue(keyword, CLUE_DISPLAY_MAP[keyword] || keyword);
+                                                                }
+                                                            }}
+                                                            disabled={isCollected}
+                                                            className={`px-4 py-1.5 border text-sm font-medium tracking-widest transition-all duration-300 relative overflow-hidden group/item uppercase flex items-center gap-2
+                                                                    ${isCollected
+                                                                    ? 'bg-[#d89853]/10 border-[#d89853]/30 text-[#d89853] cursor-default'
+                                                                    : 'bg-[#1e293b]/40 border-[#334155] text-[#94a3b8] hover:bg-[#1e293b] hover:border-[#64748b] hover:text-[#e2e8f0] cursor-pointer'
+                                                                }
+                                                                `}
+                                                        >
+                                                            <span className={`absolute inset-0 bg-[#334155] translate-x-full transition-transform duration-300 pointer-events-none ${!isCollected ? 'group-hover/item:translate-x-0' : ''}`} />
+                                                            <span className="relative z-10">{CLUE_DISPLAY_MAP[keyword] || keyword}</span>
+                                                            {isCollected && (
+                                                                <span className="relative z-10 text-[10px] bg-[#d89853]/20 text-[#d89853] px-1.5 py-0.5 rounded font-mono">
+                                                                    已收录
+                                                                </span>
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-[#64748b] text-base italic font-serif leading-relaxed px-6 py-12 text-center border border-[#1e293b] bg-[#0f172a]/30 relative">
+                                            <span className="absolute text-4xl text-[#334155] top-2 left-2 font-serif">“</span>
+                                            不管你是谁，你并不知道我遭遇了什么，所以请离开吧，父亲和南希，他们都不在这里。
+                                            <span className="absolute text-4xl text-[#334155] bottom-2 right-2 font-serif">”</span>
+                                        </div>
+                                    )}
+
+                                    <div className="mt-8 pt-4 border-t border-[#1e293b] flex justify-between items-end text-[9px] text-[#475569] font-mono">
+                                        <span>SECTOR: 7G-A9</span>
+                                        <span className="animate-pulse">TERMINAL: ACTIVE</span>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Quick Input Clues - Show when focused or when there are clues */}
+                    <AnimatePresence>
+                        {(isSearchFocused || collectedClues.length > 0 || unlockedPeople.length > 0) &&
+                            (collectedClues.length > 0 || unlockedPeople.length > 0) && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="w-full max-w-2xl px-2 md:px-4 flex flex-wrap gap-1 md:gap-1.5 justify-center mt-1 z-20 relative"
+                                >
+                                    {/* Combine clues for chips. PEOPLE ARE REMOVED (Syndicate Board handles these). YEARS ARE REMOVED (Archives handle these). */}
+                                    {(() => {
+                                        // Calculate frequency map to detect re-collected items
+                                        const frequencyMap = (collectedClues || []).reduce((acc, val) => {
+                                            acc[val] = (acc[val] || 0) + 1;
+                                            return acc;
+                                        }, {} as Record<string, number>);
+
+                                        return [...new Set([...(collectedClues || [])].filter(Boolean))]
+                                            .filter(id => {
+                                                // Node 6 Exception: Always show Alexei and Morandi globally
+                                                if (id.toLowerCase() === 'alexei' || id.toLowerCase() === 'morandi') return true;
+
+                                                const isLocation = CATEGORY_IDS.LOCATIONS.includes(id);
+                                                const isCase = CATEGORY_IDS.CASES.includes(id);
+
+                                                if (!isLocation && !isCase) return false;
+
+                                                if (!CLUE_DISPLAY_MAP[id]) return false;
+
+                                                // Relaxed check: Show everything collected for easy navigation
+                                                // BUT Hide consumed keywords to keep the space clean
+                                                // UNLESS they've been re-collected (frequency > 1)
+                                                if (consumedKeywords.has(id) && (frequencyMap[id] || 0) <= 1) return false;
+
+                                                return true;
+                                            });
+                                    })()
+                                        .map(id => (
+                                            <button
+                                                key={id}
+                                                type="button"
+                                                onMouseDown={(e) => {
+                                                    e.preventDefault(); // Prevent blur
+                                                    const clueText = CLUE_DISPLAY_MAP[id] || id;
+                                                    setSearchQuery(prev => {
+                                                        if (!prev) {
+                                                            return clueText;
+                                                        }
+                                                        // Avoid duplicates if simple check passes (optional, but good UX)
+                                                        if (prev.includes(clueText)) {
+                                                            return prev;
+                                                        }
+                                                        // Append with a space, ensuring no double spaces if prev already ends with one
+                                                        const separator = prev.endsWith(' ') ? '' : ' ';
+                                                        return `${prev}${separator}${clueText}`;
+                                                    });
+                                                }}
+                                                className="px-2.5 md:px-3 py-1 bg-[#d89853]/10 hover:bg-[#d89853]/20 border border-[#d89853]/30 text-[#d89853] text-[11px] md:text-xs rounded-full transition-colors backdrop-blur-sm cursor-pointer"
+                                            >
+                                                {CLUE_DISPLAY_MAP[id] || id}
+                                            </button>
+                                        ))
+                                    }
+                                </motion.div>
+                            )}
+                    </AnimatePresence>
                 </motion.div>
             </main>
 
@@ -912,12 +947,25 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         onClick={() => setShowTerminal(false)}
                     >
                         <div
-                            className="w-full max-w-3xl h-[80vh] bg-[#0c0c0c] border border-[#d89853]/30 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative flex flex-col"
+                            className="w-full max-w-3xl h-[85vh] md:h-[80vh] bg-[#0c0c0c] border border-[#d89853]/30 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative flex flex-col"
                             onClick={e => e.stopPropagation()}
                         >
+                            {/* Top Close Bar for Mobile */}
+                            <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-[#d89853]/10 bg-black/40 pt-[max(0.75rem,env(safe-area-inset-top))]">
+                                <span className="text-[10px] font-mono tracking-widest text-[#d89853]/40">TERMINAL_LOGS</span>
+                                <button
+                                    onClick={() => setShowTerminal(false)}
+                                    className="flex items-center gap-1.5 px-3 py-1 bg-[#d89853]/10 border border-[#d89853]/30 text-[#d89853] rounded-full active:scale-95 transition-all outline-none"
+                                >
+                                    <X size={14} />
+                                    <span className="text-[10px] font-bold font-mono">CLOSE</span>
+                                </button>
+                            </div>
+
+                            {/* Desktop Close Button */}
                             <button
                                 onClick={() => setShowTerminal(false)}
-                                className="absolute top-3 right-3 z-10 text-[#d89853]/60 hover:text-[#d89853] p-1 hover:bg-[#d89853]/10 rounded transition-colors"
+                                className="hidden md:block absolute top-3 right-3 z-10 text-[#d89853]/60 hover:text-[#d89853] p-1 hover:bg-[#d89853]/10 rounded transition-colors"
                             >
                                 <X size={18} />
                             </button>
@@ -929,13 +977,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     onNodeClick(id);
                                 }}
                             />
-                        </div>
-                    </motion.div>
+                        </div >
+                    </motion.div >
                 )}
-            </AnimatePresence>
+            </AnimatePresence >
 
             {/* Node Detail Modal (triggered by search or map click) */}
-            <AnimatePresence mode="wait">
+            < AnimatePresence mode="wait" >
                 {activeNode && (
                     <motion.div
                         key={activeNode.id}
@@ -970,12 +1018,16 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             style={!activeNode.id.includes('confession') ? { boxShadow: '0 0 100px rgba(0,0,0,0.8), 0 0 40px rgba(216,152,83,0.1)' } : {}}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <button
-                                onClick={() => onNodeClick('')}
-                                className="absolute top-6 right-6 z-[220] p-2 bg-black/60 text-[#d89853]/60 hover:text-[#d89853] hover:bg-black/80 border border-[#d89853]/20 rounded-full transition-all backdrop-blur-md shadow-2xl pointer-events-auto"
-                            >
-                                <X size={20} />
-                            </button>
+                            {/* Modal Close Button (Desktop & Mobile Unified) */}
+                            <div className="absolute top-6 right-6 z-[220] pointer-events-auto flex items-center gap-4 mt-[env(safe-area-inset-top)]">
+                                <button
+                                    onClick={() => onNodeClick('')}
+                                    className="flex items-center gap-2 pl-4 pr-5 py-2.5 bg-black/80 text-[#d89853] border border-[#d89853]/40 rounded-full transition-all backdrop-blur-xl shadow-2xl hover:bg-[#d89853]/10 hover:border-[#d89853]/60 group/close active:scale-95"
+                                >
+                                    <X size={18} className="group-hover/close:rotate-90 transition-transform duration-300" />
+                                    <span className="text-[11px] font-bold tracking-[0.2em] font-mono">CLOSE</span>
+                                </button>
+                            </div>
 
                             <div className="flex-1 overflow-hidden pointer-events-auto">
                                 <NodeDetail
@@ -990,10 +1042,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     hasSwitchedPersona={hasSwitchedPersona}
                                 />
                             </div>
-                        </motion.div>
-                    </motion.div>
+                        </motion.div >
+                    </motion.div >
                 )}
-            </AnimatePresence>
+            </AnimatePresence >
 
             {/* Quick Status / Hints - Fixed Bottom (hide when MindMap is open) */}
             {
@@ -1105,6 +1157,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 };

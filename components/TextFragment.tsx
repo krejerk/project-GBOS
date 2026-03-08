@@ -12,6 +12,7 @@ interface TextFragmentProps {
     highlightKeywords: Set<string>;
     collectionEffects: Record<string, boolean>; // Passed down to trigger updates only when needed
     onKeywordClick: (e: React.MouseEvent, word: string) => void;
+    useReporterStyle?: boolean;
 }
 
 export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
@@ -22,7 +23,8 @@ export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
     keywordMap,
     highlightKeywords,
     collectionEffects,
-    onKeywordClick
+    onKeywordClick,
+    useReporterStyle = false
 }) => {
     const fragmentId = `${layerIndex}-${pIndex}`;
     const seed = (layerIndex + 1) * (pIndex + 5);
@@ -66,7 +68,7 @@ export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
                 zIndex: 100,
                 transition: { duration: 0.2, ease: "easeOut" }
             }}
-            className="relative mb-8 p-6 bg-[var(--confess-surface)] border-l-2 border-[var(--confess-border)] shadow-[0_10px_30px_rgba(0,0,0,0.8)] group/fragment overflow-hidden"
+            className="relative mb-8 p-4 md:p-6 bg-[var(--confess-surface)] border-l md:border-l-2 border-[var(--confess-border)] shadow-[0_10px_30px_rgba(0,0,0,0.8)] group/fragment overflow-hidden"
             style={{
                 zIndex: visualProps.zIndex,
                 clipPath: visualProps.clipPath,
@@ -81,15 +83,15 @@ export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
             <div className="absolute bottom-0 right-0 bg-[var(--confess-highlight)]" style={{ width: '100%', height: '1px', opacity: visualProps.decorOpacity * 0.2 }} />
 
             {/* Label */}
-            <div className="mb-4 font-mono select-none flex items-center gap-2 border-b border-[var(--confess-border)] pb-2">
-                <div className="w-1.5 h-1.5 bg-[var(--confess-highlight)] rounded-full animate-pulse opacity-50" />
-                <div className="text-[10px] tracking-widest text-[var(--confess-highlight)] opacity-60 uppercase">
-                    SECTOR_{fragmentId} // DECRYPTED
+            <div className={`mb-4 font-mono select-none flex items-center gap-2 border-b pb-2 ${useReporterStyle ? 'border-reporter-border' : 'border-[var(--confess-border)]'}`}>
+                <div className={`w-1.5 h-1.5 rounded-full animate-pulse opacity-50 ${useReporterStyle ? 'bg-reporter-highlight' : 'bg-[var(--confess-highlight)]'}`} />
+                <div className={`text-[10px] tracking-widest opacity-60 uppercase ${useReporterStyle ? 'text-reporter-highlight' : 'text-[var(--confess-highlight)]'}`}>
+                    {useReporterStyle ? `LOG_ENTRY_${fragmentId}` : `SECTOR_${fragmentId}`} // {useReporterStyle ? 'RECOVERED' : 'DECRYPTED'}
                 </div>
             </div>
 
             {/* Content Rendering */}
-            <p className="font-serif leading-loose text-lg text-[var(--confess-text)] text-justify tracking-wide opacity-90">
+            <p className={`leading-loose text-lg text-justify tracking-wide opacity-90 ${useReporterStyle ? 'font-decayed' : 'font-serif text-[var(--confess-text)]'}`}>
                 {(() => {
                     const seenInFragment = new Set<string>();
                     return contentParts.map((part, j) => {

@@ -115,11 +115,13 @@ const App: React.FC = () => {
 
     // C. Jennifer Story Dialogues
     const jenniferDialogues: string[][] = [];
-    if (gameState.currentStoryNode >= 1) jenniferDialogues.push(JENNIFER_NODE_1_DIALOGUE);
-    if (gameState.currentStoryNode >= 2) jenniferDialogues.push(JENNIFER_NODE_2_DIALOGUE);
-    if (gameState.currentStoryNode >= 3) jenniferDialogues.push(JENNIFER_NODE_3_DIALOGUE);
-    if (gameState.currentStoryNode >= 4) jenniferDialogues.push(JENNIFER_NODE_4_DIALOGUE);
-    if (gameState.currentStoryNode >= 5) jenniferDialogues.push(JENNIFER_NODE_5_DIALOGUE);
+    // Only fetch keywords from the current active chapter's Jennifer dialogue
+    // to prevent old keywords (like Dirty Frank from Node 4) from bleeding into later chapters (like Node 6)
+    if (gameState.currentStoryNode === 1) jenniferDialogues.push(JENNIFER_NODE_1_DIALOGUE);
+    if (gameState.currentStoryNode === 2) jenniferDialogues.push(JENNIFER_NODE_2_DIALOGUE);
+    if (gameState.currentStoryNode === 3) jenniferDialogues.push(JENNIFER_NODE_3_DIALOGUE);
+    if (gameState.currentStoryNode === 4) jenniferDialogues.push(JENNIFER_NODE_4_DIALOGUE);
+    if (gameState.currentStoryNode === 5) jenniferDialogues.push(JENNIFER_NODE_5_DIALOGUE);
 
     jenniferDialogues.forEach(dialog => {
       dialog.forEach(line => {
@@ -168,6 +170,27 @@ const App: React.FC = () => {
     return { success: true, keywords: missedKeywords };
   }, [gameState.systemStability, gameState.unlockedNodeIds, gameState.currentStoryNode, gameState.history, gameState.collectedClues, gameState.collectedDossierIds, gameState.collectedYears, gameState.unlockedPeople]);
 
+  // Helper to determine the story chapter of an unlocking target
+  const getNodeChapterForCleanup = useCallback((id: string): number => {
+      if (id.includes('confession_')) {
+          const num = parseInt(id.split('_')[1]);
+          if (num <= 3) return 1;
+          if (num <= 7) return 2;
+          if (num <= 11) return 3;
+          if (num <= 15) return 4;
+          if (num <= 19) return 5;
+          if (num <= 26) return 6;
+          return 7;
+      }
+      if (id.startsWith('me_') || id.startsWith('oh_') || id.startsWith('dc_') || id.startsWith('il_')) return 1;
+      if (id.startsWith('va_') || id.startsWith('nv_')) return 2;
+      if (id.startsWith('cin_') || id.startsWith('nas_') || id.startsWith('ky_')) return 3;
+      if (id.startsWith('kan_') || id.startsWith('kc_') || id.startsWith('ia_')) return 4;
+      if (id.startsWith('archive_') || id.startsWith('tx_')) return 5;
+      if (id.startsWith('sf_')) return 7;
+      return 0;
+  }, []);
+
   // Handle story node completion
   const handleStoryNodeComplete = useCallback((nodeId: number) => {
     setGameState(prev => {
@@ -179,34 +202,63 @@ const App: React.FC = () => {
         updatedUnlockedNodeIds = Array.from(new Set([...prev.unlockedNodeIds, ...node6Confessions]));
       }
 
+      // GLOBAL CARRY-OVER LOGIC:
+      // When a chapter finishes, we sweep through everything the player has collected.
+      // If a keyword was USED to unlock a target in THIS chapter or passing chapters, it gets removed.
+      // If a keyword was NOT USED, it safely stays in the inventory for the next chapter.
+      const consumedKeys = new Set<string>();
+      Object.keys(KEYWORD_CONSUMPTION_MAP).forEach(targetId => {
+          const keywords = KEYWORD_CONSUMPTION_MAP[targetId];
+          if (!keywords) return;
+
+          const targetChapter = getNodeChapterForCleanup(targetId);
+          // Only prune keywords for targets belonging to chapters up to the one we just finished
+          if (targetChapter > 0 && targetChapter <= nodeId) {
+              const isUnlocked = targetId.includes('confession_')
+                  ? updatedUnlockedNodeIds.includes(targetId)
+                  : prev.unlockedArchiveIds.includes(targetId);
+
+              // If it's unlocked, or if the chapter is now "past", the keyword is consumed.
+              if (isUnlocked || targetChapter <= nodeId) {
+                  keywords.forEach(k => consumedKeys.add(k));
+              }
+          }
+      });
+
       return {
         ...prev,
         currentStoryNode: nodeId,
         unlockedNodeIds: updatedUnlockedNodeIds,
+        collectedClues: prev.collectedClues.filter(id => !consumedKeys.has(id)),
+        collectedYears: prev.collectedYears.filter(id => !consumedKeys.has(id)),
+        // Filter out consumed people, but ALWAYS keep core identity anchors for narrative stability
+        unlockedPeople: prev.unlockedPeople.filter(id => 
+            !consumedKeys.has(id) || ['capone', 'father', 'dr_reggie', 'robert', 'robert_capone'].includes(id.toLowerCase())
+        ),
         history: [
           ...prev.history,
-          { type: 'info', content: `[STORY CHECKPOINT]: 第${nodeId}章节已完成`, timestamp: Date.now() }
+          { type: 'info', content: `[STORY CHECKPOINT]: 第${nodeId}章节已完成。碎片空间已重组，消耗的记忆锚点已沉没（未消耗的记忆已被保留）。`, timestamp: Date.now() }
         ]
       };
     });
-  }, []);
+  }, [getNodeChapterForCleanup]);
 
-  // Handle clearing unused keywords (Jennifer回收未使用的关键词) after Node 3
+  // Handle clearing unused keywords (Jennifer's punishment) after Node 3
   const handleClearUnusedKeywords = useCallback(() => {
-    // PERSISTENCE REFINED: We clear "searchable" items to clean the UI as Jennifer "sweeps" data.
-    // Core people are kept for Mind Map stability; others are swept for re-collection.
-    // NODE 6 ADDITION: Preserve critical keywords for the final phase.
-    const CORE_KEEPS = ['capone', 'father', 'dr_reggie', 'robert', 'robert_capone', 'alexei', 'morandi'];
-    const NODE_6_CLUES = ['amalekite_protocol', 'tithe'];
+    // JENNIFER PUNISHMENT:
+    // This is explicitly called when transitioning to Node 4.
+    // Jennifer confiscates ALL remaining searchable items as punishment.
+    // Core identity people are kept so the mind map doesn't completely break, but all usable clues/years/people are wiped.
+    const CORE_KEEPS = ['capone', 'father', 'dr_reggie', 'robert', 'robert_capone'];
 
     setGameState(prev => ({
       ...prev,
-      collectedClues: prev.collectedClues.filter(id => NODE_6_CLUES.includes(id)),
+      collectedClues: [],
       collectedYears: [],
       unlockedPeople: prev.unlockedPeople.filter(id => CORE_KEEPS.includes(id.toLowerCase())),
       history: [
         ...prev.history,
-        { type: 'info', content: '[JENNIFER]: 已回收并封存所有未使用的关键词', timestamp: Date.now() }
+        { type: 'info', content: '[JENNIFER]: 看来你还在试图拼凑那些不该存在的碎片。作为警告，我已清除了你所有的线索缓存。', timestamp: Date.now() }
       ]
     }));
   }, []);
@@ -523,11 +575,45 @@ const App: React.FC = () => {
         hasChemistLover: lowerQuery.includes('chemist_lover') || lowerQuery.includes('chemist lover') || lowerQuery.includes('化学家情人'),
         hasSantaFe: lowerQuery.includes('santa_fe') || lowerQuery.includes('santa fe') || lowerQuery.includes('圣菲'),
         hasBonnyAndClyde: lowerQuery.includes('bonny_and_clyde') || lowerQuery.includes('bonny and clyde') || lowerQuery.includes('邦妮和克莱德'),
+        hasMillValley: lowerQuery.includes('mill_valley') || lowerQuery.includes('米尔谷'),
+        hasReporter: lowerQuery.includes('reporter') || lowerQuery.includes('记者'),
       };
     };
 
-
     const validation = validateQuery(query);
+
+    // Confession 27: Mill Valley + Reporter
+    if (validation.hasMillValley && validation.hasReporter) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_27');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_27');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
 
     // Confession 17: Dirty Frank + Recruitment
     if (validation.hasDirtyFrank && validation.hasRecruitment) {
@@ -1612,6 +1698,7 @@ const App: React.FC = () => {
         setIsProcessing(false);
       }, 50);
       return;
+      return;
     }
 
     const lowerQuery = query.toLowerCase().trim();
@@ -2009,7 +2096,7 @@ const App: React.FC = () => {
   const handleCollectClue = (clueId: string, word: string) => {
     // FORCE RE-COLLECTION for special reveal keywords to support Easter Egg visibility logic
     // This allows duplicates in collectedClues, increasing frequency > 1, so SimplifiedMainView shows them.
-    if (['kansas_city', 'mobile_blood_truck', 'church', 'el_paso'].includes(clueId)) {
+    if (['kansas_city', 'mobile_blood_truck', 'church', 'el_paso', 'mill_valley', 'reporter'].includes(clueId)) {
       setGameState(prev => {
         const currentCount = prev.collectedClues.filter(c => c === clueId).length;
         // IF count is 0 (Debug/Lost state + Consumed), add 2 to immediately verify "Freq > 1".
@@ -2179,6 +2266,12 @@ const App: React.FC = () => {
   };
 
   const handleNodeClick = (id: string) => {
+    // If id is empty, we are closing the modal
+    if (!id) {
+      setGameState(prev => ({ ...prev, activeNodeId: null }));
+      return;
+    }
+
     const node = nodes.find(n => n.id === id);
     if (!node) return;
 

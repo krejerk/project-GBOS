@@ -668,6 +668,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             }
             // Auto-collect final route locations for Node 6 map update
             if (onCollectClue) {
+                onCollectClue('year_1976', '1976');
                 onCollectClue('portland', '波特兰');
                 onCollectClue('santa_barbara', '圣芭芭拉');
                 onCollectClue('laguna_beach', '拉古那海滩');

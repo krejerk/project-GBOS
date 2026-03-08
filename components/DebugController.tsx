@@ -83,7 +83,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
             collectedDossierIds: ['julip', 'project', 'crime_route_map', 'graywater_beacon'],
             collectedAttachments: ['wilmer_ribbon'],
             unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7'],
-            unlockedArchiveIds: ['me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'va_1990'],
+            unlockedArchiveIds: ['me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'nv_1971', 'va_1972', 'va_1990'],
             currentStoryNode: 1,
             systemStability: 84,
             activeNodeId: null
@@ -125,7 +125,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                 'confession_8', 'confession_9', 'confession_10', 'confession_11'
             ],
             unlockedArchiveIds: [
-                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'va_1990',
+                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'nv_1971', 'va_1972', 'va_1990',
                 'cin_1973', 'nas_1973', 'ky_1973'
             ],
             currentStoryNode: 2,
@@ -167,7 +167,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                 'confession_12', 'confession_13', 'confession_14', 'confession_15'
             ],
             unlockedArchiveIds: [
-                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'va_1990',
+                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'nv_1971', 'va_1972', 'va_1990',
                 'cin_1973', 'nas_1973', 'ky_1973',
                 'kan_1976', 'kc_1965', 'ia_1976'
             ],
@@ -215,7 +215,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                 'confession_16', 'confession_17', 'confession_18', 'confession_19'
             ],
             unlockedArchiveIds: [
-                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'va_1990',
+                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'nv_1971', 'va_1972', 'va_1990',
                 'cin_1973', 'nas_1973', 'ky_1973',
                 'kan_1976', 'kc_1965', 'ia_1976',
                 'archive_15', 'archive_16', 'tx_1967'
@@ -266,7 +266,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
                 'confession_20', 'confession_21', 'confession_22', 'confession_23', 'confession_24', 'confession_25', 'confession_26'
             ],
             unlockedArchiveIds: [
-                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'va_1990',
+                'me_1971', 'oh_1968', 'dc_1967', 'il_1985', 'nv_1971', 'va_1972', 'va_1990',
                 'cin_1973', 'nas_1973', 'ky_1973',
                 'kan_1976', 'kc_1965', 'ia_1976',
                 'archive_15', 'archive_16', 'tx_1967'
@@ -283,7 +283,7 @@ export const DebugController: React.FC<DebugControllerProps> = ({ onSetState }) 
 
 
     return (
-        <div className="fixed bottom-4 left-4 z-[9999] flex flex-col items-start pointer-events-none" >
+        <div className="fixed bottom-20 left-4 z-[9999] flex flex-col items-start pointer-events-none" >
             <div className={`
         pointer-events-auto bg-black/90 border border-red-500/30 rounded-lg backdrop-blur-md shadow-[0_0_20px_rgba(220,38,38,0.2)]
         transition-all duration-300 overflow-hidden flex flex-col
