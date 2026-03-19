@@ -15,6 +15,8 @@ interface NodeDetailProps {
   clueDisplayMap?: Record<string, string>;
   onPersonaReboot?: () => void;
   hasSwitchedPersona?: boolean;
+  unlockedPeople?: string[];
+  collectedClues?: string[];
 }
 
 export const NodeDetail: React.FC<NodeDetailProps> = ({
@@ -26,7 +28,9 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   collectedDossierIds = [],
   collectedAttachments = [],
   clueDisplayMap = {},
-  hasSwitchedPersona = false
+  hasSwitchedPersona = false,
+  unlockedPeople = [],
+  collectedClues = []
 }) => {
   // Safety: Fallback to SURFACE if current layer is missing (e.g. CORE not yet defined)
   const current = (node.layers[node.currentLayer] || node.layers[MemoryLayer.SURFACE])!;
@@ -107,9 +111,21 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   const [collectionFeedback, setCollectionFeedback] = React.useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
 
   const handleAttemptCollect = (targetClueId: string) => {
-    if (targetClueId === 'graywater_beacon' || (node.id === 'confession_16' && targetClueId === 'project')) {
+    if (
+      targetClueId === 'graywater_beacon' || 
+      (node.id === 'confession_16' && targetClueId === 'project') ||
+      (node.id === 'confession_28' && targetClueId === 'project') ||
+      (node.id === 'confession_29' && targetClueId === 'project') ||
+      (node.id === 'confession_30' && (targetClueId === 'project' || targetClueId === 'pendant_photo')) ||
+      (node.id === 'confession_31' && targetClueId === 'project')
+    ) {
       if (onCollectAttachment) {
-        onCollectAttachment(node.id === 'confession_16' ? 'record_of_accounts' : 'graywater_beacon');
+        if (node.id === 'confession_16') onCollectAttachment('record_of_accounts');
+        else if (node.id === 'confession_28') onCollectAttachment('laguna_beach_visual_residue');
+        else if (node.id === 'confession_29') onCollectAttachment('felipe_maldonado_poster');
+        else if (node.id === 'confession_30') onCollectAttachment('pendant_photo');
+        else if (node.id === 'confession_31') onCollectAttachment('libby_forest_map_residue');
+        else onCollectAttachment('graywater_beacon');
       }
       setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
       setTimeout(() => {
@@ -260,7 +276,33 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     '记者': 'reporter'
   };
 
+  const CONFESSION_28_KEYWORDS: Record<string, string> = {
+    '戈尔和列维探员': 'gore_and_levy'
+  };
+
+  const CONFESSION_29_KEYWORDS: Record<string, string> = {
+    'FELIPE MALDONADO': 'felipe_maldonado',
+    '费利佩·马尔多纳多': 'felipe_maldonado'
+  };
+
+  const CONFESSION_31_KEYWORDS: Record<string, string> = {
+    '曼丹市': 'mandan',
+    '森林地图': 'forest_map',
+    '汉弗莱县': 'humphrey_county',
+    '袭警案': 'assault_on_police'
+  };
+
+  const CONFESSION_30_KEYWORDS: Record<string, string> = {
+    '威廉·道森': 'william_dawson',
+    '威廉道森': 'william_dawson',
+    '1967年': 'year_1967'
+  };
+
   const KEYWORD_MAP = React.useMemo(() => {
+    if (node.id === 'confession_31') return CONFESSION_31_KEYWORDS;
+    if (node.id === 'confession_30') return CONFESSION_30_KEYWORDS;
+    if (node.id === 'confession_29') return CONFESSION_29_KEYWORDS;
+    if (node.id === 'confession_28') return CONFESSION_28_KEYWORDS;
     if (node.id === 'confession_27') return CONFESSION_27_KEYWORDS;
     if (node.id === 'confession_26') return CONFESSION_26_KEYWORDS;
     if (node.id === 'confession_25') return CONFESSION_25_KEYWORDS;
@@ -325,9 +367,16 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
 
   const [collectionEffects, setCollectionEffects] = React.useState<Record<string, boolean>>({});
   const [isVisualRevealed, setIsVisualRevealed] = React.useState(false);
-  const isImageCollected = node.id === 'confession_16'
-    ? collectedAttachments.includes('record_of_accounts')
-    : collectedAttachments.includes('graywater_beacon');
+  const [isLocketOpen, setIsLocketOpen] = React.useState(false);
+  const [isPhotoFlipped, setIsPhotoFlipped] = React.useState(false);
+  const isImageCollected = (() => {
+    if (node.id === 'confession_16') return collectedAttachments.includes('record_of_accounts');
+    if (node.id === 'confession_28') return collectedAttachments.includes('laguna_beach_visual_residue');
+    if (node.id === 'confession_29') return collectedAttachments.includes('felipe_maldonado_poster');
+    if (node.id === 'confession_30') return collectedAttachments.includes('pendant_photo');
+    if (node.id === 'confession_31') return collectedAttachments.includes('libby_forest_map_residue');
+    return collectedAttachments.includes('graywater_beacon');
+  })();
   const [isStabilized, setIsStabilized] = React.useState(false);
 
   React.useEffect(() => {
@@ -484,7 +533,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                         className="relative cursor-pointer"
                         onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
                       >
-                        <img src="assets/iron_horse_beacon.jpg" className={`w-full h-auto grayscale brightness-50 mix-blend-screen ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
+                        <img src={`${import.meta.env.BASE_URL}assets/iron_horse_beacon.jpg`} className={`w-full h-auto grayscale brightness-50 mix-blend-screen ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
                         {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-80 rotate-[-15deg]">ARCHIVED</div>}
                       </div>
                     )}
@@ -508,8 +557,209 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                         className="relative cursor-pointer"
                         onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
                       >
-                        <img src="assets/record_of_accounts.jpg" className={`w-full h-auto grayscale brightness-50 mix-blend-screen ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
+                        <img src={`${import.meta.env.BASE_URL}assets/record_of_accounts.jpg`} className={`w-full h-auto grayscale brightness-50 mix-blend-screen ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
                         {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-80 rotate-[-15deg]">ARCHIVED</div>}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {node.id === 'confession_28' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2 }}
+                    className="mt-16 p-8 bg-[var(--confess-highlight)]/5 border border-[var(--confess-border)] rounded-sm relative overflow-hidden group/visual"
+                  >
+                    {!isVisualRevealed ? (
+                      <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
+                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号</p>
+                        <div className="border border-[var(--confess-border)] px-6 py-2 text-sm text-[var(--confess-highlight)] font-bold">解析视觉记忆块 {" >> "}</div>
+                      </div>
+                    ) : (
+                      <div
+                        className="relative cursor-pointer"
+                        onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
+                      >
+                        <img src={`${import.meta.env.BASE_URL}assets/laguna_beach_visual_residue.png`} className={`w-full h-auto grayscale brightness-50 mix-blend-screen ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
+                        {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-80 rotate-[-15deg]">ARCHIVED</div>}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {node.id === 'confession_29' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2 }}
+                    className="mt-16 p-8 bg-[var(--confess-highlight)]/5 border border-[var(--confess-border)] rounded-sm relative overflow-hidden group/visual"
+                  >
+                    {!isVisualRevealed ? (
+                      <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
+                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号</p>
+                        <div className="border border-[var(--confess-border)] px-6 py-2 text-sm text-[var(--confess-highlight)] font-bold">解析视觉记忆块 {" >> "}</div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                          <motion.div
+                            initial={{ scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 }}
+                            animate={{ scale: 1, filter: 'blur(0px) brightness(1)', opacity: 1 }}
+                            transition={{ duration: 2, ease: "easeOut" }}
+                            className="neural-residue-container w-full h-full flex items-center justify-center p-4"
+                            onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
+                          >
+                            <img 
+                              src={`${import.meta.env.BASE_URL}assets/felipe_maldonado_poster.jpg`} 
+                              className={`w-full h-auto grayscale brightness-75 contrast-125 mix-blend-screen transition-all duration-1000 ${isImageCollected ? 'grayscale-0 brightness-110 scale-105' : 'hover:scale-102 hover:brightness-90 opacity-80'}`} 
+                              alt="Felipe Maldonado Poster"
+                            />
+                            
+                            {/* CRT/Memory Effects Overlay */}
+                            <div className="crt-overlay absolute inset-0 pointer-events-none opacity-30"></div>
+                            <div className="bg-vignette absolute inset-0 pointer-events-none"></div>
+                            
+                            {/* Neural Noise & Interference */}
+                            <div className="neural-residue-noise"></div>
+                            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-[var(--confess-highlight)]/5 to-transparent h-[20%] w-full animate-signal-interference"></div>
+                            
+                            {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-60 rotate-[-15deg] pointer-events-none z-10">ARCHIVED</div>}
+                          </motion.div>
+                        <div className="text-[10px] text-[var(--confess-highlight)]/60 font-mono tracking-widest text-center italic mt-4 px-4 py-2 border-t border-[var(--confess-border)]/30">
+                          这是一张<span 
+                            onClick={(e) => { e.stopPropagation(); onCollectClue('felipe_maldonado', '费利佩·马尔多纳多'); }}
+                            className={`cursor-pointer transition-all duration-300 mx-0.5 px-0.5 rounded-sm ${unlockedPeople.includes('felipe_maldonado') ? 'text-white bg-[var(--confess-highlight)] shadow-[0_0_8px_var(--confess-highlight)] font-bold' : 'text-[var(--confess-highlight)] hover:underline hover:bg-[var(--confess-highlight)]/10'}`}
+                          >费利佩·马尔多纳多</span>与乐队在俄勒冈尤金大厅的演出海报。
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {node.id === 'confession_30' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.5 }}
+                    className="mt-16 p-4 md:p-12 bg-black/40 border border-[var(--confess-border)]/10 rounded-sm relative overflow-visible group/visual min-h-[500px] flex flex-col items-center justify-center cursor-default"
+                  >
+                    {!isVisualRevealed ? (
+                      <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-6 text-center border-2 border-dashed border-[var(--confess-border)]/30 rounded-lg transition-all" onClick={() => setIsVisualRevealed(true)}>
+                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.4em] mb-4 uppercase opacity-80 animate-pulse">DETECTED: HIGH_FIDELITY_VISUAL_ARTIFACT</p>
+                        <div className="bg-[var(--confess-highlight)] text-black px-8 py-3 text-sm font-black tracking-widest uppercase hover:scale-105 transition-transform shadow-[0_0_20px_var(--confess-highlight)]">解析视觉记忆块 {" >> "}</div>
+                      </div>
+                    ) : (
+                      <div className="relative w-full flex flex-col items-center">
+                        {/* High-Fidelity Realistic Locket System */}
+                        <div className="locket-realistic-system mb-12">
+                          <motion.div 
+                            className="locket-base-image"
+                            initial={{ rotateX: 20, opacity: 0 }}
+                            animate={{ rotateX: 5, opacity: 1 }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                          >
+                            {/* Photo Overlay in the right chamber */}
+                            <div className="locket-photo-area" onClick={() => setIsPhotoFlipped(!isPhotoFlipped)}>
+                              <motion.div 
+                                className="locket-photo-content"
+                                style={{ transform: isPhotoFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+                              >
+                                {/* Front Face */}
+                                <div className="locket-photo-face front">
+                                  <img 
+                                    src={`${import.meta.env.BASE_URL}assets/william_dawson_portrait.png`} 
+                                    className="locket-inner-image" 
+                                    alt="William and Son Portrait"
+                                  />
+                                  <div className="locket-glass-sheen"></div>
+                                </div>
+                                
+                                {/* Back Face */}
+                                <div className="locket-photo-face back">
+                                  <img 
+                                    src={`${import.meta.env.BASE_URL}assets/william_dawson_inscription.png`} 
+                                    className="locket-inner-image" 
+                                    alt="William and Son Inscription"
+                                  />
+                                  <div className="locket-glass-sheen"></div>
+                                </div>
+                              </motion.div>
+                            </div>
+
+                            <div className="locket-instruction">● CLICK_PHOTO_TO_FLIP</div>
+                          </motion.div>
+
+                          {/* Collection Action */}
+                          {!isImageCollected && (
+                            <motion.button 
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              onClick={(e) => { e.stopPropagation(); setIsSelectingFolder(true); }}
+                              className="absolute -bottom-8 px-5 py-2 bg-[var(--confess-highlight)] text-black text-[10px] font-bold tracking-[0.2em] uppercase hover:scale-105 transition-all flex items-center gap-2 shadow-[0_5px_15px_rgba(0,0,0,0.5)] z-20"
+                            >
+                              <Folder size={12} /> ARCHIVE_ARTIFACT_DATA
+                            </motion.button>
+                          )}
+                        </div>
+
+                        <div className="w-full text-[12px] text-[var(--confess-highlight)]/80 font-mono tracking-[0.2em] text-center italic leading-relaxed px-10 py-8 border-t border-[var(--confess-border)]/20 bg-black/60 rounded-b-lg">
+                          照片背面用钢笔写着<span 
+                            onClick={(e) => { e.stopPropagation(); onCollectClue('william_dawson', '威廉·道森'); }}
+                            className={`cursor-pointer transition-all duration-300 mx-2 px-2 py-0.5 rounded-sm border ${unlockedPeople.includes('william_dawson') ? 'text-white bg-[var(--confess-highlight)] border-[var(--confess-highlight)] shadow-[0_0_15px_var(--confess-highlight)] font-bold' : 'text-[var(--confess-highlight)] border-[var(--confess-highlight)]/30 hover:bg-[var(--confess-highlight)]/20 shadow-sm'}`}
+                          >威廉·道森</span>和儿子
+                          
+                          {isImageCollected && (
+                            <div className="mt-5 flex items-center justify-center gap-3 text-[10px] text-green-500/70 tracking-[0.4em] font-bold">
+                              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                              DATA_ARCHIVED_SUCCESSFULLY
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {node.id === 'confession_31' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2 }}
+                    className="mt-16 p-8 bg-[var(--confess-highlight)]/5 border border-[var(--confess-border)] rounded-sm relative overflow-hidden group/visual"
+                  >
+                    {!isVisualRevealed ? (
+                      <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
+                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号 [RV_INTERIOR // I-94]</p>
+                        <div className="border border-[var(--confess-border)] px-6 py-2 text-sm text-[var(--confess-highlight)] font-bold">解析视觉记忆块 {" >> "}</div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <motion.div
+                          initial={{ scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 }}
+                          animate={{ scale: 1, filter: 'blur(0px) brightness(1)', opacity: 1 }}
+                          transition={{ duration: 2, ease: "easeOut" }}
+                          className="w-full relative cursor-pointer overflow-hidden border border-[var(--confess-border)]/30 rounded-sm"
+                          onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
+                        >
+                          <img 
+                            src={`${import.meta.env.BASE_URL}assets/confession_31_residue.png`} 
+                            className={`w-full h-auto object-cover transition-all duration-1000 ${isImageCollected ? 'grayscale-0 brightness-110' : 'grayscale brightness-75 contrast-125'}`} 
+                            alt="RV Interior Memory"
+                          />
+                          <div className="crt-overlay absolute inset-0 pointer-events-none opacity-20"></div>
+                          <div className="bg-vignette absolute inset-0 pointer-events-none"></div>
+                          
+                          {isImageCollected && !hasSwitchedPersona && (
+                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-50 rotate-[-15deg] pointer-events-none z-10 select-none">ARCHIVED</div>
+                          )}
+                        </motion.div>
+
+                        <div className="text-[10px] text-[var(--confess-highlight)]/60 font-mono tracking-widest text-center italic mt-4 px-4 py-2 border-t border-[var(--confess-border)]/30 leading-relaxed">
+                          卡彭记忆中的房车内部，他没有意识到墙上始终贴着一张利比镇的<span 
+                            onClick={(e) => { e.stopPropagation(); onCollectClue('forest_map', '森林地图'); }}
+                            className={`cursor-pointer transition-all duration-300 mx-0.5 px-0.5 rounded-sm ${collectedClues.includes('forest_map') ? 'text-white bg-[var(--confess-highlight)] shadow-[0_0_8px_var(--confess-highlight)] font-bold' : 'text-[var(--confess-highlight)] hover:underline hover:bg-[var(--confess-highlight)]/10'}`}
+                          >森林地图</span>。
+                        </div>
                       </div>
                     )}
                   </motion.div>
@@ -522,7 +772,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                   className="mt-20 pt-12 border-t border-dashed border-[#d89853]/20 flex flex-col items-center gap-6"
                 >
                   <div className="text-[10px] text-[#c85a3f]/60 font-mono tracking-[0.6em]">END_OF_TRANSCRIPT</div>
-                  <div className={`h-16 w-64 bg-[url('assets/signature.png')] bg-contain bg-no-repeat bg-center opacity-70 ${useReporterStyle ? 'grayscale contrast-125 brightness-50 sepia-[.8] hue-rotate-[15deg] blur-[0.3px]' : 'mix-blend-lighten'}`} />
+                  <div className={`h-16 w-64 bg-[url('${import.meta.env.BASE_URL}assets/signature.png')] bg-contain bg-no-repeat bg-center opacity-70 ${useReporterStyle ? 'grayscale contrast-125 brightness-50 sepia-[.8] hue-rotate-[15deg] blur-[0.3px]' : 'mix-blend-lighten'}`} />
                 </motion.div>
 
               </div>

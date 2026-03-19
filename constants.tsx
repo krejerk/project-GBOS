@@ -62,6 +62,10 @@ export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
   'confession_25': ['albuquerque', 'chemist_lover'],
   'confession_26': ['santa_fe', 'bonny_and_clyde'],
   'confession_27': ['mill_valley', 'reporter'],
+  'confession_28': ['fake_smoke_bomb', 'blind_zone_camp'],
+  'confession_29': ['woodland_depths', 'amalekite_protocol'],
+  'confession_30': ['libby_town', 'tithe'],
+  'confession_31': ['humphrey_county', 'assault_on_police', 'mandan', 'forest_map'],
 
   // Archives
   'nv_1971': ['nevada', 'year_1971'],
@@ -76,6 +80,9 @@ export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
   'archive_15': ['richie_dreyfuss', 'year_1977'],
   'archive_16': ['morning', 'year_1974'],
   'sf_1976': ['morandi', 'year_1976'],
+  'archive_18': ['alexei', 'year_1976', 'fake_smoke_bomb', 'blind_zone_camp'],
+  'archive_19': ['year_1976', 'gore_and_levy'],
+  'libby_1967': ['year_1967', 'william_dawson', 'humphrey_county', 'assault_on_police'],
 
   // Node 4 Retrieval Targets (Meta-group for visual removal AFTER Jennifer dialogue)
 };
@@ -87,7 +94,7 @@ export const CATEGORY_IDS = {
     'st_louis', 'cincinnati', 'chicago', 'louisville', 'burkesville',
     'quantico', 'kansas_city', 'roanoke', 'nevada', 'ohio', 'maine',
     'interstate_80', 'portland', 'redwood_forest', 'pow_camp', 'santa_barbara', 'laguna_beach',
-    'rockford', 'albuquerque', 'santa_fe', 'mill_valley'
+    'rockford', 'albuquerque', 'santa_fe', 'mill_valley', 'blind_zone_camp', 'woodland_depths', 'humphrey_county', 'mandan'
   ],
   CASES: [
     'new_plan', 'recruitment', 'dismemberment_case', 'rockford',
@@ -96,10 +103,11 @@ export const CATEGORY_IDS = {
     'mobile_blood_truck', 'execution_room', 'chaos_aesthetics', 'maggots',
     'police_killing', 'reboot_command', 'watchman', 'achilles_heel',
     'amalekite_protocol', 'closing_the_net', 'tithe', 'silver_magpie',
-    'project', 'julip', 'naked_root', 'chemist_lover', 'bonny_and_clyde', 'reporter'
+    'project', 'julip',    'naked_root', 'chemist_lover', 'bonny_and_clyde', 'reporter', 'fake_smoke_bomb', 'libby_town',
+    'assault_on_police', 'forest_map'
   ],
-  PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson', 'richie_dreyfuss', 'alexei', 'morandi'],
-  YEARS: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1975', 'year_1976', 'year_1974', 'year_1965', 'year_1977']
+  PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson', 'william_dawson', 'richie_dreyfuss', 'alexei', 'morandi', 'gore_and_levy'],
+  YEARS: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1976', 'year_1974', 'year_1965', 'year_1977']
 };
 
 export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'year' | 'person' | 'location' | 'archive' }> = {
@@ -121,7 +129,6 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '瓦妮莎': { id: 'vanessa', type: 'person' },
   '里奇·德莱弗斯': { id: 'richie_dreyfuss', type: 'person' },
   '里奇': { id: 'richie_dreyfuss', type: 'person' },
-  'Richie Dreyfuss': { id: 'richie_dreyfuss', type: 'person' },
   '母亲': { id: 'the_mother', type: 'person' },
   '朱维尔·钱伯斯': { id: 'juvell_chambers', type: 'person' },
   '鲍里斯·斯米尔诺夫': { id: 'boris_smirnov', type: 'person' },
@@ -136,6 +143,12 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '亚瑟·道森': { id: 'arthur_dawson', type: 'person' },
   '亚瑟': { id: 'arthur_dawson', type: 'person' },
   'Arthur Dawson': { id: 'arthur_dawson', type: 'person' },
+  '威廉·道森': { id: 'william_dawson', type: 'person' },
+  '威廉道森': { id: 'william_dawson', type: 'person' },
+  'William Dawson': { id: 'william_dawson', type: 'person' },
+  '利比镇': { id: 'libby_town', type: 'location' },
+  'libby_town': { id: 'libby_town', type: 'location' },
+  'libby': { id: 'libby_town', type: 'location' },
   '记者': { id: 'reporter', type: 'clue' },
   'reporter': { id: 'reporter', type: 'clue' },
   // Years
@@ -157,8 +170,6 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '1986年': { id: 'year_1986', type: 'year' },
   '1982': { id: 'year_1982', type: 'year' },
   '1982年': { id: 'year_1982', type: 'year' },
-  '1975': { id: 'year_1975', type: 'year' },
-  '1975年': { id: 'year_1975', type: 'year' },
   '1976': { id: 'year_1976', type: 'year' },
   '1976年': { id: 'year_1976', type: 'year' },
   '1974': { id: 'year_1974', type: 'year' },
@@ -195,6 +206,20 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '80号洲际公路': { id: 'interstate_80', type: 'location' },
   '匡提科': { id: 'quantico', type: 'location' },
   'Quantico': { id: 'quantico', type: 'location' },
+  '盲区营地': { id: 'blind_zone_camp', type: 'location' },
+  '红杉林': { id: 'redwood_forest', type: 'location' },
+  '丹佛市郊': { id: 'denver_suburb', type: 'location' },
+  '教堂': { id: 'church', type: 'location' },
+  '阿尔伯克基市': { id: 'albuquerque', type: 'location' },
+  '圣菲': { id: 'santa_fe', type: 'location' },
+  '米尔谷': { id: 'mill_valley', type: 'location' },
+  'Mill Valley': { id: 'mill_valley', type: 'location' },
+  'mill_valley': { id: 'mill_valley', type: 'location' },
+  '林地深处': { id: 'woodland_depths', type: 'location' },
+  '汉弗莱县': { id: 'humphrey_county', type: 'location' },
+  'Humphrey County': { id: 'humphrey_county', type: 'location' },
+  '曼丹市': { id: 'mandan', type: 'location' },
+  'mandan': { id: 'mandan', type: 'location' },
 
   // Cases / Details
   '小银行': { id: 'small_bank', type: 'clue' },
@@ -215,7 +240,6 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '行刑室': { id: 'execution_room', type: 'clue' },
   '流动献血车': { id: 'mobile_blood_truck', type: 'clue' },
   '软肋': { id: 'achilles_heel', type: 'clue' },
-  '红杉林': { id: 'redwood_forest', type: 'location' },
   '亚玛力人协议': { id: 'amalekite_protocol', type: 'clue' },
   '收网': { id: 'closing_the_net', type: 'clue' },
   '什一税': { id: 'tithe', type: 'clue' },
@@ -224,28 +248,27 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '青豆牡蛎汤计划': { id: 'project', type: 'clue' },
   '诡异家族': { id: 'family', type: 'clue' },
   '混乱美学': { id: 'chaos_aesthetics', type: 'clue' },
+  '森林地图': { id: 'forest_map', type: 'clue' },
   '蛆虫': { id: 'maggots', type: 'clue' },
   'KLUB-75号分析报告': { id: 'klub75_report', type: 'clue' },
   'KLUB-75': { id: 'klub75_report', type: 'clue' },
   '伯克斯维尔': { id: 'burkesville', type: 'clue' },
-  '丹佛市郊': { id: 'denver_suburb', type: 'location' },
   '警员遇害案': { id: 'police_killing', type: 'clue' },
-  '教堂': { id: 'church', type: 'location' },
   '>> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER]': { id: 'reboot_command', type: 'clue' },
-  // '收网' is already defined above at line 210, so removing duplicate here:
-
   '裸根': { id: 'naked_root', type: 'clue' },
   '阿列克谢': { id: 'alexei', type: 'person' },
   '阿列克谢·罗科维奇': { id: 'alexei', type: 'person' },
   'Alexei Rockovich': { id: 'alexei', type: 'person' },
   '莫兰迪': { id: 'morandi', type: 'person' },
-  '阿尔伯克基市': { id: 'albuquerque', type: 'location' },
   '化学家情人': { id: 'chemist_lover', type: 'clue' },
-  '圣菲': { id: 'santa_fe', type: 'location' },
-  '米尔谷': { id: 'mill_valley', type: 'location' },
-  'Mill Valley': { id: 'mill_valley', type: 'location' },
-  'mill_valley': { id: 'mill_valley', type: 'location' },
   '邦妮和克莱德': { id: 'bonny_and_clyde', type: 'clue' },
+  'Vanessa Dilovatz': { id: 'vanessa', type: 'person' },
+  'Robert Carpen': { id: 'robert_capone', type: 'person' },
+  '大卫·凯斯勒': { id: 'reporter', type: 'clue' },
+  '人造烟雾弹': { id: 'fake_smoke_bomb', type: 'clue' },
+  '戈尔和列维探员': { id: 'gore_and_levy', type: 'person' },
+  '袭警案': { id: 'assault_on_police', type: 'clue' },
+  '袭警': { id: 'assault_on_police', type: 'clue' },
 };
 
 export const ARCHIVE_CASE_HIGHLIGHT_MAP: Record<string, string[]> = {
@@ -283,6 +306,12 @@ export const ARCHIVE_CASE_HIGHLIGHT_MAP: Record<string, string[]> = {
   'sf_1976': ['记者', '米尔谷'],
   // tx_1967: only location 特克萨卡纳 is click-collected; people via archive search
   'tx_1967': ['特克萨卡纳'],
+  // archive_18
+  'archive_18': ['阿列克谢', '1976年', '人造烟雾弹', '盲区营地'],
+  // archive_19
+  'archive_19': ['林地深处'],
+  'libby_1967': ['汉弗莱县', '袭警案', '曼丹市'],
+  'confession_30': ['亚瑟·道森', '什一税', '利比镇', '吊坠盒', '瓦妮莎', '1967年'],
 };
 
 export const BRIEFING_SECTIONS = [
@@ -429,6 +458,19 @@ export const JENNIFER_NODE_6_DIALOGUE = [
   "祝好运。通讯完毕。"
 ];
 
+export const JENNIFER_NODE_7_DIALOGUE = [
+  "监测数据显示，机体心理防御正在瓦解。你的切入点十分有效。",
+  "但请暂缓现有方向。直接提及瓦妮莎的名字有触发应激保护的风险。",
+  "我们需要兜个圈子。",
+  "他们在亚利桑那的酒吧发现他时，探员在其贴身内衬里发现了一个缝死的防水袋。",
+  "内容物是19张打过孔的灰狗巴士旧票根，时间跨度十二年，全部是单程票。",
+  "目的地同一个地点，蒙大拿州西北部的[利比镇](clue:libby_town)。",
+  "一个靠近边境的偏僻伐木区。",
+  "在藏匿起父亲之后，过去十几年，他需要同时躲避联邦追捕和家族残党的报复行动，但他却冒着暴露风险，每隔几个月都进行一次毫无战术价值的迁徙行动，这完全违背他的生存测写。",
+  "问他车票的事，问他利比镇到底有什么。",
+  "[是否提取视觉信息？](clue:extract_visual_node_7)"
+];
+
 
 
 // Derived display map for backward compatibility
@@ -445,12 +487,14 @@ CLUE_DISPLAY_MAP['year_1971'] = '1971';
 CLUE_DISPLAY_MAP['year_1972'] = '1972';
 CLUE_DISPLAY_MAP['year_1973'] = '1973';
 CLUE_DISPLAY_MAP['year_1974'] = '1974';
-CLUE_DISPLAY_MAP['year_1975'] = '1975';
 CLUE_DISPLAY_MAP['year_1976'] = '1976';
 CLUE_DISPLAY_MAP['year_1982'] = '1982';
 CLUE_DISPLAY_MAP['year_1985'] = '1985';
 CLUE_DISPLAY_MAP['year_1986'] = '1986';
 CLUE_DISPLAY_MAP['year_1990'] = '1990';
+CLUE_DISPLAY_MAP['humphrey_county'] = '汉弗莱县';
+CLUE_DISPLAY_MAP['mandan'] = '曼丹市';
+CLUE_DISPLAY_MAP['assault_on_police'] = '袭警案';
 CLUE_DISPLAY_MAP['maine'] = '缅因州';
 CLUE_DISPLAY_MAP['ohio'] = '俄亥俄州';
 CLUE_DISPLAY_MAP['chicago'] = '芝加哥';
@@ -512,6 +556,7 @@ CLUE_DISPLAY_MAP['chaos_aesthetics'] = '混乱美学';
 CLUE_DISPLAY_MAP['maggots'] = '蛆虫';
 CLUE_DISPLAY_MAP['peter_henderson'] = '皮特·亨德森';
 CLUE_DISPLAY_MAP['arthur_dawson'] = '亚瑟·道森';
+CLUE_DISPLAY_MAP['william_dawson'] = '威廉·道森';
 CLUE_DISPLAY_MAP['priest'] = '牧师';
 CLUE_DISPLAY_MAP['jc_penney'] = '杰西·潘尼';
 CLUE_DISPLAY_MAP['robert'] = '罗伯特';
@@ -534,6 +579,12 @@ CLUE_DISPLAY_MAP['alexei'] = '阿列克谢·罗科维奇';
 CLUE_DISPLAY_MAP['laguna_beach'] = '拉古那海滩';
 CLUE_DISPLAY_MAP['mill_valley'] = '米尔谷';
 CLUE_DISPLAY_MAP['reporter'] = '记者';
+CLUE_DISPLAY_MAP['fake_smoke_bomb'] = '人造烟雾弹';
+CLUE_DISPLAY_MAP['blind_zone_camp'] = '盲区营地';
+CLUE_DISPLAY_MAP['gore_and_levy'] = '戈尔和列维探员';
+CLUE_DISPLAY_MAP['felipe_maldonado'] = '费利佩·马尔多纳多';
+CLUE_DISPLAY_MAP['forest_map'] = '森林地图';
+
 
 export const CORE_NODES: MemoryNode[] = [
   {
@@ -547,7 +598,7 @@ export const CORE_NODES: MemoryNode[] = [
       [MemoryLayer.SURFACE]: {
         event: "罗伯特曾是FBI最受期待的探员，但在十年前的凤凰城扫黑行动后失踪。",
         attitude: "我想回家。不，我没有家。我属于这里，属于这片阴影。",
-        visual: "assets/capone-split-personality.jpg"
+        visual: `${import.meta.env.BASE_URL}assets/capone-split-personality.jpg`
       },
       [MemoryLayer.DEEP]: {
         event: "他的失踪并非被迫，而是主动选择了静默。他发现辛迪加的根须已经伸到了局里。",
@@ -607,7 +658,7 @@ export const CORE_NODES: MemoryNode[] = [
     title: "供述 No.27",
     currentLayer: MemoryLayer.SURFACE,
     position: { x: 400, y: 300 },
-    revealedKeywords: [],
+    revealedKeywords: ['year_1976'],
     layers: {
       [MemoryLayer.SURFACE]: {
         event: `我并不常想起这件事。
@@ -644,7 +695,7 @@ export const CORE_NODES: MemoryNode[] = [
 
 “那不重要。你只需要想，十八年或是二十五年后的某一天早晨，当某个人翻开报纸，看到米尔谷曾经的办公室毫无征兆地被炸成一个大坑时，他会意识到什么呢？这个人可能是你，可能是我，可能是罗伯特，”父亲说着，看了我一眼，“——或者是那只猴子，不重要。但不管是谁，每个人想到的东西都不一样，对吗？你只需要想这一点，它就足够美了。”
 
-父亲说着话，另一边莫兰迪也完活了。他一声不吭，只从口袋里摸出了一块巴掌大的黄铜铭牌，上边用强酸蚀刻了几行极其优雅的法文花体字。借着手电筒光晕，我能清楚地看到上面写着：Cuvée Tardive Mis en cave par Morandi Novembre 1976（迟摘特酿，莫兰迪封存入窖，1976年11月）。
+父亲说着话，另一边莫兰迪也完活了。他一声不吭，只从口袋里摸出了一块巴掌大的黄铜铭牌，上边用强酸蚀刻了几行极其优雅的法文花体字。借着手电筒光晕，我能清楚地看到上面写着：Cuvée Tardive Mis en cave par Morandi Novembre [1976](clue:year_1976)（迟摘特酿，莫兰迪封存入窖，[1976年](clue:year_1976)11月）。
 
 毫无疑问，哪怕 RDX 的爆炸当量能把整栋房子化为齑粉，这块铭牌也只会像颗弹片一样嵌进砖缝里。它会幸存下来，被二十年后某个筛网筛土的联邦探员捡到。`,
         attitude: "",
@@ -653,6 +704,46 @@ export const CORE_NODES: MemoryNode[] = [
       [MemoryLayer.DEEP]: {
         event: "",
         attitude: ""
+      }
+    },
+    connectedTo: ["capone"]
+  },
+  {
+    id: "confession_28",
+    keyword: "fake_smoke_bomb",
+    title: "供述 No.28",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.5, y: window.innerHeight * 0.9 + 100 },
+    revealedKeywords: ['gore_and_levy'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: `你问的是拉古那海滩么？我们最后停靠的那个鬼地方，确实连个正经营地都算不上，就是一片长满杂草的野滩涂，除了海风的腥臭味和等死的海鸥，什么都没有。
+
+不过我们到那的第二个下午，我确实注意到了一辆福特轿车，它停在太平洋海岸公路半英里外的矮树丛里。车里的两个蠢货以为反光镜上的泥巴能掩护他们，但他俩抽烟的频率实在太高了。
+
+我没惊动父亲，也没告诉其他人。你知道的，如果让父亲知道，他也只会点点头，然后艾莉丝就会兴致勃勃地去把那家伙的皮剥下来，当然这也没什么不好的，但我更宁愿安静地吹吹海风，而不是搞得鸡飞狗跳的。所以我就从沙滩上捡了块大概五磅重的花岗岩，一个人散步了过去。`,
+        attitude: "",
+        visual: "https://picsum.photos/seed/laguna1/800/450"
+      },
+      [MemoryLayer.DEEP]: {
+        event: `我从斜后方绕过去，绕了半圈观察了一番。主驾驶上是个年轻人，看起来像个大学生，他正通过望远镜盯着我们的房车看。我站直身子，发现艾莉丝已经把沙滩椅搬到了房车顶。在那她解开了那件扎染开衫的纽扣，露出胸部晒日光浴。副驾驶上则坐着一个肥胖的中年人。我真不知道他是怎么把自己塞进车里的，而此时此刻，他还在往嘴里塞沾满枣泥奶昔的玉米片。我走到副驾驶窗前，抡起花岗岩，对着车窗狠狠砸了下去，结果车窗纹丝不动，然后我才意识到，我他妈压根忘了这不是一辆民用汽车了。
+
+那头肥猪一脸‘操，我被发现了’的表情，手忙脚乱地想要按下车门的锁销，但他那沾满油脂的粗手指滑了一下，反而把门把手给拉开了。车门‘喀哒’一声弹开了一条缝。我一把拉开车门，抓住他的涤纶领带拽了出来，接着挥起花岗岩砸下去。肥猪瞬间脑浆迸裂，看来FBI也没给它的猪猡脑袋加装防弹护罩嘛。
+
+直到这会，驾驶座上那个偷窥狂才回过神来，他扔下望远镜，手忙脚乱去摸腋下的枪套，但他实在太紧张了，战术枪套的按扣卡住了。我踩着肥猪越过中间的扶手箱，一把抓住他脖子上的望远镜带子拽过来。真不愧是军用级别的高级货，带子极其结实。那小子的脸重重地砸在硬塑料的中央扶手上，发出“砰”的一声闷响。没等他惨叫出声，我顺手抄起望远镜，砸进他的眼眶里。`,
+        attitude: "",
+        visual: "https://picsum.photos/seed/fbicar/800/450"
+      },
+      [MemoryLayer.CORE]: {
+        event: `接下来的事就简单多了。我把那个没了半边脑袋的胖子塞进后备箱，把大学生折叠起来塞进副驾驶的脚垫下，压在油门踏板上，挂上档，让这辆铁王八变成一头被蒙住眼睛的犀牛，扎进了拉古那那片暗礁密布的海沟里。我靠在路边的树上，看着它渐渐沉下去，在海面上咕噜咕噜地冒了几个带着油污的水泡。远处的房车顶上，艾莉丝悠闲地翻了个身。一切就像没发生过一样。
+
+是的，我当然拿到了他们的证件，如假包换的戈尔和列维探员。我不知道他们是从什么时候开始跟上房车的，但我想不会是在爆炸案发生之前，否则他们早就拿着胶卷去跟安全局的人换资源了，这可比车上这几个老屁股有价值多了。
+
+可如果他们在76年春天就盯上了我们，为什么会在冬天又跑去报社拦截那封匿名信呢？还有，那封信里提到的人又是谁呢？如果连你也不知道，那我就更不知道了。
+
+不会是康查尔吧，莫非他还在缅因州监狱的时候就已经成为线人了？`,
+        attitude: "",
+        visual: "https://picsum.photos/seed/laguna2/800/450"
       }
     },
     connectedTo: ["capone"]
@@ -671,7 +762,7 @@ export const CORE_NODES: MemoryNode[] = [
         visual: `${import.meta.env.BASE_URL}assets/incident-report.jpg`
       },
       [MemoryLayer.DEEP]: {
-        event: "雷吉博士，我猜你在量化官的档案库里没见到过这个名字，不过“统一场论”就是他搞出来的，那时他手里有好几个看似孤立的冷案，他认为它们之间存在共性，而所谓动机其实都是犯事者的障眼法。\n\n在训练阶段，博士就曾反复强调过，要想引起目标人物的兴趣，我必须对‘罪恶’本身展现出一种生理性的热诚。所以进到监狱之后，我隔三差五就找茬揍人，可尼比却稳得像块石头，对我所做的一切都毫无反应。直到有一天，一个叫康查尔的年轻犯人主动找我搭讪，他告诉我，他十分欣赏我，我也了解到，此人只是因为一件小事被警察盘问，最终却因袭警入狱。",
+        event: "雷吉博士，我猜你在量化官的档案库里没见到过这个名字，不过“统一场论”就是他搞出来的，那时他手里有好几个看似孤立的冷案，他认为它们之间存在共性，而所谓动机其实都是犯事者的眼法。\n\n在训练阶段，博士就曾反复强调过，要想引起目标人物的兴趣，我必须对‘罪恶’本身展现出一种生理性的热诚。所以进到监狱之后，我隔三差五就找茬揍人，可尼比却稳得像块石头，对我所做的一切都毫无反应。直到有一天，一个叫康查尔的年轻犯人主动找我搭讪，他告诉我，他十分欣赏我，我也了解到，此人只是因为一件小事被警察盘问，最终却因袭警入狱。",
         attitude: "",
         visual: "https://picsum.photos/seed/prison/800/450"
       },
@@ -730,7 +821,7 @@ export const CORE_NODES: MemoryNode[] = [
       [MemoryLayer.CORE]: {
         event: "其实我知道你想问的是什么。你想问的是父亲。对吗？我只能告诉你一句实话，从受训到潜伏，过了好多好多年后，我忽然意识到，其实父亲在各个方面都是雷吉博士的反面。准确地说，是好的那一面。这些年我反复做一个梦，梦到其实根本就不存在什么“青豆牡蛎汤计划”，它只是我的一场噩梦，在现实中，这是内华达州本地的一道菜，除了豆子和牡蛎，你还需要在锅里放进胡萝卜、洋葱、蘑菇、月桂叶，最后倒进干雪利酒。\n\n我从不喝雪利酒，我不知道自己为什么会做这样一个梦。",
         attitude: "",
-        visual: "https://picsum.photos/seed/dream_soup/800/450"
+        visual: "https://picsum.com/seed/dream_soup/800/450"
       }
     },
     connectedTo: ["confession_1", "capone", "dr_reggie"]
@@ -1068,7 +1159,7 @@ export const CORE_NODES: MemoryNode[] = [
       [MemoryLayer.CORE]: {
         event: "亚瑟的笔记工整而刻板，列出了日期、城市、代号。此人显然是个强迫症患者，他在试图做一件这辆车上从未有人做过的事——建档。亚瑟记录了“父亲”口中那些散落在全美的“远亲”据点，宛如一个庞大的地下网络，如果FBI拿到这个笔记本，那雷吉博士的“统一场论”便无可置疑。可奇怪的是，到了笔记后半部分，记录风格却完全变了，整洁的表格被粗暴的红色马克笔涂抹，很多地方都画上了问号，就像是亚瑟在质疑这些联络人是否真的存在一样。\n\n我不禁想到一种可能性，如果亚瑟是对的呢？想象一下，1967年，曼森家族的阴影笼罩着好莱坞，黄道十二宫的密码信让旧金山彻夜难眠，整个美国社会处于一种“遍地是杀手”的集体癔症中，而“父亲”，这个瘫在房车里的老头，敏锐地嗅到了邪恶的味道。他不需要真的去指挥什么。他只需要坐在收音机前，听着那些来自加州、纽约或得克萨斯的恶性案件广播，然后转过头，用一种高深莫测的语气对年轻的康查尔、对恐惧的瓦妮莎说：“听到了吗？那是‘远亲’干的。”或许康查尔之所以死心塌地，是因为他以为自己终将成为一个遍布全美的宏伟网络的大脑，而瓦妮莎不敢逃跑，是因为她相信无论她逃到哪里，在加油站、在汽车旅馆，总有一个受“父亲”指挥的“远亲”在盯着她。\n\n有没有可能，亚瑟是因为发现了这一点才被处死的？\n\n可矛盾的地方在于，自从上了这辆车，那些“远亲”……我确确实实见到了他们。在伊利诺伊的加油站，那个递给我们弹药的瘸子；在爱荷华州的汽车旅馆，那个帮我们处理带血衣物的胖女人，还有脏弗兰克酒吧的莫宁，我跟他们握过手，我感受过他们皮肤的温度。如果没有“远亲”，这些人又是谁？我开始回想那些互动的细节……是的，有一种难以言喻的生涩感。那种感觉就像是……像是在看一场排练不足的话剧。那个瘸子递子弹的时候，眼神总是飘向父亲，像是在等待确认；那个胖女人在处理衣物时，动作机械得像是在完成一种临时指派的任务。\n\n难道是因为“我”在场？\n\n是不是因为父亲知道车上有一个FBI卧底，所以他必须让那些原本不存在的“鬼魂”显形？为了我而他才把这些疯子强行捏合在一起，在这个旅途中搭建起一个个临时话剧舞台。天哪，这种想法一度更让我恐惧。我不知道，我觉得自己快疯了，但我无法向亚瑟求证。这本笔记是我唯一的证据，而我最后一次见到它是在北达科他州的法戈市。在那场混乱的暴风雪中我遭遇了一些情况，笔记本被永远地遗失在了冰原里。\n\n或许，是这辆车在保护它最后的秘密。",
         attitude: "",
-        visual: "assets/record_of_accounts.jpg"
+        visual: `${import.meta.env.BASE_URL}assets/record_of_accounts.jpg`
       }
     },
     connectedTo: ["confession_14", "capone"]
@@ -1134,7 +1225,7 @@ export const CORE_NODES: MemoryNode[] = [
     revealedKeywords: [],
     layers: {
       [MemoryLayer.SURFACE]: {
-        event: "埃尔帕索的空气里全是沙尘 and 烧焦轮胎的味道。 \n\n1979年夏天，我们在那儿停靠的唯一原因，是为了让艾丽丝去“捕猎”。她看上了一个老牧师，说那个老头看她的眼神像是在看一只迷途的羔羊，她想让他见识一下狼是怎么吃羊的。\n\n我不在乎那个牧师。那天，趁着艾丽丝在前排长椅上假装哭泣、分散那个老牧师注意力的时候，我溜到了告解室后面。 这个时候尖叫声开始了。 不是艾丽丝的，是那个牧师的。 艾丽丝动手了。她用那种她在佛罗里达时用过的手法，只不过这次是一根削尖的十字架碎片，是的，她把那个老头钉在了告解室的门框上。",
+        event: "埃尔帕索的空气里全是沙尘 and 烧焦轮胎的味道。 \n\n1979年夏天，我们在那儿停靠的唯一原因，是为了让艾丽丝去“捕猎”。她看上了一个老牧师，说那个老头看她的眼神像是在看一只迷途的羔羊，她想让他见识一下狼是怎么吃羊的。\n\n我不在乎那个牧师。那天，趁着艾丽丝在前排长椅上假装哭泣、分散那个老牧师注意力的时候，我溜到了告解室后面。 这个时候尖叫声开始了。 不是艾莉丝的，是那个牧师的。 艾莉丝动手了。她用那种她在佛罗里达时用过的手法，只不过这次是一根削尖的十字架碎片，是的，她把那个老头钉在了告解室的门框上。",
         attitude: "",
         visual: ""
       },
@@ -1212,7 +1303,7 @@ export const CORE_NODES: MemoryNode[] = [
     revealedKeywords: ['tithe'],
     layers: {
       [MemoryLayer.SURFACE]: {
-        event: "要拆掉这个笼子，我得先摸清每一根栏杆的位置。\n\n我这辆GMC房车里住了好几年，以为早已了解它的每一个角落，我知道所有的备用工具在哪，哪里藏着现金，哪块地板踩上去会响。但我错了，我一直是个瞎子，住在一个迷宫里。\n\n周二的晚上，房车停在鲑溪小径旁的红杉林里。 按照父亲制定的时间表，这天晚上轮到我“使用”瓦妮莎。不用猜，这可不是什么浪漫的约会。这是父亲的奖励，也是一种羞辱仪式。他把瓦妮莎像一块肉一样赏赐给我们，用来发泄多余的精力。当然了，在艾莉丝上车之后，每个人都希望跟她而不是瓦妮莎待在一起。",
+        event: "要拆掉这个笼子，我得先摸清每一根栏杆的位置。\n\n我这辆GMC房车里住了好几年，以为早已了解它的每一个角落，我知道所有的备用工具在哪，哪里藏着现金，哪块地板踩上去会响。但我错了，我一直是个瞎子，住在一个迷宫里。\n\n周二的晚上，房车停在鲑溪小径旁的红杉林里。 按照父亲制定的时间表，这天晚上轮到我“使用”瓦妮莎。不用猜，这可不是什么浪漫的约会。这是父亲的奖励，也是一种羞辱仪式，就像是缴纳某种**[什一税](clue:tithe)**。他把瓦妮莎像一块肉一样赏赐给我们，用来发泄多余的精力。当然了，在艾莉丝上车之后，每个人都希望跟她而不是瓦妮莎待在一起。",
         attitude: "",
         visual: ""
       },
@@ -1323,10 +1414,90 @@ export const CORE_NODES: MemoryNode[] = [
       [MemoryLayer.DEEP]: {
         event: "[SHATTER_TRIGGER]",
         attitude: "",
-        visual: "assets/capone-split-personality.jpg"
+        visual: `${import.meta.env.BASE_URL}assets/capone-split-personality.jpg`
       }
     },
     connectedTo: ["confession_25"]
+  },
+  {
+    id: "confession_29",
+    keyword: "confession",
+    title: "供述 No.29",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.3, y: window.innerHeight * 0.75 },
+    revealedKeywords: ['felipe_maldonado'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: `林地深处？东躲西藏？
+
+条子的脑子里果然只有这种无聊的刻板印象，把我们当一般通缉犯去想。实话告诉你吧，绝大部分时候，我们都开着房车平稳地行驶在洲际公路和国道上，我们在汽车旅馆加水，在加油站买热狗，像个四处旅行的普通家庭一样。偶尔几次，我们把车开进深山老林，也根本不是为了躲避什么。那只是因为父亲觉得无聊了，想找点‘乐子’，就像周末打猎的家庭聚会似的。实话说，1975年发生在红杉林里的那个事情，其实也就是这么回事。
+
+当那辆涂得花花绿绿的旧校车从我们营地旁开过去的时候，瓦妮莎就站在房车的遮阳篷下面，离那条土路只有不到十英尺。车上的嬉皮士大笑大叫，放着摇滚乐，把啤酒洒在路面上。这帮人又脏又蠢，一无是处，但自由得让人嫉妒。
+
+你见过一个已经被埋进土里的人，突然想要大口呼吸的样子吗？我当时就站在瓦妮莎的侧后方，看到她的眼睛，虽然那群人只顾着跟艾莉丝开玩笑，完全没注意到她，可是她却始终死盯着那辆大巴车，眼神跟着那片廉价的色彩一起钻进了红杉林深处。
+
+那是第一次在一个活死人身上看到那种近乎贪婪的、心驰神往的光。那群嬉皮士也就和她一样大吧，如果她也能在那辆车上，吹着风，哪怕只是做一个漫无目的、随波逐流的垃圾也好。
+
+彼时彼刻，父亲站在纱门后面。他没有看那辆嘈杂的校车，他一直在看着瓦妮莎的侧脸。半小时后，他让康查尔和艾莉丝带着酒去嬉皮士的营地，却让瓦妮莎坐在房车外面的篝火旁，哪里都不许去。我们就这么坐在黑夜里，听着远处传来的音乐声，慢慢变成痴笑和惨叫交织的声音。
+
+等到半夜，艾莉丝回到营地时，还给瓦妮莎带回了一张带血的演出海报。“那群傻蛋是从墨西哥一路开到这的，还想邀请我去他们周末在镇上的演出呢，”艾莉丝说，“那会我没告诉他们，计划有变，他们这副模样可演不了出呢。”
+
+瓦妮莎接过海报，即便她知道这是艾莉丝的存心戏弄，也还是将它小心翼翼折叠好，收藏起来。`,
+        attitude: "",
+        visual: `${import.meta.env.BASE_URL}assets/felipe_maldonado_poster.jpg`
+      },
+      [MemoryLayer.DEEP]: {
+        event: "",
+        attitude: ""
+      }
+    },
+    connectedTo: ["confession_21"]
+  },
+  {
+    id: "confession_30",
+    keyword: "confession",
+    title: "供述 No.30",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.4, y: window.innerHeight * 0.3 },
+    revealedKeywords: ['libby_town', 'tithe', 'year_1967'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "听着，即便你知道鲑溪小径的事，即便你知道她是在那个晚上跟我表露心声的，你也不该把那两个词关联在一起。这对她太不尊重了。\n\n那天晚上雾特别大，空气里全是烂树叶的味道。房车停在红杉林的最深处，引擎熄火之后，整个世界都安静了下来。我就坐在车门外的台阶上抽烟，听着水滴砸在车顶上的声音。不知道为什么，那天晚上好像所有人都消失了。\n\n瓦妮莎推开纱门走了出来。父亲那天大概给她加了药量，她连站都站不稳，夜风一吹整个人直发抖。她呆滞地坐在离我不远的泥地上，盯着远处的黑暗发愣。我脱下皮夹克，走过去披在她那薄得能摸到骨头的肩膀上。在这群人里，我是唯一知道这时候该怎么做的人——那就是闭嘴，别去碰她，也别去惊扰她。",
+        attitude: "",
+        visual: `${import.meta.env.BASE_URL}assets/william_dawson_portrait.png`
+      },
+      [MemoryLayer.DEEP]: {
+        event: "感觉到衣服的重量后，瓦妮莎突然转过脸死死盯着我。她的视线穿透了林子里的浓雾，看了我很久。然后，她忽然伸出手，冰凉的手指碰到了我的侧脸，用梦呓一样的声音叫了一个名字。“亚瑟……是你来带我走了吗？”\n\n我没有躲开她的手，也没有去纠正她。紧接着，她突然崩溃了，一头扎进我的怀里。没有任何声音，只有滚烫的眼泪大颗大颗地砸在我的衬衫上。她死死抓着我的胳膊，指甲几乎要抠进我的肉里，像个溺水的人抓住了最后一块木板。\n\n瓦妮莎告诉我，她之前撒谎了。她曾说她不记得亚瑟，但其实她记得清清楚楚。她记得那是1967年，就在那个蠢货被父亲干掉之前，他是怎么在深夜里向她承诺，一定会带她离开这条永远伴随着惨叫声的公路，去一个能大口呼吸干净空气的地方。他还告诉她，如果他没能活着带她走，只要她有机会跑出去，就一定要去蒙大拿州的利比镇，那是他的家乡。",
+        attitude: "",
+        visual: `${import.meta.env.BASE_URL}assets/william_dawson_inscription.png`
+      },
+      [MemoryLayer.CORE]: {
+        event: "瓦妮莎哆嗦着，从贴身衣物的最里层扯出一根细细的银链子。链子底下挂着个廉价的、边缘生了黑锈的银色小吊坠盒。她抖着手抠开那个生锈的搭扣，里面塞着一张剪得极小、极粗糙的黑白照片。照片上是年轻的亚瑟和他的父亲，两人站在一棵巨大的红杉树下。亚瑟告诉她，如果最后只有她一个人逃出去，只要带着这个吊坠，随便敲开利比镇哪家伐木工酒馆的门，把这张照片给那些老家伙看，他们就会帮她、照顾她。\n\n此时此刻，药效终于不可抑制地涌了上来。她靠着我昏睡了过去，微弱的光线照着她苍白的皮肤，上面的淤青清晰可见。或许有一天，我会亲自把她送上那趟去利比镇的灰狗巴士呢？我在心里这么想着。可几乎就是一瞬间，惊恐感便替代了这种妄想。不用想也知道，父亲会有一万种方法阻止这件事情发生，而亚瑟的结局就是最好的预演。\n\n后来我去过利比镇，甚至凭借记忆找到了那棵红杉树。但那里什么都没有，我没有找到姓道森的人，也没有找到叫瓦妮莎的女孩。我幻想着，或许在我从灰狗巴士上下车的一刹那，整个小镇便已严阵以待，所有人联合起来演了一出戏——就在我站在那棵红杉树下的时刻，瓦妮莎其实正躲在远处的某个地方，小心翼翼地看着我。",
+        attitude: "",
+        visual: `${import.meta.env.BASE_URL}assets/william_dawson_pendant.png`
+      }
+    },
+    connectedTo: ["confession_22", "capone", "vanessa", "arthur_dawson"]
+  },
+  {
+    id: "confession_31",
+    keyword: "confession",
+    title: "供述 No.31",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.35, y: window.innerHeight * 0.4 },
+    revealedKeywords: ['mandan', 'forest_map'],
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "我最后一次去利比镇的时候，在林区像个没头苍蝇一样转悠了好几天，除了一片长满杂草的空地，什么都没找到。最后，我站在一片松林地旁抽烟，心里忍不住地怀疑，或许道森一家只不过是瓦妮莎在药效发作时的妄想。\n\n没想到，他们的尸骨可能就埋在我当时站的地方。\n\n总之你给的信息太多了，我得好好想一想。先说汉弗莱监狱把，那就是我认识康查尔的地方，他1967年因为袭警被捕，这是他告诉我的。所以他被捕的时候还带着凶器是吧？一路从蒙大拿州跑到缅因州区……那如果他是杀害道森的元凶，着意味着父亲早就知道了亚瑟和瓦妮莎的计划，这是亚瑟和他的一家最终丧命的真正原因。\n\n可为什么瓦妮莎却能安然无恙呢？不仅安然无恙，而且对整件事毫不知情。\n\n等等——我知道了。瓦妮莎说过，1967年，她曾在感化院待过半年，那回父亲非常反常地逼她去一个公路便利店里‘拿’补给。现在看来这其实就是个圈套，那天父亲可能就坐在车里眼睁睁看着巡警把她按在泥地上。盗窃的罪名不大不开，刚好够瓦妮莎在感化院待三个月。三个月过完，他们开着一辆重新涂装过的房车，来到曼丹市的北达科他州青少年矫正机构接她，并告诉她康查尔得在缅因州待上一阵子了，然后整整四年过去，到某一天，她忽然看到我和康查尔一同登上了这辆房车。\n\n可这到底是为什么呢？他为什么要费尽心机骗过瓦妮莎。",
+        attitude: "",
+        visual: `${import.meta.env.BASE_URL}assets/confession_31_residue.png`
+      },
+      [MemoryLayer.DEEP]: {
+        event: "",
+        attitude: ""
+      }
+    },
+    connectedTo: ["confession_30", "capone", "vanessa", "conchar"]
   },
 ];
 
@@ -1367,8 +1538,8 @@ export const RELATIONSHIP_TREE: SyndicateMember[] = [
     position: { x: 40, y: 20 },
     status: 'ACTIVE',
     phase: 1,
-    description: 'Matriarch',
     chapter: 6,
+    description: 'Matriarch',
     materialType: 'polaroid'
   },
   // --- LIEUTENANTS ---
@@ -1525,8 +1696,8 @@ export const RELATIONSHIP_TREE: SyndicateMember[] = [
     position: { x: 60, y: 85 },
     status: 'DECEASED',
     phase: 1,
-    description: 'Frozen Child',
     chapter: 3,
+    description: 'Frozen Child',
     materialType: 'clipping'
   },
   {
@@ -1537,8 +1708,8 @@ export const RELATIONSHIP_TREE: SyndicateMember[] = [
     position: { x: 90, y: 60 },
     status: 'ACTIVE',
     phase: 1,
-    description: 'Department Store / Target',
     chapter: 3,
+    description: 'Department Store / Target',
     materialType: 'clipping'
   },
   {
@@ -1549,8 +1720,8 @@ export const RELATIONSHIP_TREE: SyndicateMember[] = [
     position: { x: 10, y: 40 },
     status: 'ACTIVE',
     phase: 1,
-    description: 'Ex-Cop / Recruit',
     chapter: 3,
+    description: 'Ex-Cop / Recruit',
     materialType: 'document'
   },
   {
@@ -1561,8 +1732,8 @@ export const RELATIONSHIP_TREE: SyndicateMember[] = [
     position: { x: 90, y: 40 },
     status: 'ARRESTED',
     phase: 1,
-    description: 'Burkesville Gang',
     chapter: 3,
+    description: 'Burkesville Gang',
     materialType: 'document'
   },
   {
@@ -1671,5 +1842,395 @@ export const RELATIONSHIP_TREE: SyndicateMember[] = [
     description: 'Handler / Architect?',
     chapter: 6,
     materialType: 'document'
+  },
+  {
+    id: 'felipe_maldonado',
+    name: 'FELIPE MALDONADO',
+    role: 'ASSOCIATE',
+    parentId: 'father',
+    position: { x: 20, y: 60 },
+    status: 'DECEASED',
+    phase: 1,
+    chapter: 4,
+    description: 'Band Leader / Poster Figure',
+    materialType: 'clipping'
+  },
+  {
+    id: 'william_dawson',
+    name: 'WILLIAM DAWSON',
+    role: 'ASSOCIATE',
+    parentId: 'father',
+    position: { x: 5, y: 30 },
+    status: 'DECEASED',
+    phase: 1,
+    chapter: 2,
+    description: 'The Timberman / Libby Town Patriarch',
+    materialType: 'polaroid'
+  }
+];
+
+export const CONFESSION_REGISTRY = [
+  {
+    id: 'confession_1',
+    displayId: 'REC-1971-MN',
+    title: '供述 No.1: 缅因州银行劫案',
+    eventTime: '1971',
+    location: '缅因州 (Maine)',
+    keywords: ['缅因州', '阿尔衮琴', '供述', '扭曲关系'],
+    people: ['尼比 (Nibi)', '康查尔 (Conchar)'],
+    summary: '关于1971年针对缅因州第一国民银行的武装劫案供述。揭示了尼比作为执行者与康查尔作为策划者之间的非典型同谋关系。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_2',
+    displayId: 'REC-1968-OH',
+    title: '供述 No.2: 俄亥俄州祭祀案',
+    eventTime: '1968',
+    location: '俄亥俄州 (Ohio)',
+    keywords: ['俄亥俄州', '祭祀案', '伦德格兰'],
+    people: ['伦德格兰 (Lundgren)', '莫宁 (Morning)'],
+    summary: '关于1968年俄亥俄州柯特兰邪教屠杀案的供述。揭示了雷吉博士的"统一场论"与伦德格兰案件之间的联系。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_3',
+    displayId: 'REC-1985-IL',
+    title: '供述 No.3: 罗格·毕比失踪案',
+    eventTime: '1985',
+    location: '伊利诺伊州 (Illinois)',
+    keywords: ['罗格·毕比', '1985'],
+    people: ['罗格·毕比 (Roger Beebe)'],
+    summary: '关于香槟镇失踪案真凶的供述。揭示了罗格·毕比在1985年落网后的供词，以及康查尔对此类"不受控恶行"的鄙夷态度。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_30',
+    displayId: 'REC-1975-MT',
+    title: '供述 No.30: 利比镇之约',
+    eventTime: '1975',
+    location: '蒙大拿州 (Montana)',
+    keywords: ['利比镇', '什一税', '威廉·道森'],
+    people: ['威廉·道森 (William Dawson)', '瓦妮莎 (Vanessa)'],
+    summary: '关于瓦妮莎在红杉林中的深夜坦白。揭示了她与亚瑟·道森之间的契约，以及那个藏在生锈吊坠盒里的、通往利比镇的最后希望。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_31',
+    displayId: 'REC-1967-ND',
+    title: '供述 No.31: 汉弗莱监狱',
+    eventTime: '1967',
+    location: '曼丹市 (Mandan)',
+    keywords: ['汉弗莱县', '袭警案', '曼丹市'],
+    people: ['康查尔 (Conchar)', '瓦妮莎 (Vanessa)'],
+    summary: '关于汉弗莱监狱与康查尔入狱真相的供述。揭示了“父亲”如何通过陷害瓦妮莎令其在感化院待了三个月，从而掩盖处决亚瑟一家的真相，并解释了那辆重新涂装的房车来源。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_4',
+    displayId: 'REC-1967-NV',
+    title: '供述 No.4: 训练日回忆',
+    eventTime: '1967',
+    location: '内华达州 (Nevada)',
+    keywords: ['训练日', '1402 Old Dominion Rd.', '内华达州', '雷吉博士'],
+    people: ['雷吉博士 (Dr. Reggie)'],
+    summary: '关于特工选拔与训练结束时的关键对话。揭示了雷吉博士选中卡彭的真实原因——一种被视为"天赋"的精神病态特质。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_5',
+    displayId: 'REC-1973-NV',
+    title: '供述 No.5: 维恩灭门案',
+    eventTime: '1973',
+    location: '内华达州 (Nevada)',
+    keywords: ['小德里克·维恩', '灭门案'],
+    people: ['小德里克·维恩 (Derek Wayne Jr.)', '康查尔 (Conchar)'],
+    summary: '关于维恩一家惨遭灭门的真相。揭示了该家族长子因其变态嗜好招致的报复，以及康查尔对此事所持的"受约束暴力"观点。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_6',
+    displayId: 'REC-1972-VA',
+    title: '供述 No.6: 灰水信标',
+    eventTime: '1972',
+    location: '弗吉尼亚州 (Virginia)',
+    keywords: ['罗阿诺克市', '灰水信标', '铁马'],
+    people: ['雷吉博士 (Dr. Reggie)', '康查尔 (Conchar)'],
+    summary: '关于“信标”系统的建立与早期运作。揭示了康查尔在逃亡途中如何利用特定品牌烟盒向清理小组单向传递情报的全过程。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_7',
+    displayId: 'REC-1972-VA-R',
+    title: '供述 No.7: 罗阿诺克谋杀案',
+    eventTime: '1972 ∙ 深秋',
+    location: '弗吉尼亚州 罗阿诺克市 (Roanoke)',
+    keywords: ['罗阿诺克市', '扭曲关系', '莫布利', '玛莎·迪亚兹', '1972'],
+    people: ['康查尔 (Conchar)', '尼比 (Nibi)', '玛莎·迪亚兹 (Martha Diaz)'],
+    summary: '关于康查尔与尼比之间病态关系的深度剖析，以及卡彭在罗阿诺克市的廉价旅馆中首次接触暴力仪式的经历。揭示了他目睹玛莎·迪亚兹被杀的全过程。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_8',
+    displayId: 'REC-1973-KY',
+    title: '供述 No.8: 路易斯维尔房车',
+    eventTime: '1973 ∙ 正月',
+    location: '肯塔基州 路易斯维尔 (Louisville)',
+    keywords: ['路易斯维尔', '淡蓝色房车', '1973', '朱莉', '辛辛那提'],
+    people: ['父亲 (Father)', '康查尔 (Conchar)', '母亲 (The Mother)', '塞勒斯 (Silas)', '瓦妮莎 (Vanessa)'],
+    summary: '关于卡彭首次进入"家族"核心的供述。揭示了1973年辛辛那提少女朱莉冻死案的真相，以及他在路易斯维尔码头首次见到"父亲"和淡蓝色房车内其他成员的经历。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_9',
+    displayId: 'REC-1982-TX',
+    title: '供述 No.9: 薄荷计划与灵魂厨房',
+    eventTime: '1982 ∙ 深秋',
+    location: '德克萨斯州 埃尔帕索 (El Paso)',
+    keywords: ['辛辛那提', '薄荷计划', '1982', '埃尔帕索', '朱维尔·钱伯斯', '1973'],
+    people: ['父亲 (Father)', '康查尔 (Conchar)', '朱维尔·钱伯斯 (Juvell Chambers)'],
+    summary: '关于"灵魂厨房计划"的深度揭露。卡彭讲述了1982年在埃尔帕索投放最后一个信标的经历，以及1973年纳什维尔军械库窃案背后"家族"利用种族冲突掩护犯罪的真相。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_10',
+    displayId: 'REC-1973-KY-B',
+    title: '供述 No.10: 伯克斯维尔计划',
+    eventTime: '1973 ∙ 深秋',
+    location: '肯塔基州 伯克斯维尔 (Burkesville)',
+    keywords: ['伯克斯维尔', '远亲', '1973', '鲍里斯·斯米尔诺夫'],
+    people: ['父亲 (Father)', '康查尔 (Conchar)', '塞勒斯 (Silas)', '母亲 (The Mother)', '鲍里斯·斯米尔诺夫 (Boris Smirnov)'],
+    summary: '关于卡彭首次独立策划行动的供述。揭示了1973年在伯克斯维尔，"父亲"如何要求他为"远亲"设计计划，以及家族内部"先拆解再重塑"的招募方法和成员间的权力关系。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_11',
+    displayId: 'REC-1975-KY-SS',
+    title: '供述 No.11: 静态雪花计划',
+    eventTime: '1975年前后',
+    location: '肯塔基州 伯克斯维尔 (Burkesville)',
+    keywords: ['KLUB-75报告', '匡提科', '静态雪花计划'],
+    people: ['父亲 (Father)', '母亲 (The Mother)', '塞勒斯 (Silas)', '辛西娅·米勒 (Cynthia Miller)'],
+    summary: '关于"静态雪花计划"的供述。揭示了卡彭如何利用FBI战术设计心理操控行动，通过拍摄"前卫艺术"录像绑架辛西娅·米勒，制造恐慌并享受破坏秩序的快感，完成从FBI探员到享受混乱的变态者的心理转变。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_12',
+    displayId: 'REC-1976-MO',
+    title: '供述 No.12: 流动献血车计划',
+    eventTime: '1976',
+    location: '堪萨斯城 (Kansas City)',
+    keywords: ['堪萨斯城', '流动献血车', '1976', '杰西·潘尼'],
+    people: ['罗伯特·卡彭 (Robert Capone)', '赛勒斯 (Silas)', '瓦妮莎 (Vanessa)'],
+    summary: '关于1976年堪萨斯城"流动献血车"行动的供述。揭示了卡彭如何设计极其荒谬的超现实主义犯罪来拖延捕捕时间并渗透远亲网络，以及瓦妮莎对其人性转变的质问。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_13',
+    displayId: 'REC-1976-MO-C',
+    title: '供述 No.13: 混乱的美学',
+    eventTime: '1976',
+    location: '堪萨斯城 (Kansas City)',
+    keywords: ['约翰·莫里西', '混乱美学', '1976'],
+    people: ['父亲 (Father)', '罗伯特·卡彭 (Robert Capone)'],
+    summary: '关于莫里西（杰西·潘尼）被捕后的对话揭密。揭示了"父亲"对"混乱"的独特哲学见解，以及卡彭如何通过制造混乱，在不经意间摧毁了连联邦政府都无法撼动的犯罪堡垒。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_14',
+    displayId: 'REC-1976-SL',
+    title: '供述 No.14: 圣路易斯之夜',
+    eventTime: '1976',
+    location: '密苏里州 圣路易斯市 (St. Louis)',
+    keywords: ['圣路易斯', '蛆虫'],
+    people: ['母亲 (The Mother)', '塞勒斯 (Silas)', '瓦妮莎 (Vanessa)'],
+    summary: '关于堪萨斯城行动后，在圣路易斯市郊房车内发生的古老且极其令人不适的仪式。揭示了“母亲”与“父亲”之间通过鲜血构建的共生关系本质。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_15',
+    displayId: 'REC-1976-IA',
+    title: '供述 No.15: 达文波特静默屠杀',
+    eventTime: '1976',
+    location: '爱荷华州 达文波特市 (Davenport)',
+    keywords: ['达文波特市', '新计划', '1976', '静默屠杀'],
+    people: ['皮特·亨德森 (Peter Henderson)', '康查尔 (Conchar)', '罗伯特·卡彭 (Robert Capone)'],
+    summary: '关于爱荷华州达文波特郊区亨德森一家灭门案的供述。康查尔以“新计划”为名，对一户普通中产家庭施加极端心理拷问，却在男主人皮特·亨德森拒绝成为“怪物”的选择面前首次感到挫败；这一刻也让卡彭在房车内重新想起自己身为警探的身份与使命。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_16',
+    displayId: 'REC-1967-TX',
+    title: '供述 No.16: 特克萨卡纳碎尸案',
+    eventTime: '1967',
+    location: '得克萨斯州 特克萨卡纳 (Texarkana)',
+    keywords: ['特克萨卡纳', '碎尸案', '亚瑟·道森'],
+    people: ['亚瑟·道森 (Arthur Dawson)', '康查尔 (Conchar)', '瓦妮莎 (Vanessa)'],
+    summary: '关于1967年特克萨卡纳碎尸案的真相，以及卡彭从房车大梁下意外发现的亚瑟·道森笔记。揭示了亚瑟对“远亲”网络真实性的早期质疑，以及这种质疑如何导致了他的死亡。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_17',
+    displayId: 'REC-1977-IL',
+    title: '供述 No.17: 脏弗兰克酒吧与招募',
+    eventTime: '1977年前后',
+    location: '伊利诺伊州 罗克福德市 (Rockford)',
+    keywords: ['脏弗兰克酒吧', '招募', '罗克福德市', '里奇·德莱弗斯'],
+    people: ['里奇·德莱弗斯 (Richie Dreyfuss)', '康查尔 (Conchar)', '罗伯特·卡彭 (Robert Capone)'],
+    summary: '关于里奇·德莱弗斯的招募背景及其死因的供述。描述了康查尔在罗克福德市的一间旅馆内设计的“俄罗斯轮盘”心理博弈，最终导致里奇因极度恐惧而自发性心脏衰竭。揭示了康查尔“恐惧才是唯一的子弹”这一极端哲学。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_18',
+    displayId: 'REC-1974-UT',
+    title: '供述 No.18: 警员遇害案与艾莉丝',
+    eventTime: '1974 ∙ 秋',
+    location: '犹他州 盐湖城郊外 (Utah)',
+    keywords: ['丹佛市郊', '警员遇害案', '艾莉丝', '利伯勒尔', '冰锥'],
+    people: ['艾莉丝 (Alice)', '康查尔 (Conchar)', '米勒副警长 (Deputy Miller)'],
+    summary: '关于艾莉丝加入“家族”背景的供述。描述了她在丹佛市郊利伯勒尔镇对米勒副警长的残酷处决过程。揭示了艾莉丝作为该组织中真正“享受”杀戮的成员身份，以及她顺着血腥味横跨半个美国寻找罗伯特的惊人执念。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_19',
+    displayId: 'REC-1974-TX',
+    title: '供述 No.19: 埃尔帕索教堂屠杀',
+    eventTime: '1974',
+    location: '德克萨斯州 埃尔帕索 (El Paso)',
+    keywords: ['埃尔帕索', '神父', '教堂', '1974', '猎枪'],
+    people: ['神父 (The Priest)', '康查尔 (Conchar)', '塞勒斯 (Silas)'],
+    summary: '关于埃尔帕索教堂惨案的供述。揭示了康查尔如何利用种族仇恨煽动一起针对边境教堂的袭击，以及那名所谓“沉默的神父”在死亡面前展现出的、令康查尔感到不安的平静。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_20',
+    displayId: 'REC-1978-NV',
+    title: '供述 No.20: 80号洲际公路守夜人',
+    eventTime: '1978',
+    location: '内华达州 80号洲际公路 (I-80)',
+    keywords: ['80号洲际公路', '守夜人', '无线电', '卡车司机'],
+    people: ['罗伯特·卡彭 (Robert Capone)', '守夜人 (The Watchman)'],
+    summary: '关于在80号公路上遇到的神秘卡车司机“守夜人”的供述。这实际上是卡彭分裂人格的早期具象化体现，他在无线电中与另一个自己对话，预示着他最终精神崩溃的开端。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_21',
+    displayId: 'REC-1951-KR',
+    title: '供述 No.21: 亚玛力人协议',
+    eventTime: '1951 / 1968',
+    location: '梅诺西诺 (Mendocino) / 巨济岛 (Geoje-do)',
+    keywords: ['波特兰', '软肋', '红杉林', '战俘营', '亚玛力人协议'],
+    people: ['父亲 (Father)', '雷吉博士 (Dr. Reggie)', '塞勒斯 (Silas)', '艾莉丝 (Alice)'],
+    summary: '关于“父亲”权威来源的终极解密。揭示了他在朝鲜战争巨济岛战俘营的经历，以及他如何将美军心理战技术转化为控制“家族”的洗脑工具（亚玛力人协议），并以此策划了针对嬉皮士的假旗行动。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_22',
+    displayId: 'REC-1975-CA',
+    title: '供述 No.22: 圣芭芭拉收网',
+    eventTime: '1975',
+    location: '加利福尼亚州 圣芭芭拉 (Santa Barbara)',
+    keywords: ['红杉林', '战俘营', '圣芭芭拉', '收网', '什一税'],
+    people: ['罗伯特·卡彭 (Robert Capone)', '瓦妮莎 (Vanessa)', '父亲 (Father)', '康查尔 (Conchar)'],
+    summary: '关于卡彭在房车夹层发现真相并决定收网的关键转折点。揭示了瓦妮莎试图策反他的失败尝试，以及他在发现父亲利用房车车顶夹层伪造“神谕”和生产宣传品后，决心将其逮捕的心理决断。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_23',
+    displayId: 'REC-1975-CA-B',
+    title: '供述 No.23: 裸根行动与误判',
+    eventTime: '1975',
+    location: '加利福尼亚州 圣芭芭拉 (Santa Barbara)',
+    keywords: ['拉古那海滩', '裸根', '阿列克谢·罗科维奇', '瓦妮莎'],
+    people: ['罗伯特·卡彭 (Robert Capone)', '艾莉丝 (Alice)', '阿列克谢 (Alexei)', '塞勒斯 (Silas)'],
+    summary: '关于针对苏联情报站负责人阿列克谢·罗科维奇的静默清洗行动。揭示了艾莉丝为了确保行动成功和掩盖行踪，不惜炸死自己的情人兼棋子塞勒斯，并将阿列克谢焚尸灭迹，导致原本的渗透任务升级为"恐怖袭击"，迫使"父亲"不得不更加激进地利用手中的筹码。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_24',
+    displayId: 'REC-1975-LB',
+    title: '供述 No.24: 化学家情人与大法官',
+    eventTime: '1975',
+    location: '加利福尼亚州 拉古那海滩 (Laguna Beach)',
+    keywords: ['莫兰迪', '阿尔伯克基市', '化学家情人'],
+    people: ['父亲 (Father)', '艾莉丝 (Alice)', '瓦妮莎 (Vanessa)', '索恩法官 (Judge Thorne)', '莫兰迪 (Morandi)'],
+    summary: '关于利用"裸根"名单控制联邦大法官肯尼迪·索恩的供述。描述了艾莉丝如何利用她的旧情人"莫兰迪"（阿尔伯克基爆炸案主犯）作为诱饵，以及父亲如何通过残酷的手段（给瓦妮莎注射士的宁）来取悦并控制这位变态法官，从而接管了KGB对司法系统的渗透网络。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_25',
+    displayId: 'REC-1975-NM',
+    title: '供述 No.25: 邦妮和克莱德',
+    eventTime: '1975',
+    location: '新墨西哥州 阿尔伯克基 (Albuquerque)',
+    keywords: ['圣菲', '邦妮和克莱德'],
+    people: ['罗伯特·卡彭 (Robert Capone)', '艾莉丝 (Alice)', '莫兰迪 (Morandi)'],
+    summary: '关于前往新墨西哥州接收高能炸药的途中经历。揭示了卡彭与艾莉丝在逃亡与服从之间的一念之差，以及艾莉丝对卡彭内心"精神病态"特质的精准洞察与诱导。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_26',
+    displayId: 'REC-1976-AZ',
+    title: '供述 No.26: 最后的押送',
+    eventTime: '1976',
+    location: '亚利桑那州 (Arizona)',
+    keywords: ['圣菲', '邦妮和克莱德'],
+    people: ['罗伯特·卡彭 (Robert Capone)', '父亲 (Father)', '母亲 (Mother)', '艾莉丝 (Alice)', '瓦妮莎 (Vanessa)'],
+    summary: '卡彭潜伏生涯的终结之战。描述了他如何巧妙利用瓦妮莎和莫兰迪的冲突调开同伙，并在荒漠公路上亲手处决“母亲”并完全控制了“父亲”。这是一次彻底的人格断裂与重组。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_27',
+    displayId: 'REC-1976-MV',
+    title: '供述 No.27: 米尔谷的礼物',
+    eventTime: '1976 ∙ 晚秋',
+    location: '加利福尼亚州 米尔谷 (Mill Valley)',
+    keywords: ['莫兰迪', '米尔谷', '礼物', '1976', '迟摘特酿'],
+    people: ['莫兰迪 (Morandi)', '艾莉丝 (Alice)', '父亲 (Father)', '罗伯特·卡彭 (Robert Capone)'],
+    summary: '关于1976年米尔谷针对某位记者的长期爆炸计划供述。莫兰迪利用“重力是不朽的”这一冷酷哲学，在地基中安置了通过沥青缓慢下滴触发的炸药。这不仅是一次犯罪，更是一场关于时间、恶意与“迟摘特酿”美学的病态展示。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_28',
+    displayId: 'REC-1976-LB',
+    title: '供述 No.28: 拉古那海滩的清道夫',
+    eventTime: '1976 ∙ 冬',
+    location: '加利福尼亚州 拉古那海滩 (Laguna Beach)',
+    keywords: ['拉古那海滩', '戈尔和列维探员'],
+    people: ['罗伯特·卡彭 (Robert Capone)', '艾莉丝 (Alice)', '戈尔和列维探员 (Agents Gore & Levy)'],
+    summary: '关于在拉古那海滩反杀两名监视房车的联邦调查局探员的供述。揭示了卡彭如何单枪匹马处理掉戈尔和列维探员，并利用防弹监视车将尸体沉入海沟。这也引出了关于谁在暗中泄露行踪的更深层疑云。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_29',
+    displayId: 'REC-1975-OR',
+    title: '供述 No.29: 红杉林深处',
+    eventTime: '1975',
+    location: '俄勒冈州 (Oregon)',
+    keywords: ['林地深处', '亚玛力人协议', '费利佩·马尔多纳多', 'FELIPE MALDONADO'],
+    people: ['费利佩·马尔多纳多 (Felipe Maldonado)', '瓦妮莎 (Vanessa)', '艾莉丝 (Alice)'],
+    summary: '关于1975年发生在俄勒冈红杉林中的惨案。揭示了瓦妮莎对自由的渴望，以及艾莉丝如何以一种极其残酷的方式“满足”了这种渴望——带回了一张带血的费利佩·马尔多纳多演出海报。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_30',
+    displayId: 'REC-1967-MT',
+    title: '供述 No.30: 利比镇吊坠',
+    eventTime: '1967',
+    location: '蒙大拿州 利比镇 (Libby)',
+    keywords: ['利比镇', '威廉·道森', '吊坠', '1967'],
+    people: ['威廉·道森 (William Dawson)', '亚瑟·道森 (Arthur Dawson)', '罗伯特·卡彭 (Robert Capone)'],
+    summary: '关于在利比镇发现的银色吊坠供述。揭示了威廉·道森的真实身份，以及他在被处决前留给未出世孙辈的最后遗产。这不仅是一个物证，更是卡彭家族罪行的沉默见证，标记着道森一家悲剧的终点。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_31',
+    displayId: 'REC-1967-ND',
+    title: '供述 No.31: 曼丹市的房车',
+    eventTime: '1967',
+    location: '北达科他州 曼丹市 (Mandan)',
+    keywords: ['曼丹市', '森林地图'],
+    people: ['康查尔 (Conchar)', '瓦妮莎 (Vanessa)', '父亲 (Father)', '罗伯特·卡彭 (Robert Capone)'],
+    summary: '关于曼丹市青少年矫正机构接送瓦妮莎及康查尔入狱背后的真相供述。解开了康查尔入狱其实是父亲为隔离瓦妮莎并维持其“清白感”而精心策划的圈套，同时也标志着卡彭对家族谎言网的进一步拆解。',
+    status: 'DECRYPTED'
   }
 ];

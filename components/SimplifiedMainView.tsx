@@ -92,6 +92,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     const [showRetraceModal, setShowRetraceModal] = useState(false);
     const [retraceError, setRetraceError] = useState<string | null>(null);
     const [statusFlash, setStatusFlash] = useState(false);
+    const [filingEvidence, setFilingEvidence] = useState<{ id: string, title: string, content: string, type: 'image' | 'text' } | null>(null);
 
     const closeRetraceModal = () => {
         setShowRetraceModal(false);
@@ -137,6 +138,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             if (num <= 15) return 4;
             if (num <= 19) return 5;
             if (num <= 26) return 6;
+            if (num <= 30) return 6; // Confession 30 is also part of Chapter 6 or 4? Let's assume 4 based on Vanessa.
             return 7;
         }
         // Archive chapters mapping
@@ -539,6 +541,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         '牧师': { id: 'priest', type: 'person' },
                                         '阿列克谢·罗科维奇': { id: 'alexei', type: 'person' },
                                         '阿列克谢': { id: 'alexei', type: 'person' },
+                                        '威廉·道森': { id: 'william_dawson', type: 'person' },
+                                        '威廉道森': { id: 'william_dawson', type: 'person' },
+                                        '亚瑟·道森': { id: 'arthur_dawson', type: 'person' },
+                                        '亚瑟道森': { id: 'arthur_dawson', type: 'person' },
 
                                         // Years
                                         '1971': { id: 'year_1971', type: 'year' },
@@ -566,11 +572,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         '达文波特': { id: 'davenport', type: 'location' },
                                         '脏弗兰克酒吧': { id: 'dirty_frank', type: 'location' },
                                         '特克萨卡纳': { id: 'texarkana', type: 'location' },
+                                        '汉弗莱县': { id: 'humphrey_county', type: 'location' },
                                         '埃尔帕索': { id: 'el_paso', type: 'location' },
                                         '红杉林': { id: 'redwood_forest', type: 'location' },
                                         '战俘营': { id: 'pow_camp', type: 'location' },
                                         '圣芭芭拉': { id: 'santa_barbara', type: 'location' },
                                         '拉古那海滩': { id: 'laguna_beach', type: 'location' },
+                                        '利比镇': { id: 'libby_town', type: 'location' },
 
                                         // Cases / Details
                                         '小银行': { id: 'small_bank', type: 'clue' },
@@ -581,6 +589,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         '空烟盒': { id: 'empty_cigarette_pack', type: 'clue' },
                                         '灰水信标': { id: 'graywater_beacon', type: 'clue' },
                                         '碎尸案': { id: 'dismemberment_case', type: 'clue' },
+                                        '袭警案': { id: 'assault_on_police', type: 'clue' },
                                         '扭曲关系': { id: 'twisted_relationship', type: 'clue' },
                                         '肉体关系': { id: 'twisted_relationship', type: 'clue' },
                                         '薄荷计划': { id: 'mint_plan', type: 'clue' },
@@ -595,7 +604,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         '银喜鹊': { id: 'silver_magpie', type: 'clue' },
                                         '教堂': { id: 'church', type: 'location' },
                                         '收网': { id: 'closing_the_net', type: 'clue' },
-                                        '裸根': { id: 'naked_root', type: 'clue' }
+                                        '裸根': { id: 'naked_root', type: 'clue' },
+                                        '什一税': { id: 'tithe', type: 'clue' }
                                     };
 
                                     // Suppression Logic: Hide keywords that have already been "consumed" by unlocked confessions
@@ -869,8 +879,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                         return [...new Set([...(collectedClues || [])].filter(Boolean))]
                                             .filter(id => {
-                                                // Node 6 Exception: Always show Alexei and Morandi globally
-                                                if (id.toLowerCase() === 'alexei' || id.toLowerCase() === 'morandi') return true;
+                                                // Global Exceptions: Always show these regardless of category
+                                                if (['alexei', 'morandi'].includes(id.toLowerCase())) return true;
 
                                                 const isLocation = CATEGORY_IDS.LOCATIONS.includes(id);
                                                 const isCase = CATEGORY_IDS.CASES.includes(id);
@@ -1040,6 +1050,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     collectedAttachments={collectedAttachments}
                                     clueDisplayMap={CLUE_DISPLAY_MAP}
                                     hasSwitchedPersona={hasSwitchedPersona}
+                                    unlockedPeople={unlockedPeople}
+                                    collectedClues={collectedClues}
                                 />
                             </div>
                         </motion.div >
@@ -1104,6 +1116,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 onClearUnusedKeywords={onClearUnusedKeywords}
                 hasSwitchedPersona={hasSwitchedPersona}
                 isChapterSolved={isChapterSolved}
+                onSetFilingEvidence={setFilingEvidence}
             />
             <Archives
                 isOpen={showArchives}
@@ -1154,6 +1167,72 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                 </span>
                             </div>
                         </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Evidence Filing Modal */}
+            <AnimatePresence>
+                {filingEvidence && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[600] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="bg-[#0c0505] border border-[#d89853]/50 w-full max-w-lg overflow-hidden flex flex-col shadow-[0_0_50px_rgba(216,152,83,0.3)]"
+                        >
+                            <div className="p-4 border-b border-[#d89853]/30 flex justify-between items-center bg-[#d89853]/5">
+                                <div className="flex items-center gap-2">
+                                    <ShieldAlert size={16} className="text-[#d89853] animate-pulse" />
+                                    <h3 className="text-xs font-bold tracking-[0.3em] text-[#d89853]">检测到关键证物 / NEW_EVIDENCE_DETECTED</h3>
+                                </div>
+                                <button onClick={() => setFilingEvidence(null)} className="text-[#d89853]/60 hover:text-[#d89853]">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="p-6 flex flex-col items-center gap-6">
+                                <div className="w-full aspect-[4/3] bg-black border border-[#d89853]/20 flex items-center justify-center overflow-hidden relative group">
+                                    {filingEvidence.type === 'image' ? (
+                                        <img
+                                            src={filingEvidence.content}
+                                            className="w-full h-full object-contain filter brightness-90 sepia-[0.3] contrast-110"
+                                            alt={filingEvidence.title}
+                                        />
+                                    ) : (
+                                        <div className="p-8 text-sm leading-relaxed text-[#d89853]/80 italic">
+                                            {filingEvidence.content}
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 scanlines opacity-20 pointer-events-none" />
+                                </div>
+
+                                <div className="text-center space-y-2">
+                                    <h4 className="text-sm font-bold tracking-widest text-[#d89853]">{filingEvidence.title}</h4>
+                                    <p className="text-[10px] text-[#d89853]/60 tracking-widest uppercase">
+                                        Status: Unfiled // Location: Temporary Buffer
+                                    </p>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        onCollectAttachment(filingEvidence.id);
+                                        setFilingEvidence(null);
+                                        // Visual feedback
+                                        setStatusFlash(true);
+                                        setTimeout(() => setStatusFlash(false), 2000);
+                                    }}
+                                    className="w-full py-4 bg-[#d89853] text-black font-bold tracking-[0.4em] hover:bg-white transition-all active:scale-95 shadow-[0_0_20px_rgba(216,152,83,0.4)]"
+                                >
+                                    确认归档 / FILE_TO_DOSSIER
+                                </button>
+                            </div>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>

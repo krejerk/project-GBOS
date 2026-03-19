@@ -12,7 +12,8 @@ import {
     JENNIFER_NODE_3_DIALOGUE,
     JENNIFER_NODE_4_DIALOGUE,
     JENNIFER_NODE_5_DIALOGUE,
-    JENNIFER_NODE_6_DIALOGUE
+    JENNIFER_NODE_6_DIALOGUE,
+    JENNIFER_NODE_7_DIALOGUE
 } from '../constants';
 import { VehiclePhotosViewer } from './VehiclePhotosViewer';
 
@@ -55,21 +56,28 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 id: 'julip_symbol',
                 type: 'image',
                 title: 'FBI Symbol Sketch',
-                content: 'assets/fbi-symbol.png'
+                content: `${import.meta.env.BASE_URL}assets/fbi-symbol.png`
             },
             {
                 id: 'butter_julep_evidence',
                 type: 'image',
                 title: 'Butter Julep Evidence (1973)',
-                content: 'assets/butter_julep_evidence.jpg',
+                content: `${import.meta.env.BASE_URL}assets/butter_julep_evidence.jpg`,
                 description: '1973年辛辛那提少女冻死案证物。热感成像技术扫描显示，毛毯上残留着一个由高纯度工业油脂与未知染料混合而成的热敏化学印记。该标记呈现半透明蜡黄色，形状为高度抽象的几何结构，被命名为"黄油朱莉普"。根据雷吉博士的行为学分析，凶手将遗体放置在警局门口的行为类似完成一次邮差的"签收"动作，因此在女孩身上留下了这个如同货物印章般的冒烟印迹。'
             },
             {
                 id: 'richie_id_card',
                 type: 'image',
                 title: 'Richie Dreyfuss ID Card (1977)',
-                content: 'assets/richie_id_card.jpg',
+                content: `${import.meta.env.BASE_URL}assets/richie_id_card.jpg`,
                 description: '1977年印第安纳沙丘州立公园发现的里奇·德莱弗斯驾驶证。该证件从被野生动物啃食拖散的遗骸衣物中找到，用防水胶带层层包裹。雷吉博士对塑封边缘的质谱分析显示，残留物包含结晶蔗糖、薄荷油提取物、波本威士忌及高浓度乳脂酸——与1969年圣路易斯"河船赌场失踪案"证物上发现的化学指纹完全一致。这种独特的成分组合正是"黄油朱莉普"标记的核心特征。'
+            },
+            {
+                id: 'libby_ticket',
+                type: 'image',
+                title: 'Greyhound Ticket Stubs',
+                content: `${import.meta.env.BASE_URL}assets/libby_ticket.jpg`,
+                description: '在亚利桑那的酒吧发现他时，探员在其贴身内衬里发现了一个缝死的防水袋。内容物是19张打过孔的灰狗巴士旧票根，时间跨度十二年，全部是单程票。目的地同一个地点，蒙大拿州西北部的利比镇。'
             }
         ]
     },
@@ -125,21 +133,49 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 id: 'wilmer_ribbon',
                 type: 'image',
                 title: 'Silk Ribbon Evidence (1990)',
-                content: 'assets/wilmer_ribbon.jpg'
+                content: `${import.meta.env.BASE_URL}assets/wilmer_ribbon.jpg`
             },
             {
                 id: 'record_of_accounts',
                 type: 'image',
                 title: 'Record of Accounts',
-                content: 'assets/record_of_accounts.jpg',
+                content: `${import.meta.env.BASE_URL}assets/record_of_accounts.jpg`,
                 description: '在特克萨卡纳节点发现的视觉残留。亚瑟·道森（Arthur Dawson）的笔记本，记录了某种高度机密的账户往来与代号。'
             },
             {
                 id: 'church_visual_residue',
                 type: 'image',
                 title: '视觉残留：埃尔帕索教堂',
-                content: 'assets/church_visual_residue.png',
+                content: `${import.meta.env.BASE_URL}assets/church_visual_residue.png`,
                 description: '在对话中提取出的视觉残留。这座废弃的教堂似乎是詹妮弗记忆中的核心坐标，阳光透过破碎的彩绘玻璃洒在积满灰尘的长椅上，透露出一种神圣而荒凉的气氛。'
+            },
+            {
+                id: 'laguna_beach_visual_residue',
+                type: 'image',
+                title: '视觉残留：拉古那海滩',
+                content: `${import.meta.env.BASE_URL}assets/laguna_beach_visual_residue.png`,
+                description: '在对话中提取出的视觉残留。伪装成大学生的探员透过望远镜监视房车，被花岗岩砸碎的镜片上倒映出拉古那海滩荒凉的矮树丛。'
+            },
+            {
+                id: 'felipe_maldonado_poster',
+                type: 'image',
+                title: '证物：费利佩·马尔多纳多',
+                content: `${import.meta.env.BASE_URL}assets/felipe_maldonado_poster.jpg`,
+                description: '在对话中提取出的证物。一份关于费利佩·马尔多纳多的通缉令。'
+            },
+            {
+                id: 'pendant_photo',
+                type: 'image',
+                title: '利比镇吊坠照片',
+                content: `${import.meta.env.BASE_URL}assets/william_dawson_portrait.png`,
+                description: '在对话中提取出的视觉残留。一张已经褪色的老照片，被小心地安放在吊坠盒中。照片上是一个中年男人（威廉·道森）带着一个年幼的孩子。'
+            },
+            {
+                id: 'libby_forest_map_residue',
+                type: 'image',
+                title: '视觉残留：利比镇房车与森林地图',
+                content: `${import.meta.env.BASE_URL}assets/confession_31_residue.png`,
+                description: '卡彭记忆中的房车画面，墙上贴有一张蒙大拿州利比镇的森林地图。'
             }
         ]
     },
@@ -253,7 +289,13 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         attachments: [{
             type: 'image',
             title: '东海岸犯罪路线图 (1980s)',
-            content: 'assets/crime-route-map.png'
+            content: `${import.meta.env.BASE_URL}assets/crime-route-map.png`
+        }, {
+            id: 'libby_convergence_map',
+            type: 'image',
+            title: '全美格雷伊猎犬巴士汇聚图：指向利比 (1970s-80s)',
+            content: `${import.meta.env.BASE_URL}assets/libby_convergence_map.png`,
+            description: '这张地图记录了卡彭在长达十二年的时间里，先后从全美十九个不同的城市登上灰狗巴士。虽然起点分散，但每一张票根的终点都指向同一个坐标：蒙大拿州的利比。这不仅是地理上的汇聚，更是他极力隐藏的某种回归。'
         }]
     },
     'graywater_beacon': {
@@ -264,12 +306,12 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         attachments: [{
             type: 'image',
             title: '铁马烟盒 (Iron Horse)',
-            content: 'assets/iron_horse_beacon.jpg'
+            content: `${import.meta.env.BASE_URL}assets/iron_horse_beacon.jpg`
         }, {
             id: 'iron_horse_louisville',
             type: 'image',
             title: '烟盒记录：路易斯维尔',
-            content: 'assets/iron_horse_louisville.jpg'
+            content: `${import.meta.env.BASE_URL}assets/iron_horse_louisville.jpg`
         }]
     },
     'aw_wilmo': {
@@ -354,10 +396,22 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 id: 'church_visual_residue',
                 type: 'image',
                 title: 'Visual Residue: El Paso Church',
-                content: 'assets/church_visual_residue.png',
+                content: `${import.meta.env.BASE_URL}assets/church_visual_residue.png`,
                 description: '检测到的视觉残留。一个模糊的身影在教堂角落观察着一切。'
             }
         ]
+    },
+    'gore_and_levy': {
+        id: 'gore_and_levy',
+        word: '戈尔和列维探员',
+        description: 'FBI探员阿瑟·戈尔与内森尼尔·列维，于1976年在拉古那海滩监视房车时被卡彭杀害。',
+        source: 'Confession'
+    },
+    'libby_town': {
+        id: 'libby_town',
+        word: '利比镇',
+        description: '蒙大拿州西北部一个靠近边境的偏僻伐木区。卡彭在过去十几年中多次冒着暴露风险前往此地。',
+        source: 'Dialogue'
     }
 };
 
@@ -400,17 +454,47 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             onSetFilingEvidence({
                 id: 'iron_horse_louisville',
                 title: 'Iron Horse Record (Louisville)',
-                content: 'assets/iron_horse_louisville.jpg',
+                content: `${import.meta.env.BASE_URL}assets/iron_horse_louisville.jpg`,
                 type: 'image'
             });
+            handleJenniferComplete();
         }
         if (actionId === 'extract_church_residue') {
             onSetFilingEvidence({
                 id: 'church_visual_residue',
                 title: '视觉残留：埃尔帕索教堂',
-                content: 'assets/church_visual_residue.png',
+                content: `${import.meta.env.BASE_URL}assets/church_visual_residue.png`,
                 type: 'image'
             });
+            handleJenniferComplete();
+        }
+        if (actionId === 'extract_laguna_beach_residue') {
+            onSetFilingEvidence({
+                id: 'laguna_beach_visual_residue',
+                title: '视觉残留：拉古那海滩',
+                content: `${import.meta.env.BASE_URL}assets/laguna_beach_visual_residue.png`,
+                type: 'image'
+            });
+            handleJenniferComplete();
+        }
+        if (actionId === 'extract_visual_node_7') {
+            onSetFilingEvidence({
+                id: 'libby_ticket',
+                title: '证物：灰狗巴士票根',
+                content: `${import.meta.env.BASE_URL}assets/libby_ticket.jpg`,
+                type: 'image'
+            });
+            handleJenniferComplete();
+        }
+        if (actionId === 'extract_rv_memory') {
+            onSetFilingEvidence({
+                id: 'libby_forest_map_residue',
+                title: '视觉残留：利比镇房车与森林地图',
+                content: `${import.meta.env.BASE_URL}assets/confession_31_residue.png`,
+                type: 'image'
+            });
+            if (onCollectAttachment) onCollectAttachment('libby_forest_map_residue');
+            handleJenniferComplete();
         }
     };
 
@@ -418,13 +502,13 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         const parts = content.split(/(\[.*?\]\(clue:.*?\))/g);
 
         return parts.map((part, index) => {
-            const match = part.match(/\[(.*?)\]\(clue:(.*?)\)/);
+            const match = part && part.match(/\[(.*?)\]\(clue:(.*?)\)/);
             if (match) {
                 const text = match[1];
                 const clueId = match[2].trim();
 
                 // Special handling for action links
-                if (clueId === 'view_iron_horse_record' || clueId === 'extract_church_residue') {
+                if (clueId === 'view_iron_horse_record' || clueId === 'extract_church_residue' || clueId === 'extract_laguna_beach_residue' || clueId === 'extract_visual_node_7' || clueId === 'extract_rv_memory') {
                     return (
                         <span
                             key={index}
@@ -518,6 +602,17 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const [hasViewedNode4Dialogue, setHasViewedNode4Dialogue] = useState(false);
     const [hasViewedNode5Dialogue, setHasViewedNode5Dialogue] = useState(false);
     const [hasViewedNode6Dialogue, setHasViewedNode6Dialogue] = useState(false);
+    const [hasViewedNode7Dialogue, setHasViewedNode7Dialogue] = useState(false);
+
+    const checkNode7Completion = () => {
+        const requiredConfessions = ['confession_27', 'confession_28', 'confession_29'];
+        const requiredArchives = ['sf_1976', 'archive_18', 'archive_19', 'archive_felipe'];
+        
+        const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
+        const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
+
+        return hasAllConfessions && hasAllArchives && currentStoryNode === 6;
+    };
 
     const checkNode6Completion = () => {
         return hasSwitchedPersona && currentStoryNode === 5;
@@ -580,6 +675,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     // Derived Node State (Calculated on-the-fly to avoid unmount state loss)
     const detectedNodeId = (() => {
+        if (checkNode7Completion()) return 7;
         if (checkNode6Completion()) return 6;
         if (checkNode5Completion()) return 5;
         if (checkNode4Completion()) return 4;
@@ -687,6 +783,23 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 6 dialogue as viewed to trigger map update
             setHasViewedNode6Dialogue(true);
+        } else if (simulatedDialogue === JENNIFER_NODE_7_DIALOGUE || detectedNodeId === 7) {
+            // Node 7 completion: Update story node to 7
+            if (onStoryNodeComplete) {
+                onStoryNodeComplete(7);
+            }
+            // Auto-collect items for Node 7
+            if (onCollectClue) {
+                onCollectClue('libby_town', '利比镇');
+            }
+            if (onCollectAttachment) {
+                onCollectAttachment('libby_convergence_map');
+            }
+            // Visual feedback
+            setNewlyAddedItems(new Set(['crime_route_map', 'libby_town']));
+            setTimeout(() => setNewlyAddedItems(new Set()), 10000);
+            // Mark Node 7 dialogue as viewed to trigger map update
+            setHasViewedNode7Dialogue(true);
         }
 
         setShowJennifer(false);
@@ -694,9 +807,15 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         setSimulatedDialogue(null);
 
         // SYNC: If the map is currently being viewed, refresh its content to the new version
-        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3 || detectedNodeId === 4 || detectedNodeId === 5 || detectedNodeId === 6)) {
+        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3 || detectedNodeId === 4 || detectedNodeId === 5 || detectedNodeId === 6 || detectedNodeId === 7)) {
             const updatedDefinition = getDynamicClueDefinition('crime_route_map');
-            if (updatedDefinition.attachments?.[0]) {
+            // Node 7 should show the second attachment (Greyhound Map) by default
+            const isNode7 = detectedNodeId === 7 || simulatedDialogue === JENNIFER_NODE_7_DIALOGUE;
+            const attachmentIndex = isNode7 ? 1 : 0;
+            
+            if (updatedDefinition.attachments?.[attachmentIndex]) {
+                setViewingAttachment(updatedDefinition.attachments[attachmentIndex]);
+            } else if (updatedDefinition.attachments?.[0]) {
                 setViewingAttachment(updatedDefinition.attachments[0]);
             }
         }
@@ -710,6 +829,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
     const getJenniferDialogue = (simulated: string[] | null, detectedId: number | null, visited: boolean) => {
         if (simulated) return simulated;
+        if (detectedId === 7) return JENNIFER_NODE_7_DIALOGUE;
         if (detectedId === 6) return JENNIFER_NODE_6_DIALOGUE;
         if (detectedId === 5) return JENNIFER_NODE_5_DIALOGUE;
         if (detectedId === 4) return JENNIFER_NODE_4_DIALOGUE;
@@ -737,6 +857,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
         // Dynamic Rule: Crime Route Map updates based on story node progression
         if (id === 'crime_route_map') {
+            // Node 7: Convergence map discovery
+            const isNode7Ready = currentStoryNode >= 7 || hasViewedNode7Dialogue;
             // Node 6: Complete route with West Coast locations
             const isNode6Ready = currentStoryNode >= 6;
             // Node 5: Update AFTER player completes Node 5 (currentStoryNode becomes 5)
@@ -746,14 +868,33 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             const isNode3Ready = currentStoryNode >= 3;
             const isNode2Ready = currentStoryNode >= 2;
 
+            // Node 7: Convergence Map + Complete Route
+            if (isNode7Ready) {
+                return {
+                    ...original,
+                    description: '根据汇聚的灰狗巴士票根，卡彭在过去十二年里从全美各地不断汇聚到蒙大拿州的利比镇。这是一次漫长而隐秘的回归。',
+                    attachments: original.attachments ? [
+                        {
+                            ...original.attachments[0],
+                            content: `${import.meta.env.BASE_URL}assets/crime-route-map-v6.png`,
+                            title: '东海岸及西海岸完整路线图 (1980s)'
+                        },
+                        {
+                            ...original.attachments[1],
+                            content: `${import.meta.env.BASE_URL}assets/libby_convergence_map.png`,
+                            title: '灰狗巴士汇聚点地图 (Libby, MT)'
+                        }
+                    ].filter(Boolean) : []
+                };
+            }
             // Node 6: Add West Coast (Portland, Santa Barbara, Laguna Beach, Albuquerque, Santa Fe)
-            if (isNode6Ready) {
+            else if (isNode6Ready) {
                 return {
                     ...original,
                     description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔 -> 圣路易斯 -> 堪萨斯城 -> 芝加哥 -> 罗克福德 -> 格林贝 -> 盐湖城 -> 丹佛 -> 埃尔帕索 -> 圣菲 -> 阿尔伯克基市 -> 圣芭芭拉 -> 拉古那海滩 -> 波特兰',
                     attachments: original.attachments ? [{
                         ...original.attachments[0],
-                        content: 'assets/crime-route-map-v6.png'
+                        content: `${import.meta.env.BASE_URL}assets/crime-route-map-v6.png`
                     }] : []
                 };
             }
@@ -764,7 +905,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔 -> 圣路易斯 -> 堪萨斯城 -> 芝加哥 -> 罗克福德 -> 格林贝 -> 盐湖城（标记点：丹佛[Iris]、埃尔帕索）',
                     attachments: original.attachments ? [{
                         ...original.attachments[0],
-                        content: 'assets/crime-route-map-v5.png'
+                        content: `${import.meta.env.BASE_URL}assets/crime-route-map-v5.png`
                     }] : []
                 };
             }
@@ -775,7 +916,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔 -> 圣路易斯 -> 堪萨斯城 -> 芝加哥',
                     attachments: original.attachments ? [{
                         ...original.attachments[0],
-                        content: 'assets/crime-route-map-v4.png'
+                        content: `${import.meta.env.BASE_URL}assets/crime-route-map-v4.png`
                     }] : []
                 };
             }
@@ -786,7 +927,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔 -> 伯克斯维尔 -> 纳什维尔（房车密集活动区域）',
                     attachments: original.attachments ? [{
                         ...original.attachments[0],
-                        content: 'assets/crime-route-map-v3.png'
+                        content: `${import.meta.env.BASE_URL}assets/crime-route-map-v3.png`
                     }] : []
                 };
             }
@@ -797,7 +938,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                     description: '费城 -> 里士满 -> 罗阿诺克市 -> 辛辛那提 -> 莱克辛顿 -> 路易斯维尔',
                     attachments: original.attachments ? [{
                         ...original.attachments[0],
-                        content: 'assets/crime-route-map-v2.png'
+                        content: `${import.meta.env.BASE_URL}assets/crime-route-map-v2.png`
                     }] : []
                 };
             }
@@ -1138,17 +1279,36 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                     /* Regular attachment viewer */
                                     viewingAttachment.type === 'image' && (
                                         <motion.div
-                                            initial={{ scale: 0.9, rotate: -2 }}
-                                            animate={{ scale: 1, rotate: 0 }}
-                                            exit={{ scale: 0.9, rotate: 2 }}
-                                            className="relative bg-white p-4 shadow-[0_0_100px_rgba(0,0,0,0.5)] border-8 border-white max-h-[90vh] max-w-[90vw] cursor-auto"
+                                            initial={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 } : { scale: 0.9, rotate: -2 }}
+                                            animate={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1, filter: 'blur(0px) brightness(1)', opacity: 1 } : { scale: 1, rotate: 0 }}
+                                            exit={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 } : { scale: 0.9, rotate: 2 }}
+                                            transition={viewingAttachment.id === 'felipe_maldonado_poster' ? { duration: 2, ease: "easeOut" } : {}}
+                                            className={`
+                                                relative shadow-[0_0_100px_rgba(0,0,0,0.5)] max-h-[90vh] max-w-[90vw] cursor-auto overflow-hidden
+                                                ${viewingAttachment.id === 'felipe_maldonado_poster' ? 'neural-residue-container p-0 border-none' : 'bg-white p-4 border-8 border-white'}
+                                            `}
                                             onClick={e => e.stopPropagation()}
                                         >
                                             <img
                                                 src={viewingAttachment.content}
                                                 alt={viewingAttachment.title}
-                                                className="max-h-[85vh] object-contain"
+                                                className={`
+                                                    max-h-[85vh] object-contain transition-all duration-1000
+                                                    ${viewingAttachment.id === 'felipe_maldonado_poster' ? 'grayscale brightness-75 contrast-125' : ''}
+                                                    ${viewingAttachment.id === 'libby_ticket' ? 'sepia-[0.3] brightness-90 contrast-95 saturate-[0.8] blur-[0.3px]' : ''}
+                                                `}
                                             />
+                                            {viewingAttachment.id === 'felipe_maldonado_poster' && (
+                                                <>
+                                                    {/* CRT/Memory Effects Overlay */}
+                                                    <div className="crt-overlay absolute inset-0 pointer-events-none opacity-30"></div>
+                                                    <div className="bg-vignette absolute inset-0 pointer-events-none"></div>
+                                                    
+                                                    {/* Neural Noise & Interference */}
+                                                    <div className="neural-residue-noise"></div>
+                                                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-[var(--confess-highlight)]/5 to-transparent h-[20%] w-full animate-signal-interference"></div>
+                                                </>
+                                            )}
                                             <div className="absolute bottom-[-60px] left-0 w-full text-center text-white font-mono text-sm tracking-widest mt-4">
                                                 <div className="mb-2">{viewingAttachment.title}</div>
                                                 {/* Special caption for iron horse beacon */}
@@ -1181,6 +1341,26 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                             }}
                                                         >
                                                             路易斯维尔
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {/* Special caption for libby ticket or convergence map */}
+                                                {(viewingAttachment.id === 'libby_ticket' || viewingAttachment.id === 'libby_convergence_map' || viewingAttachment.content === 'assets/libby_convergence_map.png') && (
+                                                    <div className="text-xs text-[#94a3b8]">
+                                                        地点标注：
+                                                        <span
+                                                            className={`
+                                                                ml-1 cursor-pointer hover:text-white transition-colors border-b border-dashed border-[#94a3b8]/50 hover:border-white
+                                                                ${(collectedKeywords || []).includes('libby_town') ? 'text-[#38bdf8] border-none cursor-default' : 'animate-pulse text-[#fbbf24]'}
+                                                            `}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                if (!(collectedKeywords || []).includes('libby_town') && onCollectClue) {
+                                                                    onCollectClue('libby_town', '利比镇');
+                                                                }
+                                                            }}
+                                                        >
+                                                            利比镇
                                                         </span>
                                                     </div>
                                                 )}

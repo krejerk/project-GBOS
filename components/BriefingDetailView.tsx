@@ -74,7 +74,7 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
         const parts = content.split(/(\[.*?\]\(clue:.*?\))/g);
 
         return parts.map((part, index) => {
-            const match = part.match(/\[(.*?)\]\(clue:(.*?)\)/);
+            const match = part && part.match(/\[(.*?)\]\(clue:(.*?)\)/);
             if (match) {
                 const [_, text, clueId] = match;
                 const isCollected = collectedClues.includes(clueId) || collectedDossierIds.includes(clueId);

@@ -202,6 +202,12 @@ const App: React.FC = () => {
         updatedUnlockedNodeIds = Array.from(new Set([...prev.unlockedNodeIds, ...node6Confessions]));
       }
 
+      // When entering Node 7, unlock confessions up to 29
+      if (nodeId === 7) {
+        const node7Confessions = Array.from({ length: 29 }, (_, i) => `confession_${i + 1}`);
+        updatedUnlockedNodeIds = Array.from(new Set([...prev.unlockedNodeIds, ...node7Confessions]));
+      }
+
       // GLOBAL CARRY-OVER LOGIC:
       // When a chapter finishes, we sweep through everything the player has collected.
       // If a keyword was USED to unlock a target in THIS chapter or passing chapters, it gets removed.
@@ -229,7 +235,7 @@ const App: React.FC = () => {
         ...prev,
         currentStoryNode: nodeId,
         unlockedNodeIds: updatedUnlockedNodeIds,
-        collectedClues: prev.collectedClues.filter(id => !consumedKeys.has(id)),
+        collectedClues: prev.collectedClues.filter(id => !consumedKeys.has(id) || id === 'tithe'),
         collectedYears: prev.collectedYears.filter(id => !consumedKeys.has(id)),
         // Filter out consumed people, but ALWAYS keep core identity anchors for narrative stability
         unlockedPeople: prev.unlockedPeople.filter(id => 
@@ -253,7 +259,7 @@ const App: React.FC = () => {
 
     setGameState(prev => ({
       ...prev,
-      collectedClues: [],
+      collectedClues: prev.collectedClues.filter(id => id === 'tithe'),
       collectedYears: [],
       unlockedPeople: prev.unlockedPeople.filter(id => CORE_KEEPS.includes(id.toLowerCase())),
       history: [
@@ -310,6 +316,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleSearch = useCallback(async (query: string) => {
+    const lowerQuery = query.toLowerCase().trim();
+    if (!query) return;
     setIsProcessing(true);
     setGameState(prev => ({
       ...prev,
@@ -473,8 +481,12 @@ const App: React.FC = () => {
       'laguna_beach': true, '拉古那海滩': true, 'laguna beach': true,
       'santa_fe': true, '圣菲': true, 'santa fe': true,
       'bonny_and_clyde': true, '邦妮和克莱德': true, 'bonny and clyde': true,
-      'reporter': true, '记者': true,
+      'reporter': true, '记者': true, '1967年': true,
       'mill_valley': true, '米尔谷': true,
+      'william_dawson': true, '威廉·道森': true, 'william dawson': true,
+      'humphrey_county': true, '汉弗莱县': true, 'humphrey county': true,
+      'assault_on_police': true, '袭警案': true, '袭警': true,
+      'mandan': true, '曼丹': true, '曼丹市': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -577,6 +589,17 @@ const App: React.FC = () => {
         hasBonnyAndClyde: lowerQuery.includes('bonny_and_clyde') || lowerQuery.includes('bonny and clyde') || lowerQuery.includes('邦妮和克莱德'),
         hasMillValley: lowerQuery.includes('mill_valley') || lowerQuery.includes('米尔谷'),
         hasReporter: lowerQuery.includes('reporter') || lowerQuery.includes('记者'),
+        hasFakeSmokeBomb: lowerQuery.includes('fake_smoke_bomb') || lowerQuery.includes('fake smoke bomb') || lowerQuery.includes('人造烟雾弹') || lowerQuery.includes('人造的烟雾弹'),
+        hasBlindZoneCamp: lowerQuery.includes('blind_zone_camp') || lowerQuery.includes('blind zone camp') || lowerQuery.includes('盲区营地'),
+        hasWoodlandDeep: lowerQuery.includes('林地深处') || lowerQuery.includes('woodland_deep'),
+        hasLibbyTown: lowerQuery.includes('libby_town') || lowerQuery.includes('libby town') || lowerQuery.includes('利比镇') || lowerQuery.includes('libby'),
+        hasAlexei: lowerQuery.includes('alexei') || lowerQuery.includes('阿列克谢'),
+        hasGoreAndLevy: lowerQuery.includes('gore') || lowerQuery.includes('levy') || lowerQuery.includes('戈尔') || lowerQuery.includes('列维') || lowerQuery.includes('gore_and_levy'),
+        hasYear1967: lowerQuery.includes('1967') || lowerQuery.includes('year_1967'),
+        hasHumphreyCounty: lowerQuery.includes('humphrey_county') || lowerQuery.includes('汉弗莱县'),
+        hasAssaultOnPolice: lowerQuery.includes('assault_on_police') || lowerQuery.includes('袭警案') || lowerQuery.includes('袭警'),
+        hasWilliamDawson: lowerQuery.includes('william_dawson') || lowerQuery.includes('威廉·道森') || lowerQuery.includes('william dawson'),
+        hasMandan: lowerQuery.includes('mandan') || lowerQuery.includes('曼丹') || lowerQuery.includes('曼丹市'),
       };
     };
 
@@ -606,6 +629,145 @@ const App: React.FC = () => {
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 28: Fake Smoke Bomb + Blind Zone Camp
+    if (validation.hasFakeSmokeBomb && validation.hasBlindZoneCamp) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_28');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_28');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+                { type: 'info', content: `[记忆转录]: ${Object.values(node!.layers).map(l => l.event).join('\n\n')}`, timestamp: Date.now() }
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 29: Woodland Deep + Amalekite Protocol
+    if (validation.hasWoodlandDeep && validation.hasAmalekiteProtocol) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_29');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_29');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              collectedDossierIds: Array.from(new Set([...prev.collectedDossierIds, 'project'])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+                { type: 'info', content: `[记忆转录]: ${Object.values(node!.layers).map(l => l.event).join('\n\n')}`, timestamp: Date.now() },
+                { type: 'info', content: `[SYSTEM]: 检测到残留视觉信号，已激活归档槽位「青豆牡蛎汤计划」。`, timestamp: Date.now() }
+              ]
+            };
+
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+    // Confession 30: Libby Town + Tithe
+    if (validation.hasLibbyTown && validation.hasTithe) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_30');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_30');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+                { type: 'info', content: `[记忆转录]: ${Object.values(node!.layers).map(l => l.event).join('\n\n')}`, timestamp: Date.now() },
+                { type: 'info', content: `[SYSTEM]: 侦测到残留视觉信号，请问是否提取视觉信息？`, timestamp: Date.now() }
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 31: Humphrey County + Assault on Police
+    if (validation.hasHumphreyCounty && (validation.hasAssaultOnPolice || (lowerQuery.includes('袭警案')))) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_31');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_31');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+                { type: 'info', content: `[记忆转录]: ${Object.values(node!.layers).map(l => l.event).join('\n\n')}`, timestamp: Date.now() },
               ]
             };
           });
@@ -908,6 +1070,27 @@ const App: React.FC = () => {
             history: [
               ...prev.history,
               { type: 'archive_content', content: '[归档系统]: 外部调查记录已导入——E-1981-CR-09', timestamp: Date.now() }
+            ]
+          };
+        });
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Archive: Libby 1967
+    if (validation.hasYear1967 && validation.hasWilliamDawson && validation.hasHumphreyCounty && validation.hasAssaultOnPolice) {
+      setTimeout(() => {
+        setGameState(prev => {
+          if (prev.unlockedArchiveIds.includes('libby_1967')) {
+            return prev;
+          }
+          return {
+            ...prev,
+            unlockedArchiveIds: [...prev.unlockedArchiveIds, 'libby_1967'],
+            history: [
+              ...prev.history,
+              { type: 'archive_content', content: '[归档系统]: 1967年利比镇失踪案关联报告已解锁', timestamp: Date.now() }
             ]
           };
         });
@@ -1486,6 +1669,9 @@ const App: React.FC = () => {
               ...prev,
               activeNodeId: node!.id,
               unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              unlockedArchiveIds: (node!.id === 'confession_30') && !prev.unlockedArchiveIds.includes(node!.id) 
+                ? [...prev.unlockedArchiveIds, node!.id] 
+                : prev.unlockedArchiveIds,
               systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
               history: isAlreadyUnlocked ? prev.history : [
                 ...prev.history,
@@ -1698,10 +1884,8 @@ const App: React.FC = () => {
         setIsProcessing(false);
       }, 50);
       return;
-      return;
     }
 
-    const lowerQuery = query.toLowerCase().trim();
 
     // Clipping 11 Unlock: 1976 + Kansas City
     if (validation.hasYear1976 && validation.hasKansasCity) {
@@ -1718,6 +1902,18 @@ const App: React.FC = () => {
     // Clipping 13 Unlock: 1976 + Peter Henderson
     if (validation.hasYear1976 && validation.hasPeterHenderson) {
       handleUnlockArchive('ia_1976');
+      return;
+    }
+
+    // Archive 18: 1976 + Alexei
+    if (validation.hasYear1976 && validation.hasAlexei) {
+      handleUnlockArchive('archive_18');
+      return;
+    }
+
+    // Archive 19: 1976 + Gore & Levy
+    if (validation.hasYear1976 && validation.hasGoreAndLevy) {
+      handleUnlockArchive('archive_19');
       return;
     }
 
@@ -2094,28 +2290,12 @@ const App: React.FC = () => {
   };
 
   const handleCollectClue = (clueId: string, word: string) => {
-    // FORCE RE-COLLECTION for special reveal keywords to support Easter Egg visibility logic
-    // This allows duplicates in collectedClues, increasing frequency > 1, so SimplifiedMainView shows them.
-    if (['kansas_city', 'mobile_blood_truck', 'church', 'el_paso', 'mill_valley', 'reporter'].includes(clueId)) {
-      setGameState(prev => {
-        const currentCount = prev.collectedClues.filter(c => c === clueId).length;
-        // IF count is 0 (Debug/Lost state + Consumed), add 2 to immediately verify "Freq > 1".
-        // IF count > 0 (Normal state), add 1 to increment freq.
-        const itemsToAdd = currentCount === 0 ? [clueId, clueId] : [clueId];
-
-        return {
-          ...prev,
-          collectedClues: [...prev.collectedClues, ...itemsToAdd],
-          history: [...prev.history, { type: 'info', content: `[KEYWORD RE-ACQUIRED]: ${word} 已重新收录`, timestamp: Date.now() }]
-        };
-      });
-      return;
-    }
     const isDossier = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'].includes(clueId);
     const isPerson = CATEGORY_IDS.PEOPLE.includes(clueId);
     const isYear = CATEGORY_IDS.YEARS.includes(clueId);
     const isLocation = CATEGORY_IDS.LOCATIONS.includes(clueId);
     const isCase = CATEGORY_IDS.CASES.includes(clueId);
+    const isSpecialReacquire = ['kansas_city', 'mobile_blood_truck', 'church', 'el_paso', 'mill_valley', 'reporter', 'felipe_maldonado'].includes(clueId);
 
     // Use functional update to ensure we always have the latest state
     setGameState(prev => {
@@ -2149,19 +2329,32 @@ const App: React.FC = () => {
         // kan_1976, kc_1965
         'east_12th_st', 'execution_room', 'maggots',
         // ia_1976, sf_1976, tx_1967, va_1990, dc_1967
-        'davenport', 'roanoke', 'mill_valley', 'reporter',
+        'davenport', 'roanoke', 'mill_valley', 'reporter', 'felipe_maldonado', 'william_dawson', 'humphrey_county', 'assault_on_police', 'mandan', 'forest_map'
       ];
       const isReward = REWARD_IDS.includes(clueId);
 
       if (!isReward && currentConsumed.has(clueId)) return prev;
 
+      let currentCollectedClues = [...prev.collectedClues];
+
+      // Special Re-acquisition handling for visual badges/feedback
+      if (isSpecialReacquire) {
+        const currentCount = prev.collectedClues.filter(c => c === clueId).length;
+        const itemsToAdd = currentCount === 0 ? [clueId, clueId] : [clueId];
+        currentCollectedClues = [...prev.collectedClues, ...itemsToAdd];
+        newHistory.push({ type: 'info', content: `[KEYWORD RE-ACQUIRED]: ${word} 已重新收录`, timestamp: Date.now() });
+      }
+
       // UNIFIED COLLECTION LOGIC
       if (isPerson) {
         let unlockedId = clueId;
         if (clueId === 'robert' || clueId === 'robert_capone') unlockedId = 'capone';
+        
         if (!prev.unlockedPeople.includes(unlockedId)) {
           updates.unlockedPeople = [...prev.unlockedPeople, unlockedId];
           newHistory.push({ type: 'info', content: `[PERSON IDENTIFIED]: ${word} 已收录到人物关系`, timestamp: Date.now() });
+        } else if (isReward) {
+          newHistory.push({ type: 'info', content: `[PERSON RE-IDENTIFIED]: ${word} 关联信息已更新`, timestamp: Date.now() });
         }
       }
       else if (isDossier) {
@@ -2170,7 +2363,7 @@ const App: React.FC = () => {
           newHistory.push({ type: 'info', content: `[EVIDENCE FILED]: ${word} 已收录到案卷建档`, timestamp: Date.now() });
         }
         if (clueId === 'julip' && !prev.collectedClues.includes(clueId)) {
-          updates.collectedClues = [...prev.collectedClues, clueId];
+          currentCollectedClues = [...currentCollectedClues, clueId];
           newHistory.push({ type: 'info', content: `[KEYWORD RECORDED]: ${word} 已收录至检索提示`, timestamp: Date.now() });
         }
       }
@@ -2181,19 +2374,22 @@ const App: React.FC = () => {
         newHistory.push({ type: 'info', content: `[YEAR RECORDED]: ${word} 已收录到时间线`, timestamp: Date.now() });
       }
       else if (isLocation || isCase) {
-        if (!prev.collectedClues.includes(clueId) || isReward) {
-          updates.collectedClues = [...prev.collectedClues, clueId];
+        if (!isSpecialReacquire && (!prev.collectedClues.includes(clueId) || isReward)) {
+          currentCollectedClues = [...prev.collectedClues, clueId];
           const label = isLocation ? 'LOCATION' : 'CASE';
           newHistory.push({ type: 'info', content: `[${label} IDENTIFIED]: ${word} 已收录`, timestamp: Date.now() });
         }
       }
       else {
         // ALLOW DUPLICATES FOR REWARDS (so we can detect re-collection of consumed keys)
-        if (!prev.collectedClues.includes(clueId) || isReward) {
-          updates.collectedClues = [...prev.collectedClues, clueId];
+        if (!isSpecialReacquire && (!prev.collectedClues.includes(clueId) || isReward)) {
+          currentCollectedClues = [...prev.collectedClues, clueId];
           newHistory.push({ type: 'info', content: `[KEYWORD RECORDED]: ${word} 已记下`, timestamp: Date.now() });
         }
       }
+
+      // Sync collectedClues update
+      updates.collectedClues = currentCollectedClues;
 
       if (Object.keys(updates).length > 0 || newHistory.length > 0) {
         return { ...prev, ...updates, history: [...prev.history, ...newHistory] };
@@ -2280,7 +2476,10 @@ const App: React.FC = () => {
       // Identity Matrix gating removed per user request
     }
 
-    setGameState(prev => ({ ...prev, activeNodeId: id }));
+    setGameState(prev => ({ 
+      ...prev, 
+      activeNodeId: id
+    }));
   };
 
   const shouldShowMonster = !!gameState.hasSwitchedPersona;

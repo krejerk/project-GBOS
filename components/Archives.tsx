@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Archive, Search, X, ShieldAlert, Stamp, ChevronRight, File, FolderOpen, Folder, Menu } from 'lucide-react';
-import { CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS, ARCHIVE_CASE_HIGHLIGHT_MAP, GLOBAL_KEYWORD_MAP } from '../constants';
+import { CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS, ARCHIVE_CASE_HIGHLIGHT_MAP, GLOBAL_KEYWORD_MAP, CONFESSION_REGISTRY } from '../constants';
 
 interface ArchivesProps {
     isOpen: boolean;
@@ -41,6 +41,7 @@ interface DetailedArchiveRecord {
         author: string;
         content: string;
         template?: 'REGGIE' | 'ALTERMAN' | 'THORNE' | 'CRANE' | 'BAKER';
+        stamp?: 'REJECTED';
     };
 }
 
@@ -662,6 +663,142 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
 信息封锁： 向上级申请向州惩教署（DOC）及地方警局下达封口令。我们不能让公众意识到联邦政府弄丢了一颗定时炸弹。控制住叙事，直到我们抓到这群幽灵。`,
             template: 'BAKER'
         }
+    },
+    {
+        id: 'archive_18',
+        title: '米尔谷“人造烟雾”事件',
+        triggers: {
+            year: '1976',
+            person: ['alexei', '阿列克谢', 'Alexei']
+        },
+        newspaper: {
+            source: '《洛杉矶先驱论坛报》',
+            date: '1976年11月',
+            headline: '【深度】米尔谷爆炸案：这是一场“人造烟雾”吗？',
+            content: [
+                '米尔谷那个平静的午后，被一声沉闷的巨响彻底粉碎。',
+                '位于米尔谷的一处私人住宅发生剧烈爆炸，户主——一名由于法律原因无法公开姓名的调查记者——当时正在书房工作。虽然爆炸威力惊人，但幸运的是，该记者仅受轻伤。警方在现场发现了一枚结构极其复杂的爆炸装置残骸。',
+                '据现场不愿透露姓名的爆炸物处理专家（EOD）称：“这枚炸弹的引爆逻辑简直闻所未闻。它不是通过常规的定时或遥控装置触发，而是利用了一种极其缓慢的沥青滴漏系统。如果你在几天前走进那个房间，你根本感觉不到危险正在降临。凶手甚至在装置中掺杂了某种名为‘人造烟雾’的化学粉末。这不仅是一场谋杀，更像是一场关于等待的病态艺术表演。”目前案件已由联邦调查局全面接管，所有相关人员已被要求签署保密协议。'
+            ]
+        },
+        annotation: {
+            fileId: '#1976-FBI-MV-REPORT',
+            date: '1976年12月5日',
+            level: '机密 // 涉密人员范围：BAU, KLUB-PROJECT',
+            author: '雷吉博士 (Dr. Reggie)',
+            content: `局长阁下，\n\n关于米尔谷事件的报告已汇总。现场提取的引爆逻辑完全符合[阿列克谢](clue:alexei)在莫斯科期间申请的专利描述——一种几乎无法被常规手段检测到的“重力触发平衡桥”。然而，阿列克谢此时本应在我们的严密监视下，或者说，在我们的某个[盲区营地](clue:blind_zone_camp)里进行所谓的“技术合作”。\n\n更让人不安的是，现场发现的[人造烟雾弹](clue:fake_smoke_bomb)粉末中含有追踪同位素。这种同位素唯一的供应来源是内华达州的1402 Old Dominion Rd.设施。这证明我们内部存在严重的泄密风险，或者说，有人正在利用我们的实验资产进行私人的权力清算。该名记者当时正在调查关于“联邦法官索恩非法资产”的线索。建议立即封锁消息，并启动内部审查程序。`,
+            template: 'REGGIE'
+        }
+    },
+    {
+        id: 'archive_19',
+        title: '戈尔与列维失踪案',
+        triggers: {
+            year: '1976',
+            person: ['gore_and_levy', '戈尔', '列维']
+        },
+        newspaper: {
+            source: '《奥兰治县纪事报》',
+            date: '1976年12月',
+            headline: '【失踪】联邦探员在执行监视任务中神秘消失',
+            content: [
+                '两名经验丰富的联邦探员——哈里·戈尔（Harry Gore）与艾萨克·列维（Isaac Levy），于上周二在拉古那海滩附近执行常规监视任务时彻底失联。',
+                '据附近居民反映，最后一次看到他们的防弹监视车是在周一傍晚。当时的车辆停靠在一处荒芜的公路上，车灯处于关闭状态。周三清晨，地方警方在海沟附近发现了车辆轮胎摩擦的痕迹，但现场未发现任何血迹或搏斗迹象。随后赶到的FBI特工迅速封锁了整个海域。',
+                '此案引发了华盛顿方面的高度关注。戈尔与列维一直致力于追踪那辆臭名昭著的“蓝色游牧房车”。民间长期流传关于这辆房车的恐怖传说，称其所过之处必有生命之光熄灭。联邦调查局目前拒绝对外公布任何细节，仅表示搜索行动仍在继续，但希望已极其渺茫。'
+            ]
+        },
+        annotation: {
+            fileId: '#1976-FBI-LB-MISSING',
+            date: '1977年1月',
+            level: '绝密 // 限局长本人审阅',
+            author: '霍华德·贝克 (Howard Baker)',
+            content: `局长，\n\n戈尔和列维的信号在12月24日凌晨3时消失。现场唯一的遗留物是三颗排成三角形的石子。雷吉博士认为这是某种告别仪式，或者是狩猎成功的标识。\n\n我们在拉古那海滩以南十公里的[林地深处](clue:woodland_depths)发现了一条新的车辙痕迹，宽度与目标房车完全吻合。对方早就把那辆显眼的蓝色房车换掉了，或者进行了某种彻底的改装。根据情报，这辆车已再次进入静默状态。他们像是在潮汐中隐形的猎食者，我们只能在尸体浮上来的时候感觉到他们的存在。鉴于目前形势，我建议将所有关于该车辆的追踪等级提升至S级。`,
+            template: 'BAKER'
+        }
+    },
+    {
+        id: 'archive_felipe',
+        title: '1975年俄勒冈红杉林案',
+        triggers: {
+            year: '1975',
+            person: ['felipe_maldonado', '费利佩·马尔多纳多', 'Felipe Maldonado']
+        },
+        newspaper: {
+            source: '《墨西哥城先驱报》',
+            date: '1975年12月',
+            headline: '俄勒冈“血色迷幻”伏击案深度追踪',
+            content: [
+                '（本报特派调查记者：卡洛斯·门多萨 发自美国俄勒冈州） 距离我国国宝级迷幻摇滚乐队“费利佩·马尔多纳多与乐队”在美国俄勒冈州边境失联，已经过去了整整三天。昨日清晨，噩耗传来。俄勒冈州警方在5号州际公路旁的一条偏僻伐木岔道深处，找到了那辆失踪的巡演大巴。现场的惨状令人毛骨悚然，仿佛经历了一场中世纪的处刑。',
+                '精心布置的“红脖子”仇恨现场：大巴车的车胎被全部打爆，车身上被人用刺眼的红色油漆喷满了“滚回老家”、“美国不欢迎拉美垃圾”以及纳粹的万字符号。包括主唱费利佩在内的五名乐队成员 and 两名随行人员，被发现绑在林地的树干上。他们不仅遭遇了非人的肉体折磨（部分成员耳朵被割下），更被注射了超大剂量的某种未知致幻药物。发现时，大多数人已失去意识，只剩下微弱的呼吸和诡异的痴笑。目前费利佩仍在重症监护室中，大脑受到不可逆的药物损伤。',
+                'FBI的迅速介入与令人生疑的“结案”：当地警长最初在发布会上愤怒地表示，这是一起典型的由当地极端右翼伐木工组织策划的“仇恨犯罪”。然而，仅仅不到十二小时后，美国联邦调查局（FBI）便以惊人的速度强行接管了此案。令人费解的是，FBI接手后，立刻封锁了所有毒理学化验报告。一位不愿透露姓名的当地法医向本报记者透露了疑点：“那些红脖子伐木工平时只会用猎枪和劣质威士忌惹事。但袭击这群乐手的人，手法太过专业了。他们用来放倒受害者的药物，根本不是街头的LSD，而更像是某种军用级别的马匹镇静剂混合物。而且，现场没有留下任何杂乱的脚印或指纹，干净得像是一支受过训练的特种小队干的。”',
+                '政治阴谋的牺牲品？：为什么FBI要如此急切地将这起手段极其专业的伏击案，死死扣在当地那群粗鲁的伐木工头上？联想到费利佩·马尔多纳多生前在歌词中多次表达的反战与反帝国主义思想，我们有理由怀疑，这场看似是极右翼排外的仇恨犯罪，实则是一场披着暴徒外衣的政治谋杀。真正的凶手或许早已在官方的庇护下逍遥外外。墨西哥驻西雅图领事馆已正式向美方递交抗议信，要求FBI公开透明的案件细节。我们不能让费利佩的音乐，在这个冰冷的阴谋中成为绝响。'
+            ]
+        },
+        annotation: {
+            fileId: '[绝密 // 仅限局长办公室及行为科学部传阅]',
+            date: '1976年1月5日',
+            level: '最高级别 (TOP SECRET)',
+            author: '雷吉博士 (Dr. Reggie)',
+            content: `局长阁下，\n\n关于上个月在俄勒冈州发生的墨西哥乐队“费利佩·马尔多纳多与乐队”遇袭一案，我部已完成对现场法医报告及痕迹物证的深度复核。鉴于目前国务院正面临来自墨西哥方面的巨大外交压力，而俄勒冈地方警局草率逮捕的两名涉嫌“仇恨犯罪”的当地伐木工显然只是替罪羊，我必须向您呈报这一极其严峻的真相：我们正在面对的，绝非普通的右翼排外暴徒，而是一个极具战术素养、高度致命且一直游荡在联邦监控盲区内的破坏组织。\n\n以下是几点异常情况：\n\n药理学异常： 毒理学报告显示，受害者体内含有高浓度的赛拉嗪（Xylazine，一种大型动物/马匹专用镇静剂）与致幻剂的混合物。这种精密的药剂配比和注射手法，绝不可能出自一群喝醉的红脖子之手。\n\n战术级清场： 现场没有留下任何搏斗的凌乱脚印，所有受害者的耳部切割切口平滑且一致。作案者展现出了如同特种战术小队般的协同能力——前哨渗透、药物控制、目标切割、伪造现场、安全撤离，整个过程冷酷至极。\n\n很显然，这不是出于激情的仇恨犯罪，更像是一场纯粹为了满足某种病态心理控制欲，或者是在进行某种“战术演练”的猎杀。阁下，这群人利用了公众对种族冲突的刻板印象，完美地制造了一次“伪旗行动”。他们有一辆能够长途机动的重型车辆（推测为改装房车或卡车），他们拥有军用级别的物资渠道，且极度危险。如果不立刻将他们挖出来，下一次他们引爆的可能就是国内真正的恐怖袭击。\n\n基于此，我正式向您申请立项KLUB行动组并赋予该行动组最高级别的跨州调阅权限，启用公路监控网络，我们需要不惜一切代价，把这群借着“仇恨犯罪”名义四处猎杀的游牧恶鬼找出来。为应对外交危机，建议局里暂时对外维持“当地右翼组织作案”的口径，以为我们的秘密追捕争取战术时间。`,
+            template: 'REGGIE',
+            stamp: 'REJECTED'
+        }
+    },
+    {
+        id: 'confession_30',
+        title: '供述 No.30: 利比镇之约',
+        triggers: {
+            year: '1975',
+            person: ['william_dawson', '威廉·道森', 'William Dawson', 'tithe', '什一税']
+        },
+        newspaper: {
+            source: '《蒙大拿观察者报》',
+            date: '1975年12月20日',
+            headline: '利比镇林业工人的哀悼：亚瑟·道森在俄勒冈州确认遇难',
+            content: [
+                '（本报讯） 蒙大拿州利比镇居民今日陷入沉重哀悼。曾在这里工作多年的资深伐木工人亚瑟·道森（Arthur Dawson），已被确认在近期发生于俄勒冈州红杉林的恶性暴力事件中不幸丧生。',
+                '亚瑟在镇上以其正直和乐于助人闻名。据当地牧师回忆，亚瑟在前往俄勒冈州之前曾向教会缴纳了最后一笔“什一税”，并表示他希望能在那里找到失散已久的亲人。他的意外离世不仅是其家庭的巨大悲剧，也是利比镇社区的重大损失。',
+                '目前，联邦调查局（FBI）已接管该案调查，但尚未公布具体细节。利比镇的乡亲们计划在下周日为亚瑟举行追思会，呼吁正义能早日降临。'
+            ]
+        },
+        annotation: {
+            fileId: 'LB-1975-MT-08',
+            date: '1976年2月10日',
+            level: '机密 (CONFIDENTIAL)',
+            author: '雷吉博士 (Dr. Reggie)',
+            content: `【案卷交叉分析：亚瑟·道森与“家族”的接触点】\n\n关于 1975 年 12 月发生的红杉林伏击案。虽然官方渠道将其定性为仇恨犯罪，但我们在亚瑟·道森（Arthur Dawson）的遗物中发现了一些极其反常的线索。\n\n**符号化的“什一税”：**\n在道森的随身行李中发现了一个装有一百美元现金的信封，上面用铅笔潦草地写着“什一税”。然而，根据我们对利比镇当地教会的走访，道森早在半年前就停止了固定的宗教捐献。这个信封极有可能是他交给“家族”的某种“准入费”或买命钱。\n\n**消失的吊坠盒：**\n据目击者称，道森随身携带一个廉价的银色吊坠盒，但现场搜寻未获。根据最新情报，该物品可能已被瓦妮莎（Vanessa）带走。这不仅是一个情感寄托，更可能是道森留给瓦妮莎的某种“安全凭证”。正如我们在其他案件中所见，“家族”极其擅长利用受害者的希望来编织更深的陷阱。亚瑟以为自己在救赎，实则只是为他们的杀戮增添了一抹讽刺的底色。`,
+            template: 'REGGIE'
+        }
+    },
+    {
+        id: 'libby_1967',
+        title: '1967年蒙大拿州利比镇失踪案',
+        triggers: {
+            year: '1967',
+            person: ['william_dawson', '威廉·道森', 'William Dawson', 'humphrey_county', '汉弗莱县', 'assault_on_police', '袭警案']
+        },
+        newspaper: {
+            source: '《库特奈谷纪事报》',
+            date: '1967年11月14日',
+            headline: '【北叉林区木屋焚毁，威廉·道森失踪；社区对林地异状三缄其口】',
+            content: [
+                '昨夜，一层浓重的阴霾笼罩了利比镇。受人尊敬的老伐木工威廉·道森（William Dawson）被证实已在家中离奇失踪。然而，比起失踪本身，在道森家林地小屋周围发现的恐怖景象，更让整个小镇陷入了难以名状的恐慌。',
+                '周一清晨，由于老威廉连续两天没有来工会大厅报到，几位伐木工兄弟前往他位于深林中的住处查看。他们发现木屋的大门敞开，炉火早已熄灭，但屋内的财物和猎枪都完好无损。没有任何搏斗或强行入室的痕迹。老威廉和家人就像是自己走进了深夜的林子里。',
+                '而在木屋外的空地上，工人们看到了噩梦般的场景。',
+                '据第一批赶到现场灭火的伐木工透露，几只野生动物的尸体被倒吊在周围的树杈上，雪地上有用灰烬和暗色液体画出的同心圆符号。此外，道森家门前那棵标志性的红杉树上，被人用长铁钉固定着一个缠满旧麻绳的鹿头骨。针对这些物品，警长办公室在周一的简短声明中表示，这很可能是“外来流浪汉或恶作剧者的破坏行为”。鉴于大雪封山且缺乏实质线索，警方将暂时搁置对道森失踪案的大规模搜救。',
+                '然而，本地社区对这场离奇的火灾表现出了异乎寻常的沉默。',
+                '本报记者昨日走访了道森生前常去的工会大厅和几家酒馆，绝大多数受访者在听到“道森”的名字或提及现场的符号时，都立刻终止了谈话。一位不愿透露姓名的年长伐木工在离开酒馆时向记者低声表示：“这片林子很深，有些老规矩是不能破的。如果有人惹了不该惹的东西，其他人能做的最好的事，就是当作什么都没看见。”',
+                '目前，原本负责北叉林区作业的两个伐木队已经向工会申请调换防区。对于老威廉的遭遇，利比镇似乎已经迅速达成了一种默契。随着新一轮暴雪的降临，那里发生的一切痕迹，以及道森这个名字，都将和那片林地一起被严严实实地掩埋起来。'
+            ]
+        },
+        annotation: {
+            fileId: 'FBI-MT-67-REV',
+            date: '1992年10月14日',
+            level: '[联邦调查局 NCAVC (国家暴力犯罪分析中心) - 案件补充说明]',
+            author: '马库斯·索恩 (Marcus Thorne)',
+            content: `【核心案情更新】 1992年9月，两名背包客在蒙大拿州利比镇以北的库特奈国家森林深处（原道森林地旧址外延）偏离步道露营时，因大雨冲刷，于一处隐蔽的松林浅坑中发现三具人类遗骨。经调取当地已结业的牙科诊所纸质微缩胶片档案，法医齿科学确认，死者正是1967年被当地传言因“黑角神诅咒”而失踪的老伐木工威廉·道森及其两名直系亲属。\n\n【物理证据与法医人类学比对】 匡提科法医实验室在清理威廉·道森的遗骨时，在其第四颈椎及左侧第三肋骨上，发现了极深的、非致命性暴力斩击留下的骨骼刻痕。在电子显微镜下，该骨骼创痕呈现出极其特殊的“非对称微观条纹”。这表明凶器是一把边缘受损严重的重型刃具。通过录入全国工具痕迹数据库进行跨州回溯比对，系统发出了最高级别的匹配警报：留在道森骨头上的“条纹条形码”，与1967年12月在缅因州汉弗莱县缴获的一件编号为 #88-B 的证物留下的切削测试痕迹达到100%微观物理吻合。\n\n【物证 #88-B 描述】 一把由汽车板簧手工打磨改装的重型剔骨刀。刀刃中段有两处因暴力劈砍硬物而形成的锯齿状不规则崩口。物证 #88-B 的持有人系当年因袭警案被捕的嫌疑人，化名「康查尔」的弗兰克·斯基纳·罗林斯。\n\n【结论】 1967年发生在蒙大拿州利比镇的所谓“异教祭祀与诅咒”事件，系该犯罪家族头目为掩盖定点清除行动、并利用当地迷信恐吓镇民封口的蓄意现场伪装。道森一家并非死于诅咒，更没有离开小镇，他们被康查尔在极近距离内用重型刃具暴力处决。不过由于此人已在1976年图森市发生的大规模枪击案中被本地警方击毙，关于本案真相已经无法得到口供验证。`,
+            template: 'THORNE'
+        }
     }
 ];
 
@@ -756,7 +893,7 @@ export const Archives: React.FC<ArchivesProps> = ({
 
     const handleAttemptCollect = (targetClueId: string) => {
         // Special mapping: wilmer_ribbon goes to project dossier
-        if (attachmentImage === 'assets/wilmer_ribbon.jpg' && targetClueId === 'project') {
+        if (attachmentImage === `${import.meta.env.BASE_URL}assets/wilmer_ribbon.jpg` && targetClueId === 'project') {
             onCollectAttachment('wilmer_ribbon');
             setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
             setTimeout(() => {
@@ -767,7 +904,7 @@ export const Archives: React.FC<ArchivesProps> = ({
             return;
         }
 
-        if (attachmentImage === 'assets/fbi-symbol.png' && targetClueId === 'graywater_beacon') {
+        if (attachmentImage === `${import.meta.env.BASE_URL}assets/fbi-symbol.png` && targetClueId === 'graywater_beacon') {
             onCollectAttachment('graywater_beacon');
             setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
             setTimeout(() => {
@@ -779,7 +916,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         }
 
         // Default logic for julip_symbol (if it's still needed, though graywater_beacon replaces it for the FBI symbol)
-        if (attachmentImage === 'assets/fbi-symbol.png' && targetClueId === 'julip') {
+        if (attachmentImage === `${import.meta.env.BASE_URL}assets/fbi-symbol.png` && targetClueId === 'julip') {
             if (onCollectAttachment) {
                 onCollectAttachment('julip_symbol');
             }
@@ -793,7 +930,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         }
 
         // Butter Julep evidence photo goes to julip dossier
-        if (attachmentImage === 'assets/butter_julep_evidence.jpg' && targetClueId === 'julip') {
+        if (attachmentImage === `${import.meta.env.BASE_URL}assets/butter_julep_evidence.jpg` && targetClueId === 'julip') {
             if (onCollectAttachment) {
                 onCollectAttachment('butter_julep_evidence');
             }
@@ -807,7 +944,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         }
 
         // Richie's ID card goes to julip dossier
-        if (attachmentImage === 'assets/richie_id_card.jpg' && targetClueId === 'julip') {
+        if (attachmentImage === `${import.meta.env.BASE_URL}assets/richie_id_card.jpg` && targetClueId === 'julip') {
             if (onCollectAttachment) {
                 onCollectAttachment('richie_id_card');
             }
@@ -857,8 +994,9 @@ export const Archives: React.FC<ArchivesProps> = ({
         setErrorMsg('');
 
         setTimeout(() => {
+            const normalizedYear = yearInput.trim().replace('年', '');
             const found = ARCHIVE_DATABASE.find(record =>
-                record.triggers.year === yearInput.trim() &&
+                record.triggers.year === normalizedYear &&
                 record.triggers.person.some(p => p.toLowerCase() === personInput.trim().toLowerCase())
             );
 
@@ -875,18 +1013,17 @@ export const Archives: React.FC<ArchivesProps> = ({
                 const usedPersonIds: string[] = [];
 
                 // Match year
-                const yearTrimmed = yearInput.trim();
-                if (yearTrimmed === '1971') usedYearIds.push('year_1971');
-                if (yearTrimmed === '1968') usedYearIds.push('year_1968');
-                if (yearTrimmed === '1967') usedYearIds.push('year_1967');
-                if (yearTrimmed === '1985') usedYearIds.push('year_1985');
-                if (yearTrimmed === '1972') usedYearIds.push('year_1972');
-                if (yearTrimmed === '1990') usedYearIds.push('year_1990');
-                if (yearTrimmed === '1973') usedYearIds.push('year_1973');
-                if (yearTrimmed === '1986') usedYearIds.push('year_1986');
-                if (yearTrimmed === '1975') usedYearIds.push('year_1975');
-                if (yearTrimmed === '1976') usedYearIds.push('year_1976');
-                if (yearTrimmed === '1965') usedYearIds.push('year_1965');
+                if (normalizedYear === '1971') usedYearIds.push('year_1971');
+                if (normalizedYear === '1968') usedYearIds.push('year_1968');
+                if (normalizedYear === '1967') usedYearIds.push('year_1967');
+                if (normalizedYear === '1985') usedYearIds.push('year_1985');
+                if (normalizedYear === '1972') usedYearIds.push('year_1972');
+                if (normalizedYear === '1990') usedYearIds.push('year_1990');
+                if (normalizedYear === '1973') usedYearIds.push('year_1973');
+                if (normalizedYear === '1986') usedYearIds.push('year_1986');
+                if (normalizedYear === '1975') usedYearIds.push('year_1975');
+                if (normalizedYear === '1976') usedYearIds.push('year_1976');
+                if (normalizedYear === '1965') usedYearIds.push('year_1965');
 
                 // Match person
                 const personLower = personInput.trim().toLowerCase();
@@ -903,8 +1040,14 @@ export const Archives: React.FC<ArchivesProps> = ({
                 if (['boris_smirnov', '鲍里斯·斯米尔诺夫', 'boris'].includes(personLower)) usedPersonIds.push('boris_smirnov');
                 if (['julie', '朱莉'].includes(personLower)) usedPersonIds.push('julie');
                 if (['juvell_chambers', '朱维尔·钱伯斯', '钱伯斯'].includes(personLower)) usedPersonIds.push('juvell_chambers');
+                if (['felipe_maldonado', '费利佩·马尔多纳多', 'felipe'].includes(personLower)) usedPersonIds.push('felipe_maldonado');
                 if (['john_morrissey', '约翰·莫里西'].includes(personLower)) usedPersonIds.push('john_morrissey');
                 if (['morandi', '莫兰迪'].includes(personLower)) usedPersonIds.push('morandi');
+                if (['william_dawson', '威廉·道森', 'william dawson', 'arthur_dawson', '亚瑟·道森', 'arthur dawson'].includes(personLower)) usedPersonIds.push('william_dawson');
+                if (['humphrey_county', '汉弗莱县', 'humphrey county'].includes(personLower)) usedPersonIds.push('humphrey_county');
+                if (['assault_on_police', '袭警案', '袭警'].includes(personLower)) usedPersonIds.push('assault_on_police');
+                if (['tithe', '什一税'].includes(personLower)) usedPersonIds.push('tithe');
+
 
 
                 // STRATEGIC CHANGE: Successful investigation unlocks the relevant Case Files (Dossier)
@@ -1016,6 +1159,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                         <div className="mt-2 text-[10px] opacity-50">Please perform search to retrieve cases.</div>
                                     </div>
                                 )}
+
 
                                 {unlockedArchiveIds.map(id => {
                                     const record = ARCHIVE_DATABASE.find(r => r.id === id);
@@ -1193,7 +1337,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                         });
 
                                                                         // Node 6 Exception: Keep Alexei and Morandi available for testing/mindmap
-                                                                        if (['alexei', 'morandi'].includes(lowerId)) return true;
+                                                                        if (['alexei', 'morandi', 'william_dawson', 'humphrey_county', 'assault_on_police'].includes(lowerId)) return true;
 
                                                                         return remainingTargets.length > 0;
                                                                     });
@@ -1292,13 +1436,21 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                 {/* Newspaper Pane */}
                                                 <div
                                                     className={`
-                                                    relative transition-all duration-500 ease-in-out cursor-pointer
-                                                    h-full md:h-full
-                                                    ${focusedPane === 'newspaper' ? 'flex-[1] md:flex-[2.5]' : 'hidden md:flex md:flex-[0.8] md:opacity-60 md:hover:opacity-100 md:hover:flex-[1]'}
-                                                    border-b md:border-b-0 md:border-r border-[#c85a3f]/20
+                                                    relative transition-all duration-700 ease-in-out cursor-pointer
+                                                    h-full md:h-full overflow-hidden
+                                                    ${focusedPane === 'newspaper' ? 'flex-[1] md:flex-[3]' : focusedPane === null ? 'flex-1' : 'hidden md:flex md:flex-1 md:bg-black/40 md:hover:bg-black/20'}
+                                                    border-b md:border-b-0 md:border-r border-[#c85a3f]/20 group/news
                                                 `}
-                                                    onClick={() => setFocusedPane('newspaper')}
+                                                    onClick={() => setFocusedPane(focusedPane === 'newspaper' ? null : 'newspaper')}
                                                 >
+                                                    {/* Vertical Label for folded state */}
+                                                    {focusedPane === 'annotation' && (
+                                                        <div className="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none">
+                                                            <span className="text-[#c85a3f]/40 font-black tracking-[0.5em] uppercase text-xs transition-all duration-500 group-hover/news:text-[#c85a3f]/80 group-hover/news:scale-110" style={{ writingMode: 'vertical-rl' }}>
+                                                                Newspaper Clipping
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                     {/* Vintage Newspaper Container with Striking Effects */}
                                                     <div className="h-full overflow-y-auto relative group scrollbar-thin scrollbar-thumb-neutral-400"
                                                         style={{
@@ -1462,17 +1614,39 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                 {/* FBI Annotation Pane */}
                                                 <div
                                                     className={`
-                                                    relative transition-all duration-500 ease-in-out cursor-pointer bg-[#1a1515]
+                                                    relative transition-all duration-700 ease-in-out cursor-pointer bg-[#1a1515]
                                                     h-full md:h-full
-                                                    ${focusedPane === 'annotation' ? 'flex-[1] md:flex-[2]' : 'hidden md:flex md:flex-[0.5] md:opacity-60 md:hover:opacity-100 md:hover:flex-[0.8]'}
+                                                    ${focusedPane === 'annotation' ? 'flex-[1] md:flex-[3]' : focusedPane === null ? 'flex-1' : 'hidden md:flex md:flex-1 md:opacity-60 md:hover:opacity-100'}
+                                                    group/notes
                                                 `}
-                                                    onMouseEnter={() => setFocusedPane('annotation')}
-                                                    onClick={() => setFocusedPane('annotation')}
+                                                    onMouseEnter={() => !focusedPane && setFocusedPane('annotation')}
+                                                    onClick={() => setFocusedPane(focusedPane === 'annotation' ? null : 'annotation')}
                                                 >
+                                                    {/* Vertical Label for folded state */}
+                                                    {focusedPane === 'newspaper' && (
+                                                        <div className="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none">
+                                                            <span className="text-[#c85a3f]/40 font-black tracking-[0.5em] uppercase text-xs transition-all duration-500 group-hover/notes:text-[#c85a3f]/80 group-hover/notes:scale-110" style={{ writingMode: 'vertical-rl' }}>
+                                                                Internal Notes
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                     <div className="h-full overflow-y-auto p-8 md:p-12 relative scrollbar-thin scrollbar-thumb-[#c85a3f]/30">
                                                         <div className="absolute top-10 right-10 p-4 opacity-10 pointer-events-none transform rotate-12">
                                                             <Stamp size={180} className="text-red-600" />
                                                         </div>
+
+                                                            {/* Status Stamp (e.g., REJECTED) */}
+                                                            {activeCase.annotation.stamp === 'REJECTED' && (
+                                                                <div className="absolute top-[20%] right-[10%] z-20 pointer-events-none">
+                                                                    <div className="border-4 border-red-600/60 px-6 py-2 rounded text-red-600/60 font-black text-3xl tracking-[0.2em] transform rotate-[-25deg] uppercase mix-blend-multiply opacity-80 flex flex-col items-center">
+                                                                        <span>Rejected</span>
+                                                                        <div className="w-full h-1 bg-red-600/40 mt-2" />
+                                                                        <span className="text-red-600/60 font-mono text-[10px] tracking-[0.3em] mt-1 uppercase text-center">
+                                                                            未通过 / 转移至KLUB机密档案
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            )}
 
                                                         <div className="max-w-xl mx-auto space-y-8 relative z-10">
                                                             <div className="border border-[#c85a3f]/30 p-6 rounded bg-[#c85a3f]/5 backdrop-blur-sm relative overflow-hidden">
@@ -1520,18 +1694,18 @@ export const Archives: React.FC<ArchivesProps> = ({
 
                                                                                 if (part === attachmentTrigger || part === wilmerTrigger || part === attachmentTrigger2) {
                                                                                     // ... keep existing attachment trigger logic
-                                                                                    const isVisible = part === attachmentTrigger ? attachmentImage === 'assets/butter_julep_evidence.jpg' || attachmentImage === 'assets/richie_id_card.jpg'
-                                                                                        : part === wilmerTrigger ? attachmentImage === 'assets/wilmer_ribbon.jpg'
-                                                                                            : attachmentImage === 'assets/fbi-symbol.png' && activeCase.id === 'archive_15';
+                                                                                    const isVisible = part === attachmentTrigger ? attachmentImage === `${import.meta.env.BASE_URL}assets/butter_julep_evidence.jpg` || attachmentImage === `${import.meta.env.BASE_URL}assets/richie_id_card.jpg`
+                                                                                        : part === wilmerTrigger ? attachmentImage === `${import.meta.env.BASE_URL}assets/wilmer_ribbon.jpg`
+                                                                                            : attachmentImage === `${import.meta.env.BASE_URL}assets/fbi-symbol.png` && activeCase.id === 'archive_15';
 
                                                                                     return (
                                                                                         <span
                                                                                             key={j}
                                                                                             className={`mx-1 cursor-pointer font-bold border-b border-dashed transition-all duration-300 ${isVisible ? 'text-green-500 border-green-500 hover:bg-green-500/10' : 'text-blue-500 border-blue-500 hover:bg-blue-500/10'}`}
                                                                                             onClick={() => {
-                                                                                                if (part === attachmentTrigger) setAttachmentImage('assets/butter_julep_evidence.jpg');
-                                                                                                else if (part === wilmerTrigger) setAttachmentImage('assets/wilmer_ribbon.jpg');
-                                                                                                else setAttachmentImage('assets/fbi-symbol.png');
+                                                                                                if (part === attachmentTrigger) setAttachmentImage(`${import.meta.env.BASE_URL}assets/butter_julep_evidence.jpg`);
+                                                                                                else if (part === wilmerTrigger) setAttachmentImage(`${import.meta.env.BASE_URL}assets/wilmer_ribbon.jpg`);
+                                                                                                else setAttachmentImage(`${import.meta.env.BASE_URL}assets/fbi-symbol.png`);
                                                                                             }}
                                                                                         >
                                                                                             {part}
@@ -1795,7 +1969,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                             alt="FBI Attachment"
                                             className={`
                                                 max-h-[70vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.8)] transition-all
-                                                ${attachmentImage === 'assets/wilmer_ribbon.jpg'
+                                                ${attachmentImage === `${import.meta.env.BASE_URL}assets/wilmer_ribbon.jpg`
                                                     ? 'p-0 bg-transparent transform rotate-2 scale-110' // Clean Polaroid style
                                                     : 'border-8 border-white p-4 bg-white transform rotate-1' // Legacy style
                                                 }
