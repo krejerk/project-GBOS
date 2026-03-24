@@ -143,6 +143,13 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 description: '在特克萨卡纳节点发现的视觉残留。亚瑟·道森（Arthur Dawson）的笔记本，记录了某种高度机密的账户往来与代号。'
             },
             {
+                id: 'jane_doe_1977',
+                type: 'image',
+                title: '无名氏（Jane Doe）与起火的车辆',
+                content: `${import.meta.env.BASE_URL}assets/jane_doe_1977.jpg`,
+                description: '在FBI批注中发现的现场照片。记录了1977年图森沙漠中，一名无名氏（Jane Doe）背对起火的警车走向荒野的背影。'
+            },
+            {
                 id: 'church_visual_residue',
                 type: 'image',
                 title: '视觉残留：埃尔帕索教堂',
@@ -176,6 +183,13 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
                 title: '视觉残留：利比镇房车与森林地图',
                 content: `${import.meta.env.BASE_URL}assets/confession_31_residue.png`,
                 description: '卡彭记忆中的房车画面，墙上贴有一张蒙大拿州利比镇的森林地图。'
+            },
+            {
+                id: 'vanessa_memory_final',
+                type: 'image',
+                title: '视觉残留：记忆中的房车与瓦妮莎',
+                content: `${import.meta.env.BASE_URL}assets/vanessa_memory_final.png`,
+                description: '在对话中提取出的证物。房车在尘土飞扬的公路上行驶，瓦妮莎在路边渴望地挥手。'
             }
         ]
     },
@@ -412,6 +426,30 @@ const CLUE_DEFINITIONS: Record<string, Clue> = {
         word: '利比镇',
         description: '蒙大拿州西北部一个靠近边境的偏僻伐木区。卡彭在过去十几年中多次冒着暴露风险前往此地。',
         source: 'Dialogue'
+    },
+    'humphrey_county': {
+        id: 'humphrey_county',
+        word: '汉弗莱县',
+        description: '密西西比州的一个县。1967年曾发生过一起导致多名警员伤亡的严重暴力冲突。',
+        source: 'Archive'
+    },
+    'assault_on_police': {
+        id: 'assault_on_police',
+        word: '袭警案',
+        description: '发生在汉弗莱县的严重暴力事件。多名当地警员在试图拦截一辆房车时遭到重火力袭击。',
+        source: 'Archive'
+    },
+    'mandan': {
+        id: 'mandan',
+        word: '曼丹',
+        description: '位于北达科他州的一个坐标。似乎是某个家族据点或撤离路线的中转站。',
+        source: 'Confession'
+    },
+    'forest_map': {
+        id: 'forest_map',
+        word: '森林地图',
+        description: '在记忆碎片中发现的详细地图，标注了蒙大拿州利比镇周边的原始森林区域。',
+        source: 'Confession'
     }
 };
 
@@ -496,6 +534,15 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             if (onCollectAttachment) onCollectAttachment('libby_forest_map_residue');
             handleJenniferComplete();
         }
+        if (actionId === 'extract_visual_node_32') {
+            onSetFilingEvidence({
+                id: 'vanessa_memory_final',
+                title: '视觉残留：记忆中的房车与瓦妮莎',
+                content: `${import.meta.env.BASE_URL}assets/vanessa_memory_final.png`,
+                type: 'image'
+            });
+            handleJenniferComplete();
+        }
     };
 
     const renderContent = (content: string) => {
@@ -508,7 +555,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                 const clueId = match[2].trim();
 
                 // Special handling for action links
-                if (clueId === 'view_iron_horse_record' || clueId === 'extract_church_residue' || clueId === 'extract_laguna_beach_residue' || clueId === 'extract_visual_node_7' || clueId === 'extract_rv_memory') {
+                if (clueId === 'view_iron_horse_record' || clueId === 'extract_church_residue' || clueId === 'extract_laguna_beach_residue' || clueId === 'extract_visual_node_7' || clueId === 'extract_rv_memory' || clueId === 'extract_visual_node_32') {
                     return (
                         <span
                             key={index}

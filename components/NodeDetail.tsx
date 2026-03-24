@@ -12,11 +12,12 @@ interface NodeDetailProps {
   onCollectAttachment?: (id: string) => void;
   collectedDossierIds?: string[];
   collectedAttachments?: string[];
-  clueDisplayMap?: Record<string, string>;
+  clueDisplayMap: Record<string, string>;
   onPersonaReboot?: () => void;
   hasSwitchedPersona?: boolean;
-  unlockedPeople?: string[];
-  collectedClues?: string[];
+  unlockedPeople: string[];
+  collectedClues: string[];
+  collectedYears?: string[];
 }
 
 export const NodeDetail: React.FC<NodeDetailProps> = ({
@@ -27,10 +28,11 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   onCollectAttachment,
   collectedDossierIds = [],
   collectedAttachments = [],
-  clueDisplayMap = {},
+  clueDisplayMap,
   hasSwitchedPersona = false,
-  unlockedPeople = [],
-  collectedClues = []
+  unlockedPeople,
+  collectedClues,
+  collectedYears
 }) => {
   // Safety: Fallback to SURFACE if current layer is missing (e.g. CORE not yet defined)
   const current = (node.layers[node.currentLayer] || node.layers[MemoryLayer.SURFACE])!;
@@ -124,7 +126,10 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
         else if (node.id === 'confession_28') onCollectAttachment('laguna_beach_visual_residue');
         else if (node.id === 'confession_29') onCollectAttachment('felipe_maldonado_poster');
         else if (node.id === 'confession_30') onCollectAttachment('pendant_photo');
-        else if (node.id === 'confession_31') onCollectAttachment('libby_forest_map_residue');
+        else if (node.id === 'confession_32') onCollectAttachment('libby_forest_map_residue');
+        else if (node.id === 'confession_31') {
+          onCollectAttachment('confession_31_residue');
+        }
         else onCollectAttachment('graywater_beacon');
       }
       setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
@@ -286,10 +291,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   };
 
   const CONFESSION_31_KEYWORDS: Record<string, string> = {
-    '曼丹市': 'mandan',
-    '森林地图': 'forest_map',
-    '汉弗莱县': 'humphrey_county',
-    '袭警案': 'assault_on_police'
+    '曼丹市': 'mandan'
   };
 
   const CONFESSION_30_KEYWORDS: Record<string, string> = {
@@ -297,38 +299,51 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     '威廉道森': 'william_dawson',
     '1967年': 'year_1967'
   };
+  
+  const CONFESSION_32_KEYWORDS: Record<string, string> = {
+    '曼丹市': 'mandan',
+    '森林地图': 'forest_map',
+    '弗兰克·罗林斯': 'frank_rollins'
+  };
 
   const KEYWORD_MAP = React.useMemo(() => {
-    if (node.id === 'confession_31') return CONFESSION_31_KEYWORDS;
-    if (node.id === 'confession_30') return CONFESSION_30_KEYWORDS;
-    if (node.id === 'confession_29') return CONFESSION_29_KEYWORDS;
-    if (node.id === 'confession_28') return CONFESSION_28_KEYWORDS;
-    if (node.id === 'confession_27') return CONFESSION_27_KEYWORDS;
-    if (node.id === 'confession_26') return CONFESSION_26_KEYWORDS;
-    if (node.id === 'confession_25') return CONFESSION_25_KEYWORDS;
-    if (node.id === 'confession_24') return CONFESSION_24_KEYWORDS;
-    if (node.id === 'confession_23') return CONFESSION_23_KEYWORDS;
-    if (node.id === 'confession_22') return CONFESSION_22_KEYWORDS;
-    if (node.id === 'confession_21') return CONFESSION_21_KEYWORDS;
-    if (node.id === 'confession_20') return CONFESSION_20_KEYWORDS;
-    if (node.id === 'confession_17') return CONFESSION_17_KEYWORDS;
-    if (node.id === 'confession_16') return CONFESSION_16_KEYWORDS;
-    if (node.id === 'confession_15') return CONFESSION_15_KEYWORDS;
-    if (node.id === 'confession_14') return CONFESSION_14_KEYWORDS;
-    if (node.id === 'confession_13') return CONFESSION_13_KEYWORDS;
-    if (node.id === 'confession_12') return CONFESSION_12_KEYWORDS;
-    if (node.id === 'confession_11') return CONFESSION_11_KEYWORDS;
-    if (node.id === 'confession_10') return CONFESSION_10_KEYWORDS;
-    if (node.id === 'confession_9') return CONFESSION_9_KEYWORDS;
-    if (node.id === 'confession_8') return CONFESSION_8_KEYWORDS;
-    if (node.id === 'confession_7') return CONFESSION_7_KEYWORDS;
-    if (node.id === 'confession_6') return CONFESSION_6_KEYWORDS;
-    if (node.id === 'confession_5') return CONFESSION_5_KEYWORDS;
-    if (node.id === 'confession_4') return CONFESSION_4_KEYWORDS;
-    if (node.id === 'confession_3') return CONFESSION_3_KEYWORDS;
-    if (node.id === 'confession_2') return CONFESSION_2_KEYWORDS;
-    return CONFESSION_1_KEYWORDS;
-  }, [node.id]);
+    let baseMap = {};
+    
+    // Select base hardcoded map
+    if (node.id === 'confession_1') baseMap = CONFESSION_1_KEYWORDS;
+    else if (node.id === 'confession_2') baseMap = CONFESSION_2_KEYWORDS;
+    else if (node.id === 'confession_3') baseMap = CONFESSION_3_KEYWORDS;
+    else if (node.id === 'confession_4') baseMap = CONFESSION_4_KEYWORDS;
+    else if (node.id === 'confession_5') baseMap = CONFESSION_5_KEYWORDS;
+    else if (node.id === 'confession_6') baseMap = CONFESSION_6_KEYWORDS;
+    else if (node.id === 'confession_7') baseMap = CONFESSION_7_KEYWORDS;
+    else if (node.id === 'confession_8') baseMap = CONFESSION_8_KEYWORDS;
+    else if (node.id === 'confession_9') baseMap = CONFESSION_9_KEYWORDS;
+    else if (node.id === 'confession_10') baseMap = CONFESSION_10_KEYWORDS;
+    else if (node.id === 'confession_11') baseMap = CONFESSION_11_KEYWORDS;
+    else if (node.id === 'confession_12') baseMap = CONFESSION_12_KEYWORDS;
+    else if (node.id === 'confession_13') baseMap = CONFESSION_13_KEYWORDS;
+    else if (node.id === 'confession_14') baseMap = CONFESSION_14_KEYWORDS;
+    else if (node.id === 'confession_15') baseMap = CONFESSION_15_KEYWORDS;
+    else if (node.id === 'confession_16') baseMap = CONFESSION_16_KEYWORDS;
+    else if (node.id === 'confession_17') baseMap = CONFESSION_17_KEYWORDS;
+    else if (node.id === 'confession_20') baseMap = CONFESSION_20_KEYWORDS;
+    else if (node.id === 'confession_21') baseMap = CONFESSION_21_KEYWORDS;
+    else if (node.id === 'confession_22') baseMap = CONFESSION_22_KEYWORDS;
+    else if (node.id === 'confession_23') baseMap = CONFESSION_23_KEYWORDS;
+    else if (node.id === 'confession_24') baseMap = CONFESSION_24_KEYWORDS;
+    else if (node.id === 'confession_25') baseMap = CONFESSION_25_KEYWORDS;
+    else if (node.id === 'confession_26') baseMap = CONFESSION_26_KEYWORDS;
+    else if (node.id === 'confession_27') baseMap = CONFESSION_27_KEYWORDS;
+    else if (node.id === 'confession_28') baseMap = CONFESSION_28_KEYWORDS;
+    else if (node.id === 'confession_29') baseMap = CONFESSION_29_KEYWORDS;
+    else if (node.id === 'confession_30') baseMap = CONFESSION_30_KEYWORDS;
+    else if (node.id === 'confession_31') baseMap = CONFESSION_31_KEYWORDS;
+    else if (node.id === 'confession_32') baseMap = CONFESSION_32_KEYWORDS;
+
+    // Merge with clueMap from node (data-driven)
+    return { ...baseMap, ...node.clueMap };
+  }, [node.id, node.clueMap]);
 
   const fragmentHighlightMap = React.useMemo(() => {
     const map: Record<string, Set<string>> = {};
@@ -369,14 +384,41 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   const [isVisualRevealed, setIsVisualRevealed] = React.useState(false);
   const [isLocketOpen, setIsLocketOpen] = React.useState(false);
   const [isPhotoFlipped, setIsPhotoFlipped] = React.useState(false);
-  const isImageCollected = (() => {
+  const isImageCollected = React.useMemo(() => {
     if (node.id === 'confession_16') return collectedAttachments.includes('record_of_accounts');
     if (node.id === 'confession_28') return collectedAttachments.includes('laguna_beach_visual_residue');
     if (node.id === 'confession_29') return collectedAttachments.includes('felipe_maldonado_poster');
     if (node.id === 'confession_30') return collectedAttachments.includes('pendant_photo');
-    if (node.id === 'confession_31') return collectedAttachments.includes('libby_forest_map_residue');
+    if (node.id === 'confession_31') return collectedAttachments.includes('mandan_city_map');
+    if (node.id === 'confession_32') return collectedAttachments.includes('libby_forest_map_residue');
     return collectedAttachments.includes('graywater_beacon');
-  })();
+  }, [node.id, collectedAttachments]);
+
+  const renderEventText = (text: string) => {
+    if (!text) return null;
+    const parts = text.split(/(\[.*?\]\(clue:.*?\))/g);
+    return parts.map((part, index) => {
+      const match = part && part.match(/\[(.*?)\]\(clue:(.*?)\)/);
+      if (match) {
+        const clueText = match[1];
+        const clueId = match[2];
+        return (
+          <span 
+            key={index}
+            onClick={(e) => {
+               e.stopPropagation();
+               onCollectClue(clueId, clueText);
+            }}
+            className={`cursor-pointer transition-all duration-300 mx-0.5 px-0.5 rounded-sm flex-inline ${collectedClues.includes(clueId) ? 'text-[var(--bg-color)] bg-[var(--confess-highlight)] shadow-[0_0_8px_var(--confess-highlight)] font-bold' : 'text-[var(--confess-highlight)] border border-[var(--confess-highlight)]/30 hover:underline hover:bg-[var(--confess-highlight)]/10'}`}
+          >
+            {clueText}
+          </span>
+        );
+      }
+      return <span key={index} className="whitespace-pre-wrap">{part}</span>;
+    });
+  };
+
   const [isStabilized, setIsStabilized] = React.useState(false);
 
   React.useEffect(() => {
@@ -720,7 +762,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                   </motion.div>
                 )}
 
-                {node.id === 'confession_31' && (
+                {node.id === 'confession_32' && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -729,7 +771,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                   >
                     {!isVisualRevealed ? (
                       <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
-                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号 [RV_INTERIOR // I-94]</p>
+                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号 [MANDAN_RV // I-94]</p>
                         <div className="border border-[var(--confess-border)] px-6 py-2 text-sm text-[var(--confess-highlight)] font-bold">解析视觉记忆块 {" >> "}</div>
                       </div>
                     ) : (
@@ -742,9 +784,9 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                           onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
                         >
                           <img 
-                            src={`${import.meta.env.BASE_URL}assets/confession_31_residue.png`} 
+                            src={`${import.meta.env.BASE_URL}assets/confession_32_vanessa_sketch.png`} 
                             className={`w-full h-auto object-cover transition-all duration-1000 ${isImageCollected ? 'grayscale-0 brightness-110' : 'grayscale brightness-75 contrast-125'}`} 
-                            alt="RV Interior Memory"
+                            alt="Vanessa Leaving Sketch"
                           />
                           <div className="crt-overlay absolute inset-0 pointer-events-none opacity-20"></div>
                           <div className="bg-vignette absolute inset-0 pointer-events-none"></div>
@@ -755,9 +797,51 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                         </motion.div>
 
                         <div className="text-[10px] text-[var(--confess-highlight)]/60 font-mono tracking-widest text-center italic mt-4 px-4 py-2 border-t border-[var(--confess-border)]/30 leading-relaxed">
-                          卡彭记忆中的房车内部，他没有意识到墙上始终贴着一张利比镇的<span 
+                          <span onClick={(e) => { e.stopPropagation(); onCollectClue('year_1977', '1977'); }} className={`cursor-pointer transition-all duration-300 mx-0.5 px-0.5 rounded-sm flex-inline ${collectedYears?.includes('year_1977') ? 'text-white bg-[var(--confess-highlight)] shadow-[0_0_8px_var(--confess-highlight)] font-bold' : 'text-[var(--confess-highlight)] border border-[var(--confess-highlight)]/30 hover:underline hover:bg-[var(--confess-highlight)]/10'}`}>1977</span>年8月清晨，瓦妮莎离开房车徒步前往图森市，卡彭或许从未亲眼目睹这个画面，但从他的衣服内衬里，我们发现了这张画在烟盒背面的简笔画。
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {node.id === 'confession_31' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2 }}
+                    className="mt-16 p-8 bg-[var(--confess-highlight)]/5 border border-[var(--confess-border)] rounded-sm relative overflow-hidden group/visual"
+                  >
+                    {!isVisualRevealed ? (
+                      <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
+                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号 [HUMPHREY // MAINE]</p>
+                        <div className="border border-[var(--confess-border)] px-6 py-2 text-sm text-[var(--confess-highlight)] font-bold">解析视觉记忆块 {" >> "}</div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <motion.div
+                          initial={{ scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 }}
+                          animate={{ scale: 1, filter: 'blur(0px) brightness(1)', opacity: 1 }}
+                          transition={{ duration: 2, ease: "easeOut" }}
+                          className="w-full relative cursor-pointer overflow-hidden border border-[var(--confess-border)]/30 rounded-sm"
+                          onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
+                        >
+                          <img 
+                            src={`${import.meta.env.BASE_URL}assets/confession_31_residue_custom.jpg`} 
+                            className={`w-full h-auto object-cover transition-all duration-1000 ${isImageCollected ? 'grayscale-0 brightness-110' : 'grayscale brightness-75 contrast-125'}`} 
+                            alt="Humphrey Prison Memory"
+                          />
+                          <div className="crt-overlay absolute inset-0 pointer-events-none opacity-20"></div>
+                          <div className="bg-vignette absolute inset-0 pointer-events-none"></div>
+                          
+                          {isImageCollected && !hasSwitchedPersona && (
+                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-50 rotate-[-15deg] pointer-events-none z-10 select-none">ARCHIVED</div>
+                          )}
+                        </motion.div>
+
+                        <div className="text-[10px] text-[var(--confess-highlight)]/60 font-mono tracking-widest text-center italic mt-4 px-4 py-2 border-t border-[var(--confess-border)]/30 leading-relaxed">
+                          卡彭记忆中残留着房车的内部景象，可以看到右上角的墙面上贴着一张利比镇的<span 
                             onClick={(e) => { e.stopPropagation(); onCollectClue('forest_map', '森林地图'); }}
-                            className={`cursor-pointer transition-all duration-300 mx-0.5 px-0.5 rounded-sm ${collectedClues.includes('forest_map') ? 'text-white bg-[var(--confess-highlight)] shadow-[0_0_8px_var(--confess-highlight)] font-bold' : 'text-[var(--confess-highlight)] hover:underline hover:bg-[var(--confess-highlight)]/10'}`}
+                            className={`cursor-pointer transition-all duration-300 mx-0.5 px-0.5 rounded-sm flex-inline ${collectedClues.includes('forest_map') ? 'text-white bg-[var(--confess-highlight)] shadow-[0_0_8px_var(--confess-highlight)] font-bold' : 'text-[var(--confess-highlight)] border border-[var(--confess-highlight)]/30 hover:underline hover:bg-[var(--confess-highlight)]/10'}`}
                           >森林地图</span>。
                         </div>
                       </div>
@@ -784,7 +868,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
               <div className="flex items-center gap-2 text-xs font-bold text-neutral-500 uppercase tracking-widest">
                 <Sparkles size={12} /> 客观事件
               </div>
-              <p className="text-lg leading-relaxed text-neutral-200 font-serif">{current.event}</p>
+              <p className="text-lg leading-relaxed text-neutral-200 font-serif">{renderEventText(current.event)}</p>
             </section>
             <section className="space-y-4 bg-white/5 p-6 border-l border-white/20">
               <div className="flex items-center gap-2 text-xs font-bold text-neutral-500 uppercase tracking-widest">

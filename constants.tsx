@@ -65,7 +65,8 @@ export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
   'confession_28': ['fake_smoke_bomb', 'blind_zone_camp'],
   'confession_29': ['woodland_depths', 'amalekite_protocol'],
   'confession_30': ['libby_town', 'tithe'],
-  'confession_31': ['humphrey_county', 'assault_on_police', 'mandan', 'forest_map'],
+  'confession_31': ['humphrey_county', 'assault_on_police'],
+  'confession_32': ['mandan', 'forest_map'],
 
   // Archives
   'nv_1971': ['nevada', 'year_1971'],
@@ -83,6 +84,7 @@ export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {
   'archive_18': ['alexei', 'year_1976', 'fake_smoke_bomb', 'blind_zone_camp'],
   'archive_19': ['year_1976', 'gore_and_levy'],
   'libby_1967': ['year_1967', 'william_dawson', 'humphrey_county', 'assault_on_police'],
+  'frank_rollins_report': ['frank_rollins', 'year_1977'],
 
   // Node 4 Retrieval Targets (Meta-group for visual removal AFTER Jennifer dialogue)
 };
@@ -106,7 +108,7 @@ export const CATEGORY_IDS = {
     'project', 'julip',    'naked_root', 'chemist_lover', 'bonny_and_clyde', 'reporter', 'fake_smoke_bomb', 'libby_town',
     'assault_on_police', 'forest_map'
   ],
-  PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson', 'william_dawson', 'richie_dreyfuss', 'alexei', 'morandi', 'gore_and_levy'],
+  PEOPLE: ['nibi', 'conchar', 'father', 'lundgren', 'morning', 'robert', 'robert_capone', 'dr_reggie', 'roger_beebe', 'little_derek_wayne', 'aw_wilmo', 'martha_diaz', 'julie', 'the_mother', 'vanessa', 'silas', 'juvell_chambers', 'boris_smirnov', 'jc_penney', 'john_morrissey', 'cynthia_miller', 'peter_henderson', 'priest', 'arthur_dawson', 'william_dawson', 'richie_dreyfuss', 'alexei', 'morandi', 'gore_and_levy', 'frank_rollins'],
   YEARS: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1990', 'year_1973', 'year_1986', 'year_1982', 'year_1976', 'year_1974', 'year_1965', 'year_1977']
 };
 
@@ -139,6 +141,9 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: 'clue' | 'ye
   '约翰莫里西': { id: 'john_morrissey', type: 'person' },
   '皮特·亨德森': { id: 'peter_henderson', type: 'person' },
   '彼特·亨德森': { id: 'peter_henderson', type: 'person' },
+  '弗兰克·罗林斯': { id: 'frank_rollins', type: 'person' },
+  '弗兰克': { id: 'frank_rollins', type: 'person' },
+  '罗林斯': { id: 'frank_rollins', type: 'person' },
   '牧师': { id: 'priest', type: 'person' },
   '亚瑟·道森': { id: 'arthur_dawson', type: 'person' },
   '亚瑟': { id: 'arthur_dawson', type: 'person' },
@@ -584,6 +589,7 @@ CLUE_DISPLAY_MAP['blind_zone_camp'] = '盲区营地';
 CLUE_DISPLAY_MAP['gore_and_levy'] = '戈尔和列维探员';
 CLUE_DISPLAY_MAP['felipe_maldonado'] = '费利佩·马尔多纳多';
 CLUE_DISPLAY_MAP['forest_map'] = '森林地图';
+CLUE_DISPLAY_MAP['frank_rollins'] = '弗兰克·罗林斯';
 
 
 export const CORE_NODES: MemoryNode[] = [
@@ -1484,13 +1490,35 @@ export const CORE_NODES: MemoryNode[] = [
     keyword: "confession",
     title: "供述 No.31",
     currentLayer: MemoryLayer.SURFACE,
-    position: { x: window.innerWidth * 0.35, y: window.innerHeight * 0.4 },
-    revealedKeywords: ['mandan', 'forest_map'],
+    position: { x: window.innerWidth * 0.45, y: window.innerHeight * 0.2 },
+    revealedKeywords: ['humphrey_county', 'assault_on_police', 'year_1967'],
+    clueMap: { '曼丹市': 'mandan' },
     layers: {
       [MemoryLayer.SURFACE]: {
-        event: "我最后一次去利比镇的时候，在林区像个没头苍蝇一样转悠了好几天，除了一片长满杂草的空地，什么都没找到。最后，我站在一片松林地旁抽烟，心里忍不住地怀疑，或许道森一家只不过是瓦妮莎在药效发作时的妄想。\n\n没想到，他们的尸骨可能就埋在我当时站的地方。\n\n总之你给的信息太多了，我得好好想一想。先说汉弗莱监狱把，那就是我认识康查尔的地方，他1967年因为袭警被捕，这是他告诉我的。所以他被捕的时候还带着凶器是吧？一路从蒙大拿州跑到缅因州区……那如果他是杀害道森的元凶，着意味着父亲早就知道了亚瑟和瓦妮莎的计划，这是亚瑟和他的一家最终丧命的真正原因。\n\n可为什么瓦妮莎却能安然无恙呢？不仅安然无恙，而且对整件事毫不知情。\n\n等等——我知道了。瓦妮莎说过，1967年，她曾在感化院待过半年，那回父亲非常反常地逼她去一个公路便利店里‘拿’补给。现在看来这其实就是个圈套，那天父亲可能就坐在车里眼睁睁看着巡警把她按在泥地上。盗窃的罪名不大不开，刚好够瓦妮莎在感化院待三个月。三个月过完，他们开着一辆重新涂装过的房车，来到曼丹市的北达科他州青少年矫正机构接她，并告诉她康查尔得在缅因州待上一阵子了，然后整整四年过去，到某一天，她忽然看到我和康查尔一同登上了这辆房车。\n\n可这到底是为什么呢？他为什么要费尽心机骗过瓦妮莎。",
+        event: "我最后一次去利比镇的时候，在林区像个没头苍蝇一样转悠了好几天，除了一片长满杂草的空地，什么都没找到。最后，我站在一片松林地旁抽烟，心里忍不住地怀疑，或许道森一家只不过是瓦妮莎在药效发作时的妄想。\n\n没想到，他们的尸骨可能就埋在我当时站的地方。\n\n总之你给的信息太多了，我得好好想一想。先说汉弗莱监狱把，那就是我认识康查尔的地方，他1967年因为袭警被捕，这是他告诉我的。所以他被捕的时候还带着凶器是吧？一路从蒙大拿州跑到缅因州区……那如果他是杀害道森的元凶，着意味着父亲早就知道了亚瑟和瓦妮莎的计划，这是亚瑟和他的一家最终丧命的真正原因。\n\n可为什么瓦妮莎却能安然无恙呢？不仅安然无恙，而且对整件事毫不知情。\n\n等等——我知道了。瓦妮莎说过，1967年，她曾在感化院待过半年，那回父亲非常反常地逼她去一个公路便利店里‘拿’补给。现在看来这其实就是个圈套，那天父亲可能就坐在车里眼睁睁看着巡警把她按在泥地上。盗窃的罪名不大不小，刚好够瓦妮莎在感化院待三个月。三个月过完，他们开着一辆重新涂装过的房车，来到曼丹市的北达科他州青少年矫正机构接她，并告诉她康查尔得在缅因州待上一阵子了，然后整整四年过去，到某一天，她忽然看到我和康查尔一同登上了这辆房车。\n\n可这到底是为什么呢？他为什么要费尽心机骗过瓦妮莎。",
         attitude: "",
-        visual: `${import.meta.env.BASE_URL}assets/confession_31_residue.png`
+        visual: `${import.meta.env.BASE_URL}assets/confession_31_residue_custom.jpg`
+      },
+      [MemoryLayer.DEEP]: {
+        event: "",
+        attitude: ""
+      }
+    },
+    connectedTo: ["confession_32", "capone", "vanessa", "frank_rollins"]
+  },
+  {
+    id: "confession_32",
+    keyword: "confession",
+    title: "供述 No.32",
+    currentLayer: MemoryLayer.SURFACE,
+    position: { x: window.innerWidth * 0.35, y: window.innerHeight * 0.4 },
+    revealedKeywords: ['mandan', 'forest_map', 'frank_rollins'],
+    clueMap: { '弗兰克·罗林斯': 'frank_rollins' },
+    layers: {
+      [MemoryLayer.SURFACE]: {
+        event: "你一定是在骗我，或者，是我疯了。\n\n我脑海当中一直有段记忆，那是在犹他州的时候，外面整日阴雨，某个下午，我坐在副驾驶抽烟，其他人都在忙别的，我从后视镜里看到她光着脚站在水槽边，把地图贴在木墙上，再把冰箱挪回原位。我什么都没说，我知道那是她唯一的指望。\n\n你们这些警察，拿着相机跑到一个个案发现场，收集弹壳，拍下干涸的血迹。其实这是最简单的，血迹干了说明事情已经结束了。可我见过那些活生生的事情，就在我的眼前。\n\n做掉阿列克谢那次，她负责搞定车子，结果水箱漏了，事后老头子没处撒气，先用拖车的麻绳把她的手绑在后保险杠的钢架上，让她跪在沥青路上。直到老头睡着了，我赶紧拿块湿布把水拧在她的额头和身上，再把打死结的绳扣弄松。她抬头看我，嘴唇上全是裂开的血痂，一句话也没说。\n\n后来为了引索恩上钩，母亲拿着注射器，直接把士的宁打进她的血管里。完事之后，她被扔在后排的床垫上，痛得脊椎反弓。我怕她咬断舌头，赶忙按着她，把皮带塞进她的嘴里，她指甲在我手背上抠出了十几道血沟。\n\n她告诉过我，被关起来的那几个月，每时每刻她都在盼望着，当自己被放出去那天，父亲没有出现，母亲没有出现，塞勒斯没有出现，康查尔，也就是你所谓的弗兰克·罗林斯没有出现，她可以无忧无虑地在公路上走，像那些搭车客一样，朝着驶向北方的车辆伸出她的大拇指。你觉得这些时刻她是怎么熬过来的？除了地图之外，她还能有什么别的念想吗？现在你说，这辆车是威廉·道森的，这分明解释不通。67年11月，他们把瓦妮莎送进惩戒，然后出发去利比镇，杀光了道森一家，把这辆车开回来。可亚瑟则在67年初就已经死了，如果这车是他死后才被他们偷来的，那我在底盘暗格里抠出来的那个笔记本又哪来的？\n\n它为什么被会藏在这辆车里。",
+        attitude: "",
+        visual: `${import.meta.env.BASE_URL}assets/confession_32_vanessa_sketch.png`
       },
       [MemoryLayer.DEEP]: {
         event: "",
@@ -1915,18 +1943,6 @@ export const CONFESSION_REGISTRY = [
     status: 'DECRYPTED'
   },
   {
-    id: 'confession_31',
-    displayId: 'REC-1967-ND',
-    title: '供述 No.31: 汉弗莱监狱',
-    eventTime: '1967',
-    location: '曼丹市 (Mandan)',
-    keywords: ['汉弗莱县', '袭警案', '曼丹市'],
-    people: ['康查尔 (Conchar)', '瓦妮莎 (Vanessa)'],
-    summary: '关于汉弗莱监狱与康查尔入狱真相的供述。揭示了“父亲”如何通过陷害瓦妮莎令其在感化院待了三个月，从而掩盖处决亚瑟一家的真相，并解释了那辆重新涂装的房车来源。',
-    status: 'DECRYPTED'
-  },
-  {
-    id: 'confession_4',
     displayId: 'REC-1967-NV',
     title: '供述 No.4: 训练日回忆',
     eventTime: '1967',
@@ -2224,8 +2240,19 @@ export const CONFESSION_REGISTRY = [
   },
   {
     id: 'confession_31',
+    displayId: 'REC-1967-ME',
+    title: '供述 No.31: 汉弗莱监狱与袭警案',
+    eventTime: '1967',
+    location: '缅因州 汉弗莱县 (Humphrey County)',
+    keywords: ['汉弗莱县', '袭警案'],
+    people: ['康查尔 (Conchar)', '罗伯特·卡彭 (Robert Capone)'],
+    summary: '关于在缅因州汉弗莱监狱认识康查尔（即弗兰克·罗林斯）以及他因袭警入狱背景的供述。揭示了这段关系的起始，以及康查尔作为刺头新人的危险特征。',
+    status: 'DECRYPTED'
+  },
+  {
+    id: 'confession_32',
     displayId: 'REC-1967-ND',
-    title: '供述 No.31: 曼丹市的房车',
+    title: '供述 No.32: 曼丹市的房车',
     eventTime: '1967',
     location: '北达科他州 曼丹市 (Mandan)',
     keywords: ['曼丹市', '森林地图'],

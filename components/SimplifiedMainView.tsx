@@ -509,6 +509,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         pickableKeywords = ['杰西·潘尼', '杰西潘尼'];
                                     } else if (isNode6Awakening) {
                                         pickableKeywords = ['1976'];
+                                    } else if (activeNodeId === 'confession_32') {
+                                        pickableKeywords = ['弗兰克·罗林斯', '1977'];
                                     } else if (isReveal) {
                                         pickableKeywords = (displayItem as any).revealKeywords || [];
                                     }
@@ -519,6 +521,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         '父亲': { id: 'father', type: 'person' },
                                         '尼比': { id: 'nibi', type: 'person' },
                                         '康查尔': { id: 'conchar', type: 'person' },
+                                        '弗兰克·罗林斯': { id: 'frank_rollins', type: 'person' },
                                         '伦德格兰': { id: 'lundgren', type: 'person' },
                                         '莫宁': { id: 'morning', type: 'person' },
                                         '雷吉博士': { id: 'dr_reggie', type: 'person' },
@@ -558,6 +561,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                         '1965': { id: 'year_1965', type: 'year' },
                                         '1976': { id: 'year_1976', type: 'year' },
                                         '1976年': { id: 'year_1976', type: 'year' },
+                                        '1977': { id: 'year_1977', type: 'year' },
+                                        '1977年': { id: 'year_1977', type: 'year' },
 
                                         // Locations
                                         '缅因州': { id: 'maine', type: 'location' },
@@ -1052,6 +1057,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     hasSwitchedPersona={hasSwitchedPersona}
                                     unlockedPeople={unlockedPeople}
                                     collectedClues={collectedClues}
+                                    collectedYears={collectedYears}
                                 />
                             </div>
                         </motion.div >

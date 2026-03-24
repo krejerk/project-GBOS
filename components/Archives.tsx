@@ -783,7 +783,7 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
             headline: '【北叉林区木屋焚毁，威廉·道森失踪；社区对林地异状三缄其口】',
             content: [
                 '昨夜，一层浓重的阴霾笼罩了利比镇。受人尊敬的老伐木工威廉·道森（William Dawson）被证实已在家中离奇失踪。然而，比起失踪本身，在道森家林地小屋周围发现的恐怖景象，更让整个小镇陷入了难以名状的恐慌。',
-                '周一清晨，由于老威廉连续两天没有来工会大厅报到，几位伐木工兄弟前往他位于深林中的住处查看。他们发现木屋的大门敞开，炉火早已熄灭，但屋内的财物和猎枪都完好无损。没有任何搏斗或强行入室的痕迹。老威廉和家人就像是自己走进了深夜的林子里。',
+                '周一清晨，由于老威廉连续两天没有来工会大厅报到，几位伐木工兄弟前往他位于深林中的住处查看。抵达的时候发现木屋的大门敞开，炉火早已熄灭，但屋内的财物和猎枪都完好无损，没有任何搏斗或强行入室的痕迹。屋外的房车不在原地，老威廉和家人就像是自己开车驶入山林之中。',
                 '而在木屋外的空地上，工人们看到了噩梦般的场景。',
                 '据第一批赶到现场灭火的伐木工透露，几只野生动物的尸体被倒吊在周围的树杈上，雪地上有用灰烬和暗色液体画出的同心圆符号。此外，道森家门前那棵标志性的红杉树上，被人用长铁钉固定着一个缠满旧麻绳的鹿头骨。针对这些物品，警长办公室在周一的简短声明中表示，这很可能是“外来流浪汉或恶作剧者的破坏行为”。鉴于大雪封山且缺乏实质线索，警方将暂时搁置对道森失踪案的大规模搜救。',
                 '然而，本地社区对这场离奇的火灾表现出了异乎寻常的沉默。',
@@ -798,6 +798,36 @@ const ARCHIVE_DATABASE: DetailedArchiveRecord[] = [
             author: '马库斯·索恩 (Marcus Thorne)',
             content: `【核心案情更新】 1992年9月，两名背包客在蒙大拿州利比镇以北的库特奈国家森林深处（原道森林地旧址外延）偏离步道露营时，因大雨冲刷，于一处隐蔽的松林浅坑中发现三具人类遗骨。经调取当地已结业的牙科诊所纸质微缩胶片档案，法医齿科学确认，死者正是1967年被当地传言因“黑角神诅咒”而失踪的老伐木工威廉·道森及其两名直系亲属。\n\n【物理证据与法医人类学比对】 匡提科法医实验室在清理威廉·道森的遗骨时，在其第四颈椎及左侧第三肋骨上，发现了极深的、非致命性暴力斩击留下的骨骼刻痕。在电子显微镜下，该骨骼创痕呈现出极其特殊的“非对称微观条纹”。这表明凶器是一把边缘受损严重的重型刃具。通过录入全国工具痕迹数据库进行跨州回溯比对，系统发出了最高级别的匹配警报：留在道森骨头上的“条纹条形码”，与1967年12月在缅因州汉弗莱县缴获的一件编号为 #88-B 的证物留下的切削测试痕迹达到100%微观物理吻合。\n\n【物证 #88-B 描述】 一把由汽车板簧手工打磨改装的重型剔骨刀。刀刃中段有两处因暴力劈砍硬物而形成的锯齿状不规则崩口。物证 #88-B 的持有人系当年因袭警案被捕的嫌疑人，化名「康查尔」的弗兰克·斯基纳·罗林斯。\n\n【结论】 1967年发生在蒙大拿州利比镇的所谓“异教祭祀与诅咒”事件，系该犯罪家族头目为掩盖定点清除行动、并利用当地迷信恐吓镇民封口的蓄意现场伪装。道森一家并非死于诅咒，更没有离开小镇，他们被康查尔在极近距离内用重型刃具暴力处决。不过由于此人已在1976年图森市发生的大规模枪击案中被本地警方击毙，关于本案真相已经无法得到口供验证。`,
             template: 'THORNE'
+        }
+    },
+    {
+        id: 'frank_rollins_report',
+        title: '1977年图森市警务站枪击案',
+        triggers: {
+            person: ['frank_rollins', '弗兰克·罗林斯', 'Frank Rollins'],
+            year: '1977'
+        },
+        newspaper: {
+            source: '《图森先驱报》',
+            date: '1977年10月14日',
+            headline: '警务站外的炼狱：匿名举报引发沙漠血战，一死两逃',
+            content: [
+                '击毙歹徒身份确认；嫌犯引爆车辆并盗走警车；现场惊现军用级武器与高爆炸药',
+                '（本报记者 托马斯·汉德森 图森报道） —— 昨夜，原本宁静的图森市郊被自动步枪的咆哮和冲天的火光彻底撕裂。一场由匿名线报引发的警方伏击行动，最终演变成了一场伤亡惨重的战区级交火。目前，一名嫌犯被当场击毙，另外一男一女两名嫌疑人在制造了极其惨烈的爆炸后，驾驶一辆被盗的警用巡逻车遁入沙漠腹地。',
+                '据皮马县治安官办公室透露，事件起因于昨晚7时许截获的一段业余短波电台信号。一名自称无线电爱好者的匿名男子向警方报警，称一伙“持有军用级重型武器的危险分子”正沿着10号州际公路行驶，并即将经过图森市郊的第4警务站。基于该线报，警方迅速在警务站外围的高速公路出口部署了伏击圈。然而，当嫌疑人的深色轿车驶入包围圈时，警方遭遇了超乎想象的暴力抵抗。“他们根本没有停车交涉的打算，车门一开，子弹就像雨点一样扫过来。”一名参与交火的警员在接受采访时依然心有余悸。',
+                '交火中最令人毛骨悚然的一幕，来自那名被当场击毙的男性歹徒。“他简直就像个感觉不到疼的怪物，”现场指挥官米勒上尉表示，“他在躯干连续中了数发.38口径警用左轮手枪弹后，不仅没有倒下，反而继续端着枪向前推进，直到被防暴霰弹枪近距离击中头部才停止活动。”今早，FBI通过指纹加急比对确认了该死者的身份，弗兰克·罗林斯，曾因暴力伤害罪在缅因州州立监狱服刑。',
+                '在罗林斯被击毙后，同车的另外一男一女两名嫌犯做出了极其疯狂的举动，他们直接引爆了驾驶车辆，巨大的火球瞬间吞噬了公路，爆炸产生的冲击波掀翻了两辆作为掩体的警车，导致四名警员受重伤并出现短暂失聪。借着浓烟和火海的掩护，两人强行夺取了一辆福特警用巡逻车消失在夜色中。',
+                '另据警方发言人称，爆炸物处理小组在被彻底炸毁的嫌犯车辆底盘残骸中，检测到了高纯度的黑索金（RDX）炸药化学残留。据此炸弹专家推测，嫌犯极有可能是一名受过专业训练、且拥有极深黑市背景的爆炸物制造者，他预先将所驾驶车辆设置成了一个巨大的可移动炸药包。另一方面，调查人员还在交火地带回收了大量5.56毫米口径的弹壳，并从烧焦的残骸中挖出了两支严重损毁的M16A1全自动步枪，武器的序列号已被锉刀和酸液彻底破坏，根据ATF（美国烟酒枪炮及爆炸物管理局）的特工确认，武器均是现役军队的制式装备。',
+                '目前警方已出动直升机在索诺兰沙漠地带展开地毯式搜索。'
+            ]
+        },
+        annotation: {
+            fileId: 'AZ-77-1014-X',
+            date: '1977年11月12日',
+            level: '机密（行为分析组档案）',
+            author: '霍华德·贝克 (Howard Baker)',
+            content: `【主题：时间线重构及“无名氏（Jane Doe）”的关联性评估】\n\n在对10月14日图森枪战案的案卷进行全面审查后，我处发现地方警局在初期调查中的一处纰漏。\n\n以下是重构后的关键时间线：\n10月13日 21:15 —— 州警调度中心截获业余短波电台信号。匿名男子精确描述了嫌犯的车辆特征及重火力配置，并预告他们将途经图森市郊的10号公路。图森警方据此连夜开始在第4警务站周边进行布控。\n10月14日 07:10 —— （交火前50分钟）一名年轻女性徒步进入第4警务站。值班记录显示，该女性衣着破烂，精神处于极度亢奋和惊恐状态。她向接警台倾倒了一堆所谓的“证据”，声称自己正在被一个跨国犯罪家族追杀。由于其证词缺乏基本逻辑，且提交的物品（空白录音带等，最终都被地方警局归档为“无法辨认的垃圾”）毫无直接侦查价值，值班警长认定其处于某种致幻剂的影响下。\n10月14日 07:45 —— 值班警长准备以“妨碍公务”和“公共场所神志不清”为由将其暂时拘留。而在警长转身去档案柜拿手铐的不到一分钟内，该女性从洗手间的狭窄气窗翻出，不知所踪。\n10月14日 08:00 —— （女性逃跑后15分钟）弗兰克·罗林斯（即死者康查尔）及其同伙驾驶车辆，精准驶入警务站外围。随后爆发了骇人听闻的自动武器交火与黑索金爆炸。\n\n此前当地警方一直将此事件与稍后发生的交火视作独立事件，然而我处现在高度怀疑无名氏与发动枪战的三人存在关联。值得庆幸的是，虽然值班警长失职让嫌疑人逃走，但他提前打开审讯用录像机还是捕捉到了后者的模糊影像，我处建议因立即发布跨州通缉令，并将级别设为最高。「图片见附录」`,
+            template: 'BAKER'
         }
     }
 ];
@@ -957,6 +987,20 @@ export const Archives: React.FC<ArchivesProps> = ({
             return;
         }
 
+        // Jane Doe 1977 image goes to project dossier
+        if (attachmentImage === `${import.meta.env.BASE_URL}assets/jane_doe_1977.jpg` && targetClueId === 'project') {
+            if (onCollectAttachment) {
+                onCollectAttachment('jane_doe_1977');
+            }
+            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+            setTimeout(() => {
+                setAttachmentImage(null);
+                setIsSelectingFolder(false);
+                setCollectionFeedback({ type: null, msg: '' });
+            }, 1500);
+            return;
+        }
+
         setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
         setTimeout(() => setCollectionFeedback({ type: null, msg: '' }), 2000);
     };
@@ -982,7 +1026,7 @@ export const Archives: React.FC<ArchivesProps> = ({
             const info = GLOBAL_KEYWORD_MAP[keyword];
             if (info && info.type === 'year') {
                 setYearInput(keyword.replace('年', '')); // Strip '年' for the input if present
-            } else if (info && (info.type === 'person' || info.type === 'archive')) {
+            } else if (info && (info.type === 'person' || info.type === 'archive' || info.type === 'location' || info.type === 'clue')) {
                 setPersonInput(keyword);
             }
         }
@@ -1337,7 +1381,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                         });
 
                                                                         // Node 6 Exception: Keep Alexei and Morandi available for testing/mindmap
-                                                                        if (['alexei', 'morandi', 'william_dawson', 'humphrey_county', 'assault_on_police'].includes(lowerId)) return true;
+                                                                        if (['alexei', 'morandi'].includes(lowerId)) return true;
 
                                                                         return remainingTargets.length > 0;
                                                                     });
@@ -1694,16 +1738,24 @@ export const Archives: React.FC<ArchivesProps> = ({
 
                                                                                 if (part === attachmentTrigger || part === wilmerTrigger || part === attachmentTrigger2) {
                                                                                     // ... keep existing attachment trigger logic
-                                                                                    const isVisible = part === attachmentTrigger ? attachmentImage === `${import.meta.env.BASE_URL}assets/butter_julep_evidence.jpg` || attachmentImage === `${import.meta.env.BASE_URL}assets/richie_id_card.jpg`
+                                                                                    const isVisible = part === attachmentTrigger ? attachmentImage === `${import.meta.env.BASE_URL}assets/butter_julep_evidence.jpg` || attachmentImage === `${import.meta.env.BASE_URL}assets/richie_id_card.jpg` || attachmentImage === `${import.meta.env.BASE_URL}assets/jane_doe_1977.jpg`
                                                                                         : part === wilmerTrigger ? attachmentImage === `${import.meta.env.BASE_URL}assets/wilmer_ribbon.jpg`
                                                                                             : attachmentImage === `${import.meta.env.BASE_URL}assets/fbi-symbol.png` && activeCase.id === 'archive_15';
 
                                                                                     return (
                                                                                         <span
                                                                                             key={j}
-                                                                                            className={`mx-1 cursor-pointer font-bold border-b border-dashed transition-all duration-300 ${isVisible ? 'text-green-500 border-green-500 hover:bg-green-500/10' : 'text-blue-500 border-blue-500 hover:bg-blue-500/10'}`}
+                                                                                            className={`mx-1 cursor-pointer font-bold border-b-2 transition-all duration-300 ${isVisible ? 'text-white bg-[#c85a3f] border-transparent px-1 shadow-[0_0_15px_rgba(200,90,63,0.6)] z-10 scale-105' : 'text-[#c85a3f] border-[#c85a3f] hover:bg-[#c85a3f]/20 animate-pulse'}`}
                                                                                             onClick={() => {
-                                                                                                if (part === attachmentTrigger) setAttachmentImage(`${import.meta.env.BASE_URL}assets/butter_julep_evidence.jpg`);
+                                                                                                if (part === attachmentTrigger) {
+                                                                                                    if (activeCase.id === 'frank_rollins_report') {
+                                                                                                        setAttachmentImage(`${import.meta.env.BASE_URL}assets/jane_doe_1977.jpg`);
+                                                                                                    } else if (activeCase.id === 'tx_1967') {
+                                                                                                        setAttachmentImage(`${import.meta.env.BASE_URL}assets/richie_id_card.jpg`);
+                                                                                                    } else {
+                                                                                                        setAttachmentImage(`${import.meta.env.BASE_URL}assets/butter_julep_evidence.jpg`);
+                                                                                                    }
+                                                                                                }
                                                                                                 else if (part === wilmerTrigger) setAttachmentImage(`${import.meta.env.BASE_URL}assets/wilmer_ribbon.jpg`);
                                                                                                 else setAttachmentImage(`${import.meta.env.BASE_URL}assets/fbi-symbol.png`);
                                                                                             }}

@@ -17,26 +17,28 @@ import { DebugController } from './components/DebugController';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { MusicControl } from './components/MusicControl';
 
+const INITIAL_GAME_STATE: GameState = {
+  phase: 'briefing',
+  unlockedNodeIds: ['capone'],
+  activeNodeId: null,
+  passwordEntered: false,
+  collectedClues: [],
+  collectedDossierIds: [],
+  collectedYears: [],
+  collectedAttachments: [],
+  unlockedPeople: [],
+  unlockedArchiveIds: [],
+  systemStability: 84, // Initial Stability
+  currentStoryNode: 0, // No story nodes reached yet
+  playerHypotheses: {},
+  history: [
+    { type: 'info', content: '[SYSTEM]: NEURAL LINK ESTABLISHED...', timestamp: Date.now() }
+  ],
+  consecutiveSearch: undefined
+};
+
 const App: React.FC = () => {
-  const [gameState, setGameState] = useState<GameState>({
-    phase: 'briefing',
-    unlockedNodeIds: ['capone'],
-    activeNodeId: null,
-    passwordEntered: false,
-    collectedClues: [],
-    collectedDossierIds: [],
-    collectedYears: [],
-    collectedAttachments: [],
-    unlockedPeople: [],
-    unlockedArchiveIds: [],
-    systemStability: 84, // Initial Stability
-    currentStoryNode: 0, // No story nodes reached yet
-    playerHypotheses: {},
-    history: [
-      { type: 'info', content: '[SYSTEM]: NEURAL LINK ESTABLISHED...', timestamp: Date.now() }
-    ],
-    consecutiveSearch: undefined
-  });
+  const [gameState, setGameState] = useState<GameState>(INITIAL_GAME_STATE);
 
   const [nodes, setNodes] = useState(CORE_NODES);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -56,6 +58,21 @@ const App: React.FC = () => {
       audio.pause();
       audioRef.current = null;
     };
+  }, []);
+
+  // --- ARCHITECTURAL SAFEGUARD ---
+  useEffect(() => {
+    // Validate that no node is consuming its own revealed keywords (rewards)
+    // This prevents the "double-click collection" bug from recurring.
+    Object.entries(KEYWORD_CONSUMPTION_MAP).forEach(([nodeId, requiredKeys]) => {
+      const node = CORE_NODES.find(n => n.id === nodeId);
+      if (node && node.revealedKeywords) {
+        const overlaps = requiredKeys.filter(k => node.revealedKeywords.includes(k));
+        if (overlaps.length > 0) {
+          console.warn(`[STRUCTURE WARNING]: Node "${nodeId}" consumes its own revealed keywords: ${overlaps.join(', ')}. This will cause collection issues (keywords disappearing on click).`);
+        }
+      }
+    });
   }, []);
 
   const startMusic = useCallback(() => {
@@ -186,7 +203,7 @@ const App: React.FC = () => {
       if (id.startsWith('va_') || id.startsWith('nv_')) return 2;
       if (id.startsWith('cin_') || id.startsWith('nas_') || id.startsWith('ky_')) return 3;
       if (id.startsWith('kan_') || id.startsWith('kc_') || id.startsWith('ia_')) return 4;
-      if (id.startsWith('archive_') || id.startsWith('tx_')) return 5;
+      if (id.startsWith('archive_') || id.startsWith('tx_') || id.startsWith('libby_')) return 5;
       if (id.startsWith('sf_')) return 7;
       return 0;
   }, []);
@@ -487,6 +504,8 @@ const App: React.FC = () => {
       'humphrey_county': true, '汉弗莱县': true, 'humphrey county': true,
       'assault_on_police': true, '袭警案': true, '袭警': true,
       'mandan': true, '曼丹': true, '曼丹市': true,
+      'forest_map': true, '森林地图': true,
+      'frank_rollins': true, '弗兰克·罗林斯': true,
     };
 
     const validateQuery = (queryStr: string) => {
@@ -519,7 +538,7 @@ const App: React.FC = () => {
       const valid = remaining.length === 0; // All content was matched or is separator
 
       // ===== FEATURE DETECTION (unchanged) =====
-      return {
+      const validation = {
         valid,
         hasMaine: lowerQuery.includes('maine') || lowerQuery.includes('缅因'),
         hasSmallBank: lowerQuery.includes('small_bank') || lowerQuery.includes('小银行') || lowerQuery.includes('small bank'),
@@ -600,7 +619,11 @@ const App: React.FC = () => {
         hasAssaultOnPolice: lowerQuery.includes('assault_on_police') || lowerQuery.includes('袭警案') || lowerQuery.includes('袭警'),
         hasWilliamDawson: lowerQuery.includes('william_dawson') || lowerQuery.includes('威廉·道森') || lowerQuery.includes('william dawson'),
         hasMandan: lowerQuery.includes('mandan') || lowerQuery.includes('曼丹') || lowerQuery.includes('曼丹市'),
+        hasForestMap: lowerQuery.includes('forest_map') || lowerQuery.includes('森林地图'),
+        hasFrankRollins: lowerQuery.includes('frank') || lowerQuery.includes('rollins') || lowerQuery.includes('弗兰克') || lowerQuery.includes('罗林斯'),
       };
+
+      return validation;
     };
 
     const validation = validateQuery(query);
@@ -744,7 +767,7 @@ const App: React.FC = () => {
     }
 
     // Confession 31: Humphrey County + Assault on Police
-    if (validation.hasHumphreyCounty && (validation.hasAssaultOnPolice || (lowerQuery.includes('袭警案')))) {
+    if (validation.hasHumphreyCounty && validation.hasAssaultOnPolice) {
       setTimeout(() => {
         let node = nodes.find(n => n.id === 'confession_31');
 
@@ -768,6 +791,42 @@ const App: React.FC = () => {
                 ...prev.history,
                 { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
                 { type: 'info', content: `[记忆转录]: ${Object.values(node!.layers).map(l => l.event).join('\n\n')}`, timestamp: Date.now() },
+                { type: 'info', content: `[SYSTEM]: 侦测到残留视觉信号，请问是否提取视觉信息？`, timestamp: Date.now() }
+              ]
+            };
+          });
+        }
+        setIsProcessing(false);
+      }, 50);
+      return;
+    }
+
+    // Confession 32: Mandan + Forest Map
+    if (validation.hasMandan && validation.hasForestMap) {
+      setTimeout(() => {
+        let node = nodes.find(n => n.id === 'confession_32');
+
+        if (!node) {
+          const coreNode = CORE_NODES.find(n => n.id === 'confession_32');
+          if (coreNode) {
+            node = coreNode;
+            setNodes(prev => [...prev, coreNode]);
+          }
+        }
+
+        if (node) {
+          setGameState(prev => {
+            const isAlreadyUnlocked = prev.unlockedNodeIds.includes(node!.id);
+            return {
+              ...prev,
+              activeNodeId: node!.id,
+              unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, node!.id])),
+              systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+              history: isAlreadyUnlocked ? prev.history : [
+                ...prev.history,
+                { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() },
+                { type: 'info', content: `[记忆转录]: ${Object.values(node!.layers).map(l => l.event).join('\n\n')}`, timestamp: Date.now() },
+                { type: 'info', content: `[SYSTEM]: 侦测到残留视觉信号，请问是否提取视觉信息？`, timestamp: Date.now() }
               ]
             };
           });
@@ -1916,6 +1975,12 @@ const App: React.FC = () => {
       handleUnlockArchive('archive_19');
       return;
     }
+    
+    // Frank Rollins Report: Frank Rollins
+    if (validation.hasFrankRollins) {
+      handleUnlockArchive('frank_rollins_report');
+      return;
+    }
 
     // Track consecutive invalid inputs for special easter egg
     const invalidInputKey = 'consecutive_invalid_inputs';
@@ -2329,7 +2394,7 @@ const App: React.FC = () => {
         // kan_1976, kc_1965
         'east_12th_st', 'execution_room', 'maggots',
         // ia_1976, sf_1976, tx_1967, va_1990, dc_1967
-        'davenport', 'roanoke', 'mill_valley', 'reporter', 'felipe_maldonado', 'william_dawson', 'humphrey_county', 'assault_on_police', 'mandan', 'forest_map'
+        'davenport', 'roanoke', 'mill_valley', 'reporter', 'felipe_maldonado', 'william_dawson', 'humphrey_county', 'assault_on_police', 'mandan', 'forest_map', 'frank_rollins', 'conchar'
       ];
       const isReward = REWARD_IDS.includes(clueId);
 
@@ -2342,7 +2407,13 @@ const App: React.FC = () => {
         const currentCount = prev.collectedClues.filter(c => c === clueId).length;
         const itemsToAdd = currentCount === 0 ? [clueId, clueId] : [clueId];
         currentCollectedClues = [...prev.collectedClues, ...itemsToAdd];
-        newHistory.push({ type: 'info', content: `[KEYWORD RE-ACQUIRED]: ${word} 已重新收录`, timestamp: Date.now() });
+        
+        // Improve feedback: Only say "RE-ACQUIRED" if it was actually acquired before
+        const message = currentCount === 0 
+          ? `[KEYWORD RECORDED]: ${word} 已记下`
+          : `[KEYWORD RE-ACQUIRED]: ${word} 已重新收录`;
+          
+        newHistory.push({ type: 'info', content: message, timestamp: Date.now() });
       }
 
       // UNIFIED COLLECTION LOGIC
@@ -2375,7 +2446,7 @@ const App: React.FC = () => {
       }
       else if (isLocation || isCase) {
         if (!isSpecialReacquire && (!prev.collectedClues.includes(clueId) || isReward)) {
-          currentCollectedClues = [...prev.collectedClues, clueId];
+          currentCollectedClues = [...currentCollectedClues, clueId];
           const label = isLocation ? 'LOCATION' : 'CASE';
           newHistory.push({ type: 'info', content: `[${label} IDENTIFIED]: ${word} 已收录`, timestamp: Date.now() });
         }
@@ -2383,7 +2454,7 @@ const App: React.FC = () => {
       else {
         // ALLOW DUPLICATES FOR REWARDS (so we can detect re-collection of consumed keys)
         if (!isSpecialReacquire && (!prev.collectedClues.includes(clueId) || isReward)) {
-          currentCollectedClues = [...prev.collectedClues, clueId];
+          currentCollectedClues = [...currentCollectedClues, clueId];
           newHistory.push({ type: 'info', content: `[KEYWORD RECORDED]: ${word} 已记下`, timestamp: Date.now() });
         }
       }
@@ -2433,10 +2504,13 @@ const App: React.FC = () => {
 
   // Handle Debug State Changes
   const handleDebugStateChange = (newState: Partial<GameState>) => {
-    setGameState(prev => ({
-      ...prev,
+    // START FROM CLEAN SLATE:
+    // This solves the 'state bleed' problem where jumping backward 
+    // left future variables (like hasSwitchedPersona) active.
+    setGameState({
+      ...INITIAL_GAME_STATE,
       ...newState
-    }));
+    });
     // If using debug, ensure music module is visible and starts playing
     startMusic();
   };

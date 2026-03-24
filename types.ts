@@ -24,6 +24,7 @@ export interface MemoryNode {
   connectedTo: string[];
   position?: { x: number; y: number };
   revealedKeywords?: string[];
+  clueMap?: Record<string, string>;
 }
 
 export interface ClueAttachment {
