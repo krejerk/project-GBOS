@@ -679,16 +679,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                     <div className="w-full flex flex-col items-center gap-1">
                         {/* Memory Action Row - Tightened */}
-                        <div className="w-full flex flex-row items-center justify-between px-6 mb-0">
-                            <button
-                                onClick={handleRetraceClick}
-                                disabled={isProcessing}
-                                className="flex-1 flex items-center justify-center gap-2 text-[10px] tracking-[0.2em] text-[#d89853]/60 hover:text-[#d89853] transition-all uppercase font-bold py-1 group/retrace relative disabled:opacity-30"
-                            >
-                                <RotateCcw size={14} className="group-hover:rotate-[-45deg] transition-transform" />
-                                <span className="opacity-80">RETRACE</span>
-                            </button>
-                            <div className="w-[1px] h-3 bg-[#d89853]/10 md:hidden" />
+                        <div className="w-full flex flex-row items-center justify-center px-6 mb-0">
                             <button
                                 onClick={() => setShowTerminal(true)}
                                 className="flex-1 flex items-center justify-center gap-2 text-[10px] tracking-[0.2em] text-[#d89853]/60 hover:text-[#d89853] transition-all uppercase font-bold py-1 group/logs relative"
