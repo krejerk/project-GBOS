@@ -1,0 +1,35 @@
+
+> project-g.b.o.s.---memory-diver@0.0.0 build
+> vite build
+
+vite v6.4.2 building for production...
+transforming...
+[plugin vite:esbuild] constants/registry.ts: Duplicate key "森林地图" in object literal
+546|      "type": "location"
+547|    },
+548|    "森林地图": {
+   |    ^
+549|      "id": "forest_map",
+550|      "type": "case"
+
+✓ 1987 modules transformed.
+✗ Build failed in 1.50s
+error during build:
+components/ConfessionLog.tsx (4:9): "CONFESSION_REGISTRY" is not exported by "constants/index.ts", imported by "components/ConfessionLog.tsx".
+file: /Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new shit of project gbos/components/ConfessionLog.tsx:4:9
+
+2: import { motion } from 'framer-motion';
+3: import { FileText, Lock, AlertCircle, Hash } from 'lucide-react';
+4: import { CONFESSION_REGISTRY } from '../constants';
+            ^
+
+    at getRollupError (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/parseAst.js:406:41)
+    at error (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/parseAst.js:402:42)
+    at Module.error (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/node-entry.js:17380:16)
+    at Module.traceVariable (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/node-entry.js:17813:29)
+    at ModuleScope.findVariable (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/node-entry.js:15403:39)
+    at ReturnValueScope.findVariable (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/node-entry.js:5676:38)
+    at FunctionBodyScope.findVariable (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/node-entry.js:5676:38)
+    at MemberExpression.bind (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/node-entry.js:7395:49)
+    at CallExpression.bind (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/node-entry.js:2832:23)
+    at CallExpression.bind (file:///Users/xindaliu/Downloads/project-g.b.o.s.---memory-diver/new%20shit%20of%20project%20gbos/node_modules/rollup/dist/es/shared/node-entry.js:12512:15)
