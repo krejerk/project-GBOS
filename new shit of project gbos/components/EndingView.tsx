@@ -12,6 +12,7 @@ export const EndingView: React.FC<EndingViewProps> = ({ type }) => {
     const [isTyping, setIsTyping] = useState(true);
     const [showTheEnd, setShowTheEnd] = useState(false);
     const [showLoopSequence, setShowLoopSequence] = useState(false);
+    const [showBlackScreen, setShowBlackScreen] = useState(false);
 
     let endingText = "";
     let classification = "MISSION ACCOMPLISHED // 绝密档案";
@@ -51,7 +52,7 @@ export const EndingView: React.FC<EndingViewProps> = ({ type }) => {
             } else {
                 setIsTyping(false);
                 clearInterval(timer);
-                if (type === 'ending1' || type === 'ending2') {
+                if (type === 'ending2') {
                     setTimeout(() => {
                         setShowLoopSequence(true);
                         setTimeout(() => {
@@ -59,6 +60,14 @@ export const EndingView: React.FC<EndingViewProps> = ({ type }) => {
                             window.location.reload();
                         }, 6000); // Reload after showing loop text
                     }, 2000);
+                } else if (type === 'ending1') {
+                    setTimeout(() => {
+                        setShowBlackScreen(true);
+                        setTimeout(() => {
+                            localStorage.removeItem('gbos_save_state');
+                            window.location.reload();
+                        }, 1000);
+                    }, 500); // Small pause, then black screen
                 }
             }
         }, typingSpeed);
@@ -223,6 +232,18 @@ export const EndingView: React.FC<EndingViewProps> = ({ type }) => {
                         </div>
                         <div className="absolute inset-0 pointer-events-none animate-cinematic-glitch mix-blend-difference bg-white/10 backdrop-invert backdrop-saturate-200 z-50 opacity-20" />
                     </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Black Screen Overlay (Ending 1) */}
+            <AnimatePresence>
+                {showBlackScreen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1 }}
+                        className="fixed inset-0 z-[6000] bg-black pointer-events-auto"
+                    />
                 )}
             </AnimatePresence>
 
