@@ -51,10 +51,13 @@ export const EndingView: React.FC<EndingViewProps> = ({ type }) => {
             } else {
                 setIsTyping(false);
                 clearInterval(timer);
-                if (type === 'ending2') {
+                if (type === 'ending1' || type === 'ending2') {
                     setTimeout(() => {
                         setShowLoopSequence(true);
-                        setTimeout(() => window.location.reload(), 6000); // Reload after showing loop text
+                        setTimeout(() => {
+                            localStorage.removeItem('gbos_save_state');
+                            window.location.reload();
+                        }, 6000); // Reload after showing loop text
                     }, 2000);
                 }
             }
