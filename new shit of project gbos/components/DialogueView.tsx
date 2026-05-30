@@ -469,7 +469,7 @@ export const DialogueView: React.FC<DialogueViewProps> = ({
                                             {Array.from(new Set([...collectedClues, ...unlockedPeople, ...(collectedDossierIds || [])]))
                                                 .filter(id => {
                                                     const meta = KEYWORD_REGISTRY[id];
-                                                    return meta && (meta.type === 'person' || meta.type === 'year');
+                                                    return meta && meta.type !== 'system' && id !== 'personnel_tree';
                                                 })
                                                 .map(id => (
                                                     <button
