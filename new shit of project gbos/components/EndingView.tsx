@@ -30,12 +30,7 @@ export const EndingView: React.FC<EndingViewProps> = ({ type }) => {
     useEffect(() => {
         if (type === 'ending3') {
             setShowTheEnd(true);
-            const endAudio = new Audio(`${import.meta.env.BASE_URL}sounds/end_music.mp3`);
-            endAudio.loop = true;
-            endAudio.play().catch(err => console.warn("End music playback failed:", err));
-            return () => {
-                endAudio.pause();
-            };
+            return;
         }
 
         setIsTyping(true);
@@ -184,12 +179,13 @@ export const EndingView: React.FC<EndingViewProps> = ({ type }) => {
                         animate={{ opacity: 1 }}
                         className="fixed inset-0 z-[5000] bg-[#020202] flex flex-col items-center justify-center pointer-events-auto"
                     >
+                        <audio src={`${import.meta.env.BASE_URL}sounds/end_music.mp3`} autoPlay loop />
                         <motion.div
                             initial={{ opacity: 0, scale: 1.05 }}
                             animate={{ opacity: 0.8, scale: 1 }}
                             transition={{ duration: 6, ease: "easeOut" }}
                             className="absolute inset-0 z-0 bg-center bg-cover bg-no-repeat mix-blend-screen"
-                            style={{ backgroundImage: 'url(/albatross_ending.png)' }}
+                            style={{ backgroundImage: `url(${import.meta.env.BASE_URL}albatross_ending.png)` }}
                         />
                         <motion.div 
                             initial={{ y: 20, opacity: 0 }}
