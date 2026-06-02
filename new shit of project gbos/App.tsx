@@ -1616,7 +1616,7 @@ const App: React.FC = () => {
             onClueClick={handleCollectClue} 
           />
         )}
-      <CheckpointManager gameState={gameState} onSetState={handleDebugStateChange} />
+      <CheckpointManager gameState={gameState} onSetState={handleDebugStateChange} onReset={resetGame} />
 
       {/* Ending 2 Buildup Overlay */}
       <AnimatePresence>

@@ -8,6 +8,7 @@ import { KEYWORD_REGISTRY, ALL_MEMORY_NODES } from '../constants/registry';
 interface CheckpointManagerProps {
     gameState: GameState;
     onSetState: (newState: Partial<GameState>) => void;
+    onReset?: () => void;
 }
 
 interface Checkpoint {
@@ -18,7 +19,7 @@ interface Checkpoint {
     state: Partial<GameState>;
 }
 
-export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState, onSetState }) => {
+export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState, onSetState, onReset }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const CHECKPOINTS: Checkpoint[] = [
@@ -257,6 +258,14 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 {/* Content Panel */}
                 {isOpen && (
                     <div className="p-4 space-y-4 overflow-y-auto custom-scrollbar relative">
+                        <div className="flex gap-2 pb-2 border-b border-cyan-500/10">
+                            <button onClick={() => { if(window.confirm('警告：此操作将清空所有记忆碎片，重新开启从头开始的审讯。是否确认？')) { onReset?.(); } }} className="flex-1 bg-red-950/40 hover:bg-red-900/60 text-red-400/90 hover:text-red-300 text-xs py-2 px-1 rounded border border-red-900/50 transition-colors font-bold tracking-wider">
+                                重新开启审讯
+                            </button>
+                            <button onClick={() => setIsOpen(false)} className="flex-1 bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-400/90 hover:text-cyan-300 text-xs py-2 px-1 rounded border border-cyan-900/50 transition-colors font-bold tracking-wider">
+                                继续当前审讯
+                            </button>
+                        </div>
                         <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                 <label className="text-[10px] text-cyan-500/50 font-mono uppercase tracking-widest block">
