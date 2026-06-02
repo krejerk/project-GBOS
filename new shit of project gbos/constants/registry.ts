@@ -608,6 +608,263 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "intercept",
     "type": "case"
   }
+,
+  "william_dawson": {
+    "id": "william_dawson",
+    "type": "person"
+  },
+  "William Dawson": {
+    "id": "william_dawson",
+    "type": "person"
+  },
+  "capone": {
+    "id": "capone",
+    "type": "person"
+  },
+  "Robert Capone": {
+    "id": "capone",
+    "type": "person"
+  },
+  "frank_rollins": {
+    "id": "frank_rollins",
+    "type": "person"
+  },
+  "Frank Rollins": {
+    "id": "frank_rollins",
+    "type": "person"
+  },
+  "nibi": {
+    "id": "nibi",
+    "type": "person"
+  },
+  "Apollo Nibi": {
+    "id": "nibi",
+    "type": "person"
+  },
+  "roger_beebe": {
+    "id": "roger_beebe",
+    "type": "person"
+  },
+  "Roger Beebe": {
+    "id": "roger_beebe",
+    "type": "person"
+  },
+  "Beebe": {
+    "id": "roger_beebe",
+    "type": "person"
+  },
+  "dr_reggie": {
+    "id": "dr_reggie",
+    "type": "person"
+  },
+  "Reggie": {
+    "id": "dr_reggie",
+    "type": "person"
+  },
+  "lundgren": {
+    "id": "lundgren",
+    "type": "person"
+  },
+  "Lundgren": {
+    "id": "lundgren",
+    "type": "person"
+  },
+  "felipe_maldonado": {
+    "id": "felipe_maldonado",
+    "type": "person"
+  },
+  "Felipe Maldonado": {
+    "id": "felipe_maldonado",
+    "type": "person"
+  },
+  "alexander_mengel": {
+    "id": "alexander_mengel",
+    "type": "person"
+  },
+  "Alexander Mengel": {
+    "id": "alexander_mengel",
+    "type": "person"
+  },
+  "clement_svirson": {
+    "id": "clement_svirson",
+    "type": "person"
+  },
+  "Clement Svirson": {
+    "id": "clement_svirson",
+    "type": "person"
+  },
+  "cynthia_miller": {
+    "id": "cynthia_miller",
+    "type": "person"
+  },
+  "Cynthia Miller": {
+    "id": "cynthia_miller",
+    "type": "person"
+  },
+  "richie_dreyfuss": {
+    "id": "richie_dreyfuss",
+    "type": "person"
+  },
+  "里奇": {
+    "id": "richie_dreyfuss",
+    "type": "person"
+  },
+  "Richie": {
+    "id": "richie_dreyfuss",
+    "type": "person"
+  },
+  "arthur_dawson": {
+    "id": "arthur_dawson",
+    "type": "person"
+  },
+  "亚瑟·道森": {
+    "id": "arthur_dawson",
+    "type": "person"
+  },
+  "Arthur Dawson": {
+    "id": "arthur_dawson",
+    "type": "person"
+  },
+  "morning": {
+    "id": "morning",
+    "type": "person"
+  },
+  "Morning": {
+    "id": "morning",
+    "type": "person"
+  },
+  "little_derek_wayne": {
+    "id": "little_derek_wayne",
+    "type": "person"
+  },
+  "\u5c0f\u5fb7\u91cc\u514b\u00b7\u7ef4\u6069": {
+    "id": "little_derek_wayne",
+    "type": "person"
+  },
+  "Derek Wayne Jr.": {
+    "id": "little_derek_wayne",
+    "type": "person"
+  },
+  "nevada": {
+    "id": "little_derek_wayne",
+    "type": "person"
+  },
+  "\u5185\u534e\u8fbe": {
+    "id": "little_derek_wayne",
+    "type": "person"
+  },
+  "\u5185\u534e\u8fbe\u5dde": {
+    "id": "little_derek_wayne",
+    "type": "person"
+  },
+  "aw_wilmo": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "小A.W.威尔莫": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "小 A.W. 威尔莫": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "小A.W. 威尔莫": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "A.W. Wilmer Jr.": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "martha_diaz": {
+    "id": "martha_diaz",
+    "type": "person"
+  },
+  "\u739b\u838e\u00b7\u8fea\u4e9a\u5179": {
+    "id": "martha_diaz",
+    "type": "person"
+  },
+  "Martha Diaz": {
+    "id": "martha_diaz",
+    "type": "person"
+  },
+  "roanoke": {
+    "id": "martha_diaz",
+    "type": "person"
+  },
+  "\u7f57\u963f\u8bfa\u514b": {
+    "id": "martha_diaz",
+    "type": "person"
+  },
+  "boris_smirnov": {
+    "id": "boris_smirnov",
+    "type": "person"
+  },
+  "boris smirnov": {
+    "id": "boris_smirnov",
+    "type": "person"
+  },
+  "juvell_chambers": {
+    "id": "juvell_chambers",
+    "type": "person"
+  },
+  "Jewel Chambers": {
+    "id": "juvell_chambers",
+    "type": "person"
+  },
+  "julie": {
+    "id": "julie",
+    "type": "person"
+  },
+  "Julie Walsh": {
+    "id": "julie",
+    "type": "person"
+  },
+  "jc_penney": {
+    "id": "jc_penney",
+    "type": "person"
+  },
+  "\u6770\u897f\u00b7\u6f58\u5c3c": {
+    "id": "jc_penney",
+    "type": "person"
+  },
+  "Jesse Penney": {
+    "id": "jc_penney",
+    "type": "person"
+  },
+  "peter_henderson": {
+    "id": "peter_henderson",
+    "type": "person"
+  },
+  "\u76ae\u7279\u00b7\u4ea8\u5fb7\u68ee": {
+    "id": "peter_henderson",
+    "type": "person"
+  },
+  "\u5f7c\u7279\u00b7\u4ea8\u5fb7\u68ee": {
+    "id": "peter_henderson",
+    "type": "person"
+  },
+  "Peter Henderson": {
+    "id": "peter_henderson",
+    "type": "person"
+  },
+  "john_morrissey": {
+    "id": "john_morrissey",
+    "type": "person"
+  },
+  "\u7ea6\u7ff0\u00b7\u83ab\u91cc\u897f": {
+    "id": "john_morrissey",
+    "type": "person"
+  },
+  "John Morrissey": {
+    "id": "john_morrissey",
+    "type": "person"
+  },
+  "\u7ea6\u7ff0\u83ab\u91cc\u897f": {
+    "id": "john_morrissey",
+    "type": "person"
+  }
 };
 
 export const CLUE_DISPLAY_MAP: Record<string, string> = {};
