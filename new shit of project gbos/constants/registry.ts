@@ -1351,9 +1351,7 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
     "targetId": "clipping_26",
     "type": "archive"
   }
-};
-
-export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {,
+,
   "confession_15": {
     "keywords": [
       "davenport",
@@ -1385,6 +1383,8 @@ export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {,
     ],
     "targetId": "confession_19",
     "type": "node"
-  },
+  }
 };
+
+export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {};
 Object.entries(UNLOCKS_REGISTRY).forEach(([id, entry]) => { if (entry.keywords) KEYWORD_CONSUMPTION_MAP[id] = entry.keywords; });
