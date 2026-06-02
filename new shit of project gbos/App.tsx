@@ -191,7 +191,17 @@ const INITIAL_GAME_STATE: GameState = {
 };
 
 const App: React.FC = () => {
-  const [gameState, setGameState] = useState<GameState>(INITIAL_GAME_STATE);
+  const [gameState, setGameState] = useState<GameState>(() => {
+    const saved = localStorage.getItem('gbos_save_state');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse save state', e);
+      }
+    }
+    return INITIAL_GAME_STATE;
+  });
 
   const [showFinalLetter, setShowFinalLetter] = useState(false);
   const [nodes, setNodes] = useState(CORE_NODES);
