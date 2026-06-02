@@ -1353,5 +1353,38 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   }
 };
 
-export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {};
+export const KEYWORD_CONSUMPTION_MAP: Record<string, string[]> = {,
+  "confession_15": {
+    "keywords": [
+      "davenport",
+      "new_plan"
+    ],
+    "targetId": "confession_15",
+    "type": "node"
+  },
+  "confession_16": {
+    "keywords": [
+      "texarkana",
+      "dismemberment_case"
+    ],
+    "targetId": "confession_16",
+    "type": "node"
+  },
+  "confession_18": {
+    "keywords": [
+      "denver_suburb",
+      "police_killing"
+    ],
+    "targetId": "confession_18",
+    "type": "node"
+  },
+  "confession_19": {
+    "keywords": [
+      "el_paso",
+      "church"
+    ],
+    "targetId": "confession_19",
+    "type": "node"
+  },
+};
 Object.entries(UNLOCKS_REGISTRY).forEach(([id, entry]) => { if (entry.keywords) KEYWORD_CONSUMPTION_MAP[id] = entry.keywords; });
