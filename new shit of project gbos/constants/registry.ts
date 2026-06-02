@@ -329,7 +329,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "type": "year"
   },
   "教堂": {
-    "id": "church",
+    "id": "priest",
     "type": "location"
   },
   "丹佛市郊": {
@@ -1379,7 +1379,7 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   "confession_19": {
     "keywords": [
       "el_paso",
-      "church"
+      "priest"
     ],
     "targetId": "confession_19",
     "type": "node"
