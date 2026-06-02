@@ -904,68 +904,55 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_23": {
     "keywords": [
-      "1983",
-      "capone",
-      "罗伯特·卡彭",
-      "Robert Capone"
+      "year_1983",
+      "capone"
     ],
     "targetId": "clipping_23",
     "type": "archive"
   },
   "clipping_01": {
     "keywords": [
-      "1971",
-      "nibi",
-      "尼比",
-      "Apollo Nibi"
+      "year_1971",
+      "nibi"
     ],
     "targetId": "clipping_01",
     "type": "archive"
   },
   "clipping_04": {
     "keywords": [
-      "1985",
-      "roger_beebe",
-      "罗格·毕比",
-      "Roger Beebe",
-      "Beebe"
+      "year_1985",
+      "roger_beebe"
     ],
     "targetId": "clipping_04",
     "type": "archive"
   },
   "clipping_03": {
     "keywords": [
-      "1967",
-      "dr_reggie",
-      "雷吉博士",
-      "Reggie"
+      "year_1967",
+      "dr_reggie"
     ],
     "targetId": "clipping_03",
     "type": "archive"
   },
   "clipping_02": {
     "keywords": [
-      "1968",
-      "lundgren",
-      "伦德格兰",
-      "Lundgren"
+      "year_1968",
+      "lundgren"
     ],
     "targetId": "clipping_02",
     "type": "archive"
   },
   "clipping_20": {
     "keywords": [
-      "1975",
-      "felipe_maldonado",
-      "费利佩·马尔多纳多",
-      "Felipe Maldonado"
+      "year_1975",
+      "felipe_maldonado"
     ],
     "targetId": "clipping_20",
     "type": "archive"
   },
   "clipping_17": {
     "keywords": [
-      "1976",
+      "year_1976",
       "莫兰迪"
     ],
     "targetId": "clipping_17",
@@ -973,7 +960,7 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_19": {
     "keywords": [
-      "1976",
+      "year_1976",
       "戈尔和列维探员"
     ],
     "targetId": "clipping_19",
@@ -981,7 +968,7 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_18": {
     "keywords": [
-      "1976",
+      "year_1976",
       "阿列克谢"
     ],
     "targetId": "clipping_18",
@@ -989,130 +976,96 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_15": {
     "keywords": [
-      "1977",
-      "richie_dreyfuss",
-      "里奇",
-      "Richie"
+      "year_1977",
+      "richie_dreyfuss"
     ],
     "targetId": "clipping_15",
     "type": "archive"
   },
   "clipping_14": {
     "keywords": [
-      "1967",
-      "arthur_dawson",
-      "亚瑟·道森",
-      "Arthur Dawson"
+      "year_1967",
+      "arthur_dawson"
     ],
     "targetId": "clipping_14",
     "type": "archive"
   },
   "clipping_16": {
     "keywords": [
-      "1974",
-      "morning",
-      "莫宁",
-      "Morning"
+      "year_1974",
+      "morning"
     ],
     "targetId": "clipping_16",
     "type": "archive"
   },
   "clipping_05": {
     "keywords": [
-      "1971",
-      "little_derek_wayne",
-      "\\u5c0f\\u5fb7\\u91cc\\u514b\\u00b7\\u7ef4\\u6069",
-      "Derek Wayne Jr.",
-      "nevada",
-      "\\u5185\\u534e\\u8fbe",
-      "\\u5185\\u534e\\u8fbe\\u5dde"
+      "year_1971",
+      "little_derek_wayne"
     ],
     "targetId": "clipping_05",
     "type": "archive"
   },
   "clipping_07": {
     "keywords": [
-      "1990",
-      "aw_wilmo",
-      "小A.W.威尔莫",
-      "小 A.W. 威尔莫",
-      "小A.W. 威尔莫",
-      "小 A.W.威尔莫",
-      "A.W. Wilmer Jr."
+      "year_1990",
+      "aw_wilmo"
     ],
     "targetId": "clipping_07",
     "type": "archive"
   },
   "clipping_06": {
     "keywords": [
-      "1972",
-      "martha_diaz",
-      "\\u739b\\u838e\\u00b7\\u8fea\\u4e9a\\u5179",
-      "Martha Diaz",
-      "roanoke",
-      "\\u7f57\\u963f\\u8bfa\\u514b"
+      "year_1972",
+      "martha_diaz"
     ],
     "targetId": "clipping_06",
     "type": "archive"
   },
   "clipping_10": {
     "keywords": [
-      "1973",
-      "boris_smirnov",
-      "鲍里斯·斯米尔诺夫",
-      "boris smirnov"
+      "year_1973",
+      "boris_smirnov"
     ],
     "targetId": "clipping_10",
     "type": "archive"
   },
   "clipping_09": {
     "keywords": [
-      "1973",
-      "juvell_chambers",
-      "朱维尔·钱伯斯",
-      "Jewel Chambers"
+      "year_1973",
+      "juvell_chambers"
     ],
     "targetId": "clipping_09",
     "type": "archive"
   },
   "clipping_08": {
     "keywords": [
-      "1973",
-      "julie",
-      "朱莉",
-      "Julie Walsh"
+      "year_1973",
+      "julie"
     ],
     "targetId": "clipping_08",
     "type": "archive"
   },
   "clipping_11": {
     "keywords": [
-      "1976",
-      "jc_penney",
-      "\\u6770\\u897f\\u00b7\\u6f58\\u5c3c",
-      "Jesse Penney"
+      "year_1976",
+      "jc_penney"
     ],
     "targetId": "clipping_11",
     "type": "archive"
   },
   "clipping_13": {
     "keywords": [
-      "1976",
-      "peter_henderson",
-      "\\u76ae\\u7279\\u00b7\\u4ea8\\u5fb7\\u68ee",
-      "\\u5f7c\\u7279\\u00b7\\u4ea8\\u5fb7\\u68ee",
-      "Peter Henderson"
+      "year_1976",
+      "peter_henderson"
     ],
     "targetId": "clipping_13",
     "type": "archive"
   },
   "clipping_12": {
     "keywords": [
-      "1965",
-      "john_morrissey",
-      "\\u7ea6\\u7ff0\\u00b7\\u83ab\\u91cc\\u897f",
-      "John Morrissey",
-      "\\u7ea6\\u7ff0\\u83ab\\u91cc\\u897f"
+      "year_1965",
+      "john_morrissey"
     ],
     "targetId": "clipping_12",
     "type": "archive"
