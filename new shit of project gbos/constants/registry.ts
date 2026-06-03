@@ -993,7 +993,7 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "confession_23": {
     "keywords": [
-      "pow_camp",
+      "santa_barbara",
       "closing_the_net"
     ],
     "targetId": "confession_23",

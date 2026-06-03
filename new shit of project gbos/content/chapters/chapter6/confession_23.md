@@ -2,7 +2,7 @@
 id: confession_23
 title: "供述 No.23"
 trigger:
-  - pow_camp
+  - santa_barbara
   - closing_the_net
 revealed:
   - naked_root
