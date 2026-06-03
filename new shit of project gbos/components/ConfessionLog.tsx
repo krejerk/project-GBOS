@@ -502,10 +502,6 @@ export const ConfessionLog: React.FC<ConfessionLogProps> = ({ unlockedNodeIds, o
                                 <div>
                                     <h3 className="text-[#d89853] font-bold text-lg tracking-wide group-hover:text-white transition-colors">{record.title}</h3>
                                     <div className="flex gap-3 text-[10px] text-[#c85a3f]/80 mt-1 font-mono">
-                                        <span>ID: {record.displayId}</span>
-                                        <span>|</span>
-                                        <span>DATE: {record.eventTime}</span>
-                                        <span>|</span>
                                         <span>LOC: {record.location}</span>
                                     </div>
                                 </div>
