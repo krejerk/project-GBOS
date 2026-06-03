@@ -293,6 +293,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const [showVehiclePhotos, setShowVehiclePhotos] = useState(false);
 
     // Track Node 4 dialogue completion for map update timing
+    const [hasViewedNode1Dialogue, setHasViewedNode1Dialogue] = useState(false);
     const [hasViewedNode2Dialogue, setHasViewedNode2Dialogue] = useState(false);
     const [hasViewedNode3Dialogue, setHasViewedNode3Dialogue] = useState(false);
     const [hasViewedNode4Dialogue, setHasViewedNode4Dialogue] = useState(false);
@@ -340,7 +341,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
         const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
 
-        return hasAllConfessions && hasAllArchives && currentStoryNode === 4;
+        return hasAllConfessions && hasAllArchives && (currentStoryNode === 4 || (currentStoryNode === 5 && !hasViewedNode5Dialogue));
     };
 
     const checkNode4Completion = () => {
@@ -350,7 +351,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
         const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
 
-        return hasAllConfessions && hasAllArchives && currentStoryNode === 3;
+        return hasAllConfessions && hasAllArchives && (currentStoryNode === 3 || (currentStoryNode === 4 && !hasViewedNode4Dialogue));
     };
 
     const checkNode3Completion = () => {
@@ -360,7 +361,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
         const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
 
-        return hasAllConfessions && hasAllArchives && currentStoryNode === 2;
+        return hasAllConfessions && hasAllArchives && (currentStoryNode === 2 || (currentStoryNode === 3 && !hasViewedNode3Dialogue));
     };
 
     const checkNode2Completion = () => {
@@ -370,7 +371,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
         const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
 
-        return hasAllConfessions && hasAllArchives && currentStoryNode === 1;
+        return hasAllConfessions && hasAllArchives && (currentStoryNode === 1 || (currentStoryNode === 2 && !hasViewedNode2Dialogue));
     };
 
     const checkNode1Completion = () => {
@@ -380,7 +381,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
         const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
 
-        return hasAllConfessions && hasAllArchives && currentStoryNode === 0;
+        return hasAllConfessions && hasAllArchives && (currentStoryNode === 0 || (currentStoryNode === 1 && !hasViewedNode1Dialogue));
     };
 
     // Derived Node State (Calculated on-the-fly to avoid unmount state loss)
@@ -429,6 +430,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             // Mark dialogue as viewed to prevent re-triggering
             if (detectedNodeId === 1) {
                 if (onCollectClue) onCollectClue('crime_route_map', '罗伯特·卡彭：犯罪路线');
+                setHasViewedNode1Dialogue(true);
                 setNewlyAddedItems(new Set(['crime_route_map']));
                 setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             } else if (detectedNodeId === 2) {
