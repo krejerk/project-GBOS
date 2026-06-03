@@ -8,6 +8,7 @@ export interface Attachment {
   description?: string;
   chapter?: number;
   parentId?: string;
+  unlockSource?: string;
 }
 
 export interface KeywordMetadata {

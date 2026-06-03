@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { GameState } from '../types';
 import { Anchor, ChevronDown, Lock, Unlock } from 'lucide-react';
 import { KEYWORD_REGISTRY, ALL_MEMORY_NODES } from '../constants/registry';
+import { ATTACHMENT_REGISTRY } from '../constants/attachments';
 
 interface CheckpointManagerProps {
     gameState: GameState;
@@ -36,7 +37,7 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedDossierIds: ['julip', 'project'],
                 collectedYears: [],
                 unlockedNodeIds: ALL_MEMORY_NODES.map(n => n.id),
-                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13', 'clipping_14', 'clipping_15', 'clipping_16', 'clipping_17', 'clipping_18', 'clipping_19', 'clipping_20', 'clipping_21', 'clipping_22', 'clipping_23'],
+                unlockedArchiveIds: [],
                 currentStoryNode: 9,
                 systemStability: 84,
                 activeNodeId: null
@@ -54,7 +55,7 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedClues: [],
                 collectedDossierIds: ['julip', 'project'],
                 collectedYears: [],
-                unlockedNodeIds: ['capone'],
+                unlockedNodeIds: [],
                 unlockedArchiveIds: [],
                 currentStoryNode: 0,
                 systemStability: 84,
@@ -73,9 +74,8 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedYears: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1990', 'year_1972'],
                 collectedClues: [],
                 collectedDossierIds: ['personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon'],
-                collectedAttachments: ['wilmer_ribbon'],
-                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7'],
-                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07'],
+                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3'],
+                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04'],
                 currentStoryNode: 1,
                 systemStability: 84,
                 activeNodeId: null
@@ -93,8 +93,8 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedYears: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1972', 'year_1973', 'year_1975'],
                 collectedClues: [],
                 collectedDossierIds: ['personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon'],
-                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11'],
-                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10'],
+                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7'],
+                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07'],
                 currentStoryNode: 2,
                 systemStability: 84,
                 activeNodeId: null
@@ -112,9 +112,8 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedYears: ['year_1971', 'year_1972', 'year_1973', 'year_1976', 'year_1965'],
                 collectedClues: [],
                 collectedDossierIds: ['personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon'],
-                collectedAttachments: ['wilmer_ribbon', 'iron_horse_louisville'],
-                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15'],
-                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13'],
+                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11'],
+                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10'],
                 currentStoryNode: 3,
                 systemStability: 84,
                 activeNodeId: null
@@ -132,9 +131,8 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedYears: ['year_1971', 'year_1967', 'year_1974', 'year_1977'],
                 collectedClues: [],
                 collectedDossierIds: ['personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon'],
-                collectedAttachments: ['wilmer_ribbon', 'richie_id_card', 'church_visual_residue', 'iron_horse_beacon', 'record_of_accounts'],
-                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15', 'confession_16', 'confession_17', 'confession_18', 'confession_19'],
-                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13', 'clipping_14', 'clipping_15', 'clipping_16'],
+                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15'],
+                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13'],
                 currentStoryNode: 4,
                 systemStability: 84,
                 activeNodeId: null
@@ -152,8 +150,7 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedYears: ['year_1971', 'year_1967', 'year_1974', 'year_1977'],
                 collectedClues: [],
                 collectedDossierIds: ['personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon'],
-                collectedAttachments: ['wilmer_ribbon', 'richie_id_card', 'church_visual_residue'],
-                unlockedNodeIds: Array.from({ length: 24 }, (_, i) => `confession_${i + 1}`),
+                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15', 'confession_16', 'confession_17', 'confession_18', 'confession_19'],
                 unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13', 'clipping_14', 'clipping_15', 'clipping_16'],
                 currentStoryNode: 5,
                 systemStability: 84
@@ -171,8 +168,8 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 unlockedPeople: ['nibi', 'lundgren', 'dr_reggie', 'roger_beebe', 'morning', 'alexei', 'morandi'],
                 collectedClues: ['amalekite_protocol'],
                 collectedDossierIds: ['personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon'],
-                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15', 'confession_16', 'confession_17', 'confession_18', 'confession_19', 'confession_20', 'confession_21'],
-                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13', 'clipping_14', 'clipping_15', 'clipping_16', 'clipping_17', 'clipping_18', 'clipping_19'],
+                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15', 'confession_16', 'confession_17', 'confession_18', 'confession_19'],
+                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13', 'clipping_14', 'clipping_15', 'clipping_16'],
                 currentStoryNode: 6,
                 hasSwitchedPersona: true,
                 systemStability: 84,
@@ -193,8 +190,7 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedYears: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1976', 'year_1975', 'year_1983', 'year_1974', 'year_1977', 'year_1986'],
                 collectedClues: ['humiliation_ritual'], // Carries over from previous chapters for consumption in Node 30
                 collectedDossierIds: ['personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon', 'forest_map'],
-                collectedAttachments: ['wilmer_ribbon', 'richie_id_card', 'church_visual_residue', 'iron_horse_beacon', 'record_of_accounts', 'laguna_beach_visual_residue', 'felipe_maldonado_poster'],
-                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15', 'confession_16', 'confession_17', 'confession_18', 'confession_19', 'confession_20', 'confession_21', 'confession_22', 'confession_23', 'confession_24', 'confession_25', 'confession_26', 'confession_27', 'confession_28', 'confession_29'],
+                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15', 'confession_16', 'confession_17', 'confession_18', 'confession_19', 'confession_20', 'confession_21'],
                 unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13', 'clipping_14', 'clipping_15', 'clipping_16', 'clipping_17', 'clipping_18', 'clipping_19'],
                 currentStoryNode: 7,
                 hasSwitchedPersona: true,
@@ -219,9 +215,8 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 collectedYears: ['year_1971', 'year_1968', 'year_1967', 'year_1985', 'year_1976', 'year_1975', 'year_1983', 'year_1974', 'year_1977', 'year_1986', 'year_1999'],
                 collectedClues: [],
                 collectedDossierIds: ['personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon', 'forest_map'],
-                collectedAttachments: ['wilmer_ribbon', 'richie_id_card', 'church_visual_residue', 'iron_horse_beacon', 'record_of_accounts', 'laguna_beach_visual_residue', 'felipe_maldonado_poster', 'john_doe_autopsy'],
-                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15', 'confession_16', 'confession_17', 'confession_18', 'confession_19', 'confession_20', 'confession_21', 'confession_22', 'confession_23', 'confession_24', 'confession_25', 'confession_26', 'confession_27', 'confession_28', 'confession_29', 'confession_30', 'confession_31', 'confession_32', 'confession_33'],
-                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13', 'clipping_14', 'clipping_15', 'clipping_16', 'clipping_17', 'clipping_18', 'clipping_19', 'clipping_20', 'clipping_21', 'clipping_22', 'clipping_23'],
+                unlockedNodeIds: ['confession_1', 'confession_2', 'confession_3', 'confession_4', 'confession_5', 'confession_6', 'confession_7', 'confession_8', 'confession_9', 'confession_10', 'confession_11', 'confession_12', 'confession_13', 'confession_14', 'confession_15', 'confession_16', 'confession_17', 'confession_18', 'confession_19', 'confession_20', 'confession_21', 'confession_22', 'confession_23', 'confession_24', 'confession_25', 'confession_26', 'confession_27', 'confession_28', 'confession_29'],
+                unlockedArchiveIds: ['clipping_01', 'clipping_02', 'clipping_03', 'clipping_04', 'clipping_05', 'clipping_06', 'clipping_07', 'clipping_08', 'clipping_09', 'clipping_10', 'clipping_11', 'clipping_12', 'clipping_13', 'clipping_14', 'clipping_15', 'clipping_16', 'clipping_17', 'clipping_18', 'clipping_19', 'clipping_20', 'clipping_21', 'clipping_22'],
                 currentStoryNode: 8,
                 hasSwitchedPersona: true,
                 systemStability: 84,
@@ -305,7 +300,12 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                                         key={cp.id}
                                         disabled={!isUnlocked}
                                         onClick={() => {
-                                            onSetState(cp.state);
+                                            const stateToApply = { ...cp.state };
+                                            const allUnlocked = [...(stateToApply.unlockedNodeIds || []), ...(stateToApply.unlockedArchiveIds || [])];
+                                            stateToApply.collectedAttachments = Object.values(ATTACHMENT_REGISTRY)
+                                                .filter(a => a.unlockSource && allUnlocked.includes(a.unlockSource))
+                                                .map(a => a.id);
+                                            onSetState(stateToApply);
                                             setIsOpen(false);
                                         }}
                                         style={{ 
