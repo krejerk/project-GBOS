@@ -333,17 +333,14 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         return hasSwitchedPersona && (currentStoryNode === 5 || (currentStoryNode === 6 && !hasViewedNode6Dialogue));
     };
 
-    // Check for node completion - prioritize higher nodes first
     const checkNode5Completion = () => {
         const requiredConfessions = ['confession_16', 'confession_17', 'confession_18', 'confession_19'];
         const requiredArchives = ['clipping_14', 'clipping_15', 'clipping_16']; // Archives 14-16
-        const requiredAttachment = 'church_visual_residue'; // Church image from Easter egg
 
         const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
         const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
-        const hasChurchImage = collectedAttachments.includes(requiredAttachment);
 
-        return hasAllConfessions && hasAllArchives && hasChurchImage && currentStoryNode === 4;
+        return hasAllConfessions && hasAllArchives && currentStoryNode === 4;
     };
 
     const checkNode4Completion = () => {
@@ -369,13 +366,11 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const checkNode2Completion = () => {
         const requiredConfessions = ['confession_4', 'confession_5', 'confession_6', 'confession_7'];
         const requiredArchives = ['clipping_05', 'clipping_06', 'clipping_07']; // Clipping 5, 6, 7
-        const requiredAttachment = 'wilmer_ribbon';
 
         const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
         const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
-        const hasAttachment = collectedAttachments.includes(requiredAttachment);
 
-        return hasAllConfessions && hasAllArchives && hasAttachment && currentStoryNode === 1;
+        return hasAllConfessions && hasAllArchives && currentStoryNode === 1;
     };
 
     const checkNode1Completion = () => {
