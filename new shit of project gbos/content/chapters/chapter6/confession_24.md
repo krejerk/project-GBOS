@@ -1,8 +1,8 @@
 ---
 id: confession_24
 title: "供述 No.24"
-trigger:  
-- laguna_beach
+trigger:
+  - laguna_beach
   - naked_root
 
 revealed:

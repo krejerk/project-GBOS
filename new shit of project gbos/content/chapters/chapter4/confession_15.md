@@ -2,6 +2,8 @@
 id: confession_15
 title: "供述 No.15"
 trigger:
+  - davenport
+  - new_plan
 
 revealed:
   - year_1976

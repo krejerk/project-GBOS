@@ -2,6 +2,8 @@
 id: confession_16
 title: "供述 No.16"
 trigger:
+  - texarkana
+  - dismemberment_case
 revealed:
   - arthur_dawson
   - year_1967

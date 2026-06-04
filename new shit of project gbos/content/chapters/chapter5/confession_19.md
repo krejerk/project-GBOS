@@ -2,8 +2,8 @@
 id: confession_19
 title: "供述 No.19"
 trigger:
-埃尔帕索
-牧师
+  - el_paso
+  - priest
 revealed:
   - 
 position: { x: window.innerWidth * 0.65, y: window.innerHeight * 0.55 }

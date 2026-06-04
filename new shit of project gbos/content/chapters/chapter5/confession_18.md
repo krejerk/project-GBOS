@@ -2,8 +2,8 @@
 id: confession_18
 title: "供述 No.18"
 trigger:
-丹佛市郊
-警员遇害案
+  - denver_suburb
+  - police_killing
 
 revealed:
   - 

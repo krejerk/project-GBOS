@@ -3,7 +3,7 @@ id: confession_36B2
 title: "供述 No.36B2"
 trigger:
   - port_jefferson
-  - project_oyster_soup
+  - project
 ---
 
 # SURFACE
