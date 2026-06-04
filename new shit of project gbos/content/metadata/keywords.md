@@ -78,15 +78,15 @@
 | year_1974 | year | 1974 | 5 | 莫宁锁定时间轴的关键年份。 | Dialogue |  |
 | year_1977 | year | 1977 | 5 |  |  |  |
 | achilles_heel | case | 软肋 | 6 |  |  |  |
-| albuquerque | location | 阿尔伯克基 | 6 |  |  |  |
+| albuquerque | location | 阿尔伯克基 | 5 |  |  |  |
 | alexei | person | 阿列克谢 | 6 |  |  |  |
 | bonny_and_clyde | case | 邦妮和克莱德 | 6 |  |  |  |
-| chemist_lover | case | 化学家情人 | 6 |  |  |  |
+| chemist_lover | case | 化学家情人 | 5 |  |  |  |
 | closing_the_net | case | 收网 | 6 |  |  |  |
 | gore_and_levy | person | 戈尔和列维探员 | 6 | FBI探员，于1976年在拉古那海滩监视房车时被卡彭杀害。 | Confession |  |
-| laguna_beach | location | 拉古那海滩 | 6 |  |  |  |
+| laguna_beach | location | 拉古那海滩 | 5 |  |  |  |
 | morandi | person | 莫兰迪 | 6 |  |  |  |
-| naked_root | case | 裸根 | 6 |  |  |  |
+| naked_root | case | 裸根 | 5 |  |  |  |
 | portland | location | 波特兰 | 6 |  |  |  |
 | pow_camp | location | 战俘营 | 6 |  |  |  |
 | redwood_forest | location | 红杉林 | 6 |  |  |  |
