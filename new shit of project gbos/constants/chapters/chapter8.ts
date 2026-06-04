@@ -9,11 +9,7 @@ export const CHAPTER8_KEYWORDS: Record<string, KeywordMetadata> = {
   'year_1983': { id: 'year_1983', chapter: 7, type: 'year', displayName: "1983", isPersistent: true },
   'capone': { id: 'capone', chapter: 7, type: 'person', displayName: "罗伯特·卡彭", isPersistent: true, description: "潜伏阶段使用的身份代号，KLUB计划的重点关注对象。", source: "Confession" },
   'frank_rollins': { id: 'frank_rollins', chapter: 7, type: 'person', displayName: "弗兰克·罗林斯", isPersistent: true },
-  'year_1967': { id: 'year_1967', chapter: 1, type: 'year', displayName: "1967", isPersistent: true },
-  'mandan': { id: 'mandan', chapter: 8, type: 'location', displayName: "曼丹市", isPersistent: true },
-  'assault_on_police': { id: 'assault_on_police', chapter: 8, type: 'case', displayName: "袭警案", isPersistent: true, description: "1967年弗兰克·罗林斯被捕的案件。", source: "Archive" },
-  'precinct_4': { id: 'precinct_4', chapter: 8, type: 'location', displayName: "第4警务站", isPersistent: true, description: "图森市郊的第4警务站，1977年枪击案发生地。", source: "Archive" },
-  'tucson_shooting': { id: 'tucson_shooting', chapter: 8, type: 'case', displayName: "图森枪击案", isPersistent: true, description: "1977年发生在图森市警务站外围的战区级交火事件。", source: "Archive" }
+  'year_1967': { id: 'year_1967', chapter: 1, type: 'year', displayName: "1967", isPersistent: true }
 };
 
 export const CHAPTER8_NODES: MemoryNode[] = [

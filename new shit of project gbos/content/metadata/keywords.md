@@ -78,21 +78,21 @@
 | year_1974 | year | 1974 | 5 | 莫宁锁定时间轴的关键年份。 | Dialogue |  |
 | year_1977 | year | 1977 | 5 |  |  |  |
 | achilles_heel | case | 软肋 | 6 |  |  |  |
-| albuquerque | location | 阿尔伯克基 | 7 |  |  |  |
+| albuquerque | location | 阿尔伯克基 | 6 |  |  |  |
 | alexei | person | 阿列克谢 | 6 |  |  |  |
-| bonny_and_clyde | case | 邦妮和克莱德 | 7 |  |  |  |
-| chemist_lover | case | 化学家情人 | 7 |  |  |  |
+| bonny_and_clyde | case | 邦妮和克莱德 | 6 |  |  |  |
+| chemist_lover | case | 化学家情人 | 6 |  |  |  |
 | closing_the_net | case | 收网 | 6 |  |  |  |
 | gore_and_levy | person | 戈尔和列维探员 | 6 | FBI探员，于1976年在拉古那海滩监视房车时被卡彭杀害。 | Confession |  |
-| laguna_beach | location | 拉古那海滩 | 7 |  |  |  |
+| laguna_beach | location | 拉古那海滩 | 6 |  |  |  |
 | morandi | person | 莫兰迪 | 6 |  |  |  |
-| naked_root | case | 裸根 | 7 |  |  |  |
+| naked_root | case | 裸根 | 6 |  |  |  |
 | portland | location | 波特兰 | 6 |  |  |  |
 | pow_camp | location | 战俘营 | 6 |  |  |  |
 | redwood_forest | location | 红杉林 | 6 |  |  |  |
 | santa_barbara | location | 圣芭芭拉 | 6 |  |  |  |
-| santa_fe | location | 圣菲 | 7 |  |  |  |
-| amalekite_protocol | case | 亚玛力人协议 | 7 |  |  |  |
+| santa_fe | location | 圣菲 | 6 |  |  |  |
+| amalekite_protocol | case | 亚玛力人协议 | 6 |  |  |  |
 | assault_on_police | case | 袭警案 | 7 | 发生在汉弗莱县的严重暴力事件。 | Archive |  |
 | blind_zone_camp | location | 盲区营地 | 7 |  |  |  |
 | capone | person | 罗伯特·卡彭 | 7 | 潜伏阶段使用的身份代号，KLUB计划的重点关注对象。 | Confession |  |

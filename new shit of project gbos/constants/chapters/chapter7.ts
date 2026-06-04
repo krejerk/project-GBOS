@@ -2,13 +2,6 @@ import { MemoryLayer, MemoryNode } from '../../types';
 import { KeywordMetadata } from '../types';
 
 export const CHAPTER7_KEYWORDS: Record<string, KeywordMetadata> = {
-  'albuquerque': { id: 'albuquerque', chapter: 7, type: 'location', displayName: "阿尔伯克基", isPersistent: true },
-  'bonny_and_clyde': { id: 'bonny_and_clyde', chapter: 7, type: 'case', displayName: "邦妮和克莱德", isPersistent: true },
-  'chemist_lover': { id: 'chemist_lover', chapter: 7, type: 'case', displayName: "化学家情人", isPersistent: true },
-  'laguna_beach': { id: 'laguna_beach', chapter: 7, type: 'location', displayName: "拉古那海滩", isPersistent: true },
-  'naked_root': { id: 'naked_root', chapter: 7, type: 'case', displayName: "裸根", isPersistent: true },
-  'santa_fe': { id: 'santa_fe', chapter: 7, type: 'location', displayName: "圣菲", isPersistent: true },
-  'amalekite_protocol': { id: 'amalekite_protocol', chapter: 7, type: 'case', displayName: "亚玛力人协议", isPersistent: true },
   'assault_on_police': { id: 'assault_on_police', chapter: 7, type: 'case', displayName: "袭警案", isPersistent: true, description: "发生在汉弗莱县的严重暴力事件。", source: "Archive" },
   'blind_zone_camp': { id: 'blind_zone_camp', chapter: 7, type: 'location', displayName: "盲区营地", isPersistent: true },
   'capone': { id: 'capone', chapter: 7, type: 'person', displayName: "罗伯特·卡彭", isPersistent: true, description: "潜伏阶段使用的身份代号，KLUB计划的重点关注对象。", source: "Confession" },

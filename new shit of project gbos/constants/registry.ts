@@ -60,14 +60,6 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "personnel_tree",
     "type": "case"
   },
-  "范霍恩边境检查站": {
-    "id": "van_horn_checkpoint",
-    "type": "location"
-  },
-  "拦截": {
-    "id": "intercept",
-    "type": "case"
-  },
   "亚裔女性": {
     "id": "asian_woman",
     "type": "person"
@@ -329,7 +321,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "type": "year"
   },
   "教堂": {
-    "id": "priest",
+    "id": "church",
     "type": "location"
   },
   "丹佛市郊": {
@@ -512,30 +504,6 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "year_1983",
     "type": "year"
   },
-  "1981": {
-    "id": "year_1981",
-    "type": "year"
-  },
-  "克莱门特·斯维尔松": {
-    "id": "clement_svirson",
-    "type": "person"
-  },
-  "艾利克斯·门格尔": {
-    "id": "alexander_mengel",
-    "type": "person"
-  },
-  "杰弗逊港": {
-    "id": "port_jefferson",
-    "type": "location"
-  },
-  "jane_doe": {
-    "id": "jane_doe_1977",
-    "type": "dossier"
-  },
-  "圣泉镇": {
-    "id": "holy_springs",
-    "type": "location"
-  },
   "朱莉": {
     "id": "julie",
     "type": "person"
@@ -548,15 +516,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "holy_springs",
     "type": "location"
   },
-  "曼丹市": {
-    "id": "mandan",
-    "type": "location"
-  },
   "联邦最高通缉令案卷": {
-    "id": "MTXXXXXXXX-93",
-    "type": "case"
-  },
-  "MTXXXXXXXX-93": {
     "id": "MTXXXXXXXX-93",
     "type": "case"
   },
@@ -564,306 +524,9 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "QTC-VA-0994",
     "type": "location"
   },
-  "QTC-VA-0994": {
-    "id": "QTC-VA-0994",
-    "type": "location"
-  },
   "照片": {
     "id": "photo",
     "type": "case"
-  },
-  "阿巴拉契亚山区": {
-    "id": "appalachia",
-    "type": "location"
-  },
-  "诱饵": {
-    "id": "bait",
-    "type": "case"
-  },
-  "干涸石涧": {
-    "id": "dry_gully",
-    "type": "location"
-  },
-  "凤凰城": {
-    "id": "phoenix",
-    "type": "location"
-  },
-  "会面": {
-    "id": "meeting",
-    "type": "case"
-  },
-  "无名尸体": {
-    "id": "unnamed_female_body",
-    "type": "case"
-  },
-  "无名女尸": {
-    "id": "unnamed_female_body",
-    "type": "case"
-  },
-  "范霍恩边境检查站": {
-    "id": "van_horn_checkpoint",
-    "type": "location"
-  },
-  "拦截": {
-    "id": "intercept",
-    "type": "case"
-  }
-,
-  "william_dawson": {
-    "id": "william_dawson",
-    "type": "person"
-  },
-  "William Dawson": {
-    "id": "william_dawson",
-    "type": "person"
-  },
-  "capone": {
-    "id": "capone",
-    "type": "person"
-  },
-  "Robert Capone": {
-    "id": "capone",
-    "type": "person"
-  },
-  "frank_rollins": {
-    "id": "frank_rollins",
-    "type": "person"
-  },
-  "Frank Rollins": {
-    "id": "frank_rollins",
-    "type": "person"
-  },
-  "nibi": {
-    "id": "nibi",
-    "type": "person"
-  },
-  "Apollo Nibi": {
-    "id": "nibi",
-    "type": "person"
-  },
-  "roger_beebe": {
-    "id": "roger_beebe",
-    "type": "person"
-  },
-  "Roger Beebe": {
-    "id": "roger_beebe",
-    "type": "person"
-  },
-  "Beebe": {
-    "id": "roger_beebe",
-    "type": "person"
-  },
-  "dr_reggie": {
-    "id": "dr_reggie",
-    "type": "person"
-  },
-  "Reggie": {
-    "id": "dr_reggie",
-    "type": "person"
-  },
-  "lundgren": {
-    "id": "lundgren",
-    "type": "person"
-  },
-  "Lundgren": {
-    "id": "lundgren",
-    "type": "person"
-  },
-  "felipe_maldonado": {
-    "id": "felipe_maldonado",
-    "type": "person"
-  },
-  "Felipe Maldonado": {
-    "id": "felipe_maldonado",
-    "type": "person"
-  },
-  "alexander_mengel": {
-    "id": "alexander_mengel",
-    "type": "person"
-  },
-  "Alexander Mengel": {
-    "id": "alexander_mengel",
-    "type": "person"
-  },
-  "clement_svirson": {
-    "id": "clement_svirson",
-    "type": "person"
-  },
-  "Clement Svirson": {
-    "id": "clement_svirson",
-    "type": "person"
-  },
-  "cynthia_miller": {
-    "id": "cynthia_miller",
-    "type": "person"
-  },
-  "Cynthia Miller": {
-    "id": "cynthia_miller",
-    "type": "person"
-  },
-  "richie_dreyfuss": {
-    "id": "richie_dreyfuss",
-    "type": "person"
-  },
-  "里奇": {
-    "id": "richie_dreyfuss",
-    "type": "person"
-  },
-  "Richie": {
-    "id": "richie_dreyfuss",
-    "type": "person"
-  },
-  "arthur_dawson": {
-    "id": "arthur_dawson",
-    "type": "person"
-  },
-  "亚瑟·道森": {
-    "id": "arthur_dawson",
-    "type": "person"
-  },
-  "Arthur Dawson": {
-    "id": "arthur_dawson",
-    "type": "person"
-  },
-  "morning": {
-    "id": "morning",
-    "type": "person"
-  },
-  "Morning": {
-    "id": "morning",
-    "type": "person"
-  },
-  "little_derek_wayne": {
-    "id": "little_derek_wayne",
-    "type": "person"
-  },
-  "\u5c0f\u5fb7\u91cc\u514b\u00b7\u7ef4\u6069": {
-    "id": "little_derek_wayne",
-    "type": "person"
-  },
-  "Derek Wayne Jr.": {
-    "id": "little_derek_wayne",
-    "type": "person"
-  },
-  "nevada": {
-    "id": "little_derek_wayne",
-    "type": "person"
-  },
-  "\u5185\u534e\u8fbe": {
-    "id": "little_derek_wayne",
-    "type": "person"
-  },
-  "\u5185\u534e\u8fbe\u5dde": {
-    "id": "little_derek_wayne",
-    "type": "person"
-  },
-  "aw_wilmo": {
-    "id": "aw_wilmo",
-    "type": "person"
-  },
-  "小A.W.威尔莫": {
-    "id": "aw_wilmo",
-    "type": "person"
-  },
-  "小 A.W. 威尔莫": {
-    "id": "aw_wilmo",
-    "type": "person"
-  },
-  "小A.W. 威尔莫": {
-    "id": "aw_wilmo",
-    "type": "person"
-  },
-  "A.W. Wilmer Jr.": {
-    "id": "aw_wilmo",
-    "type": "person"
-  },
-  "martha_diaz": {
-    "id": "martha_diaz",
-    "type": "person"
-  },
-  "\u739b\u838e\u00b7\u8fea\u4e9a\u5179": {
-    "id": "martha_diaz",
-    "type": "person"
-  },
-  "Martha Diaz": {
-    "id": "martha_diaz",
-    "type": "person"
-  },
-  "roanoke": {
-    "id": "martha_diaz",
-    "type": "person"
-  },
-  "\u7f57\u963f\u8bfa\u514b": {
-    "id": "martha_diaz",
-    "type": "person"
-  },
-  "boris_smirnov": {
-    "id": "boris_smirnov",
-    "type": "person"
-  },
-  "boris smirnov": {
-    "id": "boris_smirnov",
-    "type": "person"
-  },
-  "juvell_chambers": {
-    "id": "juvell_chambers",
-    "type": "person"
-  },
-  "Jewel Chambers": {
-    "id": "juvell_chambers",
-    "type": "person"
-  },
-  "julie": {
-    "id": "julie",
-    "type": "person"
-  },
-  "Julie Walsh": {
-    "id": "julie",
-    "type": "person"
-  },
-  "jc_penney": {
-    "id": "jc_penney",
-    "type": "person"
-  },
-  "\u6770\u897f\u00b7\u6f58\u5c3c": {
-    "id": "jc_penney",
-    "type": "person"
-  },
-  "Jesse Penney": {
-    "id": "jc_penney",
-    "type": "person"
-  },
-  "peter_henderson": {
-    "id": "peter_henderson",
-    "type": "person"
-  },
-  "\u76ae\u7279\u00b7\u4ea8\u5fb7\u68ee": {
-    "id": "peter_henderson",
-    "type": "person"
-  },
-  "\u5f7c\u7279\u00b7\u4ea8\u5fb7\u68ee": {
-    "id": "peter_henderson",
-    "type": "person"
-  },
-  "Peter Henderson": {
-    "id": "peter_henderson",
-    "type": "person"
-  },
-  "john_morrissey": {
-    "id": "john_morrissey",
-    "type": "person"
-  },
-  "\u7ea6\u7ff0\u00b7\u83ab\u91cc\u897f": {
-    "id": "john_morrissey",
-    "type": "person"
-  },
-  "John Morrissey": {
-    "id": "john_morrissey",
-    "type": "person"
-  },
-  "\u7ea6\u7ff0\u83ab\u91cc\u897f": {
-    "id": "john_morrissey",
-    "type": "person"
   }
 };
 
@@ -975,6 +638,14 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
     "targetId": "confession_12",
     "type": "node"
   },
+  "confession_15": {
+    "keywords": [
+      "davenport",
+      "new_plan"
+    ],
+    "targetId": "confession_15",
+    "type": "node"
+  },
   "confession_14": {
     "keywords": [
       "st_louis",
@@ -983,12 +654,36 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
     "targetId": "confession_14",
     "type": "node"
   },
+  "confession_19": {
+    "keywords": [
+      "el_paso",
+      "priest"
+    ],
+    "targetId": "confession_19",
+    "type": "node"
+  },
+  "confession_18": {
+    "keywords": [
+      "denver_suburb",
+      "police_killing"
+    ],
+    "targetId": "confession_18",
+    "type": "node"
+  },
   "confession_17": {
     "keywords": [
       "dirty_frank",
       "recruitment"
     ],
     "targetId": "confession_17",
+    "type": "node"
+  },
+  "confession_16": {
+    "keywords": [
+      "texarkana",
+      "dismemberment_case"
+    ],
+    "targetId": "confession_16",
     "type": "node"
   },
   "confession_23": {
@@ -1161,55 +856,68 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_23": {
     "keywords": [
-      "year_1983",
-      "capone"
+      "1983",
+      "capone",
+      "罗伯特·卡彭",
+      "Robert Capone"
     ],
     "targetId": "clipping_23",
     "type": "archive"
   },
   "clipping_01": {
     "keywords": [
-      "year_1971",
-      "nibi"
+      "1971",
+      "nibi",
+      "尼比",
+      "Apollo Nibi"
     ],
     "targetId": "clipping_01",
     "type": "archive"
   },
   "clipping_04": {
     "keywords": [
-      "year_1985",
-      "roger_beebe"
+      "1985",
+      "roger_beebe",
+      "罗格·毕比",
+      "Roger Beebe",
+      "Beebe"
     ],
     "targetId": "clipping_04",
     "type": "archive"
   },
   "clipping_03": {
     "keywords": [
-      "year_1967",
-      "dr_reggie"
+      "1967",
+      "dr_reggie",
+      "雷吉博士",
+      "Reggie"
     ],
     "targetId": "clipping_03",
     "type": "archive"
   },
   "clipping_02": {
     "keywords": [
-      "year_1968",
-      "lundgren"
+      "1968",
+      "lundgren",
+      "伦德格兰",
+      "Lundgren"
     ],
     "targetId": "clipping_02",
     "type": "archive"
   },
   "clipping_20": {
     "keywords": [
-      "year_1975",
-      "felipe_maldonado"
+      "1975",
+      "felipe_maldonado",
+      "费利佩·马尔多纳多",
+      "Felipe Maldonado"
     ],
     "targetId": "clipping_20",
     "type": "archive"
   },
   "clipping_17": {
     "keywords": [
-      "year_1976",
+      "1976",
       "莫兰迪"
     ],
     "targetId": "clipping_17",
@@ -1217,7 +925,7 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_19": {
     "keywords": [
-      "year_1976",
+      "1976",
       "戈尔和列维探员"
     ],
     "targetId": "clipping_19",
@@ -1225,7 +933,7 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_18": {
     "keywords": [
-      "year_1976",
+      "1976",
       "阿列克谢"
     ],
     "targetId": "clipping_18",
@@ -1233,156 +941,133 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_15": {
     "keywords": [
-      "year_1977",
-      "richie_dreyfuss"
+      "1977",
+      "richie_dreyfuss",
+      "里奇",
+      "Richie"
     ],
     "targetId": "clipping_15",
     "type": "archive"
   },
   "clipping_14": {
     "keywords": [
-      "year_1967",
-      "arthur_dawson"
+      "1967",
+      "arthur_dawson",
+      "亚瑟·道森",
+      "Arthur Dawson"
     ],
     "targetId": "clipping_14",
     "type": "archive"
   },
   "clipping_16": {
     "keywords": [
-      "year_1974",
-      "morning"
+      "1974",
+      "morning",
+      "莫宁",
+      "Morning"
     ],
     "targetId": "clipping_16",
     "type": "archive"
   },
   "clipping_05": {
     "keywords": [
-      "year_1971",
-      "little_derek_wayne"
+      "1971",
+      "little_derek_wayne",
+      "\\u5c0f\\u5fb7\\u91cc\\u514b\\u00b7\\u7ef4\\u6069",
+      "Derek Wayne Jr.",
+      "nevada",
+      "\\u5185\\u534e\\u8fbe",
+      "\\u5185\\u534e\\u8fbe\\u5dde"
     ],
     "targetId": "clipping_05",
     "type": "archive"
   },
   "clipping_07": {
     "keywords": [
-      "year_1990",
-      "aw_wilmo"
+      "1990",
+      "aw_wilmo",
+      "小A.W.威尔莫",
+      "小 A.W. 威尔莫",
+      "小A.W. 威尔莫",
+      "小 A.W.威尔莫",
+      "A.W. Wilmer Jr."
     ],
     "targetId": "clipping_07",
     "type": "archive"
   },
   "clipping_06": {
     "keywords": [
-      "year_1972",
-      "martha_diaz"
+      "1972",
+      "martha_diaz",
+      "\\u739b\\u838e\\u00b7\\u8fea\\u4e9a\\u5179",
+      "Martha Diaz",
+      "roanoke",
+      "\\u7f57\\u963f\\u8bfa\\u514b"
     ],
     "targetId": "clipping_06",
     "type": "archive"
   },
   "clipping_10": {
     "keywords": [
-      "year_1973",
-      "boris_smirnov"
+      "1973",
+      "boris_smirnov",
+      "鲍里斯·斯米尔诺夫",
+      "boris smirnov"
     ],
     "targetId": "clipping_10",
     "type": "archive"
   },
   "clipping_09": {
     "keywords": [
-      "year_1973",
-      "juvell_chambers"
+      "1973",
+      "juvell_chambers",
+      "朱维尔·钱伯斯",
+      "Jewel Chambers"
     ],
     "targetId": "clipping_09",
     "type": "archive"
   },
   "clipping_08": {
     "keywords": [
-      "year_1973",
-      "julie"
+      "1973",
+      "julie",
+      "朱莉",
+      "Julie Walsh"
     ],
     "targetId": "clipping_08",
     "type": "archive"
   },
   "clipping_11": {
     "keywords": [
-      "year_1976",
-      "jc_penney"
+      "1976",
+      "jc_penney",
+      "\\u6770\\u897f\\u00b7\\u6f58\\u5c3c",
+      "Jesse Penney"
     ],
     "targetId": "clipping_11",
     "type": "archive"
   },
   "clipping_13": {
     "keywords": [
-      "year_1976",
-      "peter_henderson"
+      "1976",
+      "peter_henderson",
+      "\\u76ae\\u7279\\u00b7\\u4ea8\\u5fb7\\u68ee",
+      "\\u5f7c\\u7279\\u00b7\\u4ea8\\u5fb7\\u68ee",
+      "Peter Henderson"
     ],
     "targetId": "clipping_13",
     "type": "archive"
   },
   "clipping_12": {
     "keywords": [
-      "year_1965",
-      "john_morrissey"
+      "1965",
+      "john_morrissey",
+      "\\u7ea6\\u7ff0\\u00b7\\u83ab\\u91cc\\u897f",
+      "John Morrissey",
+      "\\u7ea6\\u7ff0\\u83ab\\u91cc\\u897f"
     ],
     "targetId": "clipping_12",
     "type": "archive"
-  },
-  "clipping_24": {
-    "keywords": [
-      "year_1981",
-      "clement_svirson"
-    ],
-    "targetId": "clipping_24",
-    "type": "archive"
-  },
-  "clipping_25": {
-    "keywords": [
-      "year_1985",
-      "alexander_mengel"
-    ],
-    "targetId": "clipping_25",
-    "type": "archive"
-  },
-  "clipping_26": {
-    "keywords": [
-      "year_1999",
-      "cynthia_miller"
-    ],
-    "targetId": "clipping_26",
-    "type": "archive"
-  }
-,
-  "confession_15": {
-    "keywords": [
-      "davenport",
-      "new_plan"
-    ],
-    "targetId": "confession_15",
-    "type": "node"
-  },
-  "confession_16": {
-    "keywords": [
-      "texarkana",
-      "dismemberment_case"
-    ],
-    "targetId": "confession_16",
-    "type": "node"
-  },
-  "confession_18": {
-    "keywords": [
-      "denver_suburb",
-      "police_killing"
-    ],
-    "targetId": "confession_18",
-    "type": "node"
-  },
-  "confession_19": {
-    "keywords": [
-      "el_paso",
-      "priest"
-    ],
-    "targetId": "confession_19",
-    "type": "node"
   }
 };
 
