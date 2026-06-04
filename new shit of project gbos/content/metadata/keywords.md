@@ -80,7 +80,7 @@
 | achilles_heel | case | 软肋 | 6 |  |  |  |
 | albuquerque | location | 阿尔伯克基 | 5 |  |  |  |
 | alexei | person | 阿列克谢 | 6 |  |  |  |
-| bonny_and_clyde | case | 邦妮和克莱德 | 6 |  |  |  |
+| bonny_and_clyde | case | 邦妮和克莱德 | 5 |  |  |  |
 | chemist_lover | case | 化学家情人 | 5 |  |  |  |
 | closing_the_net | case | 收网 | 6 |  |  |  |
 | gore_and_levy | person | 戈尔和列维探员 | 6 | FBI探员，于1976年在拉古那海滩监视房车时被卡彭杀害。 | Confession |  |
@@ -91,7 +91,7 @@
 | pow_camp | location | 战俘营 | 6 |  |  |  |
 | redwood_forest | location | 红杉林 | 6 |  |  |  |
 | santa_barbara | location | 圣芭芭拉 | 6 |  |  |  |
-| santa_fe | location | 圣菲 | 6 |  |  |  |
+| santa_fe | location | 圣菲 | 5 |  |  |  |
 | amalekite_protocol | case | 亚玛力人协议 | 6 |  |  |  |
 | assault_on_police | case | 袭警案 | 7 | 发生在汉弗莱县的严重暴力事件。 | Archive |  |
 | blind_zone_camp | location | 盲区营地 | 7 |  |  |  |

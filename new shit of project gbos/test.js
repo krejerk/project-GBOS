@@ -1,10 +1,15 @@
-const q = "干涸石涧 无名女尸";
-let queryRemainder = q;
-const sortedAliases = ["无名尸体", "无名女尸", "干涸石涧", "石涧"]; // example
-for (const lowerAlias of sortedAliases) {
-  if (queryRemainder.includes(lowerAlias)) {
-    queryRemainder = queryRemainder.split(lowerAlias).join(' '.repeat(lowerAlias.length));
+const { readFileSync } = require('fs');
+
+const code = readFileSync('constants/registry.ts', 'utf8');
+
+const parseJSON = (regex) => {
+  const match = code.match(regex);
+  if (!match) return null;
+  let str = match[1];
+  try { return JSON.parse(str); } catch (e) {
+    console.error("Parse failed for", regex);
+    return null;
   }
-}
-const cleanRemainder = queryRemainder.replace(/[\s,，.。!！?？;；:：、\-_/\\|年]/g, '');
-console.log("cleanRemainder:", cleanRemainder, cleanRemainder.length);
+};
+
+// Instead of parsing TS, let's just use ts-node properly.

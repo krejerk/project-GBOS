@@ -16,9 +16,11 @@ export const CHAPTER5_KEYWORDS: Record<string, KeywordMetadata> = {
   'year_1974': { id: 'year_1974', chapter: 5, type: 'year', displayName: "1974", isPersistent: true, description: "莫宁锁定时间轴的关键年份。", source: "Dialogue" },
   'year_1977': { id: 'year_1977', chapter: 5, type: 'year', displayName: "1977", isPersistent: true },
   'albuquerque': { id: 'albuquerque', chapter: 5, type: 'location', displayName: "阿尔伯克基", isPersistent: true },
+  'bonny_and_clyde': { id: 'bonny_and_clyde', chapter: 5, type: 'case', displayName: "邦妮和克莱德", isPersistent: true },
   'chemist_lover': { id: 'chemist_lover', chapter: 5, type: 'case', displayName: "化学家情人", isPersistent: true },
   'laguna_beach': { id: 'laguna_beach', chapter: 5, type: 'location', displayName: "拉古那海滩", isPersistent: true },
   'naked_root': { id: 'naked_root', chapter: 5, type: 'case', displayName: "裸根", isPersistent: true },
+  'santa_fe': { id: 'santa_fe', chapter: 5, type: 'location', displayName: "圣菲", isPersistent: true },
   'year_1967': { id: 'year_1967', chapter: 1, type: 'year', displayName: "1967", isPersistent: true }
 };
 

@@ -6,7 +6,6 @@ export const CHAPTER6_KEYWORDS: Record<string, KeywordMetadata> = {
   'watchman': { id: 'watchman', chapter: 6, type: 'case', displayName: "守夜人", isPersistent: true },
   'achilles_heel': { id: 'achilles_heel', chapter: 6, type: 'case', displayName: "软肋", isPersistent: true },
   'alexei': { id: 'alexei', chapter: 6, type: 'person', displayName: "阿列克谢", isPersistent: true },
-  'bonny_and_clyde': { id: 'bonny_and_clyde', chapter: 6, type: 'case', displayName: "邦妮和克莱德", isPersistent: true },
   'closing_the_net': { id: 'closing_the_net', chapter: 6, type: 'case', displayName: "收网", isPersistent: true },
   'gore_and_levy': { id: 'gore_and_levy', chapter: 6, type: 'person', displayName: "戈尔和列维探员", isPersistent: true, description: "FBI探员，于1976年在拉古那海滩监视房车时被卡彭杀害。", source: "Confession" },
   'morandi': { id: 'morandi', chapter: 6, type: 'person', displayName: "莫兰迪", isPersistent: true },
@@ -14,10 +13,11 @@ export const CHAPTER6_KEYWORDS: Record<string, KeywordMetadata> = {
   'pow_camp': { id: 'pow_camp', chapter: 6, type: 'location', displayName: "战俘营", isPersistent: true },
   'redwood_forest': { id: 'redwood_forest', chapter: 6, type: 'location', displayName: "红杉林", isPersistent: true },
   'santa_barbara': { id: 'santa_barbara', chapter: 6, type: 'location', displayName: "圣芭芭拉", isPersistent: true },
-  'santa_fe': { id: 'santa_fe', chapter: 6, type: 'location', displayName: "圣菲", isPersistent: true },
   'amalekite_protocol': { id: 'amalekite_protocol', chapter: 6, type: 'case', displayName: "亚玛力人协议", isPersistent: true },
   'naked_root': { id: 'naked_root', chapter: 5, type: 'case', displayName: "裸根", isPersistent: true },
   'laguna_beach': { id: 'laguna_beach', chapter: 5, type: 'location', displayName: "拉古那海滩", isPersistent: true },
+  'santa_fe': { id: 'santa_fe', chapter: 5, type: 'location', displayName: "圣菲", isPersistent: true },
+  'bonny_and_clyde': { id: 'bonny_and_clyde', chapter: 5, type: 'case', displayName: "邦妮和克莱德", isPersistent: true },
   'albuquerque': { id: 'albuquerque', chapter: 5, type: 'location', displayName: "阿尔伯克基", isPersistent: true },
   'chemist_lover': { id: 'chemist_lover', chapter: 5, type: 'case', displayName: "化学家情人", isPersistent: true }
 };
