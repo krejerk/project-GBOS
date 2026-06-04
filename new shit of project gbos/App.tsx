@@ -905,7 +905,11 @@ const App: React.FC = () => {
 
     // Strict validation: No extra keywords, and no significant unrecognized text
     // We allow spaces, common separators and punctuation in the remainder, and the "年" suffix for years
-    const cleanRemainder = queryRemainder.replace(/[\s,，.。!！?？;；:：、\-_/\\|年]/g, '');
+    // We also remove standard node prefixes so that if a user types "供述24" along with keywords, it doesn't fail the clean check.
+    const cleanRemainder = queryRemainder
+      .replace(/[\s,，.。!！?？;；:：、\-_/\\|年]/g, '')
+      .replace(/[0-9]+/g, '')
+      .replace(/(供述|confession|剪报|clipping|档案|archive|no|第)/gi, '');
     const isRemainderClean = cleanRemainder.length === 0;
 
     for (const [id, entry] of Object.entries(UNLOCKS_REGISTRY)) {

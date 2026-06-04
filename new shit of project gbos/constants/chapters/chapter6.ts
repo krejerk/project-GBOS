@@ -14,12 +14,12 @@ export const CHAPTER6_KEYWORDS: Record<string, KeywordMetadata> = {
   'redwood_forest': { id: 'redwood_forest', chapter: 6, type: 'location', displayName: "红杉林", isPersistent: true },
   'santa_barbara': { id: 'santa_barbara', chapter: 6, type: 'location', displayName: "圣芭芭拉", isPersistent: true },
   'amalekite_protocol': { id: 'amalekite_protocol', chapter: 6, type: 'case', displayName: "亚玛力人协议", isPersistent: true },
-  'naked_root': { id: 'naked_root', chapter: 5, type: 'case', displayName: "裸根", isPersistent: true },
-  'laguna_beach': { id: 'laguna_beach', chapter: 5, type: 'location', displayName: "拉古那海滩", isPersistent: true },
-  'santa_fe': { id: 'santa_fe', chapter: 5, type: 'location', displayName: "圣菲", isPersistent: true },
-  'bonny_and_clyde': { id: 'bonny_and_clyde', chapter: 5, type: 'case', displayName: "邦妮和克莱德", isPersistent: true },
-  'albuquerque': { id: 'albuquerque', chapter: 5, type: 'location', displayName: "阿尔伯克基", isPersistent: true },
-  'chemist_lover': { id: 'chemist_lover', chapter: 5, type: 'case', displayName: "化学家情人", isPersistent: true }
+  'naked_root': { id: 'naked_root', chapter: 6, type: 'case', displayName: "裸根", isPersistent: true },
+  'laguna_beach': { id: 'laguna_beach', chapter: 6, type: 'location', displayName: "拉古那海滩", isPersistent: true },
+  'santa_fe': { id: 'santa_fe', chapter: 6, type: 'location', displayName: "圣菲", isPersistent: true },
+  'bonny_and_clyde': { id: 'bonny_and_clyde', chapter: 6, type: 'case', displayName: "邦妮和克莱德", isPersistent: true },
+  'albuquerque': { id: 'albuquerque', chapter: 6, type: 'location', displayName: "阿尔伯克基", isPersistent: true },
+  'chemist_lover': { id: 'chemist_lover', chapter: 6, type: 'case', displayName: "化学家情人", isPersistent: true }
 };
 
 export const CHAPTER6_NODES: MemoryNode[] = [

@@ -896,7 +896,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                                 // 3. TYPE FILTERS
                                                 const isLocation = meta.type === 'location';
                                                 const isCase = meta.type === 'case';
-                                                if (!isLocation && !isCase) return false;
+                                                const isClue = meta.type === 'clue';
+                                                if (!isLocation && !isCase && !isClue) return false;
                                                 
                                                 if (meta.isArchiveOnly) return false;
                                                 if (!CLUE_DISPLAY_MAP[id]) return false;
