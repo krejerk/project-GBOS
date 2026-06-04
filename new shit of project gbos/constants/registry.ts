@@ -527,6 +527,10 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
   "照片": {
     "id": "photo",
     "type": "case"
+  },
+  ">> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER]": {
+    "id": "reboot_command",
+    "type": "clue"
   }
 };
 

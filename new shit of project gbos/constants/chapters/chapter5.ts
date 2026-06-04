@@ -21,6 +21,7 @@ export const CHAPTER5_KEYWORDS: Record<string, KeywordMetadata> = {
   'laguna_beach': { id: 'laguna_beach', chapter: 5, type: 'location', displayName: "拉古那海滩", isPersistent: true },
   'naked_root': { id: 'naked_root', chapter: 5, type: 'case', displayName: "裸根", isPersistent: true },
   'santa_fe': { id: 'santa_fe', chapter: 5, type: 'location', displayName: "圣菲", isPersistent: true },
+  'reboot_command': { id: 'reboot_command', chapter: 5, type: 'clue', displayName: ">> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER]", isPersistent: true },
   'year_1967': { id: 'year_1967', chapter: 1, type: 'year', displayName: "1967", isPersistent: true }
 };
 

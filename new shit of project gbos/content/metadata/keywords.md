@@ -117,3 +117,4 @@
 | MTXXXXXXXX-93 | case | 联邦最高通缉令案卷 | 8 | 安娜·理查德通过通灵画像强推上来的案件，后被揭露为精心策划的心理实验。 | Archive | - | - |
 | QTC-VA-0994 | location | 匡提科法证实验室QTC-VA-0994 | 8 | 马库斯·索恩工作的地方，他在那里通过显微镜揭开了圣泉镇奇迹的真相。 | Archive | - | - |
 | photo | case | 照片 | 8 | 瓦妮莎吊坠盒里塞着的黑白照片，是她寻求利比镇救赎的唯一指引。 | Confession | - | - |
+| reboot_command | clue | >> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER] | 5 |  |  |  |
