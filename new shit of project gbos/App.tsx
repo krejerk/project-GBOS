@@ -1127,12 +1127,12 @@ const App: React.FC = () => {
         },
         {
           keywords: ['圣路易斯', 'st louis', 'st. louis', 'st_louis'],
-          response: '> [R. CAPONE]: "你想知道圣路易斯发生了什么？去问阿尔特曼啊，让他在办公室里，照照镜子就知道吸血鬼在哪了。别来问我。我已经死了，不存在了。"',
+          response: '> [R. CAPONE]: "究竟是谁在带着你兜圈子？吸血鬼？你让阿尔特曼照照镜子就知道吸血鬼在哪了。你想知道什么，为什么不直接问？"',
           priority: 90
         },
         {
           keywords: ['吸血鬼', 'vampire'],
-          response: '> [R. CAPONE]: "你想知道圣路易斯发生了什么？去问阿尔特曼啊，让他在办公室里，照照镜子就知道吸血鬼在哪了。别来问我。我已经死了，不存在了。"',
+          response: '> [R. CAPONE]: "究竟是谁在带着你兜圈子？吸血鬼？你让阿尔特曼照照镜子就知道吸血鬼在哪了。你想知道什么，为什么不直接问？"',
           priority: 90
         },
         { keywords: ['v_response_1'], response: '> [R. CAPONE]: "瓦妮莎？谁告诉你的这个名字？资料里没有提到她。"', priority: 200 },
