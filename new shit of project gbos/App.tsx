@@ -1061,7 +1061,7 @@ const App: React.FC = () => {
         },
         {
           keywords: ['修道院', 'abbey', '初次会面', '修道院任务'],
-          response: '> [R. CAPONE]: "詹妮弗说是修道院？（发出一声嘶哑的冷笑）……随她怎么说吧。我只记得那是一个没有上帝的地方，到处都是旧书的味道 and 发霉的阴影。那是\'初次会面\'。我以为我是去执行任务，结果我是参加我自己的葬礼。"',
+          response: '> [R. CAPONE]: "詹妮弗说是修道院？（发出一声嘶哑的冷笑）……随她怎么说吧。我只记得那是一个没有上帝的地方，到处都是旧书的味道和发霉的阴影。那是\'初次会面\'。我以为我是去执行任务，结果我是参加我自己的葬礼。"',
           priority: 90
         },
         {
@@ -1122,7 +1122,7 @@ const App: React.FC = () => {
         },
         {
           keywords: ['痛', 'pain', 'hurt', '头', 'headache'],
-          response: '> [R. CAPONE]: "我的头...像要裂开一样。每次 I 试图记起什么，就像有人在我脑子里用刀刻字。"',
+          response: '> [R. CAPONE]: "我的头...像要裂开一样。每次我试图记起什么，就像有人在我脑子里用刀刻字。"',
           priority: 50
         },
         {
@@ -1143,6 +1143,21 @@ const App: React.FC = () => {
         { keywords: ['jennifer_consecutive_1'], response: '> [R. CAPONE]: "别逗了，你收到的档案里根本就没有詹妮弗这个名字，你想问的是那只银喜鹊，我们在营地的时候，她是那个负责在大家睡觉时，从外面反锁车门的人。"', priority: 210 },
         { keywords: ['jennifer_consecutive_2'], response: '> [R. CAPONE]: "她喜欢收集亮晶晶的垃圾，是个哑巴，或者只是不想跟我们要这种人说话。别浪费时间了，下一个问题。"', priority: 211 },
         { keywords: ['jennifer_consecutive_3'], response: '> [R. CAPONE]: "难道说真的是她……那天在埃尔帕索，当我绝望地把烟盒揉烂的时候，她就在教堂的角落里看着，对吗？"', priority: 999 },
+        {
+          keywords: ['艾莉丝', 'alice', 'elise'],
+          response: '> [R. CAPONE]: "别被那副皮囊骗了，这女人血管里流的全是致命的硝酸甘油。"',
+          priority: 85
+        },
+        {
+          keywords: ['塞勒斯', 'cyrus'],
+          response: '> [R. CAPONE]: "一个自以为是的替罪羊罢了。"',
+          priority: 85
+        },
+        {
+          keywords: ['骗子', 'liar', '谎言', 'lie'],
+          response: '> [R. CAPONE]: "连官方报告都在拿推土机掩盖死人。在这个烂摊子里，真相是最不值钱的废纸。"',
+          priority: 80
+        },
     ];
 
     const sortedResponses = [...PRESET_RESPONSES].sort((a, b) => (b.priority || 0) - (a.priority || 0));
