@@ -980,21 +980,11 @@ const App: React.FC = () => {
 
             if (node) {
               const isAlreadyUnlocked = prev.unlockedNodeIds.includes(targetId);
-              
-              // Automatically collect revealed keywords from the node
-              let updatedClues = [...newCollectedClues];
-              if (node.revealedKeywords) {
-                node.revealedKeywords.forEach(k => {
-                  if (!updatedClues.includes(k)) {
-                    updatedClues.push(k);
-                  }
-                });
-              }
 
               return {
                 ...prev,
                 consecutiveSearch: newConsecutive,
-                collectedClues: updatedClues,
+                collectedClues: newCollectedClues,
                 collectedYears: newCollectedYears,
                 unlockedPeople: newUnlockedPeople,
                 activeNodeId: targetId,
@@ -1396,16 +1386,6 @@ const App: React.FC = () => {
         setNodes(p => [...p, node!]);
       }
 
-      // Automatically collect revealed keywords from the node
-      let updatedClues = [...prev.collectedClues];
-      if (node?.revealedKeywords) {
-        node.revealedKeywords.forEach(k => {
-          if (!updatedClues.includes(k)) {
-            updatedClues.push(k);
-          }
-        });
-      }
-
       return {
         ...prev,
         unlockedNodeIds: Array.from(new Set([
@@ -1415,7 +1395,7 @@ const App: React.FC = () => {
             ? Array.from({ length: parseInt(nodeId.split('_')[1]) || 0 }, (_, i) => `confession_${i + 1}`) 
             : [])
         ])),
-        collectedClues: updatedClues,
+        collectedClues: prev.collectedClues,
         activeNodeId: nodeId,
         systemStability: Math.min(prev.systemStability + 20, 84),
         history: [
