@@ -118,3 +118,21 @@
 | QTC-VA-0994 | location | 匡提科法证实验室QTC-VA-0994 | 8 | 马库斯·索恩工作的地方，他在那里通过显微镜揭开了圣泉镇奇迹的真相。 | Archive | - | - |
 | photo | case | 照片 | 8 | 瓦妮莎吊坠盒里塞着的黑白照片，是她寻求利比镇救赎的唯一指引。 | Confession | - | - |
 | reboot_command | clue | >> 0x524F42455254_PURGE // ERR::NO_SIGNAL_FROM_GOD // MAGPIE_OVERRIDE >> [FORCE_LOAD_MONSTER] | 5 |  |  |  |
+| humiliation_ritual | case | 羞辱仪式 | 6 |  |  |  |
+| mandan | location | 曼丹市 | 8 |  |  |  |
+| appalachia | location | 阿巴拉契亚山脉 | 9 |  |  |  |
+| arthur_dawson | person | 亚瑟·道森 | 8 |  |  |  |
+| bait | case | 诱饵 | 9 |  |  |  |
+| clement_svirson | person | 克莱门特·斯维尔森 | 9 |  |  |  |
+| dry_gully | location | 干涸沟渠 | 9 |  |  |  |
+| intercept | case | 拦截 | 9 |  |  |  |
+| jc_penney | location | 杰西·潘尼 | 3 |  |  |  |
+| meeting | case | 会面 | 9 |  |  |  |
+| philadelphia | location | 费城 | 9 |  |  |  |
+| phoenix | location | 凤凰城 | 9 |  |  |  |
+| port_jefferson | location | 杰斐逊港 | 9 |  |  |  |
+| record_of_accounts | case | 账本 | 9 |  |  |  |
+| unnamed_female_body | person | 无名女尸 | 9 |  |  |  |
+| van_horn_checkpoint | location | 范霍恩检查站 | 9 |  |  |  |
+| year_1981 | year | 1981 | 8 |  |  |  |
+| year_1999 | year | 1999 | 9 |  |  |  |

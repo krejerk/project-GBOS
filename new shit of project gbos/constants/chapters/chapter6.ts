@@ -19,7 +19,8 @@ export const CHAPTER6_KEYWORDS: Record<string, KeywordMetadata> = {
   'santa_fe': { id: 'santa_fe', chapter: 6, type: 'location', displayName: "圣菲", isPersistent: true },
   'bonny_and_clyde': { id: 'bonny_and_clyde', chapter: 6, type: 'case', displayName: "邦妮和克莱德", isPersistent: true },
   'albuquerque': { id: 'albuquerque', chapter: 6, type: 'location', displayName: "阿尔伯克基", isPersistent: true },
-  'chemist_lover': { id: 'chemist_lover', chapter: 6, type: 'case', displayName: "化学家情人", isPersistent: true }
+  'chemist_lover': { id: 'chemist_lover', chapter: 6, type: 'case', displayName: "化学家情人", isPersistent: true },
+  'humiliation_ritual': { id: 'humiliation_ritual', chapter: 6, type: 'case', displayName: "羞辱仪式", isPersistent: true }
 };
 
 export const CHAPTER6_NODES: MemoryNode[] = [
