@@ -535,8 +535,13 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
 };
 
 export const CLUE_DISPLAY_MAP: Record<string, string> = {};
-Object.keys(KEYWORD_REGISTRY).forEach(id => { CLUE_DISPLAY_MAP[id] = KEYWORD_REGISTRY[id].displayName || id; });
-
+Object.keys(KEYWORD_REGISTRY).forEach(id => { 
+  const meta = KEYWORD_REGISTRY[id];
+  CLUE_DISPLAY_MAP[id] = meta.displayName || id; 
+  if (meta.displayName && !GLOBAL_KEYWORD_MAP[meta.displayName]) {
+    GLOBAL_KEYWORD_MAP[meta.displayName] = { id, type: meta.type };
+  }
+});
 export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: string, type: 'node' | 'archive' }> = {
   "confession_2": {
     "keywords": [
