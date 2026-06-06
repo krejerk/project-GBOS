@@ -1,7 +1,7 @@
 export const ARCHIVE_DATABASE = [
     {
         "id": "clipping_21",
-        "title": "...placeholder...Title fixed by next line",
+        "title": "1967年蒙大拿州利比镇失踪案",
         "triggers": {
             "year": "1967",
             "person": ["william_dawson"]
@@ -91,7 +91,7 @@ export const ARCHIVE_DATABASE = [
     },
     {
         "id": "clipping_22",
-        "title": "...placeholder...Title fixed by next line",
+        "title": "1977年亚利桑那州图森枪击案",
         "triggers": {
             "year": "1977",
             "person": ["frank_rollins"]
@@ -417,7 +417,7 @@ export const ARCHIVE_DATABASE = [
     },
     {
         "id": "clipping_25",
-        "title": "...placeholder...Title fixed by next line",
+        "title": "1985年密歇根州安娜堡市公路谋杀案",
         "triggers": {
             "year": "1985",
             "person": ["alexander_mengel"]
@@ -442,7 +442,7 @@ export const ARCHIVE_DATABASE = [
     },
     {
         "id": "clipping_24",
-        "title": "...placeholder...Title fixed by next line",
+        "title": "1981年特拉华州里霍博斯海滩溺水案",
         "triggers": {
             "year": "1981",
             "person": ["clement_svirson"]
