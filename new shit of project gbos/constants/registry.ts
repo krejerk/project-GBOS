@@ -863,7 +863,6 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
     "targetId": "confession_36B1",
     "type": "node"
   },
-,
   "clipping_01": {
     "keywords": [
       "year_1971",
