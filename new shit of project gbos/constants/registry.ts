@@ -52,6 +52,16 @@ export const ALL_MEMORY_NODES: MemoryNode[] = [
 export const NODE_MAP = new Map(ALL_MEMORY_NODES.map(node => [node.id, node]));
 
 export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = {
+  "羞辱仪式": { "id": "humiliation_ritual", "type": "case" },
+  "克莱门特·斯维尔森": { "id": "clement_svirson", "type": "person" },
+  "亚历山大·门格尔": { "id": "alexander_mengel", "type": "person" },
+  "父亲": { "id": "father", "type": "person" },
+  "母亲": { "id": "mother", "type": "person" },
+  "约翰·多伊": { "id": "john_doe", "type": "person" },
+  "赛勒斯": { "id": "silas", "type": "person" },
+  "范霍恩检查站": { "id": "van_horn_checkpoint", "type": "location" },
+  "拦截": { "id": "intercept", "type": "case" },
+
   "詹妮弗": {
     "id": "jennifer",
     "type": "person"
