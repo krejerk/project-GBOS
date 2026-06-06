@@ -1,10 +1,10 @@
 export const ARCHIVE_DATABASE = [
     {
         "id": "clipping_21",
-        "title": "1967年蒙大拿州利比镇失踪案",
+        "title": "...placeholder...Title fixed by next line",
         "triggers": {
-            "year": "",
-            "person": []
+            "year": "1967",
+            "person": ["william_dawson"]
         },
         "revealed": [
             "humphrey_county",
@@ -91,10 +91,10 @@ export const ARCHIVE_DATABASE = [
     },
     {
         "id": "clipping_22",
-        "title": "1977年图森市警务站枪击案",
+        "title": "...placeholder...Title fixed by next line",
         "triggers": {
-            "year": "",
-            "person": []
+            "year": "1977",
+            "person": ["frank_rollins"]
         },
         "revealed": [
             "precinct_4",
@@ -417,10 +417,10 @@ export const ARCHIVE_DATABASE = [
     },
     {
         "id": "clipping_25",
-        "title": "猫山深处的沉默",
+        "title": "...placeholder...Title fixed by next line",
         "triggers": {
-            "year": "",
-            "person": []
+            "year": "1985",
+            "person": ["alexander_mengel"]
         },
         "revealed": [
             "dry_gully"
@@ -442,10 +442,10 @@ export const ARCHIVE_DATABASE = [
     },
     {
         "id": "clipping_24",
-        "title": "阿巴拉契亚山区清理行动",
+        "title": "...placeholder...Title fixed by next line",
         "triggers": {
-            "year": "",
-            "person": []
+            "year": "1981",
+            "person": ["clement_svirson"]
         },
         "revealed": [
             "appalachia",
@@ -468,10 +468,10 @@ export const ARCHIVE_DATABASE = [
     },
     {
         "id": "clipping_26",
-        "title": "clipping_26",
+        "title": "凤凰城爆炸案与失踪的少女Title fixed by next line",
         "triggers": {
-            "year": "",
-            "person": []
+            "year": "1999",
+            "person": ["cynthia_miller"]
         },
         "revealed": [],
         "newspaper": {

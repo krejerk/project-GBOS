@@ -56,6 +56,12 @@ export const Terminal: React.FC<TerminalProps> = ({ onSearch, history, isProcess
                 [!] 核心记忆节点已激活: {item.content}
               </div>
             )}
+            {item.type === 'archive_content' && (
+              <div className="text-[#d89853] font-bold bg-[#c85a3f]/20 p-2 rounded border border-[#c85a3f]/40 flex flex-col gap-1">
+                <div>{item.content}</div>
+                <div className="text-xs text-[#c85a3f] opacity-80">请点击左侧菜单的【档案 (ARCHIVES)】图标查看。</div>
+              </div>
+            )}
           </div>
         ))}
         {isProcessing && (
