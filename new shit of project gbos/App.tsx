@@ -607,8 +607,8 @@ const App: React.FC = () => {
       // 2. Define protected keywords (newly given or core system)
       const protectedIds = ['st_louis', 'vampire', 'personnel_tree', ...PROTECTED_YEARS];
 
-      // 3. Filter lists: REMOVE if it's already been used
-      const filterFn = (id: string) => !consumed.has(id) || protectedIds.includes(id);
+      // 3. Filter lists: REMOVE everything except protected keywords to simulate "confiscating all unused"
+      const filterFn = (id: string) => protectedIds.includes(id);
 
       // 3. Sync attachments based on chapter
       const chapterAttachments = Object.values(ATTACHMENT_REGISTRY)

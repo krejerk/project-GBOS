@@ -456,7 +456,11 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         // SWEEP TRIGGER: Always sweep if ending Node 3 dialogue, regardless of what detectedNodeId says now
         if (simulatedDialogue === JENNIFER_NODE_3_DIALOGUE || (detectedNodeId === 3 && onStoryNodeComplete)) {
             setHasViewedNode3Dialogue(true);
-            setNewlyAddedItems(new Set(['crime_route_map']));
+            if (onCollectClue) {
+                onCollectClue('st_louis', '圣路易斯');
+                onCollectClue('vampire', '吸血鬼');
+            }
+            setNewlyAddedItems(new Set(['crime_route_map', 'st_louis', 'vampire']));
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             if (onClearUnusedKeywords) onClearUnusedKeywords();
         } else if (simulatedDialogue === JENNIFER_NODE_4_DIALOGUE || detectedNodeId === 4) {
