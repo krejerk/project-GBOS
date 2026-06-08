@@ -1262,7 +1262,7 @@ Author: 特别主管 (SAC) 艾萨克·阿尔特曼 (I. Altman)
 斯米尔诺夫甚至创造了一个生造词：「远亲」（The Distants）。根据他的疯话，他们只是这个庞大网络末端的触角，他声称那个所谓的“父亲”乘坐着一辆蓝色房车，不仅为他们规划了逃跑路线，甚至教导他们如何利用警方的应急预案漏洞。
 
 二、 KLUB 系统的数据毒害
-如果这仅仅是罪犯的疯言烟语，我们可以一笑置之。但问题出在我们的内部。刑事分析科的一名初级数据员——显然是雷吉博士时代的遗留人员——擅自将这些口供输入了尚未完全下线的 KLUB 系统。结果是灾难性的。昨天深夜提交到我桌上的[「」](clue:)声称，系统在全美范围内捕捉到了数个类似的“组织结构回响”。
+如果这仅仅是罪犯的疯言烟语，我们可以一笑置之。但问题出在我们的内部。刑事分析科的一名初级数据员——显然是雷吉博士时代的遗留人员——擅自将这些口供输入了尚未完全下线的 KLUB 系统。结果是灾难性的。昨天深夜提交到我桌上的[「KLUB-75号分析报告」](clue:klub75_report)声称，系统在全美范围内捕捉到了数个类似的“组织结构回响”。
 
 三、 处置建议与定性重塑
 副局长，我们必须清醒地认识到这份报告的政治危害。如果我们现在采信了这份报告，承认真的存在什么“看不见的家族”，那就等于是在承认雷吉博士是对的，承认我们过去两年的清洗是错误的。这不仅会动摇局里的指挥权威，更会让媒体再次把焦点从我们的胜利转移到阴谋论上。
@@ -1346,7 +1346,7 @@ Author: 霍华德·贝克 (Howard Baker)
 
 关于“驱逐流浪汉”的真实意图（误读）： 莫里西（潘尼）在采访中提到的“商品瑕疵”和“留下记号”，显然是黑话，而那群房车流浪汉极有可能是当地的小偷集团，习惯在包装箱上做记号以便同伙盗窃（即所谓的“留下记号”），或者故意损坏商品以图低价收购。 莫里西之所以反应如此激烈，是因为他正在通过物流网络运输高价值的走私品（可能是烟草或电器），他绝不能允许任何外人在我的仓库周围转悠，更怕这些小偷无意中发现了混在百货商品里的违禁品。
 
-结论： 无需追踪那辆房车。这只是黑帮大佬在清理地盘上的[「」](clue:)。重点监控潘尼百货的进出货运单，特别是来自东海岸的集装箱。
+结论： 无需追踪那辆房车。这只是黑帮大佬在清理地盘上的[「蛆虫」](clue:maggots)。重点监控潘尼百货的进出货运单，特别是来自东海岸的集装箱。
 
 [后人手写批注（字迹潦草，疑为雷吉博士早期笔记）]： 贝克，你这头蠢猪，无需多言。`}}],TN=i=>{if(!i)return 0;if(i.includes("confession_")){const l=i.split("_")[1].match(/^\d+/),c=l?parseInt(l[0]):0;return c<=3?1:c<=7?2:c<=11?3:c<=15?4:c<=19?5:c<=26?6:c<=29?7:c<=33?8:9}if(i.startsWith("clipping_")){const l=i.split("_")[1].match(/^\d+/),c=l?parseInt(l[0]):0;if(c<=4)return 1;if(c<=7)return 2;if(c<=10)return 3;if(c<=13)return 4;if(c<=16)return 5;if(c<=20)return 7;if(c<=23)return 8;if(c<=26)return 9}return i.startsWith("me_")||i.startsWith("oh_")||i.startsWith("dc_")||i.startsWith("il_")?1:i.startsWith("va_")||i.startsWith("nv_")?2:i.startsWith("cin_")||i.startsWith("nas_")||i.startsWith("ky_")?3:i.startsWith("kan_")||i.startsWith("kc_")||i.startsWith("ia_")?4:i.startsWith("archive_")||i.startsWith("tx_")?5:i.startsWith("sf_")?7:0},is=f1,CN=({onContinue:i,onCollectClue:r,collectedClues:l,collectedDossierIds:c,unlockedPeople:d=[]})=>{const[h,f]=N.useState(0),[y,g]=N.useState(!1),[m,x]=N.useState(0),[v,w]=N.useState(!1),[j,D]=N.useState(""),[L,z]=N.useState(by),P=["julip","maine","small_bank","chicago","missing","project"],H=()=>{const ue=P.filter(le=>!l.includes(le)&&!c.includes(le));if(ue.length>0){const le=ue.map(Ee=>`[${en[Ee]||Ee}](clue:${Ee})`).join("、");z(["我是你本次潜航任务的向导兼操作员詹妮弗。",`你在刚才的关键词搜集中漏掉了以下内容：「${le}」。`,"你要记住，关键词是解锁机体记忆的唯一钥匙。","接下来，请将这些关键词在同卡彭对话时抛出，以进一步搜集他记忆中的重要碎片。","准备好进入卡彭的潜意识了吗？我会不定期进行联络，对于搜集进度和关键性问题提出指导意见。"])}else z(by);g(!0)};N.useEffect(()=>{if(!y)return;w(!0),D("");const ue=L[m]||"";let le=0;const Ee=setInterval(()=>{if(le<ue.length){if(ue[le]==="["){const Xe=ue.indexOf("](clue:",le);if(Xe!==-1){const ne=ue.indexOf(")",Xe);if(ne!==-1){le=ne+1,D(ue.slice(0,le));return}}}le++,D(ue.slice(0,le))}else w(!1),clearInterval(Ee)},30);return()=>clearInterval(Ee)},[y,m,L]);const F=()=>{v?(D(L[m]||""),w(!1)):m<L.length-1&&x(ue=>ue+1)},J=()=>{h<pr.length-1&&f(h+1)},$=()=>{h>0&&f(h-1)},te=()=>{m>0&&x(ue=>ue-1)},ce=pr[h],se=h===pr.length-1,he=ue=>ue.split(/(\[.*?\]\(clue:.*?\))/g).map((Ee,Xe)=>{const ne=Ee&&Ee.match(/\[(.*?)\]\(clue:(.*?)\)/);if(ne){const[me,k,G]=ne,Y=l.includes(G)||c.includes(G)||d.includes(G)||G==="robert"&&d.includes("capone")||G==="robert_capone"&&d.includes("capone");return a.jsxs("span",{onClick:()=>!Y&&r(G,k),className:`
               relative inline-block px-1 rounded cursor-pointer transition-all duration-300
