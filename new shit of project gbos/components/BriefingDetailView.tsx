@@ -359,7 +359,7 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
                                     {renderContent(jenniferText)}
                                     {jenniferTyping && <span className="animate-pulse ml-1 inline-block w-2 h-5 bg-[#38bdf8] align-middle" />}
                                 </p>
-                                <div className="absolute top-2 right-2 text-[#334155]/20">
+                                <div className="absolute top-2 right-2 text-[#334155]/20 pointer-events-none">
                                     <Activity size={120} />
                                 </div>
                             </div>
