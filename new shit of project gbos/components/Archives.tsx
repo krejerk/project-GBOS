@@ -69,6 +69,7 @@ export const Archives: React.FC<ArchivesProps> = ({
         unlockedNodeIds.filter(Boolean).forEach(nodeId => {
             const keywords = KEYWORD_CONSUMPTION_MAP[nodeId];
             if (keywords) keywords.forEach(k => {
+                if (['year_1967', 'year_1971', 'year_1973', 'year_1976', 'year_1977', 'year_1985', '1967', '1971', '1973', '1976', '1977', '1985'].includes(k)) return;
                 consumed.add(k);
                 const mapped = GLOBAL_KEYWORD_MAP[k];
                 if (mapped) consumed.add(mapped.id);

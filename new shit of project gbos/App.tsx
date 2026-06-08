@@ -10,6 +10,8 @@ import { SimplifiedMainView } from './components/SimplifiedMainView';
 import { EndingView } from './components/EndingView';
 import { FinalLetter } from './components/FinalLetter';
 import { StudioIntro } from './components/StudioIntro';
+import { TutorialOverlay } from './TutorialOverlay';
+import { SyndicateBoard } from './SyndicateBoard';
 import {
   INITIAL_DOSSIER, MEMORY_NODES as CORE_NODES, BRIEFING_SECTIONS,
   GLOBAL_KEYWORD_MAP, CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP,
@@ -22,6 +24,8 @@ import {
 import { KEYWORD_REGISTRY, UNLOCKS_REGISTRY } from './constants/registry';
 import { ATTACHMENT_REGISTRY } from './constants/attachments';
 import { ARCHIVE_DATABASE } from './constants/archive_data';
+
+const PROTECTED_YEARS = ['year_1967', 'year_1971', 'year_1973', 'year_1976', 'year_1977', 'year_1985', '1967', '1971', '1973', '1976', '1977', '1985'];
 
 // Define bulletproof helper function to lookup keyword metadata by either string key (Chinese name) or ID (English key)
 const getKeywordMeta = (id: string): any => {
@@ -531,10 +535,11 @@ const App: React.FC = () => {
         prev.unlockedArchiveIds.forEach(processConsumed);
 
         // 3. Special Year Handling: Protected years ALWAYS stay. Others need ammo + current/future.
-        if (id.startsWith('year_')) {
+        if (id.startsWith('year_') || !isNaN(Number(id))) {
+           if (PROTECTED_YEARS.includes(id)) return true;
            const hasAmmo = (yearCollectedCount[id] || 0) > (yearConsumedCount[id] || 0);
-           const isCurrentOrFuture = (meta.chapter || 0) >= nodeId;
-           const isProtected = meta.isPersistent || meta.isIdentity || id === 'year_1976' || id === 'year_1967';
+           const isCurrentOrFuture = (meta?.chapter || 0) >= nodeId;
+           const isProtected = meta?.isPersistent || meta?.isIdentity;
            // Protected years are NEVER removed. Others need ammo AND be current/future.
            return isProtected || (hasAmmo && isCurrentOrFuture);
         }
@@ -600,7 +605,7 @@ const App: React.FC = () => {
       });
 
       // 2. Define protected keywords (newly given or core system)
-      const protectedIds = ['st_louis', 'vampire', 'personnel_tree'];
+      const protectedIds = ['st_louis', 'vampire', 'personnel_tree', ...PROTECTED_YEARS];
 
       // 3. Filter lists: REMOVE if it's already been used
       const filterFn = (id: string) => !consumed.has(id) || protectedIds.includes(id);
@@ -720,9 +725,9 @@ const App: React.FC = () => {
 
           return {
             ...prev,
-            collectedClues: prev.collectedClues.filter(id => !keysToConsume.has(id)),
-            collectedYears: prev.collectedYears.filter(id => !keysToConsume.has(id)),
-            unlockedPeople: prev.unlockedPeople.filter(id => !keysToConsume.has(id)),
+            collectedClues: prev.collectedClues.filter(id => !keysToConsume.has(id) || PROTECTED_YEARS.includes(id)),
+            collectedYears: prev.collectedYears.filter(id => !keysToConsume.has(id) || PROTECTED_YEARS.includes(id)),
+            unlockedPeople: prev.unlockedPeople.filter(id => !keysToConsume.has(id) || PROTECTED_YEARS.includes(id)),
             history: [
               ...prev.history,
               { 
@@ -950,6 +955,7 @@ const App: React.FC = () => {
           // Consume detected keywords UNLESS they are marked as persistent or are years
           const keysToConsume = new Set(uniqueDetected);
           const filterConsumed = (id: string) => {
+            if (PROTECTED_YEARS.includes(id)) return true;
             const meta = getKeywordMeta(id);
             // Only Identities (Core Characters like Robert/Capone) are strictly persistent across all consumption
             if (meta?.isIdentity) return true;
@@ -1442,12 +1448,12 @@ const App: React.FC = () => {
       let nextPeople = prev.unlockedPeople;
 
       if (personIds && personIds.length > 0) {
-        nextPeople = nextPeople.filter(id => !personIds.includes(id));
+        nextPeople = nextPeople.filter(id => !personIds.includes(id) || PROTECTED_YEARS.includes(id));
         // Keep clues filtered too in case of dual-mapped items
-        nextClues = nextClues.filter(id => !personIds.includes(id)); 
+        nextClues = nextClues.filter(id => !personIds.includes(id) || PROTECTED_YEARS.includes(id)); 
       }
       if (yearIds && yearIds.length > 0) {
-        nextYears = nextYears.filter(id => !yearIds.includes(id));
+        nextYears = nextYears.filter(id => !yearIds.includes(id) || PROTECTED_YEARS.includes(id));
       }
 
       return {
