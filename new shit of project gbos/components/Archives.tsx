@@ -524,7 +524,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     
                                                                     {/* Vertical Label for folded state */}
                                                                     {focusedPane === 'annotation' && (
-                                                                        <div className="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none">
+                                                                        <div className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 items-center justify-center pointer-events-none z-50">
                                                                             <div className="flex flex-col items-center gap-4 transition-all duration-500 group-hover/news:scale-110">
                                                                                 <span className="text-[#c85a3f]/40 font-black tracking-[0.5em] uppercase text-xs group-hover/news:text-[#c85a3f]/80" style={{ writingMode: 'vertical-rl' }}>
                                                                                     新闻剪报
@@ -677,7 +677,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 </div>
                                                                 <div className={`relative transition-all duration-700 ease-in-out cursor-pointer h-full overflow-hidden ${focusedPane === 'annotation' ? 'flex-[1] md:flex-[2.5]' : focusedPane === null ? 'flex-1' : 'hidden md:flex md:flex-1 md:opacity-60 md:hover:opacity-100'} bg-[#0a0505] group/notes`} onClick={() => setFocusedPane(focusedPane === 'annotation' ? null : 'annotation')}>
                                                                     {focusedPane === 'newspaper' && (
-                                                                        <div className="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none">
+                                                                        <div className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 items-center justify-center pointer-events-none z-50">
                                                                             <div className="flex flex-col items-center gap-4 transition-all duration-500 group-hover/notes:scale-110">
                                                                                 <span className="text-[#c85a3f]/40 font-black tracking-[0.5em] uppercase text-xs group-hover/notes:text-[#c85a3f]/80" style={{ writingMode: 'vertical-rl' }}>
                                                                                     Internal Notes
