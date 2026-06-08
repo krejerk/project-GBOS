@@ -33,33 +33,26 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
 
     const INTRO_CLUES = ['julip', 'maine', 'small_bank', 'chicago', 'missing', 'project'];
 
-    // Dynamic dialogue check
-    React.useEffect(() => {
-        if (showJennifer) {
-            const missedClues = INTRO_CLUES.filter(id => 
-                !collectedClues.includes(id) && 
-                !collectedDossierIds.includes(id)
-            );
+    const handleEnterSubconscious = () => {
+        const missedClues = INTRO_CLUES.filter(id => 
+            !collectedClues.includes(id) && 
+            !collectedDossierIds.includes(id)
+        );
 
-            if (missedClues.length > 0) {
-                const missedNames = missedClues.map(id => CLUE_DISPLAY_MAP[id] || id).join('、');
-                setJenniferDialogue([
-                    "我是你本次潜航任务的向导兼操作员詹妮弗。",
-                    `你在刚才的关键词搜集中漏掉了以下内容：「${missedNames}」。`,
-                    "你要记住，关键词是解锁机体记忆的唯一钥匙。",
-                    "接下来，请将这些关键词在同卡彭对话时抛出，以进一步搜集他记忆中的重要碎片。",
-                    "准备好进入卡彭的潜意识了吗？我会不定期进行联络，对于搜集进度和关键性问题提出指导意见。"
-                ]);
-
-                // Auto collect them
-                missedClues.forEach(id => {
-                    onCollectClue(id, CLUE_DISPLAY_MAP[id] || id);
-                });
-            } else {
-                setJenniferDialogue(JENNIFER_INTRO_DIALOGUE);
-            }
+        if (missedClues.length > 0) {
+            const missedNames = missedClues.map(id => `[${CLUE_DISPLAY_MAP[id] || id}](clue:${id})`).join('、');
+            setJenniferDialogue([
+                "我是你本次潜航任务的向导兼操作员詹妮弗。",
+                `你在刚才的关键词搜集中漏掉了以下内容：「${missedNames}」。`,
+                "你要记住，关键词是解锁机体记忆的唯一钥匙。",
+                "接下来，请将这些关键词在同卡彭对话时抛出，以进一步搜集他记忆中的重要碎片。",
+                "准备好进入卡彭的潜意识了吗？我会不定期进行联络，对于搜集进度和关键性问题提出指导意见。"
+            ]);
+        } else {
+            setJenniferDialogue(JENNIFER_INTRO_DIALOGUE);
         }
-    }, [showJennifer]);
+        setShowJennifer(true);
+    };
 
     // Jennifer Typewriter
     React.useEffect(() => {
@@ -72,8 +65,19 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
 
         const timer = setInterval(() => {
             if (index < fullText.length) {
-                setJenniferText(fullText.slice(0, index + 1));
+                if (fullText[index] === '[') {
+                    const closeBracket = fullText.indexOf('](clue:', index);
+                    if (closeBracket !== -1) {
+                        const closeParen = fullText.indexOf(')', closeBracket);
+                        if (closeParen !== -1) {
+                            index = closeParen + 1;
+                            setJenniferText(fullText.slice(0, index));
+                            return;
+                        }
+                    }
+                }
                 index++;
+                setJenniferText(fullText.slice(0, index));
             } else {
                 setJenniferTyping(false);
                 clearInterval(timer);
@@ -249,7 +253,7 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
                                 transition={{ delay: 0.3 }}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                onClick={() => setShowJennifer(true)}
+                                onClick={handleEnterSubconscious}
                                 className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#8e3d2f]/30 via-[#c85a3f]/28 to-[#8e3d2f]/30 hover:from-[#8e3d2f]/40 hover:via-[#c85a3f]/38 hover:to-[#8e3d2f]/40 border-2 border-[#c85a3f]/55 text-[#d89853]/98 rounded-lg transition-all font-mono text-base tracking-widest backdrop-blur-md neural-glow"
                             >
                                 进入罗伯特卡彭的潜意识 ENTER SUBCONSCIOUS
@@ -352,7 +356,7 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
                             {/* Dialogue Content */}
                             <div className="p-8 min-h-[160px] flex items-center justify-center text-center relative">
                                 <p className="text-[#e2e8f0] text-lg font-light tracking-wide leading-relaxed font-sans">
-                                    {jenniferText}
+                                    {renderContent(jenniferText)}
                                     {jenniferTyping && <span className="animate-pulse ml-1 inline-block w-2 h-5 bg-[#38bdf8] align-middle" />}
                                 </p>
                                 <div className="absolute top-2 right-2 text-[#334155]/20">
@@ -387,7 +391,17 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
                                             animate={{ scale: 1, opacity: 1 }}
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
-                                            onClick={onContinue}
+                                            onClick={() => {
+                                                // Make sure any unclicked missed clues are automatically collected when proceeding
+                                                const missedClues = INTRO_CLUES.filter(id => 
+                                                    !collectedClues.includes(id) && 
+                                                    !collectedDossierIds.includes(id)
+                                                );
+                                                missedClues.forEach(id => {
+                                                    onCollectClue(id, CLUE_DISPLAY_MAP[id] || id);
+                                                });
+                                                onContinue();
+                                            }}
                                             disabled={jenniferTyping}
                                             className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] hover:from-[#1e293b] hover:via-[#334155] hover:to-[#1e293b] border border-[#38bdf8]/50 text-[#38bdf8] rounded-lg transition-all font-mono text-base tracking-widest disabled:opacity-50 backdrop-blur-md shadow-[0_0_30px_rgba(56,189,248,0.2)]"
                                         >
