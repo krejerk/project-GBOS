@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, AlertCircle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, AlertCircle } from 'lucide-react';
 
 interface BriefingViewProps {
   onComplete: () => void;
@@ -274,15 +274,26 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete, onFirstI
           transition={{ delay: 0.5 }}
           className="flex flex-col items-center gap-6 mt-8"
         >
-          {!isLastStep ? (
-            <button
-              onClick={handleNext}
-              className="group flex items-center gap-3 px-8 py-4 bg-[#c85a3f]/12 hover:bg-[#c85a3f]/20 border border-[#c85a3f]/40 text-[#d89853]/95 rounded-lg transition-all font-mono text-sm tracking-wider backdrop-blur-sm neural-glow"
-            >
-              {isTyping ? '跳过 SKIP' : '继续 CONTINUE'}
-              <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          ) : (
+          <div className="flex flex-wrap items-center justify-center gap-4 w-full">
+            {currentStep > 0 && !isTyping && (
+              <button
+                onClick={() => setCurrentStep(prev => prev - 1)}
+                className="group flex items-center gap-3 px-6 py-4 bg-black/40 hover:bg-[#c85a3f]/20 border border-[#c85a3f]/20 hover:border-[#c85a3f]/40 text-[#d89853]/70 hover:text-[#d89853] rounded-lg transition-all font-mono text-sm tracking-wider backdrop-blur-sm"
+              >
+                <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+                回退 BACK
+              </button>
+            )}
+
+            {!isLastStep ? (
+              <button
+                onClick={handleNext}
+                className="group flex items-center gap-3 px-8 py-4 bg-[#c85a3f]/12 hover:bg-[#c85a3f]/20 border border-[#c85a3f]/40 text-[#d89853]/95 rounded-lg transition-all font-mono text-sm tracking-wider backdrop-blur-sm neural-glow"
+              >
+                {isTyping ? '跳过 SKIP' : '继续 CONTINUE'}
+                <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            ) : (
             <motion.button
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -297,6 +308,7 @@ export const BriefingView: React.FC<BriefingViewProps> = ({ onComplete, onFirstI
               <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </motion.button>
           )}
+          </div>
 
           {isLastStep && !isTyping && (
             <motion.div

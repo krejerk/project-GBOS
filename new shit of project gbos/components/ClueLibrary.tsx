@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, Folder, File, X, Image as ImageIcon, Paperclip, FileText, Search, Tag, Eye, Lock, Hash, MessageCircle, Mic, ChevronRight, Activity, Brain } from 'lucide-react';
+import { Database, Folder, File, X, Image as ImageIcon, Paperclip, FileText, Search, Tag, Eye, Lock, Hash, MessageCircle, Mic, ChevronRight, ChevronLeft, Activity, Brain } from 'lucide-react';
 import { Clue, ClueAttachment } from '../types';
 import {
     CLUE_DISPLAY_MAP, CATEGORY_IDS, KEYWORD_REGISTRY,
@@ -317,8 +317,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     };
 
     const checkNode7Completion = () => {
-        const requiredConfessions = ['confession_27', 'confession_28', 'confession_29'];
-        const requiredArchives = ['clipping_20', 'clipping_21', 'clipping_22'];
+        const requiredConfessions = ['confession_20', 'confession_21', 'confession_22', 'confession_23', 'confession_24', 'confession_25', 'confession_26', 'confession_27', 'confession_28', 'confession_29'];
+        const requiredArchives = ['clipping_17', 'clipping_18', 'clipping_19', 'clipping_20'];
         
         const hasAllConfessions = requiredConfessions.every(id => unlockedNodeIds.includes(id));
         const hasAllArchives = requiredArchives.every(id => unlockedArchiveIds.includes(id));
@@ -596,6 +596,12 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         const dialog = getJenniferDialogue(simulatedDialogue, detectedNodeId, hasVisitedBefore);
         if (jenniferStep < dialog.length - 1) {
             setJenniferStep(prev => prev + 1);
+        }
+    };
+
+    const handleJenniferPrev = () => {
+        if (jenniferStep > 0) {
+            setJenniferStep(prev => prev - 1);
         }
     };
 
@@ -1360,27 +1366,41 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                         {(() => {
                                             if (showHistory) return null;
                                             const dialog = getJenniferDialogue(simulatedDialogue, detectedNodeId, hasVisitedBefore);
-                                            return jenniferStep < dialog.length - 1 ? (
-                                                <button
-                                                    onClick={handleJenniferNext}
-                                                    className="group flex items-center gap-3 px-8 py-3 bg-[#334155]/50 hover:bg-[#475569]/50 border border-[#475569] text-[#e2e8f0] rounded-lg transition-all font-mono text-sm tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.1)] outline-none"
-                                                >
-                                                    继续 // NEXT
-                                                    <ChevronRight size={16} className="text-[#94a3b8] group-hover:translate-x-1 transition-transform" />
-                                                </button>
-                                            ) : (
-                                                <motion.button
-                                                    initial={{ scale: 0.9, opacity: 0 }}
-                                                    animate={{ scale: 1, opacity: 1 }}
-                                                    whileHover={{ scale: 1.05 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                    onClick={handleJenniferComplete}
-                                                    className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] hover:from-[#1e293b] hover:via-[#334155] hover:to-[#1e293b] border border-[#38bdf8]/50 text-[#38bdf8] rounded-lg transition-all font-mono text-base tracking-widest backdrop-blur-md shadow-[0_0_30px_rgba(56,189,248,0.2)]"
-                                                >
-                                                    <Brain size={20} className="animate-pulse" />
-                                                    继续工作 // DISCONNECT
-                                                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                                                </motion.button>
+                                            return (
+                                                <div className="flex items-center gap-4">
+                                                    {jenniferStep > 0 && (
+                                                        <button
+                                                            onClick={handleJenniferPrev}
+                                                            className="group flex items-center gap-3 px-6 py-3 bg-[#334155]/30 hover:bg-[#475569]/50 border border-[#475569]/50 hover:border-[#475569] text-[#94a3b8] hover:text-[#e2e8f0] rounded-lg transition-all font-mono text-sm tracking-widest backdrop-blur-md"
+                                                        >
+                                                            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                                                            回退 // BACK
+                                                        </button>
+                                                    )}
+
+                                                    {jenniferStep < dialog.length - 1 ? (
+                                                        <button
+                                                            onClick={handleJenniferNext}
+                                                            className="group flex items-center gap-3 px-8 py-3 bg-[#334155]/50 hover:bg-[#475569]/50 border border-[#475569] text-[#e2e8f0] rounded-lg transition-all font-mono text-sm tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.1)] outline-none"
+                                                        >
+                                                            继续 // NEXT
+                                                            <ChevronRight size={16} className="text-[#94a3b8] group-hover:translate-x-1 transition-transform" />
+                                                        </button>
+                                                    ) : (
+                                                        <motion.button
+                                                            initial={{ scale: 0.9, opacity: 0 }}
+                                                            animate={{ scale: 1, opacity: 1 }}
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            onClick={handleJenniferComplete}
+                                                            className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] hover:from-[#1e293b] hover:via-[#334155] hover:to-[#1e293b] border border-[#38bdf8]/50 text-[#38bdf8] rounded-lg transition-all font-mono text-base tracking-widest backdrop-blur-md shadow-[0_0_30px_rgba(56,189,248,0.2)]"
+                                                        >
+                                                            <Brain size={20} className="animate-pulse" />
+                                                            继续工作 // DISCONNECT
+                                                            <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                                                        </motion.button>
+                                                    )}
+                                                </div>
                                             );
                                         })()}
                                     </div>
