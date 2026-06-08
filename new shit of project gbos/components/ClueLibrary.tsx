@@ -454,7 +454,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         }
 
         // SWEEP TRIGGER: Always sweep if ending Node 3 dialogue, regardless of what detectedNodeId says now
-        if (simulatedDialogue === JENNIFER_NODE_3_DIALOGUE || (detectedNodeId === 3 && onStoryNodeComplete)) {
+        if (detectedNodeId === 3 && onStoryNodeComplete && !simulatedDialogue) {
             setHasViewedNode3Dialogue(true);
             if (onCollectClue) {
                 onCollectClue('st_louis', '圣路易斯');
@@ -463,7 +463,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setNewlyAddedItems(new Set(['crime_route_map', 'st_louis', 'vampire']));
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             if (onClearUnusedKeywords) onClearUnusedKeywords();
-        } else if (simulatedDialogue === JENNIFER_NODE_4_DIALOGUE || detectedNodeId === 4) {
+        } else if (detectedNodeId === 4 && !simulatedDialogue) {
             // Node 4 completion: Update story node and collect julip dossier
             if (onStoryNodeComplete) {
                 onStoryNodeComplete(4);
@@ -482,7 +482,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 4 dialogue as viewed to trigger map update
             setHasViewedNode4Dialogue(true);
-        } else if (simulatedDialogue === JENNIFER_NODE_5_DIALOGUE || detectedNodeId === 5) {
+        } else if (detectedNodeId === 5 && !simulatedDialogue) {
             // Node 5 completion: Update story node and collect reboot_command keyword
             if (onStoryNodeComplete) {
                 onStoryNodeComplete(5);
@@ -496,7 +496,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 5 dialogue as viewed to trigger map update
             setHasViewedNode5Dialogue(true);
-        } else if (simulatedDialogue === JENNIFER_NODE_6_DIALOGUE || detectedNodeId === 6) {
+        } else if (detectedNodeId === 6 && !simulatedDialogue) {
             // Node 6 completion: Update story node to 6
             if (onStoryNodeComplete) {
                 onStoryNodeComplete(6);
@@ -514,7 +514,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 6 dialogue as viewed to trigger map update
             setHasViewedNode6Dialogue(true);
-        } else if (simulatedDialogue === JENNIFER_NODE_7_DIALOGUE || detectedNodeId === 7) {
+        } else if (detectedNodeId === 7 && !simulatedDialogue) {
             // Node 7 completion: Update story node to 7
             if (onStoryNodeComplete) {
                 onStoryNodeComplete(7);
@@ -528,7 +528,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 7 dialogue as viewed to trigger map update
             setHasViewedNode7Dialogue(true);
-        } else if (simulatedDialogue === JENNIFER_NODE_8_DIALOGUE || detectedNodeId === 8) {
+        } else if (detectedNodeId === 8 && !simulatedDialogue) {
             // Node 8 completion: Update story node to 8
             if (onStoryNodeComplete) {
                 onStoryNodeComplete(8);
@@ -540,7 +540,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             }
             
             setHasViewedNode8Dialogue(true);
-        } else if (simulatedDialogue === JENNIFER_NODE_9_DIALOGUE || detectedNodeId === 9) {
+        } else if (detectedNodeId === 9 && !simulatedDialogue) {
             // Node 9 completion: Collect 1999 and Cynthia Miller
             if (onStoryNodeComplete) {
                 onStoryNodeComplete(9);
