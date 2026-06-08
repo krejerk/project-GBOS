@@ -317,6 +317,10 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "st_louis",
     "type": "location"
   },
+  "吸血鬼": {
+    "id": "vampire",
+    "type": "case"
+  },
   "特克萨卡纳": {
     "id": "texarkana",
     "type": "location"

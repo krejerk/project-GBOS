@@ -12,6 +12,7 @@ export const CHAPTER4_KEYWORDS: Record<string, KeywordMetadata> = {
   'new_plan': { id: 'new_plan', chapter: 4, type: 'case', displayName: "新计划", isPersistent: true, description: "康查尔在圣路易斯行动后制定的秘密方案，具体内容仍然模糊。", source: "Confession" },
   'peter_henderson': { id: 'peter_henderson', chapter: 4, type: 'person', displayName: "皮特·亨德森", isPersistent: true },
   'st_louis': { id: 'st_louis', chapter: 4, type: 'location', displayName: "圣路易斯", isPersistent: true, description: "密苏里州的一座城市。", source: "Archive" },
+  'vampire': { id: 'vampire', chapter: 4, type: 'case', displayName: "吸血鬼", isPersistent: true, description: "詹妮弗提及的一起案件。", source: "Jennifer" },
   'vanessa': { id: 'vanessa', chapter: 4, type: 'person', displayName: "瓦妮莎", isPersistent: true },
   'year_1965': { id: 'year_1965', chapter: 4, type: 'year', displayName: "1965", isPersistent: true },
   'year_1976': { id: 'year_1976', chapter: 4, type: 'year', displayName: "1976", isPersistent: true }
