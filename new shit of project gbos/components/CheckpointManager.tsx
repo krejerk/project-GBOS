@@ -33,14 +33,16 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                 phase: 'immersion',
                 passwordEntered: true,
                 unlockedPeople: [],
-                collectedClues: [],
-                collectedDossierIds: ['julip', 'project'],
+                collectedClues: ['maine', 'small_bank', 'chicago', 'missing'],
+                collectedDossierIds: ['personnel_tree', 'julip', 'project'],
                 collectedYears: [],
                 unlockedNodeIds: [],
                 unlockedArchiveIds: [],
                 currentStoryNode: 0,
                 systemStability: 84,
-                activeNodeId: null
+                activeNodeId: null,
+                tutorialStep: 1,
+                isTutorialComplete: false
             }
         },
         {
