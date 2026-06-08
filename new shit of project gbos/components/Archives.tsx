@@ -350,7 +350,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                     <div className="text-[10px] text-[#c85a3f]/40 font-mono uppercase">Case Directory</div>
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                                    {unlockedArchiveIds.map(id => {
+                                    {[...unlockedArchiveIds].reverse().map(id => {
                                         const record = ARCHIVE_DATABASE.find(r => r.id === id);
                                         if (!record) return null;
                                         return (

@@ -471,20 +471,10 @@ export const ConfessionLog: React.FC<ConfessionLogProps> = ({ unlockedNodeIds, o
 
             {/* List */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-                {(CONFESSION_REGISTRY || []).map((record, index) => {
-                    const isDecrypted = unlockedNodeIds.includes(record.id);
-
-                    if (!isDecrypted) {
-                        return (
-                            <div key={record.id} className="opacity-40 border-l-2 border-[#c85a3f]/20 pl-4 py-2">
-                                <div className="flex items-center gap-2 text-[#c85a3f]/60 font-bold mb-1">
-                                    <Lock size={12} />
-                                    <span>[RECORD #{String(index + 1).padStart(3, '0')} - DATA MISSING]</span>
-                                </div>
-                            </div>
-                        );
-                    }
-
+                {[...(CONFESSION_REGISTRY || [])]
+                    .filter(record => unlockedNodeIds.includes(record.id))
+                    .reverse()
+                    .map((record, index) => {
                     return (
                         <motion.div
                             key={record.id}
