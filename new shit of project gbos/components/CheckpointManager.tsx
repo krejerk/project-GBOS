@@ -25,25 +25,6 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
 
     const CHECKPOINTS: Checkpoint[] = [
         {
-            id: 99,
-            title: "MASTER UNLOCK",
-            description: "DEVELOPER OVERRIDE: ALL ACCESS",
-            storyNode: 0,
-            state: {
-                phase: 'immersion',
-                passwordEntered: true,
-                unlockedPeople: [],
-                collectedClues: [],
-                collectedDossierIds: ['julip', 'project'],
-                collectedYears: [],
-                unlockedNodeIds: ALL_MEMORY_NODES.map(n => n.id),
-                unlockedArchiveIds: [],
-                currentStoryNode: 9,
-                systemStability: 84,
-                activeNodeId: null
-            }
-        },
-        {
             id: 0,
             title: "CHAPTER 0",
             description: "NEURAL INITIALIZATION",
