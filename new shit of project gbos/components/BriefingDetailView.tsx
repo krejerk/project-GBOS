@@ -19,7 +19,7 @@ interface BriefingSection {
     isHighlight?: boolean;
 }
 
-import { BRIEFING_SECTIONS, JENNIFER_INTRO_DIALOGUE as JENNIFER_DIALOGUE } from '../constants';
+import { BRIEFING_SECTIONS, JENNIFER_INTRO_DIALOGUE, CLUE_DISPLAY_MAP } from '../constants';
 
 export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContinue, onCollectClue, collectedClues, collectedDossierIds, unlockedPeople = [] }) => {
     const [currentSection, setCurrentSection] = useState(0);
@@ -29,6 +29,37 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
     const [jenniferStep, setJenniferStep] = useState(0);
     const [jenniferTyping, setJenniferTyping] = useState(false);
     const [jenniferText, setJenniferText] = useState('');
+    const [jenniferDialogue, setJenniferDialogue] = useState<string[]>(JENNIFER_INTRO_DIALOGUE);
+
+    const INTRO_CLUES = ['julip', 'maine', 'small_bank', 'chicago', 'missing', 'project'];
+
+    // Dynamic dialogue check
+    React.useEffect(() => {
+        if (showJennifer) {
+            const missedClues = INTRO_CLUES.filter(id => 
+                !collectedClues.includes(id) && 
+                !collectedDossierIds.includes(id)
+            );
+
+            if (missedClues.length > 0) {
+                const missedNames = missedClues.map(id => CLUE_DISPLAY_MAP[id] || id).join('、');
+                setJenniferDialogue([
+                    "我是你本次潜航任务的向导兼操作员詹妮弗。",
+                    `你在刚才的关键词搜集中漏掉了以下内容：「${missedNames}」。`,
+                    "你要记住，关键词是解锁机体记忆的唯一钥匙。",
+                    "接下来，请将这些关键词在同卡彭对话时抛出，以进一步搜集他记忆中的重要碎片。",
+                    "准备好进入卡彭的潜意识了吗？我会不定期进行联络，对于搜集进度和关键性问题提出指导意见。"
+                ]);
+
+                // Auto collect them
+                missedClues.forEach(id => {
+                    onCollectClue(id, CLUE_DISPLAY_MAP[id] || id);
+                });
+            } else {
+                setJenniferDialogue(JENNIFER_INTRO_DIALOGUE);
+            }
+        }
+    }, [showJennifer]);
 
     // Jennifer Typewriter
     React.useEffect(() => {
@@ -36,7 +67,7 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
 
         setJenniferTyping(true);
         setJenniferText('');
-        const fullText = JENNIFER_DIALOGUE[jenniferStep];
+        const fullText = jenniferDialogue[jenniferStep] || '';
         let index = 0;
 
         const timer = setInterval(() => {
@@ -50,13 +81,13 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
         }, 30);
 
         return () => clearInterval(timer);
-    }, [showJennifer, jenniferStep]);
+    }, [showJennifer, jenniferStep, jenniferDialogue]);
 
     const handleJenniferNext = () => {
         if (jenniferTyping) {
-            setJenniferText(JENNIFER_DIALOGUE[jenniferStep]);
+            setJenniferText(jenniferDialogue[jenniferStep] || '');
             setJenniferTyping(false);
-        } else if (jenniferStep < JENNIFER_DIALOGUE.length - 1) {
+        } else if (jenniferStep < jenniferDialogue.length - 1) {
             setJenniferStep(prev => prev + 1);
         }
     };
@@ -342,7 +373,7 @@ export const BriefingDetailView: React.FC<BriefingDetailViewProps> = ({ onContin
                                         </button>
                                     )}
 
-                                    {jenniferStep < JENNIFER_DIALOGUE.length - 1 ? (
+                                    {jenniferStep < jenniferDialogue.length - 1 ? (
                                         <button
                                             onClick={handleJenniferNext}
                                             className="group flex items-center gap-3 px-8 py-3 bg-[#334155]/50 hover:bg-[#475569]/50 border border-[#475569] text-[#e2e8f0] rounded-lg transition-all font-mono text-sm tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.1)] outline-none"
