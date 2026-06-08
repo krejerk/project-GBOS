@@ -378,8 +378,8 @@ export const Archives: React.FC<ArchivesProps> = ({
                                 <div className="flex-1 overflow-hidden pt-16">
                                     <AnimatePresence mode="wait">
                                         {!activeCase ? (
-                                            <motion.div key="search" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-start p-8 pt-16 pb-12 overflow-y-auto custom-scrollbar">
-                                                <div className="max-w-md w-full space-y-8">
+                                            <motion.div key="search" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-start p-8 pt-8 pb-8 overflow-y-auto custom-scrollbar">
+                                                <div className="max-w-md w-full space-y-6">
                                                     <div className="text-center space-y-4">
                                                         <div className="relative inline-block">
                                                             <ShieldAlert size={56} className="text-[#c85a3f] relative z-10 filter drop-shadow-[0_0_15px_rgba(200,90,63,0.4)]" />
@@ -391,7 +391,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                         <div className="h-[1px] w-24 mx-auto bg-gradient-to-r from-transparent via-[#c85a3f]/40 to-transparent"></div>
                                                     </div>
                                                     
-                                                    <form onSubmit={handleSearch} className="space-y-6">
+                                                    <form onSubmit={handleSearch} className="space-y-5">
                                                         <div className="space-y-4">
                                                             <div>
                                                                 <label className="text-[9px] text-[#c85a3f]/60 font-mono uppercase tracking-widest mb-1 block">Time Index</label>
@@ -441,7 +441,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                     </form>
                                                     
                                                     {/* Original Style Keyword Hints */}
-                                                    <div className="space-y-4 pt-10 border-t border-[#c85a3f]/10 mt-12">
+                                                    <div className="space-y-4 pt-6 border-t border-[#c85a3f]/10 mt-8">
                                                         <div className="text-[10px] text-[#c85a3f]/40 font-mono uppercase tracking-widest text-center">关键词参考 // KEYWORD HINTS</div>
                                                         <div className="flex flex-wrap justify-center gap-2">
                                                             {Array.from(new Set([...(collectedYears || []), ...(unlockedPeople || [])])).filter(id => {
@@ -525,9 +525,14 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                     {/* Vertical Label for folded state */}
                                                                     {focusedPane === 'annotation' && (
                                                                         <div className="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none">
-                                                                            <span className="text-[#c85a3f]/40 font-black tracking-[0.5em] uppercase text-xs transition-all duration-500 group-hover/news:text-[#c85a3f]/80 group-hover/news:scale-110" style={{ writingMode: 'vertical-rl' }}>
-                                                                                新闻剪报
-                                                                            </span>
+                                                                            <div className="flex flex-col items-center gap-4 transition-all duration-500 group-hover/news:scale-110">
+                                                                                <span className="text-[#c85a3f]/40 font-black tracking-[0.5em] uppercase text-xs group-hover/news:text-[#c85a3f]/80" style={{ writingMode: 'vertical-rl' }}>
+                                                                                    新闻剪报
+                                                                                </span>
+                                                                                <span className="text-[#c85a3f]/30 font-mono text-[10px] tracking-widest uppercase group-hover/news:text-[#c85a3f]/60 animate-pulse" style={{ writingMode: 'vertical-rl' }}>
+                                                                                    [ 点击展开 ]
+                                                                                </span>
+                                                                            </div>
                                                                         </div>
                                                                     )}
                                                                         <div className="h-full relative overflow-hidden" 
@@ -673,9 +678,14 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 <div className={`relative transition-all duration-700 ease-in-out cursor-pointer h-full overflow-hidden ${focusedPane === 'annotation' ? 'flex-[1] md:flex-[2.5]' : focusedPane === null ? 'flex-1' : 'hidden md:flex md:flex-1 md:opacity-60 md:hover:opacity-100'} bg-[#0a0505] group/notes`} onClick={() => setFocusedPane(focusedPane === 'annotation' ? null : 'annotation')}>
                                                                     {focusedPane === 'newspaper' && (
                                                                         <div className="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none">
-                                                                            <span className="text-[#c85a3f]/40 font-black tracking-[0.5em] uppercase text-xs transition-all duration-500 group-hover/notes:text-[#c85a3f]/80 group-hover/notes:scale-110" style={{ writingMode: 'vertical-rl' }}>
-                                                                                Internal Notes
-                                                                            </span>
+                                                                            <div className="flex flex-col items-center gap-4 transition-all duration-500 group-hover/notes:scale-110">
+                                                                                <span className="text-[#c85a3f]/40 font-black tracking-[0.5em] uppercase text-xs group-hover/notes:text-[#c85a3f]/80" style={{ writingMode: 'vertical-rl' }}>
+                                                                                    Internal Notes
+                                                                                </span>
+                                                                                <span className="text-[#c85a3f]/30 font-mono text-[10px] tracking-widest uppercase group-hover/notes:text-[#c85a3f]/60 animate-pulse" style={{ writingMode: 'vertical-rl' }}>
+                                                                                    [ 点击展开 ]
+                                                                                </span>
+                                                                            </div>
                                                                         </div>
                                                                     )}
                                                                     
