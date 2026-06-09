@@ -17,7 +17,7 @@ export const CHAPTER3_KEYWORDS: Record<string, KeywordMetadata> = {
   'year_1973': { id: 'year_1973', chapter: 3, type: 'year', displayName: "1973", isPersistent: true },
   'year_1975': { id: 'year_1975', chapter: 3, type: 'year', displayName: "1975", isPersistent: true },
   'year_1986': { id: 'year_1986', chapter: 3, type: 'year', displayName: "1986", isPersistent: true },
-  'jc_penney': { id: 'jc_penney', chapter: 3, type: 'location', displayName: "杰西·潘尼", isPersistent: true },
+  'jc_penney': { id: 'jc_penney', chapter: 3, type: 'person', displayName: "杰西·潘尼", isPersistent: true },
   'julie': { id: 'julie', chapter: 3, type: 'person', displayName: "朱莉", isPersistent: true, description: "辛辛那提冷库案的受害者。", source: "Confession" },
   'juvell_chambers': { id: 'juvell_chambers', chapter: 3, type: 'person', displayName: "朱维尔·钱伯斯", isPersistent: true, description: "一名路易斯维尔的黑人警察，后被招募进家族成为远亲。", source: "Confession" },
   'recruitment': { id: 'recruitment', chapter: 5, type: 'case', displayName: "招募", isPersistent: true, description: "雷吉博士筛选并引导卡彭进入“统一场论”计划的过程。", source: "Dialogue" }

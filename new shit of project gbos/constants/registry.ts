@@ -1052,21 +1052,24 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_17": {
     "keywords": [
-      "year_1976"
+      "year_1976",
+      "morandi"
     ],
     "targetId": "clipping_17",
     "type": "archive"
   },
   "clipping_18": {
     "keywords": [
-      "year_1976"
+      "year_1976",
+      "alexei"
     ],
     "targetId": "clipping_18",
     "type": "archive"
   },
   "clipping_19": {
     "keywords": [
-      "year_1976"
+      "year_1976",
+      "gore_and_levy"
     ],
     "targetId": "clipping_19",
     "type": "archive"

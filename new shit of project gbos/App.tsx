@@ -607,8 +607,14 @@ const App: React.FC = () => {
       // 2. Define protected keywords (newly given or core system)
       const protectedIds = ['st_louis', 'vampire', 'personnel_tree', ...PROTECTED_YEARS];
 
-      // 3. Filter lists: REMOVE everything except protected keywords to simulate "confiscating all unused"
-      const filterFn = (id: string) => protectedIds.includes(id);
+      // 3. Filter lists: REMOVE everything except protected keywords and future keywords
+      const filterFn = (id: string) => {
+          if (protectedIds.includes(id)) return true;
+          const meta = Object.values(KEYWORD_REGISTRY).find(k => k.id === id);
+          // Keep anything collected AFTER node 3
+          if (meta && meta.chapter > 3) return true;
+          return false;
+      };
 
       // 3. Sync attachments based on chapter
       const chapterAttachments = Object.values(ATTACHMENT_REGISTRY)
@@ -621,7 +627,6 @@ const App: React.FC = () => {
         ...prev,
         collectedClues: prev.collectedClues.filter(filterFn),
         collectedYears: prev.collectedYears.filter(filterFn),
-        unlockedPeople: prev.unlockedPeople.filter(filterFn),
         collectedAttachments: newAttachments,
         history: [
           ...prev.history,
@@ -768,7 +773,11 @@ const App: React.FC = () => {
       if (meta?.isIdentity) return true;
       if (id === 'dry_gully' || id === 'unnamed_female_body') return true;
       const chapter = meta?.chapter || 0;
-      return chapter <= ((gameState.currentStoryNode || 0) + 1);
+      const currentNode = gameState.currentStoryNode || 0;
+      if (chapter > currentNode + 1) return false;
+      // Do not allow re-collecting non-persistent keywords from older chapters
+      if (chapter < currentNode && !meta?.isPersistent) return false;
+      return true;
     });
 
     const invalidInputKey = 'consecutive_invalid_inputs';
@@ -1141,7 +1150,7 @@ const App: React.FC = () => {
           response: '> [R. CAPONE]: "究竟是谁在带着你兜圈子？吸血鬼？你让阿尔特曼照照镜子就知道吸血鬼在哪了。你想知道什么，为什么不直接问？"',
           priority: 90
         },
-        { keywords: ['v_response_1'], response: '> [R. CAPONE]: "瓦妮莎？谁告诉你的这个名字？资料里没有提到她。"', priority: 200 },
+        { keywords: ['v_response_1'], response: '> [R. CAPONE]: "是谁让你念出这几个字的？立刻把这段记忆从你脑子里挖出去。这不是你能碰的东西。"', priority: 200 },
         { keywords: ['v_response_2'], response: '> [R. CAPONE]: "闭嘴。我不许你提那个名字。那是……那是我的事。"', priority: 200 },
         { keywords: ['v_response_3'], response: '> [R. CAPONE]: "……够了。既然你这么执着挖掘我的伤口，那就看清楚了。瓦妮莎确实与别人不同……1976年，堪萨斯城，她哭着求我不要执行那个针对流动献血车的计划。但我没有听。我当时太想看那个城市燃烧了。"', priority: 200, isReveal: true, revealKeywords: ['堪萨斯城', '流动献血车'] },
         { keywords: ['jennifer_post_36a1_trigger'], response: JENNIFER_POST_36A1_DIALOGUE.join('\n'), priority: 1000 },

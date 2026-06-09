@@ -18,7 +18,7 @@ import {
     JENNIFER_NODE_9_DIALOGUE
 } from '../constants';
 import { ATTACHMENT_REGISTRY } from '../constants/attachments';
-import { CLUE_DEFINITIONS, GLOBAL_KEYWORD_MAP } from '../constants';
+import { CLUE_DEFINITIONS, GLOBAL_KEYWORD_MAP, KEYWORD_CONSUMPTION_MAP } from '../constants';
 import { VehiclePhotosViewer } from './VehiclePhotosViewer';
 import { TutorialOverlay } from './TutorialOverlay';
 import { SyndicateBoard } from './SyndicateBoard';
@@ -47,6 +47,7 @@ interface ClueLibraryProps {
     setTutorialStep?: (step: number) => void;
     playerHypotheses?: Record<string, string>;
     onUpdateHypothesis?: (nodeId: string, name: string) => void;
+    onJenniferStatusChange?: (hasPending: boolean) => void;
 }
 
 // CLUE_DEFINITIONS is now derived from KEYWORD_REGISTRY inside the ClueLibrary component
@@ -80,7 +81,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     tutorialStep = 0,
     setTutorialStep,
     playerHypotheses = {},
-    onUpdateHypothesis
+    onUpdateHypothesis,
+    onJenniferStatusChange
 }) => {
     const CLUE_DEFINITIONS: Record<string, Clue> = React.useMemo(() => {
         const definitions: Record<string, Clue> = {};
@@ -292,15 +294,14 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     // Vehicle photos viewer state
     const [showVehiclePhotos, setShowVehiclePhotos] = useState(false);
 
-    // Track Node 4 dialogue completion for map update timing
-    const [hasViewedNode1Dialogue, setHasViewedNode1Dialogue] = useState(false);
-    const [hasViewedNode2Dialogue, setHasViewedNode2Dialogue] = useState(false);
-    const [hasViewedNode3Dialogue, setHasViewedNode3Dialogue] = useState(false);
-    const [hasViewedNode4Dialogue, setHasViewedNode4Dialogue] = useState(false);
-    const [hasViewedNode5Dialogue, setHasViewedNode5Dialogue] = useState(false);
-    const [hasViewedNode6Dialogue, setHasViewedNode6Dialogue] = useState(false);
-    const [hasViewedNode7Dialogue, setHasViewedNode7Dialogue] = useState(false);
-    const [hasViewedNode8Dialogue, setHasViewedNode8Dialogue] = useState(false);
+    const [hasViewedNode1Dialogue, setHasViewedNode1Dialogue] = useState(() => localStorage.getItem('hasViewedNode1') === 'true');
+    const [hasViewedNode2Dialogue, setHasViewedNode2Dialogue] = useState(() => localStorage.getItem('hasViewedNode2') === 'true');
+    const [hasViewedNode3Dialogue, setHasViewedNode3Dialogue] = useState(() => localStorage.getItem('hasViewedNode3') === 'true');
+    const [hasViewedNode4Dialogue, setHasViewedNode4Dialogue] = useState(() => localStorage.getItem('hasViewedNode4') === 'true');
+    const [hasViewedNode5Dialogue, setHasViewedNode5Dialogue] = useState(() => localStorage.getItem('hasViewedNode5') === 'true');
+    const [hasViewedNode6Dialogue, setHasViewedNode6Dialogue] = useState(() => localStorage.getItem('hasViewedNode6') === 'true');
+    const [hasViewedNode7Dialogue, setHasViewedNode7Dialogue] = useState(() => localStorage.getItem('hasViewedNode7') === 'true');
+    const [hasViewedNode8Dialogue, setHasViewedNode8Dialogue] = useState(() => localStorage.getItem('hasViewedNode8') === 'true');
 
     const checkNode9Completion = () => {
         return unlockedNodeIds.includes('node_9') && currentStoryNode === 8;
@@ -412,6 +413,13 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
         }
     }, [isOpen, detectedNodeId]);
 
+    // Notify parent about Jennifer's pending status
+    useEffect(() => {
+        if (onJenniferStatusChange) {
+            onJenniferStatusChange(detectedNodeId !== null && !showJennifer);
+        }
+    }, [detectedNodeId, showJennifer, onJenniferStatusChange]);
+
         // Mark as visited when dialogue completes
     const handleJenniferComplete = () => {
         if (!hasVisitedBefore) {
@@ -431,6 +439,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             if (detectedNodeId === 1) {
                 if (onCollectClue) onCollectClue('crime_route_map', '罗伯特·卡彭：犯罪路线');
                 setHasViewedNode1Dialogue(true);
+                localStorage.setItem('hasViewedNode1', 'true');
                 setNewlyAddedItems(new Set(['crime_route_map']));
                 setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             } else if (detectedNodeId === 2) {
@@ -438,18 +447,24 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                 setNewlyAddedItems(new Set(['crime_route_map', 'graywater_beacon']));
                 setTimeout(() => setNewlyAddedItems(new Set()), 10000);
                 setHasViewedNode2Dialogue(true);
+                localStorage.setItem('hasViewedNode2', 'true');
             } else if (detectedNodeId === 3) {
                 setHasViewedNode3Dialogue(true);
+                localStorage.setItem('hasViewedNode3', 'true');
             } else if (detectedNodeId === 4) {
                 setHasViewedNode4Dialogue(true);
+                localStorage.setItem('hasViewedNode4', 'true');
             } else if (detectedNodeId === 5) {
                 setHasViewedNode5Dialogue(true);
+                localStorage.setItem('hasViewedNode5', 'true');
             } else if (detectedNodeId === 6) {
                 setHasViewedNode6Dialogue(true);
+                localStorage.setItem('hasViewedNode6', 'true');
                 // Trigger sweep after intro dialogue to clean up old chapter debris
                 if (onClearUnusedKeywords) onClearUnusedKeywords();
             } else if (detectedNodeId === 7) {
                 setHasViewedNode7Dialogue(true);
+                localStorage.setItem('hasViewedNode7', 'true');
             }
         }
 
@@ -482,6 +497,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 4 dialogue as viewed to trigger map update
             setHasViewedNode4Dialogue(true);
+            localStorage.setItem('hasViewedNode4', 'true');
         } else if (detectedNodeId === 5 && !simulatedDialogue) {
             // Node 5 completion: Update story node and collect reboot_command keyword
             if (onStoryNodeComplete) {
@@ -496,6 +512,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTimeout(() => setNewlyAddedItems(new Set()), 10000);
             // Mark Node 5 dialogue as viewed to trigger map update
             setHasViewedNode5Dialogue(true);
+            localStorage.setItem('hasViewedNode5', 'true');
         } else if (detectedNodeId === 6 && !simulatedDialogue) {
             // Node 6 completion: Update story node to 6
             if (onStoryNodeComplete) {
@@ -1065,45 +1082,53 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                             文件注记：{renderContent('[小A.W.威尔莫](clue:aw_wilmo)')}
                                                         </div>
                                                     )}
-                                                    {viewingAttachment.content?.endsWith('images/iron_horse_louisville.jpg') && (
-                                                        <div className="text-xs text-[#94a3b8] mt-2 pt-2 border-t border-white/10">
-                                                            地理坐标分析：首次会面于
-                                                            <span
-                                                                className={`
-                                                                    ml-1 cursor-pointer text-white underline underline-offset-4 decoration-dashed decoration-[#94a3b8]/50 hover:decoration-white
-                                                                    ${collectedKeywords.includes('louisville') ? 'text-[#38bdf8] no-underline cursor-default' : ''}
-                                                                `}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    if (!collectedKeywords.includes('louisville') && onCollectClue) {
-                                                                        onCollectClue('louisville', '路易斯维尔');
-                                                                    }
-                                                                }}
-                                                            >
-                                                                {collectedKeywords.includes('louisville') ? '路易斯维尔' : '点击提取坐标'}
-                                                            </span>
-                                                        </div>
-                                                    )}
+                                                    {viewingAttachment.content?.endsWith('images/iron_horse_louisville.jpg') && (() => {
+                                                        const isLouisvilleConsumed = unlockedNodeIds.some(id => KEYWORD_CONSUMPTION_MAP[id]?.includes('louisville'));
+                                                        const hasLouisville = collectedKeywords.includes('louisville') || isLouisvilleConsumed;
+                                                        return (
+                                                            <div className="text-xs text-[#94a3b8] mt-2 pt-2 border-t border-white/10">
+                                                                地理坐标分析：首次会面于
+                                                                <span
+                                                                    className={`
+                                                                        ml-1 cursor-pointer text-white underline underline-offset-4 decoration-dashed decoration-[#94a3b8]/50 hover:decoration-white
+                                                                        ${hasLouisville ? 'text-[#38bdf8] no-underline cursor-default' : ''}
+                                                                    `}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        if (!hasLouisville && onCollectClue) {
+                                                                            onCollectClue('louisville', '路易斯维尔');
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {hasLouisville ? '路易斯维尔' : '点击提取坐标'}
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })()}
                                                     {/* Special annotation for libby */}
-                                                    {(viewingAttachment.id === 'libby_ticket' || viewingAttachment.id === 'libby_convergence_map' || viewingAttachment.content?.endsWith('images/libby_convergence_map.png')) && (
-                                                        <div className="text-xs text-[#94a3b8] mt-2 pt-2 border-t border-white/10">
-                                                            地点标注：
-                                                            <span
-                                                                className={`
-                                                                    ml-1 cursor-pointer text-white underline underline-offset-4 decoration-dashed decoration-[#94a3b8]/50 hover:decoration-white
-                                                                    ${(collectedKeywords || []).includes('libby_town') ? 'text-[#38bdf8] no-underline cursor-default' : 'animate-pulse text-[#fbbf24]'}
-                                                                `}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    if (!(collectedKeywords || []).includes('libby_town') && onCollectClue) {
-                                                                        onCollectClue('libby_town', '利比镇');
-                                                                    }
-                                                                }}
-                                                            >
-                                                                利比镇
-                                                            </span>
-                                                        </div>
-                                                    )}
+                                                    {(viewingAttachment.id === 'libby_ticket' || viewingAttachment.id === 'libby_convergence_map' || viewingAttachment.content?.endsWith('images/libby_convergence_map.png')) && (() => {
+                                                        const isLibbyConsumed = unlockedNodeIds.some(id => KEYWORD_CONSUMPTION_MAP[id]?.includes('libby_town'));
+                                                        const hasLibby = (collectedKeywords || []).includes('libby_town') || isLibbyConsumed;
+                                                        return (
+                                                            <div className="text-xs text-[#94a3b8] mt-2 pt-2 border-t border-white/10">
+                                                                地点标注：
+                                                                <span
+                                                                    className={`
+                                                                        ml-1 cursor-pointer text-white underline underline-offset-4 decoration-dashed decoration-[#94a3b8]/50 hover:decoration-white
+                                                                        ${hasLibby ? 'text-[#38bdf8] no-underline cursor-default' : 'animate-pulse text-[#fbbf24]'}
+                                                                    `}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        if (!hasLibby && onCollectClue) {
+                                                                            onCollectClue('libby_town', '利比镇');
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    利比镇
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })()}
                                                     {/* Autopsy Report Special Caption */}
                                                     {(viewingAttachment.id === 'death_report' || viewingAttachment.id === 'QTC-VA-0994') && (
                                                         <div className="mt-4 p-3 bg-black/20 border-l-2 border-red-900/50 text-[10px] text-[#94a3b8] italic border-t border-white/10">

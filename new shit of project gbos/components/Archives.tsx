@@ -298,7 +298,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                 return yearMatch && personMatch;
             });
 
-            const foundNodeEntry = Object.values(UNLOCKS_REGISTRY).find((entry: any) => entry.keywords?.every((kw: string) => uniqueKeywordIds.includes(kw)));
+            const foundNodeEntry = Object.values(UNLOCKS_REGISTRY).find((entry: any) => entry.type === 'node' && entry.keywords?.every((kw: string) => uniqueKeywordIds.includes(kw)));
 
             if (foundArchive || foundNodeEntry) {
                 if (foundArchive) {

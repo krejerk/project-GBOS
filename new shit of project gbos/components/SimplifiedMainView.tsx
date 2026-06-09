@@ -174,17 +174,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
     React.useEffect(() => {
         const currentArchiveCount = unlockedPeople.length + collectedYears.length;
-        if (currentArchiveCount > prevArchiveCount.current) {
-            setHasNewArchive(true);
-        }
+        // setHasNewArchive(true); // User requested to completely remove this red dot
         prevArchiveCount.current = currentArchiveCount;
     }, [unlockedPeople.length, collectedYears.length]);
 
     React.useEffect(() => {
         const currentDossierCount = collectedDossierIds.length;
-        if (currentDossierCount > prevDossierCount.current) {
-            setHasNewDossier(true);
-        }
+        // setHasNewDossier(true); // Now controlled by Jennifer's pending dialogue status
         prevDossierCount.current = currentDossierCount;
     }, [collectedDossierIds.length]);
 
@@ -350,15 +346,11 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         onClick={() => {
                             if (tutorialStep === 7) setTutorialStep(8);
                             setShowArchives(true);
-                            setHasNewArchive(false);
                         }}
                         className={`group flex items-center gap-1.5 transition-colors text-xs tracking-[0.1em] font-bold p-2 md:p-0 relative ${tutorialStep > 0 && tutorialStep !== 7 ? 'opacity-20 cursor-not-allowed pointer-events-none' : 'text-[#d89853]/80 hover:text-[#d89853]'}`}
                     >
                         <Archive size={16} className="group-hover:scale-110 transition-transform" />
                         <span className="hidden md:inline">档案室</span>
-                        {hasNewArchive && (
-                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_#ef4444]" />
-                        )}
                     </button>
                     <button
                         id="tutorial-dossier-btn"
@@ -1145,6 +1137,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 setTutorialStep={setTutorialStep}
                 playerHypotheses={playerHypotheses}
                 onUpdateHypothesis={onUpdateHypothesis}
+                onJenniferStatusChange={(hasPending) => setHasNewDossier(hasPending)}
             />
             <Archives
                 isOpen={showArchives}
