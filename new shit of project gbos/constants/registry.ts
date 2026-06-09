@@ -537,7 +537,15 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "MTXXXXXXXX-93",
     "type": "case"
   },
+  "MTXXXXXXXX-93": {
+    "id": "MTXXXXXXXX-93",
+    "type": "case"
+  },
   "匡提科法证实验室QTC-VA-0994": {
+    "id": "QTC-VA-0994",
+    "type": "location"
+  },
+  "QTC-VA-0994": {
     "id": "QTC-VA-0994",
     "type": "location"
   },
