@@ -320,7 +320,7 @@ const CONFESSION_REGISTRY = [
     location: '俄勒冈州 (Oregon)',
     keywords: ['林地深处', '亚玛力人协议', '费利佩·马尔多纳多', 'FELIPE MALDONADO'],
     people: ['费利佩·马尔多纳多 (Felipe Maldonado)', '瓦妮莎 (Vanessa)', '艾莉丝 (Alice)'],
-    summary: '关于1975年发生在俄勒冈红杉林中的惨案。揭示了瓦妮莎对自由的渴望，以及艾莉丝如何以一种极其残酷的方式“满足”了这种渴望——带回了一张带血的费利佩·马尔多纳多演出海报。',
+    summary: '关于1976年发生在俄勒冈红杉林中的惨案。揭示了瓦妮莎对自由的渴望，以及艾莉丝如何以一种极其残酷的方式“满足”了这种渴望——带回了一张带血的费利佩·马尔多纳多演出海报。',
     status: 'DECRYPTED'
   },
   {
