@@ -10,6 +10,7 @@ export const CHAPTER1_KEYWORDS: Record<string, KeywordMetadata> = {
   'lundgren': { id: 'lundgren', chapter: 1, type: 'person', displayName: "伦德格兰", isPersistent: true, description: "柯特兰邪教屠杀案的主谋，自称能与神灵沟通。其行为带有强烈的表演性与仪式感。", source: "Confession" },
   'maine': { id: 'maine', chapter: 1, type: 'location', displayName: "缅因州", isPersistent: true, description: "该家族曾在此地实施过一次银行劫案。", source: "Briefing" },
   'missing': { id: 'missing', chapter: 1, type: 'case', displayName: "失踪", isPersistent: true, description: "受害者的最终下落不明。", source: "Briefing" },
+  'crime_route_map': { id: 'crime_route_map', chapter: 1, type: 'case', displayName: "罗伯特·卡彭：犯罪路线", isPersistent: true, description: "卡彭在全美的流窜路线。随着新的线索解开，会逐渐拼凑出完整的路线图。", source: "Investigation" },
   'nibi': { id: 'nibi', chapter: 1, type: 'person', displayName: "尼比", isPersistent: true, description: "阿尔衮琴人，1971年缅因州银行劫案的执行者。与康查尔之间存在扭曲的仪式性关系。", source: "Confession" },
   'ohio': { id: 'ohio', chapter: 1, type: 'location', displayName: "俄亥俄州", isPersistent: true, description: "1968年柯特兰邪教屠杀案的发生地。雷吉博士\"统一场论\"列表中的关键案件之一。", source: "Confession" },
   'ritual_case': { id: 'ritual_case', chapter: 1, type: 'case', displayName: "祭祀案", isPersistent: true, description: "伦德格兰以宗教祭祀为名义实施的屠杀。艾弗里一家五口在谷仓下被杀害。", source: "Confession" },
