@@ -69,6 +69,7 @@ const LOG_DATA = {
         { id: "03", type: "DEAD_DROP", sender: "Dr. Reggie", receiver: "M. Thorne", date: "6月18日", content: "不对劲。\n我重新看了一遍这几年的双向传输日志，出大问题了。家族的每一步动作，甚至清理门户的手法，都跟“统一场论”一模一样，连个误差都找不出来。这不可能，没人能做到这种程度的拟合。只有一个解释，灰水信标是双向的，罗伯特盯着他的时候，那老鬼也在盯着他，还顺便把我的理论扒了个精光！没人生来就是这副样子的，天哪，是我们在教他怎么当一个完美的怪物，是我们把图纸递给了他！" },
         { id: "04", type: "EXP_LOGS", title: "补充研究笔记", sender: "Dr. Reggie", date: "12月14日", content: "我重新听了卡彭关于多米尼昂路的那段供述录音。他咬定根本没有什么“青豆牡蛎汤计划”，没有远亲，连家族都不存在。他说这一切只是一场噩梦。\n如果他说的是实话呢？\n如果根本没有什么犯罪帝国，一切只是这台机器在自我反馈？我们通过信标把一个虚构的设定投射给卡彭，再把他的幻觉收集回来，当成证明我“统一场论”的铁证。马库斯，如果连观测目标都是我们生造出来的，那这二十年我们到底在干什么？我们是不是在对着一面镜子，疯狂地解剖我们自己产生的幻觉？如果连卡彭这个“观察者”和那个老鬼“被观察者”都是假的，那这个实验室，这台机器，还有一直坐在这里记录数据的我……到底算是什么东西？" },
         { id: "05", type: "EXP_LOGS", title: "实验观测日志", status: "[认知污染警报]", sender: "Dr. Reggie", date: "UNKNOWN", content: "系统全乱套了。\n我去查了“黄油朱莉普”到底是个什么鬼东西。那根本不是什么邪教符号，那就是70年代一个破乐队在台上瞎喊的歌词！可是你看看档案库！卡彭明明是遇到马尔多纳多之后才听说这个词的，但现在，这个词像长了腿一样，钻进了他十年前的供述里，甚至钻进了1967年的简报里！它在篡改卡彭的记忆，每更新一轮供述，这个词都会越发扩散，它把我们的数据库全感染了。你明白吗？连我们自己的记忆都他妈的被它骗了，一度把它当成了理论的核心证据！\n\n还有更荒唐的，这一轮潜意识接入，卡彭的脑子彻底串线了。他竟然凭空长出了一段关于詹妮弗的记忆！他现在坚信，詹妮弗是那个老鬼安插在FBI内部的活人卧底。这绝对是之前那几个白痴操作员违规泄密，在提审时让他听到了这个名字。詹妮弗明明只是个跑在服务器里的审讯AI，可卡彭那快烧干的脑子为了让逻辑自洽，硬生生把一个程序捏造成了一个活生生的内鬼特务。\n\n马库斯，数据库早就被污染了，停手吧。" },
+        { id: "06", type: "DEAD_DROP", sender: "M. Thorne", receiver: "Dr. Reggie", date: "4月20日", content: "博士，你需要冷静下来。\n现在扯是谁干的还有什么用？就算那老鬼是你亲手捏出来的，我们也得动手把他弄死。别管什么双向感染了。卡彭的脑子撑不了多久了，詹妮弗正在逼他吐出最后的东西。搞砸了咱们就去收拾烂摊子，任何人都别在这时候装软蛋。还有，你刚才在那儿声嘶力竭地抱怨，说卡彭脑子烧坏了，竟然把詹妮弗这个AI当成了活人。你不觉得这太可笑了吗？还真入戏了啊。真正的雷吉博士早就死透了，你不过是我用他生前的遗稿、录音和心理侧写数据，强行喂出来的一个人格拟态算法。卡彭把詹妮弗当活人，是因为他是个被逼疯的蠢货，你一口一个“我们”，还真把自己当成有良知的活人了？摆正你的位置，就别在这操心现实世界的烂摊子了。切断你的恐慌模拟模块，老老实实看着，别再给我捣乱。\n计划继续。" },
     ],
     EXP_LOGS: {
         topology: (
@@ -260,7 +261,14 @@ const LogViewer = ({ logs, onBack }: { logs: any[], onBack: () => void }) => {
                     </div>
                 </motion.div>
             ))}
-            <div className="text-center text-green-500/30 text-xs mt-8">--- END_OF_LOGS ---</div>
+            <div className="mt-8 pt-8 border-t border-slate-500/20 text-center flex flex-col items-center gap-2">
+                <div className="text-green-500/30 text-xs font-mono tracking-widest">
+                    --- DISPLAYING_EXCERPT_ONLY ---
+                </div>
+                <div className="text-slate-500/40 text-[10px] animate-pulse font-mono tracking-[0.2em]">
+                    [ 142 FILES STILL ENCRYPTED... PLEASE UPGRADE CLEARANCE ]
+                </div>
+            </div>
         </div>
     );
 }
@@ -318,7 +326,14 @@ const AuditViewer = ({ data, onBack }: { data: any, onBack: () => void }) => {
                     </div>
                 </motion.div>
             ))}
-            <div className="text-center text-yellow-500/30 text-xs mt-8">--- END_OF_AUDIT ---</div>
+            <div className="mt-8 pt-8 border-t border-yellow-500/20 text-center flex flex-col items-center gap-2">
+                <div className="text-yellow-500/30 text-xs font-mono tracking-widest">
+                    --- DISPLAYING_EXCERPT_ONLY ---
+                </div>
+                <div className="text-yellow-500/40 text-[10px] animate-pulse font-mono tracking-[0.2em]">
+                    [ 89 AUDIT LOGS PENDING DECRYPTION... ]
+                </div>
+            </div>
         </div>
     );
 }
@@ -380,7 +395,14 @@ const ExpLogsViewer = ({ data, onBack }: { data: any, onBack: () => void }) => {
                 </motion.div>
             ))}
             
-            <div className="text-center text-cyan-500/30 text-xs mt-8">--- END_OF_EXP_LOGS ---</div>
+            <div className="mt-8 pt-8 border-t border-cyan-500/20 text-center flex flex-col items-center gap-2">
+                <div className="text-cyan-500/30 text-xs font-mono tracking-widest">
+                    --- DISPLAYING_EXCERPT_ONLY ---
+                </div>
+                <div className="text-cyan-500/40 text-[10px] animate-pulse font-mono tracking-[0.2em]">
+                    [ 256 BATCH RECORDS LOCKED BY ADMIN... ]
+                </div>
+            </div>
         </div>
     );
 }

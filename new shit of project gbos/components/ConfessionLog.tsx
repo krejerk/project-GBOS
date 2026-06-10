@@ -446,19 +446,15 @@ const CONFESSION_REGISTRY = [
   }
 ];
 
-
-
 interface ConfessionLogProps {
     unlockedNodeIds: string[];
     onClose: () => void;
     onViewNode: (id: string) => void;
 }
 
-// Definition of all confessions for the directory
 export const ConfessionLog: React.FC<ConfessionLogProps> = ({ unlockedNodeIds, onClose, onViewNode }) => {
     return (
         <div className="flex flex-col h-full bg-[#0c0c0c] border border-[#d89853]/30 rounded-lg overflow-hidden font-mono">
-            {/* Header */}
             <div className="p-4 border-b border-[#c85a3f]/20 bg-black/40 flex justify-between items-center">
                 <div className="flex items-center gap-2 text-[#d89853]">
                     <FileText size={18} />
@@ -469,7 +465,6 @@ export const ConfessionLog: React.FC<ConfessionLogProps> = ({ unlockedNodeIds, o
                 </div>
             </div>
 
-            {/* List */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
                 {[...(CONFESSION_REGISTRY || [])]
                     .filter(record => unlockedNodeIds.includes(record.id))

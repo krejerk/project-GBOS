@@ -857,24 +857,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             return acc;
                                         }, {} as Record<string, number>);
 
-                                        // Calculate consumed keywords locally for immediate UI filtering
-                                        const consumed = new Set<string>();
-                                        (gameState.unlockedNodeIds || []).forEach((nodeId: string) => {
-                                            const keywords = KEYWORD_CONSUMPTION_MAP[nodeId];
-                                            if (keywords) keywords.forEach(k => consumed.add(k));
-                                        });
-                                        (gameState.unlockedArchiveIds || []).forEach((archiveId: string) => {
-                                            const keywords = KEYWORD_CONSUMPTION_MAP[archiveId];
-                                            if (keywords) keywords.forEach(k => consumed.add(k));
-                                        });
-
                                         return [...new Set([...(collectedClues || [])].filter(Boolean))]
                                             .filter(id => {
                                                 const meta = KEYWORD_REGISTRY[id];
                                                 if (!meta) return false;
 
                                                 // 1. BASIC FILTERS
-                                                if (consumed.has(id)) return false;
+                                                if (consumedKeywords.has(id)) return false;
                                                 if (meta.isIdentity) return false;
 
                                                 // 2. CHAPTER RELEVANCE
@@ -1053,6 +1042,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     unlockedPeople={unlockedPeople}
                                     collectedClues={collectedClues}
                                     collectedYears={collectedYears}
+                                    consumedKeywords={consumedKeywords}
                                 />
                             </div>
                         </motion.div >
@@ -1076,7 +1066,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             }
                     `}>
                             <div className="flex items-center gap-2">
-                                {/* Dynamic Status Indicator */}
                                 {(() => {
                                     const isStable = systemStability > 40;
                                     const isCritical = systemStability <= 0;
@@ -1090,7 +1079,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                 {systemStability > 0 ? "STABLE" : "CRITICAL"}
                             </div>
 
-                            {/* Final Exit Button for Branch A Ending */}
                             {gameState.hasSeenEndingA && onGameEnd && (
                                 <motion.button
                                     initial={{ opacity: 0, x: 20 }}
@@ -1117,7 +1105,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             <ClueLibrary
                 isOpen={showClueLibrary}
                 onClose={() => setShowClueLibrary(false)}
-                collectedClueIds={collectedClues} // Fix: Pass collectedClues as collectedClueIds
+                collectedClueIds={collectedClues}
                 collectedKeywords={collectedClues}
                 collectedPeople={unlockedPeople}
                 collectedYears={collectedYears}

@@ -1,7 +1,4 @@
-import matter from 'gray-matter';
-import fs from 'fs';
+const fs = require('fs');
 
-const content24 = fs.readFileSync('content/chapters/chapter6/confession_24.md', 'utf8');
-const p24 = matter(content24);
-console.log("Confession 24 ID:", p24.data.id);
-console.log("Confession 24 Trigger:", p24.data.trigger);
+// We'll just read registry.ts and parse it roughly or we can use ts-node.
+// Actually, I can just grep for GLOBAL_KEYWORD_MAP and see if it has weird keys.

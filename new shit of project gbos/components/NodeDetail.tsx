@@ -19,6 +19,7 @@ interface NodeDetailProps {
   unlockedPeople: string[];
   collectedClues: string[];
   collectedYears?: string[];
+  consumedKeywords: Set<string>;
 }
 
 export const NodeDetail: React.FC<NodeDetailProps> = ({
@@ -33,7 +34,8 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   hasSwitchedPersona = false,
   unlockedPeople,
   collectedClues,
-  collectedYears
+  collectedYears,
+  consumedKeywords
 }) => {
   const renderEventText = (text: string) => {
     if (!text) return null;
@@ -277,6 +279,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   React.useEffect(() => {
     if (node.revealedKeywords) {
       node.revealedKeywords.forEach(k => {
+        if (consumedKeywords.has(k)) return;
         const isCollected = 
           (collectedClues || []).includes(k) || 
           (collectedYears || []).includes(k) || 
@@ -288,12 +291,15 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
         }
       });
     }
-  }, [node.id, node.revealedKeywords, collectedClues, collectedYears, unlockedPeople, collectedDossierIds, onCollectClue]);
+  }, [node.id, node.revealedKeywords, collectedClues, collectedYears, unlockedPeople, collectedDossierIds, onCollectClue, consumedKeywords]);
 
   const handleKeywordClick = (e: React.MouseEvent, word: string, forceClueId?: string) => {
     e.stopPropagation();
     const clueId = forceClueId || KEYWORD_MAP[word];
     if (!clueId) return;
+
+    // If the keyword has already been used to unlock something, it is completely invalid.
+    if (consumedKeywords.has(clueId)) return;
 
     const meta = Object.values(KEYWORD_REGISTRY).find(info => info.id === clueId);
     const isPerson = meta?.type === 'person' || clueId === 'capone' || clueId === 'frank_rollins';
