@@ -10,15 +10,7 @@ import { ClueLibrary } from './ClueLibrary';
 import { Archives } from './Archives';
 import { TutorialOverlay } from './TutorialOverlay';
 import { MemoryNode, BoardNote } from '../types';
-import { 
-    GLOBAL_KEYWORD_MAP, 
-    CLUE_DISPLAY_MAP, 
-    KEYWORD_CONSUMPTION_MAP, 
-    CATEGORY_IDS, 
-    KEYWORD_REGISTRY, 
-    CAPONE_BRANCH_B_POST_DIALOGUE,
-    getNodeChapter
-} from '../constants';
+import { RELATIONSHIP_TREE, CLUE_DISPLAY_MAP, KEYWORD_CONSUMPTION_MAP, CATEGORY_IDS, GLOBAL_KEYWORD_MAP, KEYWORD_REGISTRY } from '../constants';
 
 interface SimplifiedMainViewProps {
     gameState: any; // Using any for now to avoid deep type issues, or import GameState
@@ -46,12 +38,8 @@ interface SimplifiedMainViewProps {
     playerHypotheses: Record<string, string>;
     onUpdateHypothesis: (nodeId: string, name: string) => void;
     isChapterSolved: (chapter: number) => boolean;
-    onUnlockNode: (id: string) => void;
     tutorialStep: number;
     setTutorialStep: (step: number) => void;
-    onGameEnd?: () => void;
-    isBranchBActive?: boolean;
-    onTerminateExperiment?: (type: 'ending2' | 'ending3') => void;
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
@@ -82,12 +70,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     playerHypotheses,
     onUpdateHypothesis,
     isChapterSolved,
-    onUnlockNode,
     tutorialStep,
-    setTutorialStep,
-    onGameEnd,
-    isBranchBActive,
-    onTerminateExperiment
+    setTutorialStep
 }) => {
     // Derived from gameState for brevity
     const {
@@ -141,19 +125,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         if (tutorialStep === 6 && prevActiveNodeId.current === 'confession_1' && !activeNodeId) {
             setTutorialStep(7);
         }
-        
-        // Post Confession 36A1 Jennifer Dialogue
-        if (prevActiveNodeId.current === 'confession_36A1' && !activeNodeId) {
-            onSearch('jennifer_post_36a1_trigger');
-        }
-
-        // Post Confession 36B2 Jennifer Final A Dialogue
-        if (prevActiveNodeId.current === 'confession_36B2' && !activeNodeId) {
-            onSearch('jennifer_final_a_trigger');
-        }
-
         prevActiveNodeId.current = activeNodeId;
-    }, [activeNodeId, tutorialStep, setTutorialStep, onSearch]);
+    }, [activeNodeId, tutorialStep, setTutorialStep]);
 
     const handleRetraceClick = () => {
         const result = onRetrace();
@@ -174,24 +147,19 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
     React.useEffect(() => {
         const currentArchiveCount = unlockedPeople.length + collectedYears.length;
-        // setHasNewArchive(true); // User requested to completely remove this red dot
+        if (currentArchiveCount > prevArchiveCount.current) {
+            setHasNewArchive(true);
+        }
         prevArchiveCount.current = currentArchiveCount;
     }, [unlockedPeople.length, collectedYears.length]);
 
     React.useEffect(() => {
         const currentDossierCount = collectedDossierIds.length;
-        // setHasNewDossier(true); // Now controlled by Jennifer's pending dialogue status
+        if (currentDossierCount > prevDossierCount.current) {
+            setHasNewDossier(true);
+        }
         prevDossierCount.current = currentDossierCount;
     }, [collectedDossierIds.length]);
-
-    // Auto-open ClueLibrary for Node 9 (Jennifer Branch Trigger)
-    React.useEffect(() => {
-        const isNode9Unlocked = gameState.unlockedNodeIds?.includes('node_9');
-        if (isNode9Unlocked && !showClueLibrary && currentStoryNode === 8) {
-            setShowClueLibrary(true);
-        }
-    }, [gameState.unlockedNodeIds, currentStoryNode, showClueLibrary]);
-
 
 
     // Mapping: Node ID -> [Keywords to HIDE when node is unlocked]
@@ -207,42 +175,70 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         return set;
     }, []);
 
+    // Helper to determine the story chapter of a node or archive
+    const getNodeChapter = (id: string): number => {
+        if (id.includes('confession_')) {
+            const num = parseInt(id.split('_')[1]);
+            if (num <= 3) return 1;
+            if (num <= 7) return 2;
+            if (num <= 11) return 3;
+            if (num <= 15) return 4;
+            if (num <= 19) return 5;
+            if (num <= 26) return 6;
+            if (num <= 30) return 6; // Confession 30 is also part of Chapter 6 or 4? Let's assume 4 based on Vanessa.
+            return 7;
+        }
+        // Archive chapters mapping
+        if (id.startsWith('me_') || id.startsWith('oh_') || id.startsWith('dc_') || id.startsWith('il_')) return 1;
+        if (id.startsWith('va_') || id.startsWith('nv_')) return 2;
+        if (id.startsWith('cin_') || id.startsWith('nas_') || id.startsWith('ky_')) return 3;
+        if (id.startsWith('kan_') || id.startsWith('kc_') || id.startsWith('ia_')) return 4;
+        if (id.startsWith('archive_') || id.startsWith('tx_')) return 5;
+        if (id.startsWith('sf_')) return 7; // SF 1976 is Chapter 7 (post-Node 6)
+        return 0; // Base nodes like 'capone'
+    };
 
-    // Calculate fully consumed keywords based on unlocked nodes from props
+    // Calculate currently consumed keywords based on unlocked nodes from props
     const consumedKeywords = React.useMemo(() => {
-        const fullyConsumed = new Set<string>();
+        const consumed = new Set<string>();
         const unlockedNodeIds = gameState.unlockedNodeIds || [];
-        const unlockedArchiveIds = gameState.unlockedArchiveIds || [];
+        const currentChapter = (gameState.currentStoryNode || 0);
 
-        const requiredCounts: Record<string, number> = {};
-        const unlockedCounts: Record<string, number> = {};
+        // Map clue IDs to frequencies
+        const freqMap: Record<string, number> = {};
+        collectedClues.forEach(id => {
+            freqMap[id] = (freqMap[id] || 0) + 1;
+        });
 
-        // Calculate frequencies for each keyword requirement
+        // Unified consumption logic for both nodes and archives
         Object.keys(KEYWORD_CONSUMPTION_MAP).forEach(id => {
             const keywords = KEYWORD_CONSUMPTION_MAP[id];
             if (!keywords) return;
 
+            const nodeChapter = getNodeChapter(id);
             const isUnlocked = id.includes('confession_')
                 ? unlockedNodeIds.includes(id)
                 : unlockedArchiveIds.includes(id);
 
-            keywords.forEach(k => {
-                requiredCounts[k] = (requiredCounts[k] || 0) + 1;
-                if (isUnlocked) {
-                    unlockedCounts[k] = (unlockedCounts[k] || 0) + 1;
-                }
-            });
-        });
-
-        // A keyword is only fully consumed if all its targets are unlocked
-        Object.keys(requiredCounts).forEach(k => {
-            if ((unlockedCounts[k] || 0) >= requiredCounts[k]) {
-                fullyConsumed.add(k);
+            // App.tsx handles global transition erasure for consumed keywords.
+            // As long as a keyword exists in the state arrays, it means it survived the chapter transition.
+            // We only need to "virtually consume" (hide) it if it belongs to a currently active unlocked node or archive.
+            // UNIFIED CONSUMPTION:
+            // 1. People/Locations stay virtually consumed (dimmed in list) once "used".
+            // 2. Years are physically removed by App.tsx, so we don't need to "virtually consume" them here.
+            //    Removing years from this set ensures they don't get "dimmed" if the user has multiple (though currently they only have 1).
+            if (isUnlocked) {
+                keywords.forEach(k => {
+                    const info = GLOBAL_KEYWORD_MAP[k];
+                    if (info && info.type !== 'year') {
+                        consumed.add(k);
+                    }
+                });
             }
         });
 
-        return fullyConsumed;
-    }, [gameState.unlockedNodeIds, gameState.unlockedArchiveIds]);
+        return consumed;
+    }, [nodes, unlockedArchiveIds, gameState.unlockedNodeIds, gameState.currentStoryNode, collectedClues]);
 
 
     // Transient System Message Handling
@@ -260,18 +256,16 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            const currentQuery = searchQuery;
-            setSearchQuery(''); // Clear IMMEDIATELY before processing
-            
-            if (tutorialStep === 5 && currentQuery.includes('缅因州') && currentQuery.includes('小银行')) {
+            if (tutorialStep === 5 && searchQuery.includes('缅因州') && searchQuery.includes('小银行')) {
                 setTutorialStep(6);
             }
-            onSearch(currentQuery);
+            onSearch(searchQuery);
+            setSearchQuery('');
         }
     };
 
     return (
-        <div className={`h-screen w-screen bg-[#050303] text-[#d89853] overflow-hidden flex flex-col relative font-mono pb-[env(safe-area-inset-bottom)] ${isBranchBActive ? 'shattered-ui' : ''}`}>
+        <div className={`h-screen w-screen bg-[#050303] text-[#d89853] overflow-hidden flex flex-col relative font-mono pb-[env(safe-area-inset-bottom)] ${isPersonaGlitching ? 'animate-cinematic-glitch' : ''}`}>
             {/* Background Elements */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/* BRIGHTER: Ambient Light Glow in Center */}
@@ -281,9 +275,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 <div className="absolute inset-0 flex flex-col md:block pointer-events-none">
                     {/* DESKTOP VIEW (Seamless Single Image) */}
                     <div className="hidden md:block absolute inset-0 overflow-hidden">
-                        <div className="absolute inset-0 transition-all duration-100 opacity-40 mix-blend-screen filter blur-lg scale-110">
+                        <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
+                            ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
+                            : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
+                            }`}>
                             <img
-                                src={`${import.meta.env.BASE_URL}images/capone-split-personality.jpg`}
+                                src="assets/capone-split-personality.jpg"
                                 className="absolute top-0 left-0 w-full h-full object-cover"
                                 style={{ objectPosition: 'center 20%' }}
                             />
@@ -294,10 +291,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     <div className="flex-1 flex flex-col md:hidden">
                         {/* TOP HALF */}
                         <div className="relative w-full h-1/2 overflow-hidden mask-split-top">
-                            <div className="absolute inset-0 transition-all duration-100 opacity-40 mix-blend-screen filter blur-lg scale-110">
+                            <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
+                                ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
+                                : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
+                                }`}>
                                 <img
-                                    src={`${import.meta.env.BASE_URL}images/capone-split-personality.jpg`}
-                                    className="absolute top-0 left-0 w-full h-full object-cover"
+                                    src="assets/capone-split-personality.jpg"
+                                    className="absolute top-0 left-0 w-full h-[200%] max-w-none object-cover"
                                     style={{ objectPosition: 'center 0%' }}
                                 />
                             </div>
@@ -305,9 +305,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                         {/* BOTTOM HALF */}
                         <div className="relative w-full h-1/2 overflow-hidden mask-split-bottom">
-                            <div className="absolute inset-0 transition-all duration-100 opacity-40 mix-blend-screen filter blur-lg scale-110">
+                            <div className={`absolute inset-0 transition-all duration-100 ${isPersonaGlitching
+                                ? 'opacity-80 mix-blend-hard-light filter contrast-125 animate-cinematic-glitch'
+                                : 'opacity-40 mix-blend-screen filter blur-lg scale-110'
+                                }`}>
                                 <img
-                                    src={`${import.meta.env.BASE_URL}images/capone-split-personality.jpg`}
+                                    src="assets/capone-split-personality.jpg"
                                     className="absolute top-[-100%] left-0 w-full h-[200%] max-w-none object-cover"
                                     style={{ objectPosition: 'center 0%' }}
                                 />
@@ -322,12 +325,11 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 <div className="absolute inset-0 bg-vignette z-0 opacity-60" />
                 <div className="absolute inset-0 animate-noise opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay z-0" />
 
-                <div className="scanlines opacity-5" /> 
-                <div className="crt-overlay" />
+                <div className="scanlines opacity-5" /> {/* Reduced scanline interference */}
             </div>
 
             {/* Header / Nav */}
-            <header className={`relative h-auto pt-[max(2.5rem,env(safe-area-inset-top))] pb-3 md:pt-0 md:h-16 border-b border-[#d89853]/20 flex items-center justify-between px-3 md:px-8 bg-black/20 backdrop-blur-md z-20 ${isPersonaGlitching ? 'animate-cinematic-glitch' : ''}`}>
+            <header className="relative h-auto pt-[max(2.5rem,env(safe-area-inset-top))] pb-3 md:pt-0 md:h-16 border-b border-[#d89853]/20 flex items-center justify-between px-3 md:px-8 bg-black/20 backdrop-blur-md z-20">
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-[#c85a3f] rounded-full animate-pulse shadow-[0_0_8px_#c85a3f]" />
                     <h1 className="text-sm md:text-xl tracking-[0.15em] md:tracking-[0.2em] font-bold text-[#d89853] opacity-90 text-shadow-sm">G.B.O.S. LINK</h1>
@@ -340,11 +342,15 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                         onClick={() => {
                             if (tutorialStep === 7) setTutorialStep(8);
                             setShowArchives(true);
+                            setHasNewArchive(false);
                         }}
                         className={`group flex items-center gap-1.5 transition-colors text-xs tracking-[0.1em] font-bold p-2 md:p-0 relative ${tutorialStep > 0 && tutorialStep !== 7 ? 'opacity-20 cursor-not-allowed pointer-events-none' : 'text-[#d89853]/80 hover:text-[#d89853]'}`}
                     >
                         <Archive size={16} className="group-hover:scale-110 transition-transform" />
                         <span className="hidden md:inline">档案室</span>
+                        {hasNewArchive && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_#ef4444]" />
+                        )}
                     </button>
                     <button
                         id="tutorial-dossier-btn"
@@ -372,7 +378,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             </header>
 
             {/* Main Content Area - Centered Search */}
-            <main className={`flex-1 relative z-10 flex flex-col items-center justify-start md:justify-center p-4 overflow-y-auto custom-scrollbar ${isPersonaGlitching ? 'animate-cinematic-glitch' : ''}`}>
+            <main className="flex-1 relative z-10 flex flex-col items-center justify-start md:justify-center p-4 overflow-y-auto custom-scrollbar">
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -384,7 +390,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     <div className="relative mb-2 md:mb-4 group flex flex-col items-center">
                         <div className="w-20 h-32 md:w-28 md:h-48 rounded-full overflow-hidden border-2 border-[#d89853]/40 shadow-[0_0_40px_rgba(216,152,83,0.3)] opacity-90 transition-opacity filter sepia-[0.2] contrast-110 mb-4 md:mb-6 relative">
                             <img
-                                src={`${import.meta.env.BASE_URL}images/capone-split-personality.jpg`}
+                                src="assets/capone-split-personality.jpg"
                                 className={`h-full max-w-none transition-all duration-500 ${(isPersonaGlitching || hasSwitchedPersona) ? 'contrast-125 saturate-150 scale-110' : ''}`}
                                 alt={hasSwitchedPersona ? "ROBERTO_PERSONA_B" : "ROBERTO_PERSONA_A"}
                                 style={{
@@ -395,9 +401,9 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                 }}
                             />
                         </div>
-                        {/* Reboot Countdown Overlay (Glitch Effect) */}
+                        {/* Reboot Countdown Overlay */}
                         <AnimatePresence>
-                            {showCountdown && gameState.branchAttemptCount < 4 && (
+                            {showCountdown && (
                                 <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{
@@ -543,13 +549,9 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                 if (showResponse && displayItem) {
                                     // Clean up content for display: remove "> [NAME]: " prefix if present
-                                    let displayContent = displayItem.content
+                                    const displayContent = displayItem.content
                                         .replace(/^> \[.*?\]:\s*"?/, '')
                                         .replace(/"$/, '');
-
-                                    if (isBranchBActive) {
-                                        displayContent = CAPONE_BRANCH_B_POST_DIALOGUE;
-                                    }
 
                                     // Highlight pickable keywords
                                     // Highlight pickable keywords
@@ -574,8 +576,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     } else if (isConf21) {
                                         pickableKeywords = ['红杉林', '战俘营', '亚玛力人协议'];
                                     } else if (isReveal) {
-                                        const ids = (displayItem as any).revealKeywords || [];
-                                        pickableKeywords = ids.map((id: string) => CLUE_DISPLAY_MAP[id] || id);
+                                        pickableKeywords = (displayItem as any).revealKeywords || [];
                                     }
 
                                     const keywordMap = GLOBAL_KEYWORD_MAP;
@@ -665,7 +666,16 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                     <div className="w-full flex flex-col items-center gap-1">
                         {/* Memory Action Row - Tightened */}
-                        <div className="w-full flex flex-row items-center justify-center px-6 mb-0">
+                        <div className="w-full flex flex-row items-center justify-between px-6 mb-0">
+                            <button
+                                onClick={handleRetraceClick}
+                                disabled={isProcessing}
+                                className="flex-1 flex items-center justify-center gap-2 text-[10px] tracking-[0.2em] text-[#d89853]/60 hover:text-[#d89853] transition-all uppercase font-bold py-1 group/retrace relative disabled:opacity-30"
+                            >
+                                <RotateCcw size={14} className="group-hover:rotate-[-45deg] transition-transform" />
+                                <span className="opacity-80">RETRACE</span>
+                            </button>
+                            <div className="w-[1px] h-3 bg-[#d89853]/10 md:hidden" />
                             <button
                                 onClick={() => setShowTerminal(true)}
                                 className="flex-1 flex items-center justify-center gap-2 text-[10px] tracking-[0.2em] text-[#d89853]/60 hover:text-[#d89853] transition-all uppercase font-bold py-1 group/logs relative"
@@ -855,27 +865,21 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                             .filter(id => {
                                                 const meta = KEYWORD_REGISTRY[id];
                                                 if (!meta) return false;
-
-                                                // 1. BASIC FILTERS
-                                                if (consumedKeywords.has(id)) return false;
-                                                if (meta.isIdentity) return false;
-
-                                                // 2. CHAPTER RELEVANCE
-                                                // Show if it's current chapter, immediate previous persistent chapter, or ALREADY collected
-                                                const isCurrent = meta.chapter === currentStoryNode;
-                                                const isPrevPersistent = meta.chapter === currentStoryNode - 1 && meta.isPersistent;
-                                                const isAlreadyCollected = collectedClues.includes(id);
-
-                                                if (!isCurrent && !isPrevPersistent && !isAlreadyCollected) return false;
-
-                                                // 3. TYPE FILTERS
+                                                
+                                                // STRICT LANE SEPARATION: Only locations and cases in the main tray
                                                 const isLocation = meta.type === 'location';
                                                 const isCase = meta.type === 'case';
-                                                const isClue = meta.type === 'clue';
-                                                if (!isLocation && !isCase && !isClue) return false;
+
+                                                if (!isLocation && !isCase) return false;
                                                 
                                                 if (meta.isArchiveOnly) return false;
+
                                                 if (!CLUE_DISPLAY_MAP[id]) return false;
+
+                                                // Relaxed check: Show everything collected for easy navigation
+                                                // BUT Hide consumed keywords to keep the space clean
+                                                // UNLESS they've been re-collected (frequency > 1)
+                                                if (consumedKeywords.has(id) && (frequencyMap[id] || 0) <= 1) return false;
 
                                                 return true;
                                             });
@@ -1036,7 +1040,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     unlockedPeople={unlockedPeople}
                                     collectedClues={collectedClues}
                                     collectedYears={collectedYears}
-                                    consumedKeywords={consumedKeywords}
                                 />
                             </div>
                         </motion.div >
@@ -1060,6 +1063,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                             }
                     `}>
                             <div className="flex items-center gap-2">
+                                {/* Dynamic Status Indicator */}
                                 {(() => {
                                     const isStable = systemStability > 40;
                                     const isCritical = systemStability <= 0;
@@ -1072,20 +1076,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                 })()}
                                 {systemStability > 0 ? "STABLE" : "CRITICAL"}
                             </div>
-
-                            {gameState.hasSeenEndingA && onGameEnd && (
-                                <motion.button
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    onClick={onGameEnd}
-                                    className="flex items-center gap-2 px-4 py-1 bg-red-950/40 border border-red-500/30 text-red-400 rounded-sm hover:bg-red-900/60 transition-all group font-black"
-                                >
-                                    <TerminalIcon size={12} className="group-hover:rotate-12 transition-transform" />
-                                    <span>TERMINATE SESSION</span>
-                                </motion.button>
-                            )}
-
-                            <div className="h-4 w-px bg-[#d89853]/10 hidden md:block" />
                             <div className={statusFlash ? 'text-[#94a3b8] animate-pulse' : ''}>
                                 SC-STABILITY: {Math.round(systemStability)}%
                             </div>
@@ -1099,7 +1089,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             <ClueLibrary
                 isOpen={showClueLibrary}
                 onClose={() => setShowClueLibrary(false)}
-                collectedClueIds={collectedClues}
+                collectedClueIds={collectedClues} // Fix: Pass collectedClues as collectedClueIds
                 collectedKeywords={collectedClues}
                 collectedPeople={unlockedPeople}
                 collectedYears={collectedYears}
@@ -1119,15 +1109,12 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 setTutorialStep={setTutorialStep}
                 playerHypotheses={playerHypotheses}
                 onUpdateHypothesis={onUpdateHypothesis}
-                onJenniferStatusChange={(hasPending) => setHasNewDossier(hasPending)}
             />
             <Archives
                 isOpen={showArchives}
                 onClose={() => setShowArchives(false)}
                 unlockedArchiveIds={unlockedArchiveIds}
                 onUnlockArchive={onUnlockArchive}
-                onTerminateExperiment={onTerminateExperiment}
-                onUnlockNode={onUnlockNode}
                 collectedClues={collectedClues}
                 onCollectClue={onCollectClue}
                 collectedYears={collectedYears}
@@ -1141,100 +1128,40 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                 tutorialStep={tutorialStep}
                 setTutorialStep={setTutorialStep}
             />
-            {/* Reboot / Override Countdown Overlay */}
+            {/* Reboot Countdown Overlay (Root Level) */}
             <AnimatePresence>
                 {showCountdown && (
-                    gameState.branchAttemptCount >= 4 ? (
-                        /* Non-blocking top banner for Branch Countdown */
-                        <motion.div
-                            initial={{ opacity: 0, y: -100 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -100, transition: { duration: 0.3 } }}
-                            className="absolute top-8 left-1/2 -translate-x-1/2 z-[500] pointer-events-none flex flex-col items-center w-[90%] max-w-2xl"
-                        >
-                            <div className="w-full relative overflow-hidden rounded-md border border-red-500/50 bg-black/80 backdrop-blur-xl shadow-[0_0_50px_rgba(239,68,68,0.4)]">
-                                {/* Animated scanline background */}
-                                <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(transparent 50%, rgba(239,68,68,0.1) 50%)', backgroundSize: '100% 4px' }}></div>
-                                
-                                <div className="px-8 py-5 flex flex-col gap-4 relative z-10">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <motion.div
-                                                animate={{ opacity: [1, 0.5, 1] }}
-                                                transition={{ duration: 1, repeat: Infinity }}
-                                            >
-                                                <ShieldAlert size={28} className="text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
-                                            </motion.div>
-                                            <div className="flex flex-col">
-                                                <span className="text-red-500 font-mono text-sm md:text-lg tracking-[0.3em] font-black uppercase text-shadow-glow">
-                                                    CRITICAL_AUTHORITY_OVERRIDE
-                                                </span>
-                                                <span className="text-[9px] text-red-400/70 font-mono uppercase tracking-[0.2em]">
-                                                    AWAITING MANUAL OVERRIDE INPUT // DO NOT ABORT
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className="text-6xl md:text-7xl font-mono text-white tabular-nums font-black leading-none flex items-center" style={{ textShadow: '0 0 20px rgba(239,68,68,0.8), 0 0 40px rgba(239,68,68,0.4)' }}>
-                                            {countdownValue < 10 ? `0${countdownValue}` : countdownValue}
-                                            <span className="text-2xl text-red-500/80 ml-1">s</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Cool segmented progress bar */}
-                                    <div className="w-full h-2 bg-neutral-900/80 flex gap-1 rounded-sm overflow-hidden p-0.5 border border-red-900/50">
-                                        {Array.from({ length: 10 }).map((_, i) => (
-                                            <motion.div
-                                                key={i}
-                                                className={`h-full flex-1 rounded-sm ${i < countdownValue ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]' : 'bg-red-950/30'}`}
-                                                animate={{ 
-                                                    opacity: i < countdownValue ? [1, 0.7, 1] : 0.3 
-                                                }}
-                                                transition={{ 
-                                                    duration: 0.5, 
-                                                    repeat: i < countdownValue ? Infinity : 0,
-                                                    delay: i * 0.1
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[500] bg-black/80 backdrop-blur-2xl flex flex-col items-center justify-center border border-red-500/20"
+                    >
+                        <div className="p-12 border border-red-500/40 bg-black/90 flex flex-col items-center gap-8 shadow-[0_0_100px_rgba(239,68,68,0.3)]">
+                            <div className="flex items-center gap-4 text-red-500 font-mono text-sm tracking-[0.5em] animate-pulse">
+                                <ShieldAlert size={20} />
+                                <span>CRITICAL_PERSONA_OVERRIDE_IN_PROGRESS</span>
                             </div>
-                        </motion.div>
-                    ) : (
-                        /* Full-screen blocking overlay for Persona Reboot */
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-[500] bg-black/80 backdrop-blur-2xl flex flex-col items-center justify-center border border-red-500/20"
-                        >
-                            <div className="p-12 border border-red-500/40 bg-black/90 flex flex-col items-center gap-8 shadow-[0_0_100px_rgba(239,68,68,0.3)]">
-                                <div className="flex items-center gap-4 text-red-500 font-mono text-sm tracking-[0.5em] animate-pulse">
-                                    <ShieldAlert size={20} />
-                                    <span>CRITICAL_PERSONA_OVERRIDE_IN_PROGRESS</span>
-                                </div>
 
-                                <div className="text-8xl md:text-9xl font-mono text-white tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]">
-                                    {countdownValue < 10 ? `0${countdownValue}` : countdownValue}
-                                </div>
-
-                                <div className="flex flex-col items-center gap-3">
-                                    <div className="w-80 h-1.5 bg-neutral-900 overflow-hidden relative">
-                                        <motion.div
-                                            className="h-full bg-red-500 shadow-[0_0_10px_#ef4444]"
-                                            initial={{ width: "100%" }}
-                                            animate={{ width: "0%" }}
-                                            transition={{ duration: countdownValue, ease: "linear" }}
-                                        />
-                                    </div>
-                                    <span className="text-[10px] text-neutral-500 font-mono uppercase mt-2 tracking-[0.2em]">
-                                        neural protocol rebooting... DO NOT DISCONNECT
-                                    </span>
-                                </div>
+                            <div className="text-8xl md:text-9xl font-mono text-white tabular-nums drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]">
+                                0{countdownValue}
                             </div>
-                        </motion.div>
-                    )
+
+                            <div className="flex flex-col items-center gap-3">
+                                <div className="w-80 h-1.5 bg-neutral-900 overflow-hidden relative">
+                                    <motion.div
+                                        className="h-full bg-red-500 shadow-[0_0_10px_#ef4444]"
+                                        initial={{ width: "100%" }}
+                                        animate={{ width: "0%" }}
+                                        transition={{ duration: 5, ease: "linear" }}
+                                    />
+                                </div>
+                                <span className="text-[10px] text-neutral-500 font-mono uppercase mt-2 tracking-[0.2em]">
+                                    neural protocol rebooting... DO NOT DISCONNECT
+                                </span>
+                            </div>
+                        </div>
+                    </motion.div>
                 )}
             </AnimatePresence>
 
@@ -1284,46 +1211,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     <p className="text-[10px] text-[#d89853]/60 tracking-widest uppercase">
                                         Status: Unfiled // Location: Temporary Buffer
                                     </p>
-                                    {/* 特殊图注：首次打开即可见并支持交互 */}
-                                    {(filingEvidence.id === 'libby_ticket' || filingEvidence.id === 'libby_convergence_map') && (
-                                        <div className="text-xs text-[#d89853] mt-2 pt-2 border-t border-[#d89853]/20">
-                                            地点标注：
-                                            <span
-                                                className={`
-                                                    ml-1 cursor-pointer underline underline-offset-4 decoration-dashed decoration-[#d89853]/50 hover:decoration-[#d89853]
-                                                    ${(collectedClues || []).includes('libby_town') ? 'text-[#d89853] font-bold no-underline cursor-default' : 'animate-pulse text-white font-bold'}
-                                                `}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (!(collectedClues || []).includes('libby_town') && onCollectClue) {
-                                                        onCollectClue('libby_town', '利比镇');
-                                                    }
-                                                }}
-                                            >
-                                                利比镇
-                                            </span>
-                                        </div>
-                                    )}
-                                    {filingEvidence.id === 'death_report' && (
-                                        <div className="mt-2 p-2 bg-black/20 border-l-2 border-red-900/50 text-[10px] text-[#d89853] italic border-t border-[#d89853]/20 text-left">
-                                            文件注记：这是一份
-                                            <span
-                                                className={`
-                                                    ml-1 cursor-pointer underline underline-offset-4 decoration-dashed decoration-red-900/50 hover:decoration-[#d89853]
-                                                    ${(collectedClues || []).includes('unnamed_female_body') ? 'text-[#d89853] font-bold no-underline cursor-default' : 'animate-pulse text-white font-bold'}
-                                                `}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (!(collectedClues || []).includes('unnamed_female_body') && onCollectClue) {
-                                                        onCollectClue('unnamed_female_body', '无名女尸');
-                                                    }
-                                                }}
-                                            >
-                                                无名女尸
-                                            </span>
-                                            的检测报告。
-                                        </div>
-                                    )}
                                 </div>
 
                                 <button
@@ -1346,25 +1233,25 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
             {/* Tutorial Overlay */}
             <TutorialOverlay
-                isVisible={tutorialStep === 1 && !showClueLibrary && !showMindMap && !showArchives && !showClueLibrary}
+                isVisible={tutorialStep === 1}
                 targetId="tutorial-dossier-btn"
                 text="系统已初始化。首先，点击“案卷建档”以查看我们收集到的情报资料。"
                 position="bottom"
             />
             <TutorialOverlay
-                isVisible={tutorialStep === 4 && !showClueLibrary && !showMindMap && !showArchives && !showClueLibrary}
+                isVisible={tutorialStep === 4}
                 targetId="tutorial-keyword-chips"
                 text="很好。我们需要检索一些具体的记忆。请在下方点击选择“缅因州”和“小银行”。"
                 position="top"
             />
             <TutorialOverlay
-                isVisible={tutorialStep === 5 && !showClueLibrary && !showMindMap && !showArchives && !showClueLibrary}
+                isVisible={tutorialStep === 5}
                 targetId="tutorial-search-submit"
                 text="检索条件已就绪，点击搜索图标以深入这段记忆。"
                 position="right"
             />
             <TutorialOverlay
-                isVisible={tutorialStep === 7 && !showClueLibrary && !showMindMap && !showArchives && !showClueLibrary}
+                isVisible={tutorialStep === 7}
                 targetId="tutorial-archives-btn"
                 text="你已经成功调取了一段供述。现在，让我们去“档案室”看看相关的背景资料。"
                 position="bottom"

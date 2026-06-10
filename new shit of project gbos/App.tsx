@@ -627,6 +627,7 @@ const App: React.FC = () => {
         ...prev,
         collectedClues: prev.collectedClues.filter(filterFn),
         collectedYears: prev.collectedYears.filter(filterFn),
+        unlockedPeople: prev.unlockedPeople.filter(filterFn),
         collectedAttachments: newAttachments,
         history: [
           ...prev.history,
