@@ -662,7 +662,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                                                 );
                                                                                                             }
                                                                                                         }
-                                                                                                        return <span key={j}>{displayText}</span>;
+                                                                                                        return <span key={j}>{part.startsWith('「') && part.endsWith('」') ? `「${displayText}」` : displayText}</span>;
                                                                                                     })}
                                                                                                 </p>
                                                                                             ));
