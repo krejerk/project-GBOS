@@ -548,10 +548,10 @@ const App: React.FC = () => {
         if (isConsumed) return false;
 
         // Persistent/Identity items are always kept
-        if (meta.isPersistent || meta.isIdentity) return true;
+        if (meta?.isPersistent || meta?.isIdentity) return true;
 
         // Otherwise, only keep if it's from the current or future chapter
-        return (meta.chapter || 0) >= nodeId;
+        return (meta?.chapter || 0) >= nodeId;
       };
 
 
@@ -610,7 +610,7 @@ const App: React.FC = () => {
       // 3. Filter lists: REMOVE everything except protected keywords and future keywords
       const filterFn = (id: string) => {
           if (protectedIds.includes(id)) return true;
-          const meta = Object.values(KEYWORD_REGISTRY).find(k => k.id === id);
+          const meta = getKeywordMeta(id);
           // Keep anything collected AFTER node 3
           if (meta && meta.chapter > 3) return true;
           return false;

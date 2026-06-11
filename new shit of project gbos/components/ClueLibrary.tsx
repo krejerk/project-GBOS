@@ -827,6 +827,126 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                     );
                                 }
 
+                                if (activeClue.id === 'crime_route_map') {
+                                    let mapUrl = '/images/crime-route-map.png';
+                                    if (currentStoryNode >= 7) mapUrl = '/images/crime-route-map-v6.png';
+                                    else if (currentStoryNode >= 6) mapUrl = '/images/crime-route-map-v5.png';
+                                    else if (currentStoryNode >= 5) mapUrl = '/images/crime-route-map-v4.png';
+                                    else if (currentStoryNode >= 4) mapUrl = '/images/crime-route-map-v3.png';
+                                    else if (currentStoryNode >= 3) mapUrl = '/images/crime-route-map-v2.png';
+
+                                    const hasMainePhoto = collectedAttachments.includes('car_maine_original') || collectedAttachments.includes('car_photo_maine');
+                                    const hasNewMexicoPhoto = collectedAttachments.includes('car_newmexico_original') || collectedAttachments.includes('car_photo_newmexico');
+
+                                    return (
+                                        <div className="flex-1 relative overflow-hidden bg-black/40 m-4 rounded-lg border border-[#d89853]/20 shadow-inner min-h-[700px] flex flex-col">
+                                            {/* Header */}
+                                            <div className="flex items-center justify-between p-8 flex-shrink-0 bg-gradient-to-b from-[#0f172a] to-transparent">
+                                                <div>
+                                                    <h2 className="text-2xl font-bold text-[#d89853] tracking-[0.2em] mb-2">
+                                                        犯罪路线分析
+                                                    </h2>
+                                                    <p className="text-sm text-[#94a3b8] font-mono">
+                                                        CRIME ROUTE ANALYSIS - CLASSIFIED
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Scrollable Map Container */}
+                                            <div className="flex-1 overflow-y-auto px-8 pb-8 custom-scrollbar">
+                                                <motion.div
+                                                    initial={{ y: 20, opacity: 0 }}
+                                                    animate={{ y: 0, opacity: 1 }}
+                                                    className="relative max-w-6xl mx-auto"
+                                                >
+                                                    {/* Map Image */}
+                                                    <div className="relative bg-gradient-to-br from-[#1a1f2e] to-[#0f1419] p-8 rounded-lg shadow-[0_0_100px_rgba(212,165,116,0.2)] border border-[#d89853]/20">
+                                                        <img
+                                                            src={mapUrl}
+                                                            alt="Crime Route Map"
+                                                            className="w-full h-auto rounded shadow-2xl"
+                                                        />
+
+                                                        {/* Decorative corners */}
+                                                        <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-[#d89853]/40"></div>
+                                                        <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#d89853]/40"></div>
+                                                        <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-[#d89853]/40"></div>
+                                                        <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-[#d89853]/40"></div>
+
+                                                        {/* Pinned Vehicle Photos */}
+                                                        {hasMainePhoto && (
+                                                            <motion.button
+                                                                initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                                                                animate={{ opacity: 1, scale: 1, rotate: 3 }}
+                                                                transition={{ delay: 0.3 }}
+                                                                onClick={() => {
+                                                                    const att = activeClue.attachments?.find((a: any) => a.id === 'car_maine_original' || a.id === 'car_photo_maine');
+                                                                    if (att) setViewingAttachment(att);
+                                                                }}
+                                                                className="absolute top-4 right-4 w-32 md:w-40 group cursor-pointer hover:scale-105 hover:z-30 transition-all z-20"
+                                                                style={{ transformOrigin: 'top center' }}
+                                                            >
+                                                                <div className="polaroid-photo">
+                                                                    <img
+                                                                        src="images/car-maine-original.jpg"
+                                                                        alt="Maine Vehicle Evidence"
+                                                                    />
+                                                                    <div className="polaroid-caption">
+                                                                        Maine: 412-88B<br />C.K. & R.C.
+                                                                    </div>
+                                                                </div>
+                                                            </motion.button>
+                                                        )}
+
+                                                        {hasNewMexicoPhoto && (
+                                                            <motion.button
+                                                                initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+                                                                animate={{ opacity: 1, scale: 1, rotate: -2 }}
+                                                                transition={{ delay: 0.5 }}
+                                                                onClick={() => {
+                                                                    const att = activeClue.attachments?.find((a: any) => a.id === 'car_newmexico_original' || a.id === 'car_photo_newmexico');
+                                                                    if (att) setViewingAttachment(att);
+                                                                }}
+                                                                className="absolute top-12 right-16 w-32 md:w-40 group cursor-pointer hover:scale-105 hover:z-30 transition-all z-20"
+                                                                style={{ transformOrigin: 'top center' }}
+                                                            >
+                                                                <div className="polaroid-photo">
+                                                                    <img
+                                                                        src="images/car-newmexico-original.jpg"
+                                                                        alt="New Mexico Vehicle Evidence"
+                                                                    />
+                                                                    <div className="polaroid-caption">
+                                                                        NEW MEXICO: [SMUDGE] F★<br />OCT 26 '78
+                                                                    </div>
+                                                                </div>
+                                                            </motion.button>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Description */}
+                                                    <div className="mt-6 bg-[#0f172a]/80 border border-[#334155] rounded-lg p-6">
+                                                        <div className="flex items-start gap-4">
+                                                            <div className="p-2 bg-[#d89853]/10 rounded">
+                                                                <Database size={20} className="text-[#d89853]" />
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <p className="text-[#e2e8f0] text-sm leading-relaxed font-light">
+                                                                    {activeClue.description}
+                                                                </p>
+                                                                <div className="mt-4 flex gap-4 text-xs text-[#64748b]">
+                                                                    <span>案件编号: FBI-84-0132</span>
+                                                                    <span>•</span>
+                                                                    <span>状态: 进行中</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
                                 return (
                                     <div className="flex-1 p-8 md:p-16 flex flex-col overflow-y-auto w-full max-w-4xl mx-auto custom-scrollbar">
                                         <motion.div
@@ -925,129 +1045,12 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                 className="fixed inset-0 z-[110] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-12"
                                 onClick={() => setViewingAttachment(null)}
                             >
-                                {/* Special fullscreen UI for crime route map */}
-                                {selectedClue?.id === 'crime_route_map' ? (
+                                {viewingAttachment.type === 'image' && (
                                     <motion.div
-                                        initial={{ scale: 0.95, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        exit={{ scale: 0.95, opacity: 0 }}
-                                        className="relative w-full h-full flex flex-col overflow-hidden"
-                                        onClick={e => e.stopPropagation()}
-                                    >
-                                        {/* Header */}
-                                        <div className="flex items-center justify-between mb-6 px-8 flex-shrink-0">
-                                            <div>
-                                                <h2 className="text-2xl font-bold text-[#d89853] tracking-[0.2em] mb-2">
-                                                    犯罪路线分析
-                                                </h2>
-                                                <p className="text-sm text-[#94a3b8] font-mono">
-                                                    CRIME ROUTE ANALYSIS - CLASSIFIED
-                                                </p>
-                                            </div>
-                                            <button
-                                                onClick={() => setViewingAttachment(null)}
-                                                className="p-3 text-[#94a3b8] hover:text-white transition-colors bg-[#1e293b]/50 rounded-lg hover:bg-[#1e293b]"
-                                            >
-                                                <X size={24} />
-                                            </button>
-                                        </div>
-
-                                        {/* Scrollable Map Container */}
-                                        <div className="flex-1 overflow-y-auto px-8 pb-8">
-                                            <motion.div
-                                                initial={{ y: 20 }}
-                                                animate={{ y: 0 }}
-                                                className="relative max-w-6xl mx-auto"
-                                            >
-                                                {/* Map Image */}
-                                                <div className="relative bg-gradient-to-br from-[#1a1f2e] to-[#0f1419] p-8 rounded-lg shadow-[0_0_100px_rgba(212,165,116,0.2)] border border-[#d89853]/20">
-                                                    <img
-                                                        src={viewingAttachment.content}
-                                                        alt={viewingAttachment.title}
-                                                        className="w-full h-auto rounded shadow-2xl"
-                                                    />
-
-                                                    {/* Decorative corners */}
-                                                    <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-[#d89853]/40"></div>
-                                                    <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#d89853]/40"></div>
-                                                    <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-[#d89853]/40"></div>
-                                                    <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-[#d89853]/40"></div>
-
-
-                                                    {/* Pinned Vehicle Photos - Top Right */}
-                                                    {/* Maine Photo - Behind */}
-                                                    <motion.button
-                                                        initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-                                                        animate={{ opacity: 1, scale: 1, rotate: 3 }}
-                                                        transition={{ delay: 0.3 }}
-                                                        onClick={() => setShowVehiclePhotos(true)}
-                                                        className="absolute top-4 right-4 w-32 md:w-40 group cursor-pointer hover:scale-105 hover:z-30 transition-all z-20"
-                                                        style={{ transformOrigin: 'top center' }}
-                                                    >
-                                                        <div className="polaroid-photo">
-                                                            <img
-                                                                src="images/car-maine-original.jpg"
-                                                                alt="Maine Vehicle Evidence"
-                                                            />
-                                                            <div className="polaroid-caption">
-                                                                Maine: 412-88B<br />C.K. & R.C.
-                                                            </div>
-                                                        </div>
-                                                    </motion.button>
-
-                                                    {/* New Mexico Photo - Front, slightly overlapping */}
-                                                    <motion.button
-                                                        initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
-                                                        animate={{ opacity: 1, scale: 1, rotate: -2 }}
-                                                        transition={{ delay: 0.5 }}
-                                                        onClick={() => setShowVehiclePhotos(true)}
-                                                        className="absolute top-12 right-16 w-32 md:w-40 group cursor-pointer hover:scale-105 hover:z-30 transition-all z-20"
-                                                        style={{ transformOrigin: 'top center' }}
-                                                    >
-                                                        <div className="polaroid-photo">
-                                                            <img
-                                                                src="images/car-newmexico-original.jpg"
-                                                                alt="New Mexico Vehicle Evidence"
-                                                            />
-                                                            <div className="polaroid-caption">
-                                                                NEW MEXICO: [SMUDGE] F★<br />OCT 26 '78
-                                                            </div>
-                                                        </div>
-                                                    </motion.button>
-                                                </div>
-
-                                                {/* Description */}
-                                                <div className="mt-6 bg-[#0f172a]/80 border border-[#334155] rounded-lg p-6">
-                                                    <div className="flex items-start gap-4">
-                                                        <div className="p-2 bg-[#d89853]/10 rounded">
-                                                            <Database size={20} className="text-[#d89853]" />
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <p className="text-[#e2e8f0] text-sm leading-relaxed font-light">
-                                                                {selectedClue.description}
-                                                            </p>
-                                                            <div className="mt-4 flex gap-4 text-xs text-[#64748b]">
-                                                                <span>案件编号: FBI-84-0132</span>
-                                                                <span>•</span>
-                                                                <span>日期: 1984.10.12</span>
-                                                                <span>•</span>
-                                                                <span>状态: 进行中</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </motion.div>
-                                        </div>
-                                    </motion.div>
-                                ) : (
-                                    /* Regular attachment viewer */
-                                    viewingAttachment.type === 'image' && (
-                                        <motion.div
-                                            initial={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 } : { scale: 0.9, rotate: -2 }}
-                                            animate={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1, filter: 'blur(0px) brightness(1)', opacity: 1 } : { scale: 1, rotate: 0 }}
-                                            exit={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 } : { scale: 0.9, rotate: 2 }}
-                                            transition={viewingAttachment.id === 'felipe_maldonado_poster' ? { duration: 2, ease: "easeOut" } : {}}
+                                        initial={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 } : { scale: 0.9, rotate: -2 }}
+                                        animate={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1, filter: 'blur(0px) brightness(1)', opacity: 1 } : { scale: 1, rotate: 0 }}
+                                        exit={viewingAttachment.id === 'felipe_maldonado_poster' ? { scale: 1.05, filter: 'blur(8px) brightness(1.5)', opacity: 0 } : { scale: 0.9, rotate: 2 }}
+                                        transition={viewingAttachment.id === 'felipe_maldonado_poster' ? { duration: 2, ease: "easeOut" } : {}}
                                             className={`
                                                 relative shadow-[0_0_100px_rgba(0,0,0,0.5)] max-h-[90vh] max-w-[90vw] cursor-auto overflow-visible flex flex-col items-center
                                                 ${viewingAttachment.id === 'felipe_maldonado_poster' ? 'neural-residue-container p-0 border-none' : 'bg-white p-4 border-8 border-white'}
@@ -1154,7 +1157,6 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                 <X size={24} />
                                             </button>
                                         </motion.div>
-                                    )
                                 )}
                             </motion.div>
                         )}
