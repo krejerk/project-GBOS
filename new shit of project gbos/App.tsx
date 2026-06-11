@@ -229,8 +229,21 @@ const App: React.FC = () => {
 
   const resetGame = () => {
     localStorage.removeItem('gbos_save_state');
+    for (let i = 1; i <= 9; i++) {
+        localStorage.removeItem(`hasViewedNode${i}`);
+    }
+    localStorage.removeItem('clueLibrary_visited');
     window.location.reload();
   };
+
+  React.useEffect(() => {
+    // If we jump backwards in time (e.g. via CheckpointManager or other means),
+    // clear the viewed flags for future nodes so their dialogues trigger again
+    const currentNode = gameState.currentStoryNode || 0;
+    for (let i = currentNode + 1; i <= 9; i++) {
+        localStorage.removeItem(`hasViewedNode${i}`);
+    }
+  }, [gameState.currentStoryNode]);
 
   React.useEffect(() => {
     // Ensure all dossiers that were previously collected just as clues also appear in dossier list
