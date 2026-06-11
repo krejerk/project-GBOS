@@ -8,8 +8,8 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     title: '“黄油朱莉普”物证残留',
     content: '/images/butter_julep_evidence.jpg',
     chapter: 1,
-    parentId: 'julip',
-    unlockSource: 'confession_1'
+    parentId: 'clipping_08',
+    unlockSource: 'clipping_08'
   },
   'fbi_symbol': {
     id: 'fbi_symbol',

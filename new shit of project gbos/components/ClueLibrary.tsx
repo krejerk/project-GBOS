@@ -636,7 +636,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
         // Fetch attachments from the central registry that belong to this dossier/clue
         const registryAttachments = Object.values(ATTACHMENT_REGISTRY)
-            .filter(attr => attr.parentId === id && (collectedAttachments || []).includes(attr.id))
+            .filter(attr => attr.parentId === id && ((collectedAttachments || []).includes(attr.id) || (attr.unlockSource && (unlockedNodeIds || []).includes(attr.unlockSource)) || (attr.unlockSource && (unlockedArchiveIds || []).includes(attr.unlockSource))))
             .map(attr => ({
                 id: attr.id,
                 type: attr.type,
