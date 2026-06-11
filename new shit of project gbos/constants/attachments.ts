@@ -11,23 +11,14 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     parentId: 'julip',
     unlockSource: 'confession_1'
   },
-  'fbi_symbol_analysis': {
-    id: 'fbi_symbol_analysis',
+  'fbi_symbol': {
+    id: 'fbi_symbol',
     type: 'image',
     title: 'FBI Symbol Analysis',
     content: '/images/fbi-symbol.png',
     chapter: 1,
-    parentId: 'julip',
-    unlockSource: 'confession_1'
-  },
-  'yellow_julep_symbol': {
-    id: 'yellow_julep_symbol',
-    type: 'image',
-    title: '黄油朱莉普：符号变体',
-    content: '/images/yellow_julep_symbol.png',
-    chapter: 1,
-    parentId: 'julip',
-    unlockSource: 'confession_1'
+    parentId: 'clipping_03',
+    unlockSource: 'clipping_03'
   },
 
   // 2. 灰水信标 (graywater_beacon)
@@ -45,9 +36,9 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     type: 'image',
     title: '视觉残留：路易斯维尔',
     content: '/images/iron_horse_louisville.jpg',
-    chapter: 3,
+    chapter: 1,
     parentId: 'graywater_beacon',
-    unlockSource: 'confession_8'
+    unlockSource: 'jennifer_node_2'
   },
 
   // 3. 犯罪路线 (crime_route_map)
@@ -105,15 +96,6 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     parentId: 'crime_route_map',
     unlockSource: 'confession_29'
   },
-  'car_photo_maine': {
-    id: 'car_photo_maine',
-    type: 'image',
-    title: '缅因州车辆档案照',
-    content: '/images/car-photo-maine.png',
-    chapter: 1,
-    parentId: 'crime_route_map',
-    unlockSource: 'confession_3'
-  },
   'car_maine_original': {
     id: 'car_maine_original',
     type: 'image',
@@ -122,15 +104,6 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 1,
     parentId: 'crime_route_map',
     unlockSource: 'confession_3'
-  },
-  'car_photo_newmexico': {
-    id: 'car_photo_newmexico',
-    type: 'image',
-    title: '内华达州/新墨西哥州车辆照',
-    content: '/images/car-photo-newmexico.png',
-    chapter: 2,
-    parentId: 'crime_route_map',
-    unlockSource: 'confession_10'
   },
   'car_newmexico_original': {
     id: 'car_newmexico_original',
@@ -158,8 +131,8 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     title: '无名氏 (Jane Doe) 与起火车辆',
     content: '/images/jane_doe_1977.jpg',
     chapter: 4,
-    parentId: 'project',
-    unlockSource: 'confession_14'
+    parentId: 'clipping_22',
+    unlockSource: 'clipping_22'
   },
   'richie_id_card': {
     id: 'richie_id_card',
@@ -167,8 +140,8 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     title: '证件：里奇·德莱弗斯',
     content: '/images/richie_id_card.jpg',
     chapter: 5,
-    parentId: 'project',
-    unlockSource: 'confession_17'
+    parentId: 'clipping_15',
+    unlockSource: 'clipping_15'
   },
   'church_visual_residue': {
     id: 'church_visual_residue',
@@ -203,8 +176,8 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     title: '1990 丝带物证',
     content: '/images/wilmer_ribbon.jpg',
     chapter: 7,
-    parentId: 'project',
-    unlockSource: 'clipping_05'
+    parentId: 'clipping_07',
+    unlockSource: 'clipping_07'
   },
   'felipe_maldonado_poster': {
     id: 'felipe_maldonado_poster',
@@ -231,16 +204,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: '/images/libby_ticket.jpg',
     chapter: 8,
     parentId: 'project',
-    unlockSource: 'confession_31'
-  },
-  'libby_forest_map_residue': {
-    id: 'libby_forest_map_residue',
-    type: 'image',
-    title: '视觉残留：森林地图',
-    content: '/images/libby_forest_map_residue.png',
-    chapter: 8,
-    parentId: 'project',
-    unlockSource: 'confession_31'
+    unlockSource: 'jennifer_node_7'
   },
   'robert_capone_wanted_poster': {
     id: 'robert_capone_wanted_poster',
@@ -258,22 +222,13 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: '/images/capone_alice_meeting.jpg',
     chapter: 8,
     parentId: 'project',
-    unlockSource: 'confession_33'
+    unlockSource: 'confession_36A1'
   },
-  'confession_31_residue_png': {
-    id: 'confession_31_residue_png',
+  'confession_31_residue_custom': {
+    id: 'confession_31_residue_custom',
     type: 'image',
-    title: '供述 No.31 视觉残留 (PNG)',
-    content: '/images/confession_31_residue.png',
-    chapter: 8,
-    parentId: 'project',
-    unlockSource: 'confession_31'
-  },
-  'confession_31_residue_jpg': {
-    id: 'confession_31_residue_jpg',
-    type: 'image',
-    title: '供述 No.31 视觉残留 (JPG)',
-    content: '/images/confession_31_residue.jpg',
+    title: '供述 No.31 视觉残留',
+    content: '/images/confession_31_residue_custom.jpg',
     chapter: 8,
     parentId: 'project',
     unlockSource: 'confession_31'
@@ -293,8 +248,8 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     title: '1981 溪泉镇颁奖典礼合照',
     content: '/images/creekspring_award_ceremony_1981_photo.jpg',
     chapter: 9,
-    parentId: 'project',
-    unlockSource: 'confession_33'
+    parentId: 'clipping_23',
+    unlockSource: 'clipping_23'
   },
   'death_report': {
     id: 'death_report',
@@ -303,6 +258,6 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: '/images/john_doe_autopsy_report.png',
     chapter: 9,
     parentId: 'project',
-    unlockSource: 'confession_33'
+    unlockSource: 'jennifer_node_8'
   }
 };

@@ -829,7 +829,8 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
                                 if (activeClue.id === 'crime_route_map') {
                                     let mapUrl = '/images/crime-route-map.png';
-                                    if (currentStoryNode >= 7) mapUrl = '/images/crime-route-map-v6.png';
+                                    if (currentStoryNode >= 8) mapUrl = '/images/libby_convergence_map.png';
+                                    else if (currentStoryNode >= 7) mapUrl = '/images/crime-route-map-v6.png';
                                     else if (currentStoryNode >= 6) mapUrl = '/images/crime-route-map-v5.png';
                                     else if (currentStoryNode >= 5) mapUrl = '/images/crime-route-map-v4.png';
                                     else if (currentStoryNode >= 4) mapUrl = '/images/crime-route-map-v3.png';
