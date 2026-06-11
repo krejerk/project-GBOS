@@ -828,13 +828,13 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                 }
 
                                 if (activeClue.id === 'crime_route_map') {
-                                    let mapUrl = '/images/crime-route-map.png';
-                                    if (currentStoryNode >= 8) mapUrl = '/images/libby_convergence_map.png';
-                                    else if (currentStoryNode >= 7) mapUrl = '/images/crime-route-map-v6.png';
-                                    else if (currentStoryNode >= 6) mapUrl = '/images/crime-route-map-v5.png';
-                                    else if (currentStoryNode >= 5) mapUrl = '/images/crime-route-map-v4.png';
-                                    else if (currentStoryNode >= 4) mapUrl = '/images/crime-route-map-v3.png';
-                                    else if (currentStoryNode >= 3) mapUrl = '/images/crime-route-map-v2.png';
+                                    let mapUrl = 'images/crime-route-map.png';
+                                    if (currentStoryNode >= 8) mapUrl = 'images/libby_convergence_map.png';
+                                    else if (currentStoryNode >= 7) mapUrl = 'images/crime-route-map-v6.png';
+                                    else if (currentStoryNode >= 6) mapUrl = 'images/crime-route-map-v5.png';
+                                    else if (currentStoryNode >= 5) mapUrl = 'images/crime-route-map-v4.png';
+                                    else if (currentStoryNode >= 4) mapUrl = 'images/crime-route-map-v3.png';
+                                    else if (currentStoryNode >= 3) mapUrl = 'images/crime-route-map-v2.png';
 
                                     const hasMainePhoto = collectedAttachments.includes('car_maine_original') || collectedAttachments.includes('car_photo_maine');
                                     const hasNewMexicoPhoto = collectedAttachments.includes('car_newmexico_original') || collectedAttachments.includes('car_photo_newmexico');
