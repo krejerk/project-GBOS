@@ -1029,6 +1029,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                                     onCollectClue={onCollectClue}
                                     onPersonaReboot={onPersonaReboot}
                                     onCollectAttachment={onCollectAttachment}
+                                    onSetFilingEvidence={setFilingEvidence}
                                     collectedDossierIds={collectedDossierIds}
                                     collectedAttachments={collectedAttachments}
                                     clueDisplayMap={CLUE_DISPLAY_MAP}

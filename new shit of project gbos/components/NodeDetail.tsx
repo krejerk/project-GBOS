@@ -11,6 +11,7 @@ interface NodeDetailProps {
   onShatter: (id: string) => void;
   onCollectClue: (id: string, word: string) => void;
   onCollectAttachment?: (id: string) => void;
+  onSetFilingEvidence?: (evidence: { id: string, title: string, content: string, type: 'image' | 'text' } | null) => void;
   collectedDossierIds?: string[];
   collectedAttachments?: string[];
   clueDisplayMap: Record<string, string>;
@@ -35,7 +36,8 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   unlockedPeople,
   collectedClues,
   collectedYears,
-  consumedKeywords
+  consumedKeywords,
+  onSetFilingEvidence
 }) => {
   const renderEventText = (text: string) => {
     if (!text) return null;
@@ -297,6 +299,37 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     e.stopPropagation();
     const clueId = forceClueId || KEYWORD_MAP[word];
     if (!clueId) return;
+
+    // Handle visual extractions and manual attachment links
+    const isAttachment = clueId.startsWith('extract_') || clueId.startsWith('view_') || clueId === 'death_report';
+    if (isAttachment) {
+      if (clueId === 'view_iron_horse_record') {
+          onSetFilingEvidence?.({ id: 'iron_horse_louisville', title: '图注：烟盒记录：路易斯维尔', content: `${import.meta.env.BASE_URL}images/iron_horse_louisville.jpg`, type: 'image' });
+          if (onCollectAttachment) onCollectAttachment('iron_horse_louisville');
+      } else if (clueId === 'extract_visual_confession_6') {
+          onSetFilingEvidence?.({ id: 'iron_horse_beacon', title: '视觉残留：灰水信标 (莫哈韦)', content: `${import.meta.env.BASE_URL}images/iron_horse_beacon.jpg`, type: 'image' });
+          onCollectClue('graywater_beacon', '灰水信标');
+          if (onCollectAttachment) onCollectAttachment('iron_horse_beacon');
+      } else if (clueId === 'extract_church_residue') {
+          onSetFilingEvidence?.({ id: 'church_visual_residue', title: '视觉残留：圣泉镇教堂', content: `${import.meta.env.BASE_URL}images/church_visual_residue.png`, type: 'image' });
+          if (onCollectAttachment) onCollectAttachment('church_visual_residue');
+      } else if (clueId === 'extract_laguna_beach_residue') {
+          onSetFilingEvidence?.({ id: 'laguna_beach_visual_residue', title: '视觉残留：拉古那海滩', content: `${import.meta.env.BASE_URL}images/laguna_beach_visual_residue.png`, type: 'image' });
+          if (onCollectAttachment) onCollectAttachment('laguna_beach_visual_residue');
+      } else if (clueId === 'extract_visual_node_7') {
+          onSetFilingEvidence?.({ id: 'libby_ticket', title: '证物：灰狗巴士票根', content: `${import.meta.env.BASE_URL}images/libby_ticket.jpg`, type: 'image' });
+          onCollectClue('libby_town', '利比镇');
+      } else if (clueId === 'extract_rv_memory') {
+          onSetFilingEvidence?.({ id: 'libby_forest_map_residue', title: '视觉残留：利比镇房车与森林地图', content: `${import.meta.env.BASE_URL}images/confession_31_residue.png`, type: 'image' });
+          if (onCollectAttachment) onCollectAttachment('libby_forest_map_residue');
+      } else if (clueId === 'extract_visual_node_32') {
+          onSetFilingEvidence?.({ id: 'vanessa_memory_final', title: '视觉残留：记忆中的房车与瓦妮莎', content: `${import.meta.env.BASE_URL}images/vanessa_memory_final.png`, type: 'image' });
+      } else if (clueId === 'death_report') {
+          onSetFilingEvidence?.({ id: 'death_report', title: '证物：无名氏 #88-B 死亡报告', content: `${import.meta.env.BASE_URL}images/john_doe_autopsy_report.png`, type: 'image' });
+          if (onCollectAttachment) onCollectAttachment('death_report');
+      }
+      return;
+    }
 
     // If the keyword has already been used to unlock something, it is completely invalid.
     if (consumedKeywords.has(clueId)) return;
