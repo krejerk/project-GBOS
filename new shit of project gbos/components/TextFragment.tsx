@@ -45,7 +45,7 @@ export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
         const highlightBlacklist = [
             'jc_penney', 'father', 'mother', 'robert', 'capone', 
             'silas', 'conchar', 'vanessa', 'luciano', 'arthur_dawson',
-            'richie_dreyfuss', 'recruitment', 'davenport'
+            'richie_dreyfuss', 'recruitment', 'davenport', 'philadelphia', 'morning'
         ];
 
         const keywords = Object.keys(keywordMap)
@@ -131,6 +131,28 @@ export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
                             seenInFragment.add(part.text);
                             const clueId = part.isManual && part.clueId ? part.clueId : keywordMap[part.text];
                             const isEffectActive = collectionEffects[part.text];
+
+                            // Special style for attachments/visual extractions
+                            const isAttachment = part.isManual && part.clueId && (
+                                part.clueId.startsWith('extract_') || 
+                                part.clueId.startsWith('view_') || 
+                                part.clueId === 'death_report'
+                            );
+
+                            if (isAttachment) {
+                                return (
+                                    <span
+                                        key={j}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onKeywordClick(e, part.text, part.clueId);
+                                        }}
+                                        className="text-[#d89853] hover:text-[#fbbf24] hover:underline cursor-pointer transition-colors mx-1"
+                                    >
+                                        {part.text}
+                                    </span>
+                                );
+                            }
 
                             return (
                                 <span
