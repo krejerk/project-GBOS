@@ -143,89 +143,62 @@ export const Archives: React.FC<ArchivesProps> = ({
     };
 
     const handleAttemptCollect = (targetClueId: string) => {
-        if (attachmentImage?.includes('butter_julep_evidence') && targetClueId === 'julip') {
-            onCollectAttachment?.('butter_julep_evidence');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
+        // Try to match current attachmentImage with ATTACHMENT_REGISTRY
+        const activeAttachment = Object.values(ATTACHMENT_REGISTRY).find(attr => {
+            if (attr.type !== 'image' || !attachmentImage) return false;
+            const contentPath = attr.content.startsWith('/') ? attr.content.slice(1) : attr.content;
+            return attachmentImage.includes(contentPath);
+        });
+
+        if (activeAttachment) {
+            if (activeAttachment.dossierId === targetClueId) {
+                onCollectAttachment?.(activeAttachment.id);
+                setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+                setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
+                return;
+            }
+        } else {
+            // Legacy fallbacks for manually mapped images
+            if (attachmentImage?.includes('capone_alice_meeting') && (targetClueId === 'meeting' || targetClueId === 'project' || targetClueId === 'capone')) {
+                onCollectAttachment?.('capone_alice_meeting');
+                setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+                setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
+                return;
+            }
+            if (attachmentImage?.includes('wilmer_ribbon') && targetClueId === 'project') {
+                onCollectAttachment?.('wilmer_ribbon');
+                setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+                setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
+                return;
+            }
+            if (attachmentImage?.includes('creekspring_award_ceremony_1981_photo') && targetClueId === 'project') {
+                onCollectAttachment?.('creekspring_award_ceremony');
+                setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+                setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
+                return;
+            }
+            if (attachmentImage?.includes('record_of_accounts') && targetClueId === 'project') {
+                onCollectAttachment?.('record_of_accounts');
+                setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
+                setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
+                return;
+            }
         }
-        if (attachmentImage?.includes('capone_alice_meeting') && (targetClueId === 'meeting' || targetClueId === 'project' || targetClueId === 'capone')) {
-            onCollectAttachment?.('view_capone_alice_meeting');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('wilmer_ribbon') && targetClueId === 'project') {
-            onCollectAttachment?.('wilmer_ribbon');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('creekspring_award_ceremony_1981_photo') && targetClueId === 'project') {
-            onCollectAttachment?.('creekspring_award_ceremony_1981_photo');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('record_of_accounts') && targetClueId === 'project') {
-            onCollectAttachment?.('record_of_accounts');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('jane_doe_1977') && targetClueId === 'project') {
-            onCollectAttachment?.('jane_doe_1977');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('fbi-symbol') && (targetClueId === 'project' || targetClueId === 'julip')) {
-            onCollectAttachment?.('fbi_symbol_analysis');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('iron_horse_beacon') && targetClueId === 'graywater_beacon') {
-            onCollectAttachment?.('iron_horse_beacon');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('church_visual_residue') && targetClueId === 'graywater_beacon') {
-            onCollectAttachment?.('church_visual_residue');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('laguna_beach_visual_residue') && targetClueId === 'graywater_beacon') {
-            onCollectAttachment?.('laguna_beach_visual_residue');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('wilmer_ribbon') && (targetClueId === 'aw_wilmo' || targetClueId === 'martha_diaz')) {
-            onCollectAttachment?.('wilmer_ribbon');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        if (attachmentImage?.includes('butter_julep_evidence') && (targetClueId === 'julip' || targetClueId === 'project')) {
-            onCollectAttachment?.('butter_julep_evidence');
-            setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-            setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-            return;
-        }
-        setCollectionFeedback({ type: 'error', msg: '归档失败：特征不匹配 // MISMATCH' });
+
+        // Default error if no match
+        setCollectionFeedback({ type: 'error', msg: '归档失败：不符合当前案卷 // INVALID DOSSIER' });
         setTimeout(() => setCollectionFeedback({ type: null, msg: '' }), 2000);
     };
 
     const handleClueClick = (id: string) => {
-        if (id === 'view_capone_alice_meeting') {
+        // Find if this is an attachment in the registry
+        const attachment = ATTACHMENT_REGISTRY[id];
+        if (attachment && attachment.type === 'image') {
+            setAttachmentImage(`${import.meta.env.BASE_URL}${attachment.content.startsWith('/') ? attachment.content.slice(1) : attachment.content}`);
+        } else if (id === 'view_capone_alice_meeting') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/capone_alice_meeting.jpg`);
-        } else if (id === 'creekspring_award_ceremony_1981_photo') {
+        } else if (id === 'creekspring_award_ceremony') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/creekspring_award_ceremony_1981_photo.jpg`);
-        } else if (id === 'fbi_symbol_analysis') {
-            setAttachmentImage(`${import.meta.env.BASE_URL}images/fbi-symbol.png`);
         } else if (id === 'QTC-VA-0994' || id === 'MTXXXXXXXX-93') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/john_doe_autopsy_report.png`);
         } else if (id === 'wilmer_ribbon') {
@@ -238,10 +211,18 @@ export const Archives: React.FC<ArchivesProps> = ({
             setAttachmentImage(`${import.meta.env.BASE_URL}images/jane_doe_1977.jpg`);
         } else if (id === 'graywater_beacon') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/iron_horse_beacon.jpg`);
+        } else if (id === 'fbi_symbol') {
+            setAttachmentImage(`${import.meta.env.BASE_URL}images/fbi-symbol.png`);
         } else if (id === 'church_visual_residue') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/church_visual_residue.png`);
         } else if (id === 'laguna_beach_visual_residue') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/laguna_beach_visual_residue.png`);
+        } else if (id === 'iron_horse_louisville') {
+            setAttachmentImage(`${import.meta.env.BASE_URL}images/iron_horse_louisville.jpg`);
+        } else if (id === 'iron_horse_beacon') {
+            setAttachmentImage(`${import.meta.env.BASE_URL}images/iron_horse_beacon.jpg`);
+        } else if (id === 'richie_id_card') {
+            setAttachmentImage(`${import.meta.env.BASE_URL}images/richard_evans_id.jpg`);
         }
         
         // Trigger flash effect

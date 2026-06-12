@@ -18,7 +18,7 @@ export const KEYWORD_REGISTRY: Record<string, KeywordMetadata> = {
   'chicago': { id: 'chicago', chapter: 1, type: 'location', displayName: "芝加哥", isPersistent: true, description: "亚裔女性失踪案发生的周边城市。", source: "Briefing" },
   'small_bank': { id: 'small_bank', chapter: 1, type: 'case', displayName: "小银行", isPersistent: true, description: "被家族劫掠的目标地点之一。", source: "Briefing" },
   'missing': { id: 'missing', chapter: 1, type: 'case', displayName: "失踪", isPersistent: true, description: "受害者的最终下落不明。", source: "Briefing" },
-  'julip': { id: 'julip', chapter: 1, type: 'case', displayName: "黄油朱莉普", isPersistent: true, description: "卡彭的安全识别代码 (Butter Julep)。", source: "Briefing", attachments: ["fbi_symbol_analysis"] },
+  'julip': { id: 'julip', chapter: 1, type: 'case', displayName: "黄油朱莉普", isPersistent: true, description: "卡彭的安全识别代码 (Butter Julep)。", source: "Briefing", attachments: ["butter_julep_evidence"] },
   'personnel_tree': { id: 'personnel_tree', chapter: 0, type: 'case', displayName: "人物关系 (Personnel)", isPersistent: true, description: "基于目前掌握的线索，整理出的相关人物关系网络演进图。", source: "Investigation" },
   'view_iron_horse_record': { id: 'view_iron_horse_record', chapter: 3, type: 'case', displayName: "烟盒记录：路易斯维尔", isPersistent: true, description: "詹妮弗提供的一份关键记录，揭示了卡彭最后一次信标投放的地理坐标：肯塔基州路易斯维尔。", source: "Jennifer" },
   'asian_woman': { id: 'asian_woman', chapter: 1, type: 'person', displayName: "亚裔女性", isPersistent: true, description: "在香槟镇失踪的受害者。", source: "Briefing" },
@@ -367,7 +367,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
   },
   "牧师": {
     "id": "priest",
-    "type": "person"
+    "type": "case"
   },
   "里奇·德莱弗斯": {
     "id": "richie_dreyfuss",
@@ -562,7 +562,11 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
   "威廉 道森": { "id": "william_dawson", "type": "person" },
   "威廉道森": { "id": "william_dawson", "type": "person" },
   "威廉": { "id": "william_dawson", "type": "person" },
-  "道森": { "id": "william_dawson", "type": "person" },
+  "arthur_dawson": { "id": "arthur_dawson", "type": "person" },
+  "arthur dawson": { "id": "arthur_dawson", "type": "person" },
+  "亚瑟·道森": { "id": "arthur_dawson", "type": "person" },
+  "亚瑟 道森": { "id": "arthur_dawson", "type": "person" },
+  "亚瑟": { "id": "arthur_dawson", "type": "person" },
   "cynthia_miller": { "id": "cynthia_miller", "type": "person" },
   "cynthia miller": { "id": "cynthia_miller", "type": "person" },
   "辛西娅·米勒": { "id": "cynthia_miller", "type": "person" },

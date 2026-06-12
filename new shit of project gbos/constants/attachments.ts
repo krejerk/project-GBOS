@@ -9,6 +9,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/butter_julep_evidence.jpg',
     chapter: 1,
     parentId: 'clipping_08',
+    dossierId: 'julip',
     unlockSource: 'clipping_08'
   },
   'fbi_symbol': {
@@ -18,6 +19,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/fbi-symbol.png',
     chapter: 1,
     parentId: 'clipping_03',
+    dossierId: 'project',
     unlockSource: 'clipping_03'
   },
 
@@ -29,6 +31,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/iron_horse_beacon.jpg',
     chapter: 1,
     parentId: 'graywater_beacon',
+    dossierId: 'graywater_beacon',
     unlockSource: 'confession_6'
   },
   'iron_horse_louisville': {
@@ -132,6 +135,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/jane_doe_1977.jpg',
     chapter: 4,
     parentId: 'clipping_22',
+    dossierId: 'project',
     unlockSource: 'clipping_22'
   },
   'richie_id_card': {
@@ -150,6 +154,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/church_visual_residue.png',
     chapter: 5,
     parentId: 'project',
+    dossierId: 'graywater_beacon',
     unlockSource: 'confession_19'
   },
   'laguna_beach_visual_residue': {
@@ -159,6 +164,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/laguna_beach_visual_residue.png',
     chapter: 7,
     parentId: 'project',
+    dossierId: 'graywater_beacon',
     unlockSource: 'confession_28'
   },
   'record_of_accounts': {
@@ -168,6 +174,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/record_of_accounts.jpg',
     chapter: 6,
     parentId: 'project',
+    dossierId: 'project',
     unlockSource: 'confession_16'
   },
   'wilmer_ribbon': {
@@ -177,6 +184,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/wilmer_ribbon.jpg',
     chapter: 7,
     parentId: 'clipping_07',
+    dossierId: 'project',
     unlockSource: 'clipping_07'
   },
   'felipe_maldonado_poster': {
@@ -222,6 +230,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/capone_alice_meeting.jpg',
     chapter: 8,
     parentId: 'project',
+    dossierId: 'project',
     unlockSource: 'confession_36A1'
   },
   'confession_31_residue_custom': {
@@ -249,6 +258,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/creekspring_award_ceremony_1981_photo.jpg',
     chapter: 9,
     parentId: 'clipping_23',
+    dossierId: 'project',
     unlockSource: 'clipping_23'
   },
   'death_report': {

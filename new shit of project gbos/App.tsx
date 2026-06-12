@@ -259,17 +259,7 @@ const App: React.FC = () => {
         }
       });
       
-      // 2. Sync attachments based on chapter
-      const chapterAttachments = Object.values(ATTACHMENT_REGISTRY)
-        .filter(attr => attr.chapter !== undefined && attr.chapter <= prev.currentStoryNode)
-        .map(attr => attr.id);
-      
-      const newAttachments = Array.from(new Set([...(prev.collectedAttachments || []), ...chapterAttachments]));
-      if (newAttachments.length !== (prev.collectedAttachments || []).length) {
-        changed = true;
-      }
-
-      // 3. SANITIZATION: Strip future-chapter people from unlockedPeople
+      // 2. SANITIZATION: Strip future-chapter people from unlockedPeople
       // This prevents "phantom" keywords (e.g. Frank Rollins) from appearing
       // when the user hasn't reached that chapter yet.
       const sanitizedPeople = (prev.unlockedPeople || []).filter(id => {
@@ -340,6 +330,62 @@ const App: React.FC = () => {
       return prev;
     });
   }, [gameState.currentStoryNode]);
+
+  // --- CHAPTER 4 CLEANUP GUARD ---
+  // Guarantees all unprotected stranded keywords from Chapters 1-3 are destroyed
+  React.useEffect(() => {
+    if (gameState.currentStoryNode >= 4 && !gameState.hasPurgedChapter1To3) {
+      setGameState(prev => {
+        let changed = false;
+        
+        // Define protected keywords that SURVIVE the purge
+        const protectedIds = ['st_louis', 'vampire', 'personnel_tree', ...PROTECTED_YEARS];
+        
+        // Build the set of consumed keywords
+        const consumed = new Set<string>();
+        const processConsumed = (id: string) => {
+          const keywords = KEYWORD_CONSUMPTION_MAP[id];
+          if (keywords) {
+            keywords.forEach(k => consumed.add(k));
+          }
+        };
+        (prev.unlockedNodeIds || []).forEach(processConsumed);
+        (prev.unlockedArchiveIds || []).forEach(processConsumed);
+
+        const filterClues = (clues: string[]) => {
+          return clues.filter(id => {
+            if (protectedIds.includes(id)) return true; // Keep protected
+            if (consumed.has(id)) {
+              changed = true;
+              return false; // Drop consumed
+            }
+            
+            const meta = getKeywordMeta(id);
+            // If it belongs to Chapter 1, 2, or 3, forcefully confiscate it (ignoring isPersistent)
+            if (meta && meta.chapter !== undefined && meta.chapter < 4) {
+              changed = true;
+              return false;
+            }
+            
+            return true; // Keep others
+          });
+        };
+
+        const sanitizedClues = filterClues(prev.collectedClues || []);
+        const sanitizedYears = filterClues(prev.collectedYears || []);
+
+        if (changed || !prev.hasPurgedChapter1To3) {
+          return {
+            ...prev,
+            collectedClues: sanitizedClues,
+            collectedYears: sanitizedYears,
+            hasPurgedChapter1To3: true
+          };
+        }
+        return prev;
+      });
+    }
+  }, [gameState.currentStoryNode, gameState.hasPurgedChapter1To3]);
 
   // --- AUDIO LOGIC ---
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
@@ -623,25 +669,19 @@ const App: React.FC = () => {
       // 3. Filter lists: REMOVE everything except protected keywords and future keywords
       const filterFn = (id: string) => {
           if (protectedIds.includes(id)) return true;
+          if (consumed.has(id)) return false; // Definitely clear consumed ones
+          
           const meta = getKeywordMeta(id);
           // Keep anything collected AFTER node 3
           if (meta && meta.chapter > 3) return true;
           return false;
       };
 
-      // 3. Sync attachments based on chapter
-      const chapterAttachments = Object.values(ATTACHMENT_REGISTRY)
-        .filter(attr => attr.chapter !== undefined && attr.chapter <= prev.currentStoryNode)
-        .map(attr => attr.id);
-      
-      const newAttachments = Array.from(new Set([...(prev.collectedAttachments || []), ...chapterAttachments]));
-
       return {
         ...prev,
         collectedClues: prev.collectedClues.filter(filterFn),
         collectedYears: prev.collectedYears.filter(filterFn),
-        unlockedPeople: prev.unlockedPeople.filter(filterFn),
-        collectedAttachments: newAttachments,
+        unlockedPeople: prev.unlockedPeople, // DO NOT filter out people, they belong on the board
         history: [
           ...prev.history,
           { type: 'info', content: '[JENNIFER]: 看来你还在试图拼凑那些不该存在的碎片。作为警告，我已清除了你所有的线索缓存。', timestamp: Date.now() }
@@ -987,7 +1027,7 @@ const App: React.FC = () => {
 
           const newCollectedClues = prev.collectedClues.filter(filterConsumed);
           const newCollectedYears = prev.collectedYears.filter(filterConsumed);
-          const newUnlockedPeople = prev.unlockedPeople.filter(filterConsumed); 
+          const newUnlockedPeople = prev.unlockedPeople; // NEVER filter unlockedPeople
 
           if (type === 'archive') {
             const isAlreadyUnlocked = prev.unlockedArchiveIds.includes(targetId);
@@ -1387,23 +1427,9 @@ const App: React.FC = () => {
              const currentAtts = updates.collectedAttachments || prev.collectedAttachments || [];
              updates.collectedAttachments = [...currentAtts, attId];
              
-             // Dossier Linkage (Mirroring handleCollectAttachment logic)
-             if (attId === 'richie_id_card') {
-                if (!prev.collectedDossierIds.includes('julip')) {
-                   updates.collectedDossierIds = [...(updates.collectedDossierIds || prev.collectedDossierIds), 'julip'];
-                }
-             }
-             if (attId === 'iron_horse_louisville' || attId === 'graywater_beacon' || attId === 'iron_horse_beacon') {
-                if (!prev.collectedDossierIds.includes('graywater_beacon')) {
-                   updates.collectedDossierIds = [...(updates.collectedDossierIds || prev.collectedDossierIds), 'graywater_beacon'];
-                }
-                const autoAttachments = ['graywater_beacon', 'iron_horse_beacon', 'iron_horse_louisville'];
-                const nowAtts = updates.collectedAttachments || [];
-                const missing = autoAttachments.filter(a => !nowAtts.includes(a));
-                if (missing.length > 0) {
-                   updates.collectedAttachments = [...nowAtts, ...missing];
-                }
-             }
+             // Do NOT hardcode dossier linkages here.
+             // Rely on the explicit 'FILE EVIDENCE' collection flow in Archives.tsx
+             // or the registry mapping, to avoid premature story spoilers.
           }
         });
       }
@@ -1468,10 +1494,9 @@ const App: React.FC = () => {
     setGameState(prev => {
       let nextClues = prev.collectedClues;
       let nextYears = prev.collectedYears;
-      let nextPeople = prev.unlockedPeople;
+      let nextPeople = prev.unlockedPeople; // NEVER filter this, it's for the personnel tree
 
       if (personIds && personIds.length > 0) {
-        nextPeople = nextPeople.filter(id => !personIds.includes(id) || PROTECTED_YEARS.includes(id));
         // Keep clues filtered too in case of dual-mapped items
         nextClues = nextClues.filter(id => !personIds.includes(id) || PROTECTED_YEARS.includes(id)); 
       }

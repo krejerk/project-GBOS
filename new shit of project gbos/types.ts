@@ -89,6 +89,7 @@ export interface GameState {
   unlockedArchiveIds: string[]; // Store IDs of unlocked archive cases
   systemStability: number; // 0-100% (Starts at 84%)
   currentStoryNode: number; // Current story node reached (0 = none, 1 = chapter 1 complete, etc.)
+  hasPurgedChapter1To3?: boolean;
   hasSwitchedPersona?: boolean; // Whether the persona switch event has occurred
   activePersona?: 'detective' | 'shadow'; // Controls background visualization
   playerHypotheses: Record<string, string>; // Map of node ID to player-entered name

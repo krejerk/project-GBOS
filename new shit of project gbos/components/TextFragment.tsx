@@ -45,7 +45,7 @@ export const TextFragment: React.FC<TextFragmentProps> = React.memo(({
         const highlightBlacklist = [
             'jc_penney', 'father', 'mother', 'robert', 'capone', 
             'silas', 'conchar', 'vanessa', 'luciano', 'arthur_dawson',
-            'richie_dreyfuss', 'recruitment'
+            'richie_dreyfuss', 'recruitment', 'davenport'
         ];
 
         const keywords = Object.keys(keywordMap)

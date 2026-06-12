@@ -8,6 +8,7 @@ export interface Attachment {
   description?: string;
   chapter?: number;
   parentId?: string;
+  dossierId?: string;
   unlockSource?: string;
 }
 

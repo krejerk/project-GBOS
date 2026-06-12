@@ -11,7 +11,7 @@ export const CHAPTER5_KEYWORDS: Record<string, KeywordMetadata> = {
   'el_paso': { id: 'el_paso', chapter: 5, type: 'location', displayName: "埃尔帕索", isPersistent: true, description: "边境城市，著名的情报中转站。许多被“采集”的样本或人员在这里消失。", source: "Dialogue" },
   'morning': { id: 'morning', chapter: 5, type: 'person', displayName: "莫宁", isPersistent: true, description: "脏弗兰克酒吧的老板，经营着报废车场。", source: "Confession" },
   'police_killing': { id: 'police_killing', chapter: 5, type: 'case', displayName: "警员遇害案", isPersistent: true },
-  'priest': { id: 'priest', chapter: 5, type: 'person', displayName: "牧师", isPersistent: true, description: "活跃在埃尔帕索的中转站关联人物。", source: "Dialogue" },
+  'priest': { id: 'priest', chapter: 5, type: 'case', displayName: "牧师", isPersistent: true, description: "活跃在埃尔帕索的中转站关联人物。", source: "Dialogue" },
   'richie_dreyfuss': { id: 'richie_dreyfuss', chapter: 5, type: 'person', displayName: "里奇·德莱弗斯", isPersistent: true },
   'year_1974': { id: 'year_1974', chapter: 5, type: 'year', displayName: "1974", isPersistent: true, description: "莫宁锁定时间轴的关键年份。", source: "Dialogue" },
   'year_1977': { id: 'year_1977', chapter: 5, type: 'year', displayName: "1977", isPersistent: true },

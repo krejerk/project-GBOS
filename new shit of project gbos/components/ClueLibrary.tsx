@@ -577,11 +577,14 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             setTutorialStep(3);
         }
 
-        // SYNC: If the map is currently being viewed, refresh its content to the new version
-        if (viewingAttachment?.content && (detectedNodeId === 2 || detectedNodeId === 3 || detectedNodeId === 4 || detectedNodeId === 5 || detectedNodeId === 6 || detectedNodeId === 7)) {
+        // Removed faulty synchronous SYNC map logic since currentStoryNode is updated asynchronously
+    };
+
+    // Auto-update viewing map when story node changes
+    useEffect(() => {
+        if (viewingAttachment?.content && viewingAttachment.id.includes('crime_route_map_v')) {
             const updatedDefinition = getDynamicClueDefinition('crime_route_map');
-            // Node 7 should show the second attachment (Greyhound Map) by default
-            const isNode7 = detectedNodeId === 7 || simulatedDialogue === JENNIFER_NODE_7_DIALOGUE;
+            const isNode7 = currentStoryNode >= 7;
             const attachmentIndex = isNode7 ? 1 : 0;
             
             if (updatedDefinition.attachments?.[attachmentIndex]) {
@@ -590,7 +593,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                 setViewingAttachment(updatedDefinition.attachments[0]);
             }
         }
-    };
+    }, [currentStoryNode, viewingAttachment?.id]);
 
     const handleJenniferClose = () => {
         setShowJennifer(false);
@@ -636,7 +639,10 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
 
         // Fetch attachments from the central registry that belong to this dossier/clue
         const registryAttachments = Object.values(ATTACHMENT_REGISTRY)
-            .filter(attr => attr.parentId === id && ((collectedAttachments || []).includes(attr.id) || (attr.unlockSource && (unlockedNodeIds || []).includes(attr.unlockSource)) || (attr.unlockSource && (unlockedArchiveIds || []).includes(attr.unlockSource))))
+            .filter(attr => 
+            (attr.parentId === id && ((collectedAttachments || []).includes(attr.id) || (attr.unlockSource && (unlockedNodeIds || []).includes(attr.unlockSource)) || (attr.unlockSource && (unlockedArchiveIds || []).includes(attr.unlockSource)))) ||
+            (attr.dossierId === id && (collectedAttachments || []).includes(attr.id))
+        )
             .map(attr => ({
                 id: attr.id,
                 type: attr.type,
