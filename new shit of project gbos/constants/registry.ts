@@ -93,10 +93,6 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "julip",
     "type": "case"
   },
-  "伦德格兰": {
-    "id": "lundgren",
-    "type": "person"
-  },
   "缅因州": {
     "id": "maine",
     "type": "location"
@@ -225,10 +221,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "cincinnati",
     "type": "location"
   },
-  "辛西娅·米勒": {
-    "id": "cynthia_miller",
-    "type": "person"
-  },
+
   "远亲": {
     "id": "distant_relatives",
     "type": "case"
@@ -473,10 +466,7 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "forest_map",
     "type": "case"
   },
-  "弗兰克·罗林斯": {
-    "id": "frank_rollins",
-    "type": "person"
-  },
+
   "汉弗莱县": {
     "id": "humphrey_county",
     "type": "location"
