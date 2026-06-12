@@ -12,6 +12,7 @@ import {
     UNLOCKS_REGISTRY, 
     ARCHIVE_DATABASE, 
     KEYWORD_REGISTRY,
+    ATTACHMENT_REGISTRY,
     DetailedArchiveRecord,
     getNodeChapter
 } from '../constants';
