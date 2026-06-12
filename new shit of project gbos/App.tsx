@@ -544,27 +544,22 @@ const App: React.FC = () => {
     return { success: true, keywords: missedKeywords };
   }, [gameState.systemStability, gameState.unlockedNodeIds, gameState.currentStoryNode, gameState.history, gameState.collectedClues, gameState.collectedDossierIds, gameState.collectedYears, gameState.unlockedPeople]);
 
-  // Chapter 6 Jennifer Intro Dialogue Trigger via ClueLibrary
-  React.useEffect(() => {
-    if (gameState.currentStoryNode === 6 && !gameState.hasSeenNode6Intro && !showAwakeningDialogue) {
-      const timer = setTimeout(() => {
-        setIsClueLibraryOpen(true);
-        setGameState(prev => ({ ...prev, hasSeenNode6Intro: true }));
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [gameState.currentStoryNode, gameState.hasSeenNode6Intro, showAwakeningDialogue]);
+  const autoOpenedNodes = React.useRef(new Set<number>());
 
-  // Chapter 7 Jennifer Intro Dialogue Trigger via ClueLibrary
+  // Universal Jennifer Intro Dialogue Trigger via ClueLibrary
   React.useEffect(() => {
-    if (gameState.currentStoryNode === 7 && !gameState.hasSeenNode7Intro) {
-      const timer = setTimeout(() => {
-        setIsClueLibraryOpen(true);
-        setGameState(prev => ({ ...prev, hasSeenNode7Intro: true }));
-      }, 1000);
-      return () => clearTimeout(timer);
+    const node = gameState.currentStoryNode;
+    if (node >= 1 && node <= 9 && !showAwakeningDialogue && !autoOpenedNodes.current.has(node)) {
+      const hasViewed = localStorage.getItem(`hasViewedNode${node}`) === 'true';
+      if (!hasViewed) {
+        const timer = setTimeout(() => {
+          autoOpenedNodes.current.add(node);
+          setGameState(prev => ({ ...prev, isClueLibraryOpen: true }));
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
     }
-  }, [gameState.currentStoryNode, gameState.hasSeenNode7Intro]);
+  }, [gameState.currentStoryNode, showAwakeningDialogue]);
 
   const handleStoryNodeComplete = useCallback((nodeId: number) => {
     setGameState(prev => {
@@ -1632,6 +1627,7 @@ const App: React.FC = () => {
                 onGameEnd={() => setEndingType('ending1')}
                 isBranchBActive={gameState.isBranchBActive}
                 onTerminateExperiment={handleTerminateExperiment}
+                onCloseClueLibrary={() => setGameState(prev => ({ ...prev, isClueLibraryOpen: false }))}
               />
             </ErrorBoundary>
           </motion.div>

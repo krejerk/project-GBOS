@@ -52,6 +52,7 @@ interface SimplifiedMainViewProps {
     onGameEnd?: () => void;
     isBranchBActive?: boolean;
     onTerminateExperiment?: (type: 'ending2' | 'ending3') => void;
+    onCloseClueLibrary?: () => void;
 }
 
 type PanelType = 'mindmap' | 'terminal' | 'relationships';
@@ -87,7 +88,8 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     setTutorialStep,
     onGameEnd,
     isBranchBActive,
-    onTerminateExperiment
+    onTerminateExperiment,
+    onCloseClueLibrary
 }) => {
     // Derived from gameState for brevity
     const {
@@ -116,6 +118,13 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
     const [hasNewArchive, setHasNewArchive] = useState(false);
     const [hasNewDossier, setHasNewDossier] = useState(false);
     const [filingEvidence, setFilingEvidence] = useState<{ id: string, title: string, content: string, type: 'image' | 'text' } | null>(null);
+
+    // Watch for global requests to open ClueLibrary (e.g. from Checkpoints or Chapter changes)
+    useEffect(() => {
+        if (gameState.isClueLibraryOpen) {
+            setShowClueLibrary(true);
+        }
+    }, [gameState.isClueLibraryOpen]);
 
     const closeRetraceModal = () => {
         setShowRetraceModal(false);
@@ -1099,7 +1108,10 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
             {/* Feature Sidebar Panels */}
             <ClueLibrary
                 isOpen={showClueLibrary}
-                onClose={() => setShowClueLibrary(false)}
+                onClose={() => {
+                    setShowClueLibrary(false);
+                    if (onCloseClueLibrary) onCloseClueLibrary();
+                }}
                 collectedClueIds={collectedClues}
                 collectedKeywords={collectedClues}
                 collectedPeople={unlockedPeople}

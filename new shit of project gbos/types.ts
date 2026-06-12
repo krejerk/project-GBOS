@@ -113,4 +113,5 @@ export interface GameState {
   isBranchBActive?: boolean;
   hasSeenNode6Intro?: boolean;
   hasSeenNode7Intro?: boolean;
+  isClueLibraryOpen?: boolean;
 }

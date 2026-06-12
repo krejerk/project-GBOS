@@ -19,7 +19,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/fbi-symbol.png',
     chapter: 1,
     parentId: 'clipping_03',
-    dossierId: 'project',
+    dossierId: 'julip',
     unlockSource: 'clipping_03'
   },
 
