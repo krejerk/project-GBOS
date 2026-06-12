@@ -56,3 +56,4 @@ export * from './chapters/chapter8';
 export * from './chapters/identity';
 export * from './utils';
 
+export * from './attachments';

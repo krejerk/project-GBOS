@@ -616,15 +616,16 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                                         
                                                                                                         if (isRevealed) {
                                                                                                             const clueId = forceClueId || keywordData.id;
+                                                                                                            const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId) || collectedDossierIds.includes(clueId);
                                                                                                             if (!highlightedKeywords.has(clueId)) {
                                                                                                                 highlightedKeywords.add(clueId);
                                                                                                                 return (
                                                                                                                     <motion.span key={j} 
-                                                                                                                        className="cursor-pointer font-black inline-block text-[#c85a3f] border-b-[4px] border-[#c85a3f] animate-pulse px-1 mx-0.5 relative" 
+                                                                                                                        className={`cursor-pointer font-black inline-block px-1 mx-0.5 relative transition-colors duration-500 ${isCollected ? 'text-[#8b9c86] border-b-[2px] border-[#8b9c86]/50 bg-[#8b9c86]/10' : 'text-[#c85a3f] border-b-[4px] border-[#c85a3f] animate-pulse'}`}
                                                                                                                         animate={clickedClueId === clueId ? {
                                                                                                                             scale: [1, 1.4, 0.95, 1.1, 1],
-                                                                                                                            color: ['#c85a3f', '#ffffff', '#fbbf24', '#c85a3f'],
-                                                                                                                            backgroundColor: ['rgba(200, 90, 63, 0)', 'rgba(255, 255, 255, 0.8)', 'rgba(251, 191, 36, 0.4)', 'rgba(200, 90, 63, 0)'],
+                                                                                                                            color: ['#c85a3f', '#ffffff', '#fbbf24', isCollected ? '#8b9c86' : '#c85a3f'],
+                                                                                                                            backgroundColor: ['rgba(200, 90, 63, 0)', 'rgba(255, 255, 255, 0.8)', 'rgba(251, 191, 36, 0.4)', isCollected ? 'rgba(139, 156, 134, 0.1)' : 'rgba(200, 90, 63, 0)'],
                                                                                                                             textShadow: ['0 0 0px rgba(0,0,0,0)', '0 0 20px rgba(255,255,255,1)', '0 0 10px rgba(251,191,36,0.8)', '0 0 0px rgba(0,0,0,0)'],
                                                                                                                         } : {}}
                                                                                                                         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -814,15 +815,16 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                                             
                                                                                                             if (isRevealed) {
                                                                                                                 const clueId = forceClueId || keywordData.id;
+                                                                                                                const isCollected = collectedClues.includes(clueId) || collectedYears.includes(clueId) || collectedDossierIds.includes(clueId);
                                                                                                                 if (!highlightedKeywords.has(clueId)) {
                                                                                                                     highlightedKeywords.add(clueId);
                                                                                                                     return (
                                                                                                                         <motion.span key={j} 
-                                                                                                                            className="cursor-pointer font-black border-b-[3px] text-[#c85a3f] border-[#c85a3f] animate-pulse px-1 mx-0.5 relative" 
+                                                                                                                            className={`cursor-pointer font-black inline-block px-1 mx-0.5 relative transition-colors duration-500 ${isCollected ? 'text-[#8b9c86] border-b-[2px] border-[#8b9c86]/50 bg-[#8b9c86]/10' : 'text-[#c85a3f] border-b-[3px] border-[#c85a3f] animate-pulse'}`}
                                                                                                                             animate={clickedClueId === clueId ? {
                                                                                                                                 scale: [1, 1.4, 0.95, 1.1, 1],
-                                                                                                                                color: ['#c85a3f', '#ffffff', '#fbbf24', '#c85a3f'],
-                                                                                                                                backgroundColor: ['rgba(200, 90, 63, 0)', 'rgba(255, 255, 255, 0.8)', 'rgba(251, 191, 36, 0.4)', 'rgba(200, 90, 63, 0)'],
+                                                                                                                                color: ['#c85a3f', '#ffffff', '#fbbf24', isCollected ? '#8b9c86' : '#c85a3f'],
+                                                                                                                                backgroundColor: ['rgba(200, 90, 63, 0)', 'rgba(255, 255, 255, 0.8)', 'rgba(251, 191, 36, 0.4)', isCollected ? 'rgba(139, 156, 134, 0.1)' : 'rgba(200, 90, 63, 0)'],
                                                                                                                                 textShadow: ['0 0 0px rgba(0,0,0,0)', '0 0 20px rgba(255,255,255,1)', '0 0 10px rgba(251,191,36,0.8)', '0 0 0px rgba(0,0,0,0)'],
                                                                                                                             } : {}}
                                                                                                                             transition={{ duration: 0.6, ease: "easeOut" }}
