@@ -199,7 +199,14 @@ const App: React.FC = () => {
     const saved = localStorage.getItem('gbos_save_state');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed.unlockedPeople) {
+          parsed.unlockedPeople = parsed.unlockedPeople.filter((id: string) => {
+            const meta = KEYWORD_REGISTRY[id];
+            return meta && meta.type === 'person';
+          });
+        }
+        return parsed;
       } catch (e) {
         console.error('Failed to parse save state', e);
       }
