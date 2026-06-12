@@ -367,8 +367,8 @@ const App: React.FC = () => {
             }
             
             const meta = getKeywordMeta(id);
-            // If it belongs to Chapter 1, 2, or 3, forcefully confiscate it (ignoring isPersistent)
-            if (meta && meta.chapter !== undefined && meta.chapter < 4) {
+            // If it belongs to Chapter 1, 2, or 3 (or lacks a chapter definition), forcefully confiscate it (ignoring isPersistent)
+            if (meta && (meta.chapter === undefined || meta.chapter < 4)) {
               changed = true;
               return false;
             }
