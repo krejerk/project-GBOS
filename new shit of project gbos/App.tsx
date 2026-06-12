@@ -328,7 +328,6 @@ const App: React.FC = () => {
         return { 
           ...prev, 
           collectedDossierIds: Array.from(new Set(newDossiers)),
-          collectedAttachments: newAttachments,
           unlockedPeople: sanitizedPeople,
           collectedClues: sanitizedClues,
           collectedYears: recoveredYears

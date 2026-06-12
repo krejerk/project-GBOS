@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Map, Terminal as TerminalIcon, FileText, X, ChevronDown, Database, Archive, Network, Construction, Brain, Activity, RotateCcw, ShieldAlert } from 'lucide-react';
 import { SyndicateBoard } from './SyndicateBoard';
