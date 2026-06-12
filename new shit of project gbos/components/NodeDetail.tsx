@@ -134,7 +134,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
       (node.id === 'confession_16' && targetClueId === 'project') ||
       (node.id === 'confession_28' && targetClueId === 'project') ||
       (node.id === 'confession_29' && targetClueId === 'project') ||
-      (node.id === 'confession_30' && (targetClueId === 'project' || targetClueId === 'pendant_photo' || targetClueId === 'year_1967')) ||
+      (node.id === 'confession_30' && (targetClueId === 'project' || targetClueId === 'william_dawson_pendant' || targetClueId === 'year_1967')) ||
       (node.id === 'confession_31' && (targetClueId === 'project' || targetClueId === 'forest_map' || targetClueId === 'mandan')) ||
       (node.id === 'confession_32' && (targetClueId === 'forest_map' || targetClueId === 'frank_rollins' || targetClueId === 'year_1977')) ||
       (node.id === 'confession_33' && (targetClueId === 'project' || targetClueId === 'year_1983' || targetClueId === 'capone'))
@@ -143,13 +143,13 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
         if (node.id === 'confession_16') onCollectAttachment('record_of_accounts');
         else if (node.id === 'confession_28') onCollectAttachment('laguna_beach_visual_residue');
         else if (node.id === 'confession_29') onCollectAttachment('felipe_maldonado_poster');
-        else if (node.id === 'confession_30') onCollectAttachment('pendant_photo');
+        else if (node.id === 'confession_30') onCollectAttachment('william_dawson_pendant');
         else if (node.id === 'confession_32') onCollectAttachment('libby_forest_map_residue');
         else if (node.id === 'confession_31') {
           onCollectAttachment('libby_forest_map_residue');
         }
         else if (node.id === 'confession_33') {
-          onCollectAttachment('robert_capone_wanted_poster_visual');
+          onCollectAttachment('robert_capone_wanted_poster');
         }
         else onCollectAttachment('graywater_beacon');
       }
@@ -260,10 +260,10 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     if (node.id === 'confession_16') return collectedAttachments.includes('record_of_accounts');
     if (node.id === 'confession_28') return collectedAttachments.includes('laguna_beach_visual_residue');
     if (node.id === 'confession_29') return collectedAttachments.includes('felipe_maldonado_poster');
-    if (node.id === 'confession_30') return collectedAttachments.includes('pendant_photo');
+    if (node.id === 'confession_30') return collectedAttachments.includes('william_dawson_pendant');
     if (node.id === 'confession_31') return collectedAttachments.includes('libby_forest_map_residue');
     if (node.id === 'confession_32') return collectedAttachments.includes('libby_forest_map_residue');
-    if (node.id === 'confession_33') return collectedAttachments.includes('robert_capone_wanted_poster_visual');
+    if (node.id === 'confession_33') return collectedAttachments.includes('robert_capone_wanted_poster');
     return collectedAttachments.includes('graywater_beacon');
   }, [node.id, collectedAttachments]);
 
@@ -337,7 +337,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
     const meta = Object.values(KEYWORD_REGISTRY).find(info => info.id === clueId);
     const isPerson = meta?.type === 'person' || clueId === 'capone' || clueId === 'frank_rollins';
     const isYear = meta?.type === 'year' || clueId.startsWith('year_');
-    const isDossierItem = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'].includes(clueId);
+    const isDossierItem = ['julip', 'project', 'fbi_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'].includes(clueId);
 
     let isCollected = false;
     if (isPerson) {

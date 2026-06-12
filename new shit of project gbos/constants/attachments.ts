@@ -32,7 +32,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 1,
     parentId: 'graywater_beacon',
     dossierId: 'graywater_beacon',
-    unlockSource: 'confession_6'
+    // unlockSource: 'confession_6' // Explicitly collected via onSetFilingEvidence
   },
   'iron_horse_louisville': {
     id: 'iron_horse_louisville',
@@ -41,7 +41,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/iron_horse_louisville.jpg',
     chapter: 1,
     parentId: 'graywater_beacon',
-    unlockSource: 'jennifer_node_2'
+    // unlockSource: 'jennifer_node_2' // Explicitly collected via onSetFilingEvidence
   },
 
   // 3. 犯罪路线 (crime_route_map)
@@ -155,7 +155,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 5,
     parentId: 'project',
     dossierId: 'graywater_beacon',
-    unlockSource: 'confession_19'
+    // unlockSource: 'confession_19'
   },
   'laguna_beach_visual_residue': {
     id: 'laguna_beach_visual_residue',
@@ -165,7 +165,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 7,
     parentId: 'project',
     dossierId: 'graywater_beacon',
-    unlockSource: 'confession_28'
+    // unlockSource: 'confession_28'
   },
   'record_of_accounts': {
     id: 'record_of_accounts',
@@ -175,7 +175,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 6,
     parentId: 'project',
     dossierId: 'project',
-    unlockSource: 'confession_16'
+    // unlockSource: 'confession_16'
   },
   'wilmer_ribbon': {
     id: 'wilmer_ribbon',
@@ -185,7 +185,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 7,
     parentId: 'clipping_07',
     dossierId: 'project',
-    unlockSource: 'clipping_07'
+    // unlockSource: 'clipping_07'
   },
   'felipe_maldonado_poster': {
     id: 'felipe_maldonado_poster',
@@ -194,7 +194,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/felipe_maldonado_poster.jpg',
     chapter: 7,
     parentId: 'project',
-    unlockSource: 'confession_29'
+    // unlockSource: 'confession_29'
   },
   'william_dawson_pendant': {
     id: 'william_dawson_pendant',
@@ -203,7 +203,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/william_dawson_pendant.png',
     chapter: 8,
     parentId: 'project',
-    unlockSource: 'confession_30'
+    // unlockSource: 'confession_30'
   },
   'libby_ticket': {
     id: 'libby_ticket',
@@ -212,7 +212,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/libby_ticket.jpg',
     chapter: 8,
     parentId: 'project',
-    unlockSource: 'jennifer_node_7'
+    // unlockSource: 'jennifer_node_7'
   },
   'robert_capone_wanted_poster': {
     id: 'robert_capone_wanted_poster',
@@ -221,7 +221,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/robert_capone_wanted_poster.png',
     chapter: 8,
     parentId: 'project',
-    unlockSource: 'confession_33'
+    // unlockSource: 'confession_33'
   },
   'capone_alice_meeting': {
     id: 'capone_alice_meeting',
@@ -231,7 +231,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 8,
     parentId: 'project',
     dossierId: 'project',
-    unlockSource: 'confession_36A1'
+    // unlockSource: 'confession_36A1'
   },
   'confession_31_residue_custom': {
     id: 'confession_31_residue_custom',
@@ -240,7 +240,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/confession_31_residue_custom.jpg',
     chapter: 8,
     parentId: 'project',
-    unlockSource: 'confession_31'
+    // unlockSource: 'confession_31'
   },
   'confession_32_vanessa_sketch': {
     id: 'confession_32_vanessa_sketch',
@@ -249,7 +249,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/confession_32_vanessa_sketch.png',
     chapter: 8,
     parentId: 'project',
-    unlockSource: 'confession_32'
+    // unlockSource: 'confession_32'
   },
   'creekspring_award_ceremony': {
     id: 'creekspring_award_ceremony',
@@ -259,7 +259,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 9,
     parentId: 'clipping_23',
     dossierId: 'project',
-    unlockSource: 'clipping_23'
+    // unlockSource: 'clipping_23'
   },
   'death_report': {
     id: 'death_report',
@@ -268,6 +268,6 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/john_doe_autopsy_report.png',
     chapter: 9,
     parentId: 'project',
-    unlockSource: 'jennifer_node_8'
+    // unlockSource: 'jennifer_node_8'
   }
 };

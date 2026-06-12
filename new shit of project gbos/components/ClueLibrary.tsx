@@ -489,7 +489,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
             }
             // Auto-collect julip attachments for Node 4
             if (onCollectAttachment) {
-                onCollectAttachment('julip_symbol');
+                onCollectAttachment('fbi_symbol');
                 onCollectAttachment('butter_julep_evidence');
             }
             // Visual feedback for Node 4
@@ -693,7 +693,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
     const uniqueDossierIds = Array.from(new Set([...(collectedDossierIds || [])]));
     const collectedClues = uniqueDossierIds
         .map(id => getDynamicClueDefinition(id))
-        .filter(clue => clue && !['julip_symbol', 'project_symbol', 'personnel_tree', 'forest_map'].includes(clue.id));
+        .filter(clue => clue && !['fbi_symbol', 'project_symbol', 'personnel_tree', 'forest_map'].includes(clue.id));
 
     // Group clues by folder (ensure only 4 main folders)
     const groupedClues = collectedClues.reduce((acc, clue) => {
@@ -1025,7 +1025,7 @@ export const ClueLibrary: React.FC<ClueLibraryProps> = ({
                                                                 </motion.button>
                                                             );
                                                         })}
-                                                        {(!activeClue.attachments || activeClue.attachments.length === 0 || (activeClue.id === 'julip' && !collectedAttachments.includes('julip_symbol'))) && (
+                                                        {(!activeClue.attachments || activeClue.attachments.length === 0 || (activeClue.id === 'julip' && !collectedAttachments.includes('fbi_symbol'))) && (
                                                             <div className="col-span-4 text-center py-8 text-xs text-gray-400 italic">
                                                                 No physical evidence attached to this file.
                                                             </div>
