@@ -438,16 +438,9 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 const isYear = id.startsWith('year_') || !isNaN(Number(id));
                                                                 if (isYear) return true;
 
-                                                                const meta = KEYWORD_REGISTRY[id];
+                                                                const meta = Object.values(KEYWORD_REGISTRY).find(info => info.id === id);
                                                                 if (!meta) {
-                                                                    const mapped = GLOBAL_KEYWORD_MAP[id];
-                                                                    if (mapped) {
-                                                                        const standardMeta = KEYWORD_REGISTRY[mapped.id];
-                                                                        if (standardMeta && standardMeta.isIdentity) return false;
-                                                                    } else {
-                                                                        // 没有注册的关键词（或者是未知垃圾），不予在检索提示框中显示
-                                                                        return false;
-                                                                    }
+                                                                    return false; // Not registered
                                                                 } else if (meta.isIdentity) {
                                                                     return false;
                                                                 }
