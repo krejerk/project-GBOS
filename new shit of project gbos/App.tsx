@@ -1117,7 +1117,7 @@ const App: React.FC = () => {
         },
         {
           keywords: ['雷吉博士', '雷吉', 'dr reggie', 'reggie', 'dr. reggie', '博士'],
-          response: '> [R. CAPONE]: "别在背后念叨那个名字。他能听到你的想法，就像 he 当年坚信自己能听到上帝的声音一样。"',
+          response: '> [R. CAPONE]: "别在背后念叨那个名字。他能听到你的想法，就像他当年坚信自己能听到上帝的声音一样。"',
           priority: 90
         },
         {
