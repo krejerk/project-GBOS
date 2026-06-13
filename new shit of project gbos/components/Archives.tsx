@@ -432,7 +432,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                 if (consumedKeywords.has(id)) return false;
 
                                                                 // 彻底拦截所有可能作为身份核心词的中文、英文、拼音名
-                                                                const identityBlocklist = ['father', 'mother', 'silas', 'conchar', 'robert', 'capone', 'vanessa', '父亲', '母亲', '赛勒斯', '康查尔', '罗伯特', '罗伯特·卡彭', '瓦妮莎'];
+                                                                const identityBlocklist = ['father', 'mother', 'silas', 'conchar', 'vanessa', '父亲', '母亲', '赛勒斯', '康查尔', '瓦妮莎'];
                                                                 if (identityBlocklist.includes(id)) return false;
 
                                                                 const isYear = id.startsWith('year_') || !isNaN(Number(id));

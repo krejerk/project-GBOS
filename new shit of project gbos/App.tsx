@@ -234,6 +234,12 @@ const App: React.FC = () => {
     }
   }, [gameState]);
 
+  useEffect(() => {
+    if (endingType !== null || ending2Step > 0) {
+      localStorage.setItem('gbos_game_cleared', 'true');
+    }
+  }, [endingType, ending2Step]);
+
   const resetGame = () => {
     localStorage.removeItem('gbos_save_state');
     for (let i = 1; i <= 9; i++) {

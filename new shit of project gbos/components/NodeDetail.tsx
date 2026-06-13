@@ -851,7 +851,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                           onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
                         >
                           <img 
-                            src={`${import.meta.env.BASE_URL}images/confession_31_residue.png`} 
+                            src={`${import.meta.env.BASE_URL}images/confession_31_residue_custom.jpg`} 
                             className={`w-full h-auto object-cover transition-all duration-1000 ${collectedAttachments.includes('libby_forest_map_residue') ? 'grayscale-0 brightness-110' : 'grayscale brightness-75 contrast-125'}`} 
                             alt="Humphrey Prison Memory"
                           />

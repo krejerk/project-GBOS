@@ -263,9 +263,10 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                             </div>
 
                             {CHECKPOINTS.map((cp, idx) => {
-                                const isUnlocked = cp.storyNode <= currentProgress;
-                                const isFuture = cp.storyNode > currentProgress;
-                                const isFarFuture = cp.storyNode > currentProgress + 3;
+                                const isGameCleared = localStorage.getItem('gbos_game_cleared') === 'true';
+                                const isUnlocked = isGameCleared || cp.storyNode <= currentProgress;
+                                const isFuture = !isGameCleared && cp.storyNode > currentProgress;
+                                const isFarFuture = !isGameCleared && cp.storyNode > currentProgress + 3;
                                 
                                 // Hide everything beyond +3 to maintain suspense about total length
                                 if (isFarFuture) return null;

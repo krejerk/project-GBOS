@@ -32,7 +32,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 1,
     parentId: 'graywater_beacon',
     dossierId: 'graywater_beacon',
-    // unlockSource: 'confession_6' // Explicitly collected via onSetFilingEvidence
+    unlockSource: 'confession_6' // Explicitly collected via onSetFilingEvidence
   },
   'iron_horse_louisville': {
     id: 'iron_horse_louisville',
@@ -155,7 +155,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     chapter: 5,
     parentId: 'project',
     dossierId: 'graywater_beacon',
-    // unlockSource: 'confession_19'
+    unlockSource: 'confession_19'
   },
   'laguna_beach_visual_residue': {
     id: 'laguna_beach_visual_residue',
@@ -164,8 +164,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/laguna_beach_visual_residue.png',
     chapter: 7,
     parentId: 'project',
-    dossierId: 'graywater_beacon',
-    // unlockSource: 'confession_28'
+    unlockSource: 'confession_28'
   },
   'record_of_accounts': {
     id: 'record_of_accounts',

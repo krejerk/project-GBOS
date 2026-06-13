@@ -3,6 +3,7 @@ import { KeywordMetadata } from '../types';
 
 export const CHAPTER9_KEYWORDS: Record<string, KeywordMetadata> = {
   'year_1985': { id: 'year_1985', chapter: 1, type: 'year', displayName: "1985", isPersistent: true, description: "罗格·毕比被捕并供认香槟镇失踪案的年份。FBI内部对KLUB机构的重组也在这一年启动。", source: "Confession" },
+  'alexander_mengel': { id: 'alexander_mengel', chapter: 9, type: 'person', displayName: "艾利克斯·门格尔", isPersistent: true, description: "一个来自圭亚那的模具师，连环杀手。", source: "Confession" },
   'appalachia': { id: 'appalachia', chapter: 9, type: 'location', displayName: "阿巴拉契亚山脉", isPersistent: true },
   'bait': { id: 'bait', chapter: 9, type: 'case', displayName: "诱饵", isPersistent: true },
   'clement_svirson': { id: 'clement_svirson', chapter: 9, type: 'person', displayName: "克莱门特·斯维尔森", isPersistent: true },
@@ -13,7 +14,7 @@ export const CHAPTER9_KEYWORDS: Record<string, KeywordMetadata> = {
   'phoenix': { id: 'phoenix', chapter: 9, type: 'location', displayName: "凤凰城", isPersistent: true },
   'port_jefferson': { id: 'port_jefferson', chapter: 9, type: 'location', displayName: "杰斐逊港", isPersistent: true },
   'record_of_accounts': { id: 'record_of_accounts', chapter: 9, type: 'case', displayName: "账本", isPersistent: true },
-  'unnamed_female_body': { id: 'unnamed_female_body', chapter: 9, type: 'person', displayName: "无名女尸", isPersistent: true },
+  'unnamed_female_body': { id: 'unnamed_female_body', chapter: 9, type: 'case', displayName: "无名女尸", isPersistent: true },
   'van_horn_checkpoint': { id: 'van_horn_checkpoint', chapter: 9, type: 'location', displayName: "范霍恩检查站", isPersistent: true },
   'year_1999': { id: 'year_1999', chapter: 9, type: 'year', displayName: "1999", isPersistent: true }
 };
