@@ -1516,6 +1516,12 @@ const App: React.FC = () => {
   };
 
   const handleDebugStateChange = (newState: Partial<GameState>) => {
+    // Clear Jennifer's dialogue flags so they can trigger again if the checkpoint requires it
+    for (let i = 1; i <= 9; i++) {
+      localStorage.removeItem(`hasViewedNode${i}`);
+    }
+    localStorage.removeItem('hasViewedNode7Intro');
+    
     setGameState({ ...INITIAL_GAME_STATE, tutorialStep: 0, ...newState });
     startMusic();
   };
