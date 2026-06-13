@@ -665,7 +665,11 @@ const App: React.FC = () => {
       });
 
       // 2. Define protected keywords (newly given or core system)
-      const protectedIds = ['st_louis', 'vampire', 'personnel_tree', ...PROTECTED_YEARS];
+      const protectedIds = [
+          'st_louis', 'vampire', 'blue_rv', 
+          'personnel_tree', 'julip', 'project', 'crime_route_map', 'graywater_beacon', 
+          ...PROTECTED_YEARS
+      ];
 
       // 3. Filter lists: REMOVE everything except protected keywords and future keywords
       const filterFn = (id: string) => {
@@ -682,7 +686,8 @@ const App: React.FC = () => {
         ...prev,
         collectedClues: prev.collectedClues.filter(filterFn),
         collectedYears: prev.collectedYears.filter(filterFn),
-        unlockedPeople: prev.unlockedPeople, // DO NOT filter out people, they belong on the board
+        unlockedPeople: prev.unlockedPeople.filter(filterFn),
+        collectedDossierIds: (prev.collectedDossierIds || []).filter(filterFn),
         history: [
           ...prev.history,
           { type: 'info', content: '[JENNIFER]: 看来你还在试图拼凑那些不该存在的碎片。作为警告，我已清除了你所有的线索缓存。', timestamp: Date.now() }
