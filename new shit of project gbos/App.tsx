@@ -465,6 +465,7 @@ const App: React.FC = () => {
       } else {
         audioRef.current.play().then(() => {
           setIsMusicPlaying(true);
+          setHasMusicStarted(true);
         }).catch(err => {
           console.warn("Audio playback failed:", err);
         });
@@ -1594,7 +1595,7 @@ const App: React.FC = () => {
 
   return (
     <div className="w-full h-full relative overflow-hidden">
-      <MusicControl isPlaying={isMusicPlaying} onToggle={toggleMusic} isVisible={hasMusicStarted} />
+      <MusicControl isPlaying={isMusicPlaying} onToggle={toggleMusic} isVisible={hasMusicStarted || gameState.phase === 'immersion'} />
       <AnimatePresence mode="wait">
         {gameState.phase === 'studio-intro' && (
           <StudioIntro onComplete={() => setGameState(p => ({ ...p, phase: 'briefing' }))} />
