@@ -774,6 +774,16 @@ const App: React.FC = () => {
       history: [...prev.history, { type: 'search', content: query, timestamp: Date.now() }]
     }));
 
+    if (query === '世界上最后一个emo男孩') {
+      localStorage.setItem('gbos_game_cleared', 'true');
+      setGameState(prev => ({
+        ...prev,
+        history: [...prev.history, { type: 'system', content: '>>> DEVELOPER OVERRIDE: ALL ANCHORS UNLOCKED <<<', timestamp: Date.now() }]
+      }));
+      setIsProcessing(false);
+      return;
+    }
+
     if (query.includes('FORCE_LOAD_MONSTER') || query.includes('0x524F42455254_PURGE')) {
       // Immediate and persistent glitch during processing
       setIsPersonaGlitching(true);
