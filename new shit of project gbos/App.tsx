@@ -1077,6 +1077,7 @@ const App: React.FC = () => {
                 activeNodeId: targetId,
                 unlockedNodeIds: isAlreadyUnlocked ? prev.unlockedNodeIds : Array.from(new Set([...prev.unlockedNodeIds, targetId])),
                 systemStability: isAlreadyUnlocked ? prev.systemStability : Math.min(prev.systemStability + 20, 84),
+                tutorialStep: (prev.tutorialStep === 5 && targetId === 'confession_1') ? 6 : prev.tutorialStep,
                 history: [
                   ...prev.history,
                   { type: 'info', content: `[本地协议覆写]: 确认关键索引关联——${node!.title}`, timestamp: Date.now() }
@@ -1295,6 +1296,7 @@ const App: React.FC = () => {
           return {
             ...prev,
             consecutiveSearch: newConsecutive,
+            tutorialStep: prev.tutorialStep === 5 ? 4 : prev.tutorialStep,
             collectedClues: newCollectedClues,
             history: [...prev.history, { type: 'info', content: matchedPreset.response, isReveal: matchedPreset.isReveal, revealKeywords: matchedPreset.revealKeywords, timestamp: Date.now() }]
           };
@@ -1312,6 +1314,7 @@ const App: React.FC = () => {
         setGameState(prev => ({
           ...prev,
           consecutiveSearch: newConsecutive,
+          tutorialStep: prev.tutorialStep === 5 ? 4 : prev.tutorialStep,
           history: [...prev.history, { type: 'info', content: responseMessage, timestamp: Date.now() }]
         }));
         setIsProcessing(false);

@@ -271,10 +271,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
         if (searchQuery.trim()) {
             const currentQuery = searchQuery;
             setSearchQuery(''); // Clear IMMEDIATELY before processing
-            
-            if (tutorialStep === 5 && currentQuery.includes('缅因州') && currentQuery.includes('小银行')) {
-                setTutorialStep(6);
-            }
             onSearch(currentQuery);
         }
     };
