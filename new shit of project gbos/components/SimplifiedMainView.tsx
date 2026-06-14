@@ -343,7 +343,7 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
                     <button
                         id="tutorial-archives-btn"
                         onClick={() => {
-                            if (tutorialStep === 7) setTutorialStep(8);
+                            if (tutorialStep === 7) setTutorialStep(0);
                             setShowArchives(true);
                         }}
                         className={`group flex items-center gap-1.5 transition-colors text-xs tracking-[0.1em] font-bold p-2 md:p-0 relative ${tutorialStep > 0 && tutorialStep !== 7 ? 'opacity-20 cursor-not-allowed pointer-events-none' : 'text-[#d89853]/80 hover:text-[#d89853]'}`}
