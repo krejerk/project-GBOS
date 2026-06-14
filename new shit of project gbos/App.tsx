@@ -833,7 +833,8 @@ const App: React.FC = () => {
       }
     }
     
-    const uniqueDetected = Array.from(new Set(detectedKeywordIds)).filter(id => {
+    const uniqueDetectedAll = Array.from(new Set(detectedKeywordIds));
+    const uniqueDetected = uniqueDetectedAll.filter(id => {
       const meta = getKeywordMeta(id);
       // Only allow keywords from current or past chapters (unless they are identities which are always allowed)
       if (meta?.isIdentity) return true;
@@ -983,21 +984,15 @@ const App: React.FC = () => {
     let matchedUnlockId: string | null = null;
     let matchedUnlockData: any = null;
 
-    // Strict validation: No extra keywords, and no significant unrecognized text
-    // We allow spaces, common separators and punctuation in the remainder, and the "年" suffix for years
-    // We also remove standard node prefixes so that if a user types "供述24" along with keywords, it doesn't fail the clean check.
-    const cleanRemainder = queryRemainder
-      .replace(/[\s,，.。!！?？;；:：、\-_/\\|年]/g, '')
-      .replace(/[0-9]+/g, '')
-      .replace(/(供述|confession|剪报|clipping|档案|archive|no|第)/gi, '');
-    const isRemainderClean = cleanRemainder.length === 0;
-
     for (const [id, entry] of Object.entries(UNLOCKS_REGISTRY)) {
       const hasAllNeeded = entry.keywords.every(k => uniqueDetected.includes(k));
-      const hasNoExtraKeywords = uniqueDetected.length === entry.keywords.length;
+      // STRICT EXCLUSION: We verify against ALL detected keywords (even invalid/future ones).
+      // If they typed extra registered keywords, it will fail to unlock.
+      const hasNoExtraKeywords = uniqueDetectedAll.length === entry.keywords.length;
       
-      // If the user included extra keywords OR random text, don't unlock
-      if (hasAllNeeded && hasNoExtraKeywords && isRemainderClean) {
+      // We allow any random unstructured text (spaces, punctuation, random words) to pass
+      // as long as there are NO extra registered keywords in the query.
+      if (hasAllNeeded && hasNoExtraKeywords) {
         matchedUnlockId = id;
         matchedUnlockData = entry;
         break;
