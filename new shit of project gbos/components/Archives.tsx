@@ -791,7 +791,8 @@ export const Archives: React.FC<ArchivesProps> = ({
                                                                                                         style={{ 
                                                                                                             fontFamily: line.includes('后人手写批注') ? undefined : "'Special Elite', 'Courier New', monospace",
                                                                                                             filter: line.includes('后人手写批注') ? 'blur(0.4px)' : 'blur(0.25px) contrast(1.1)',
-                                                                                                            opacity: 0.95
+                                                                                                            opacity: 0.95,
+                                                                                                            WebkitTextStroke: line.includes('后人手写批注') ? undefined : '0.4px currentColor'
                                                                                                         }}
                                                                                                     >
                                                                                                         {line.includes('后人手写批注') && <span className="absolute -top-5 left-4 text-[10px] uppercase tracking-[0.2em] font-black opacity-60">Addendum Observed</span>}
