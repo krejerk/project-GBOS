@@ -677,14 +677,14 @@ const App: React.FC = () => {
           ...PROTECTED_YEARS
       ];
 
-      // 3. Filter lists: REMOVE everything except protected keywords and future keywords
+      // 3. Filter lists: REMOVE everything except protected keywords and identities
       const filterFn = (id: string) => {
           if (protectedIds.includes(id)) return true;
           if (consumed.has(id)) return false; // Definitely clear consumed ones
           
           const meta = getKeywordMeta(id);
-          // Keep anything collected AFTER node 3
-          if (meta && meta.chapter > 3) return true;
+          if (meta?.isIdentity) return true;
+          
           return false;
       };
 
