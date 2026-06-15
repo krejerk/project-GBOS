@@ -1101,6 +1101,26 @@ const App: React.FC = () => {
       fuzzyMatch?: boolean;
     }> = [
         {
+          keywords: ['伦德格兰', 'lundgren'],
+          response: '> [R. CAPONE]: "我太了解他了。他不是疯子，只是个有恶趣味的机会主义者，他没有被战争带走，便认为自己可以在剩下来的日子里为所欲为。"',
+          priority: 90
+        },
+        {
+          keywords: ['尼比', 'nibi'],
+          response: '> [R. CAPONE]: "康查尔毫不留情地干掉了他，可他过了好几年却告诉我，不苟言笑的尼比永远是他的最爱。"',
+          priority: 90
+        },
+        {
+          keywords: ['辛西娅', '辛西娅·米勒', 'cynthia', 'cynthia miller', 'cynthia_miller'],
+          response: '> [R. CAPONE]: "最好的葡萄永远不会被当场吃掉，懂行的人会摘下它，做成美味的酒，在很多很多年后再享用它。你会懂我的意思的。"',
+          priority: 90
+        },
+        {
+          keywords: ['亨德森', '皮特', '皮特·亨德森', 'peter', 'henderson', 'peter henderson', 'peter_henderson'],
+          response: '> [R. CAPONE]: "即使变成一摊腐肉，我也不会忘记这个人。父亲会告诉你人的虚伪和软弱，而亨德森的存在，永远在证明，人并不总是那样。"',
+          priority: 90
+        },
+        {
           keywords: ['真相', 'truth', '真实', 'reality', '是什么真相'],
           response: '> [R. CAPONE]: "真相就在那些灰水里，你得把手伸进去捞，而不是在这里敲打键盘。它闻起来不怎么好。"',
           priority: 100,
