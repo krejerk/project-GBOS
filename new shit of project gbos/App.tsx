@@ -1101,6 +1101,21 @@ const App: React.FC = () => {
       fuzzyMatch?: boolean;
     }> = [
         {
+          keywords: ['莫兰迪', 'morandi'],
+          response: '> [R. CAPONE]: "有时我觉得他像个傀儡，精致得一尘不染，被艾莉丝右手上把玩。而她的左手一直空着，等我上钩。"',
+          priority: 90
+        },
+        {
+          keywords: ['戈尔', '列维', '戈尔和列维探员', 'gore', 'levy', 'gore_and_levy', 'gore and levy'],
+          response: '> [R. CAPONE]: "他们是那种，我永远不后悔将其干掉的受害者，真希望那几年你们能多派点这种废物来。"',
+          priority: 90
+        },
+        {
+          keywords: ['莫宁', 'morning'],
+          response: '> [R. CAPONE]: "父亲从来没说过，永远不许脱离家族，只是确实没人能够活着离开。"',
+          priority: 90
+        },
+        {
           keywords: ['伦德格兰', 'lundgren'],
           response: '> [R. CAPONE]: "我太了解他了。他不是疯子，只是个有恶趣味的机会主义者，他没有被战争带走，便认为自己可以在剩下来的日子里为所欲为。"',
           priority: 90
