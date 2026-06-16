@@ -169,7 +169,8 @@ export const AwakeningDialogue: React.FC<AwakeningDialogueProps> = ({ onComplete
 
     const handleChallengeSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (challengeInput.trim() === '青豆牡蛎汤计划') {
+        const input = challengeInput.trim();
+        if (input === '青豆牡蛎汤计划' || input === '青豆牡蛎汤') {
             setPhase('post-challenge');
             setCurrentLineIdx(0);
             setChallengeInput('');
