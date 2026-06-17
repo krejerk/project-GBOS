@@ -287,7 +287,7 @@ const App: React.FC = () => {
           changed = true;
           return false; // Remove items that are no longer classified as 'person' (e.g. unnamed_body)
         }
-        if (meta.isIdentity) return true; // Always keep core identities
+        if (meta.isIdentity || meta.isPersistent) return true; // Always keep core identities and persistent people
         // Remove people from chapters the player hasn't reached
         if (meta.chapter !== undefined && meta.chapter > (prev.currentStoryNode || 0)) {
           changed = true;

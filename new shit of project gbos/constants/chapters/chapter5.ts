@@ -74,7 +74,7 @@ export const CHAPTER5_NODES: MemoryNode[] = [
     title: "供述 No.16",
     currentLayer: MemoryLayer.SURFACE,
     position: { x: window.innerWidth * 0.5, y: window.innerHeight * 0.1 },
-    revealedKeywords: ["arthur_dawson", "year_1967", "record_of_accounts"],
+    revealedKeywords: ["arthur_dawson", "year_1967"],
     excludedKeywords: [],
     layers: {
       [MemoryLayer.SURFACE]: { event: "关于[1967年](clue:year_1967)的特克萨卡纳碎尸案，我在家族里听过至少三个版本。有人说那个叫[亚瑟](clue:arthur_dawson)的人是FBI的线人，被父亲识破后剁碎喂了狗，有人说他试图偷走父亲的积蓄跟长女瓦妮莎私奔却未能成功，而康查尔则会用轻蔑的语气，说亚瑟只是个“缺乏想象力的会计”，死于平庸和失去价值。\n\n无论如何，原本我根本不应该知道存在着这样一个人。那是我们离开芝加哥，一路向北抵达威斯康辛州之前的某一天，房车在路边抛锚了，父亲让我钻下去检查。就我在检查支架的时候，我发现了一处不自然的凸起。那里的防锈漆颜色不对，比周围要新一些，但也被泥浆覆盖了很多年。我用扳手敲了敲，空心的。我屏住呼吸，用随身携带的瑞士军刀撬开了那块锈蚀的铁皮，一个东西落下，被我接住。我回头看了一眼，赛勒斯的一双大脚就在两米外的路边来回踱步，康查尔正和父亲讨论接下来的路线，没人察觉到任何事。", attitude: "", visual: "" },

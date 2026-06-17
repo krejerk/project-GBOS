@@ -13,7 +13,6 @@ export const CHAPTER9_KEYWORDS: Record<string, KeywordMetadata> = {
   'philadelphia': { id: 'philadelphia', chapter: 9, type: 'location', displayName: "费城", isPersistent: true },
   'phoenix': { id: 'phoenix', chapter: 9, type: 'location', displayName: "凤凰城", isPersistent: true },
   'port_jefferson': { id: 'port_jefferson', chapter: 9, type: 'location', displayName: "杰斐逊港", isPersistent: true },
-  'record_of_accounts': { id: 'record_of_accounts', chapter: 9, type: 'case', displayName: "账本", isPersistent: true },
   'unnamed_female_body': { id: 'unnamed_female_body', chapter: 9, type: 'case', displayName: "无名女尸", isPersistent: true },
   'van_horn_checkpoint': { id: 'van_horn_checkpoint', chapter: 9, type: 'location', displayName: "范霍恩检查站", isPersistent: true },
   'year_1999': { id: 'year_1999', chapter: 9, type: 'year', displayName: "1999", isPersistent: true }
