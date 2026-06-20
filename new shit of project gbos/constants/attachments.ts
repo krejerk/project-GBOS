@@ -154,7 +154,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/church_visual_residue.png',
     chapter: 5,
     parentId: 'project',
-    dossierId: 'graywater_beacon',
+    dossierId: 'project',
     unlockSource: 'confession_19'
   },
   'laguna_beach_visual_residue': {

@@ -294,8 +294,12 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                                         onClick={() => {
                                             const stateToApply = { ...cp.state };
                                             const allUnlocked = [...(stateToApply.unlockedNodeIds || []), ...(stateToApply.unlockedArchiveIds || [])];
+                                            const currentStoryNode = stateToApply.currentStoryNode || 0;
                                             stateToApply.collectedAttachments = Object.values(ATTACHMENT_REGISTRY)
-                                                .filter(a => a.unlockSource && allUnlocked.includes(a.unlockSource))
+                                                .filter(a => 
+                                                    (a.unlockSource && allUnlocked.includes(a.unlockSource)) || 
+                                                    (!a.unlockSource && a.chapter <= currentStoryNode)
+                                                )
                                                 .map(a => a.id);
                                             onSetState(stateToApply);
                                             setIsOpen(false);
