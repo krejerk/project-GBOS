@@ -145,6 +145,7 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     content: 'images/richie_id_card.jpg',
     chapter: 5,
     parentId: 'clipping_15',
+    dossierId: 'project',
     unlockSource: 'clipping_15'
   },
   'church_visual_residue': {
