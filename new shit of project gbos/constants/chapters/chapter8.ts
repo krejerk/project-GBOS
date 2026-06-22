@@ -11,8 +11,8 @@ export const CHAPTER8_KEYWORDS: Record<string, KeywordMetadata> = {
   'frank_rollins': { id: 'frank_rollins', chapter: 7, type: 'person', displayName: "弗兰克·罗林斯", isPersistent: true },
   'year_1967': { id: 'year_1967', chapter: 1, type: 'year', displayName: "1967", isPersistent: true },
   'mandan': { id: 'mandan', chapter: 7, type: 'location', displayName: "曼丹市", isPersistent: true },
-  'arthur_dawson': { id: 'arthur_dawson', chapter: 5, type: 'person', displayName: "亚瑟·道森", isPersistent: true },
-  'year_1981': { id: 'year_1981', chapter: 9, type: 'year', displayName: "1981", isPersistent: true }
+  'arthur_dawson': { id: 'arthur_dawson', chapter: 8, type: 'person', displayName: "亚瑟·道森", isPersistent: true },
+  'year_1981': { id: 'year_1981', chapter: 8, type: 'year', displayName: "1981", isPersistent: true }
 };
 
 export const CHAPTER8_NODES: MemoryNode[] = [
