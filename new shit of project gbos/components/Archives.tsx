@@ -275,18 +275,10 @@ export const Archives: React.FC<ArchivesProps> = ({
                 return yearMatch && personMatch;
             });
 
-            const foundNodeEntry = Object.values(UNLOCKS_REGISTRY).find((entry: any) => entry.type === 'node' && entry.keywords?.every((kw: string) => uniqueKeywordIds.includes(kw)));
-
-            if (foundArchive || foundNodeEntry) {
-                if (foundArchive) {
-                    if (!unlockedArchiveIds.includes(foundArchive.id)) onUnlockArchive(foundArchive.id);
-                    setActiveCase(foundArchive);
-                    setFocusedPane('newspaper');
-                }
-                if (foundNodeEntry && onUnlockNode) {
-                    onUnlockNode(foundNodeEntry.targetId);
-                    if (!foundArchive) handleClose();
-                }
+            if (foundArchive) {
+                if (!unlockedArchiveIds.includes(foundArchive.id)) onUnlockArchive(foundArchive.id);
+                setActiveCase(foundArchive);
+                setFocusedPane('newspaper');
                 setYearInput('');
                 setPersonInput('');
                 if (usedYearIds.length > 0 || usedPersonIds.length > 0) onConsumeKeywords(usedYearIds, usedPersonIds);
