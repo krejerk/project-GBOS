@@ -693,7 +693,7 @@ const App: React.FC = () => {
           if (consumed.has(id)) return false; // Definitely clear consumed ones
           
           const meta = getKeywordMeta(id);
-          if (meta?.isIdentity) return true;
+          if (meta?.isIdentity || meta?.isPersistent) return true;
           
           return false;
       };
