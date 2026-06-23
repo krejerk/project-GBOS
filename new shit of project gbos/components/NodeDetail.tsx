@@ -130,8 +130,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
 
   const handleAttemptCollect = (targetClueId: string) => {
     if (
-      targetClueId === 'graywater_beacon' || 
-      (node.id === 'confession_16' && targetClueId === 'project') ||
+      targetClueId === 'graywater_beacon' ||
       (node.id === 'confession_28' && targetClueId === 'project') ||
       (node.id === 'confession_29' && targetClueId === 'project') ||
       (node.id === 'confession_30' && (targetClueId === 'project' || targetClueId === 'william_dawson_pendant' || targetClueId === 'year_1967')) ||
@@ -140,8 +139,7 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
       (node.id === 'confession_33' && (targetClueId === 'project' || targetClueId === 'year_1983' || targetClueId === 'capone'))
     ) {
       if (onCollectAttachment) {
-        if (node.id === 'confession_16') onCollectAttachment('record_of_accounts');
-        else if (node.id === 'confession_28') onCollectAttachment('laguna_beach_visual_residue');
+        if (node.id === 'confession_28') onCollectAttachment('laguna_beach_visual_residue');
         else if (node.id === 'confession_29') onCollectAttachment('felipe_maldonado_poster');
         else if (node.id === 'confession_30') onCollectAttachment('william_dawson_pendant');
         else if (node.id === 'confession_32') onCollectAttachment('libby_forest_map_residue');
@@ -257,7 +255,6 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
   const [isLocketOpen, setIsLocketOpen] = React.useState(false);
   const [isPhotoFlipped, setIsPhotoFlipped] = React.useState(false);
   const isImageCollected = React.useMemo(() => {
-    if (node.id === 'confession_16') return collectedAttachments.includes('record_of_accounts');
     if (node.id === 'confession_28') return collectedAttachments.includes('laguna_beach_visual_residue');
     if (node.id === 'confession_29') return collectedAttachments.includes('felipe_maldonado_poster');
     if (node.id === 'confession_30') return collectedAttachments.includes('william_dawson_pendant');
@@ -536,30 +533,6 @@ export const NodeDetail: React.FC<NodeDetailProps> = ({
                       )}
                     </motion.div>
                   </div>
-                )}
-
-                {node.id === 'confession_16' && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 2 }}
-                    className="mt-16 p-8 bg-[var(--confess-highlight)]/5 border border-[var(--confess-border)] rounded-sm relative overflow-hidden group/visual"
-                  >
-                    {!isVisualRevealed ? (
-                      <div className="cursor-pointer hover:bg-[var(--confess-highlight)]/10 p-4 text-center" onClick={() => setIsVisualRevealed(true)}>
-                        <p className="text-xs text-[var(--confess-highlight)] font-mono tracking-[0.3em] mb-3 uppercase opacity-80">[SYSTEM]: 侦测到残留视觉信号</p>
-                        <div className="border border-[var(--confess-border)] px-6 py-2 text-sm text-[var(--confess-highlight)] font-bold">解析视觉记忆块 {" >> "}</div>
-                      </div>
-                    ) : (
-                      <div
-                        className="relative cursor-pointer"
-                        onClick={(e) => { e.stopPropagation(); if (!isImageCollected) setIsSelectingFolder(true); }}
-                      >
-                        <img src={`${import.meta.env.BASE_URL}images/record_of_accounts.jpg`} className={`w-full h-auto grayscale brightness-50 mix-blend-screen ${isImageCollected ? 'grayscale-0 brightness-110' : ''}`} />
-                        {isImageCollected && <div className="absolute inset-0 flex items-center justify-center font-black text-4xl text-[var(--confess-highlight)] opacity-80 rotate-[-15deg]">ARCHIVED</div>}
-                      </div>
-                    )}
-                  </motion.div>
                 )}
 
                 {node.id === 'confession_28' && (

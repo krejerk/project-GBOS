@@ -259,6 +259,15 @@ const App: React.FC = () => {
   }, [gameState.currentStoryNode]);
 
   React.useEffect(() => {
+    setGameState(prev => {
+      if (prev.currentStoryNode > (prev.maxStoryNode || 0)) {
+        return { ...prev, maxStoryNode: prev.currentStoryNode };
+      }
+      return prev;
+    });
+  }, [gameState.currentStoryNode]);
+
+  React.useEffect(() => {
     // Ensure all dossiers that were previously collected just as clues also appear in dossier list
     const dossierClues = ['julip', 'project', 'julip_symbol', 'project_symbol', 'crime_route_map', 'graywater_beacon'];
     setGameState(prev => {

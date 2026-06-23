@@ -216,7 +216,7 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
         }
     ];
 
-    const currentProgress = gameState.currentStoryNode;
+    const currentProgress = gameState.maxStoryNode ?? gameState.currentStoryNode;
 
     return (
         <div className="fixed bottom-20 left-4 z-[9999] flex flex-col items-start pointer-events-none" >
@@ -292,16 +292,7 @@ export const CheckpointManager: React.FC<CheckpointManagerProps> = ({ gameState,
                                         key={cp.id}
                                         disabled={!isUnlocked}
                                         onClick={() => {
-                                            const stateToApply = { ...cp.state };
-                                            const allUnlocked = [...(stateToApply.unlockedNodeIds || []), ...(stateToApply.unlockedArchiveIds || [])];
-                                            const currentStoryNode = stateToApply.currentStoryNode || 0;
-                                            stateToApply.collectedAttachments = Object.values(ATTACHMENT_REGISTRY)
-                                                .filter(a => 
-                                                    (a.unlockSource && allUnlocked.includes(a.unlockSource)) || 
-                                                    (!a.unlockSource && a.chapter <= currentStoryNode)
-                                                )
-                                                .map(a => a.id);
-                                            onSetState(stateToApply);
+                                            onSetState({ currentStoryNode: cp.storyNode, activeNodeId: null });
                                             setIsOpen(false);
                                         }}
                                         style={{ 

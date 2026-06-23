@@ -167,16 +167,6 @@ export const ATTACHMENT_REGISTRY: Record<string, Attachment> = {
     parentId: 'project',
     unlockSource: 'confession_28'
   },
-  'record_of_accounts': {
-    id: 'record_of_accounts',
-    type: 'image',
-    title: '亚瑟·道森的笔记本 (Record of Accounts)',
-    content: 'images/record_of_accounts.jpg',
-    chapter: 6,
-    parentId: 'project',
-    dossierId: 'project',
-    // unlockSource: 'confession_16'
-  },
   'wilmer_ribbon': {
     id: 'wilmer_ribbon',
     type: 'image',

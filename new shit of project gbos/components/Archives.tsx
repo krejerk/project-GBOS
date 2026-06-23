@@ -178,12 +178,7 @@ export const Archives: React.FC<ArchivesProps> = ({
                 setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
                 return;
             }
-            if (attachmentImage?.includes('record_of_accounts') && targetClueId === 'project') {
-                onCollectAttachment?.('record_of_accounts');
-                setCollectionFeedback({ type: 'success', msg: '归档成功 // FILED SUCCESSFULLY' });
-                setTimeout(() => { setAttachmentImage(null); setIsSelectingFolder(false); setCollectionFeedback({ type: null, msg: '' }); }, 1500);
-                return;
-            }
+
         }
 
         // Default error if no match
@@ -206,7 +201,7 @@ export const Archives: React.FC<ArchivesProps> = ({
             setAttachmentImage(`${import.meta.env.BASE_URL}images/wilmer_ribbon.jpg`);
         } else if (id === 'butter_julep_evidence' || id === 'martha_diaz') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/butter_julep_evidence.jpg`);
-        } else if (id === 'record_of_accounts' || id === 'arthur_dawson') {
+        } else if (id === 'arthur_dawson') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/record_of_accounts.jpg`);
         } else if (id === 'jane_doe') {
             setAttachmentImage(`${import.meta.env.BASE_URL}images/jane_doe_1977.jpg`);
