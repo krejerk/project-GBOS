@@ -1,12 +1,12 @@
 ---
 id: clipping_20
 title: "俄勒冈“血色迷幻”伏击案"
-trigger_year: "1976"
+trigger_year: "1975"
 trigger_persons: ["felipe_maldonado", "费利佩·马尔多纳多", "Felipe Maldonado"]
 revealed:
-newspaper_source: "《俄勒冈时报》(The Oregonian)"
-newspaper_date: "1975年8月14日"
-newspaper_headline: "红杉林公路惨剧：三名公路巡警在例行检查中遭伏击遇害"
+newspaper_source: "《墨西哥城先驱报 (El Heraldo de México)》"
+newspaper_date: "1976年12月"
+newspaper_headline: "俄勒冈公路上的血色迷幻：费利佩·马尔多纳多遭遇致命伏击"
 ---
 
 # NEWSPAPER

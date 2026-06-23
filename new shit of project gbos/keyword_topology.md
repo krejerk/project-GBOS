@@ -109,11 +109,11 @@
 | `john_morrissey` | Node: confession_13<br>Node Event: confession_13<br>Node MD: confession_13 | Unlocks: clipping_12 (archive)<br>Archive: 1965年堪萨斯城百货公司争议案 (clipping_12) |
 | `peter_henderson` | Node: confession_15<br>Node Event: confession_15<br>Archive: 1976年达文波特“静默屠杀”案 (clipping_13)<br>Node MD: confession_15 | Unlocks: clipping_13 (archive)<br>Archive: 1976年达文波特“静默屠杀”案 (clipping_13) |
 | `arthur_dawson` | Node: confession_16<br>Node Event: confession_16<br>Node MD: confession_16 | Unlocks: clipping_14 (archive)<br>Archive: 1967年德克萨卡纳碎尸案 (clipping_14) |
-| `year_1977` | Node: confession_17<br>Node Event: confession_17<br>Node MD: confession_17<br>UI Event: NodeDetail.tsx | Unlocks: clipping_15 (archive)<br>Unlocks: clipping_22 (archive)<br>Archive: 1977年图森市警务站枪击案 (clipping_22)<br>Archive: 1977年沙丘公园遗骸案 (clipping_15) |
+| `year_1977` | UI Event: NodeDetail.tsx (Confession 32) | Unlocks: clipping_22 (archive)<br>Archive: 1977年图森市警务站枪击案 (clipping_22) |
 | `richie_dreyfuss` | Node: confession_17<br>Node Event: confession_17<br>Node MD: confession_17 | Unlocks: clipping_15 (archive)<br>Archive: 1977年沙丘公园遗骸案 (clipping_15) |
 | `year_1974` | Jennifer Dialogue | Unlocks: clipping_16 (archive)<br>Archive: 1974年费城酒吧凶案 (clipping_16) |
 | `morning` | Node: confession_2<br>Node Event: confession_2<br>Archive: 1974年费城酒吧凶案 (clipping_16)<br>Jennifer Dialogue<br>Archive MD: clipping_16<br>Node MD: confession_2 | Unlocks: clipping_16 (archive)<br>Archive: 1974年费城酒吧凶案 (clipping_16) |
-| `year_1975` | Node: confession_29<br>Node Event: confession_29<br>Node MD: confession_29 | Unlocks: clipping_20 (archive)<br>Archive: 俄勒冈“血色迷幻”伏击案 (clipping_20) |
+| `year_1976` | Node: confession_29<br>Node Event: confession_29<br>Node MD: confession_29<br>Node: confession_17<br>Node Event: confession_17<br>Node MD: confession_17 | Unlocks: clipping_20 (archive)<br>Archive: 俄勒冈“血色迷幻”伏击案 (clipping_20)<br>Unlocks: clipping_15 (archive)<br>Archive: 1976年沙丘公园遗骸案 (clipping_15) |
 | `felipe_maldonado` | Node: confession_29<br>Node Event: confession_29<br>Node MD: confession_29<br>UI Event: NodeDetail.tsx | Unlocks: clipping_20 (archive)<br>Archive: 俄勒冈“血色迷幻”伏击案 (clipping_20) |
 | `william_dawson` | UI Event: NodeDetail.tsx | Unlocks: clipping_21 (archive)<br>Archive: 1967年蒙大拿州利比镇失踪案 (clipping_21) |
 | `frank_rollins` | Node: confession_32<br>Node Event: confession_32<br>Node MD: confession_32 | Unlocks: clipping_22 (archive)<br>Archive: 1977年图森市警务站枪击案 (clipping_22) |

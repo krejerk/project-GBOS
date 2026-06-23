@@ -1030,7 +1030,7 @@ export const UNLOCKS_REGISTRY: Record<string, { keywords: string[], targetId: st
   },
   "clipping_15": {
     "keywords": [
-      "year_1977",
+      "year_1976",
       "richie_dreyfuss"
     ],
     "targetId": "clipping_15",
