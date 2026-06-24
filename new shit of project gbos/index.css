@@ -442,7 +442,6 @@ body {
       rgba(0, 0, 0, 0.05) 1px,
       transparent 1px,
       transparent 2px);
-  animation: crt-flicker 0.15s infinite;
   opacity: 0.15;
 }
 
@@ -452,7 +451,6 @@ body {
   top: 0; left: 0; right: 0;
   height: 20%;
   background: linear-gradient(to bottom, transparent, rgba(216, 152, 83, 0.05), transparent);
-  animation: rolling-bar 8s linear infinite;
 }
 
 /* High Intensity Neural Overload - Pure Optical Flicker, No Distortion */
