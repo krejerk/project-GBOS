@@ -173,6 +173,10 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "project",
     "type": "case"
   },
+  "青豆牡蛎汤": {
+    "id": "project",
+    "type": "case"
+  },
   "罗阿诺克": {
     "id": "roanoke",
     "type": "location"
