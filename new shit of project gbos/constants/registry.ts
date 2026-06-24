@@ -145,6 +145,26 @@ export const GLOBAL_KEYWORD_MAP: Record<string, { id: string, type: string }> = 
     "id": "aw_wilmo",
     "type": "person"
   },
+  "小A.W.威尔莫": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "小 A.W. 威尔莫": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "小A.W. 威尔莫": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "A.W.威尔莫": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
+  "威尔莫": {
+    "id": "aw_wilmo",
+    "type": "person"
+  },
   "空烟盒": {
     "id": "empty_cigarette_pack",
     "type": "case"
