@@ -1,16 +1,16 @@
 ---
 id: clipping_20
-title: "俄勒冈“血色迷幻”伏击案"
+title: "《墨西哥城先驱报 (El Heraldo de México)》 | 1975年12月 | 国际/文化版头条"
 trigger_year: "1975"
 trigger_persons: ["felipe_maldonado", "费利佩·马尔多纳多", "Felipe Maldonado"]
 revealed:
 newspaper_source: "《墨西哥城先驱报 (El Heraldo de México)》"
-newspaper_date: "1976年12月"
+newspaper_date: "1975年12月"
 newspaper_headline: "俄勒冈公路上的血色迷幻：费利佩·马尔多纳多遭遇致命伏击"
 ---
 
 # NEWSPAPER
-**《墨西哥城先驱报 (El Heraldo de México)》 | 1976年12月 | 国际/文化版头条**
+**《墨西哥城先驱报 (El Heraldo de México)》 | 1975年12月 | 国际/文化版头条**
 
 **【深度追踪】俄勒冈公路上的血色迷幻：费利佩·马尔多纳多遭遇致命伏击，美国警方涉嫌掩盖真相**
 （本报特派调查记者：卡洛斯·门多萨 发自美国俄勒冈州）
