@@ -863,7 +863,6 @@ export const SimplifiedMainView: React.FC<SimplifiedMainViewProps> = ({
 
                                                 // 1. BASIC FILTERS
                                                 if (consumedKeywords.has(id)) return false;
-                                                if (meta.isIdentity) return false;
 
                                                 // 2. CHAPTER RELEVANCE
                                                 // Show if it's current chapter, immediate previous persistent chapter, or ALREADY collected
